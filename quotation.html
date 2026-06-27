@@ -1,0 +1,450 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Quotation Maker — WTPESTORE Admin</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B2A4A;--navy2:#0e4d6b;--orange:#ff9900;--green:#067d62;--border:#d5d9d9;--muted:#565959;--bg:#eef1f3}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',Arial,sans-serif;background:var(--bg);color:#0f1111;-webkit-font-smoothing:antialiased;padding:14px}
+input,textarea,select,button{font-family:inherit}
+.toolbar{max-width:900px;margin:0 auto 14px;background:var(--navy);border-radius:12px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar .t-title{color:#fff;font-weight:800;font-size:15px;margin-right:auto}
+.toolbar .t-title small{display:block;font-size:10px;color:#bcdff0;font-weight:500}
+.btn{border:none;border-radius:8px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn.print{background:var(--orange);color:#3a2400}
+.btn.wa{background:#25d366;color:#fff}
+.btn.email{background:#1a73e8;color:#fff}
+.btn.add{background:#fff;color:var(--navy)}
+.btn.new{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+.btn.save{background:#bcdff0;color:var(--navy)}
+.searchbox{max-width:900px;margin:0 auto 14px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px;display:none}
+.searchbox.open{display:block}
+.searchbox input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px}
+.sres{margin-top:8px;max-height:240px;overflow-y:auto}
+.sres .item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid #eee;cursor:pointer;font-size:13px}
+.sres .item:hover{background:#f4f8fb}
+.sres .item b{color:var(--navy)}
+.sres .item .pr{color:var(--green);font-weight:700;white-space:nowrap;margin-left:10px}
+
+/* Document */
+.doc{max-width:900px;margin:0 auto;background:#fff;border-radius:8px;box-shadow:0 2px 14px rgba(0,0,0,.08);padding:30px 32px}
+.dhead{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-bottom:3px solid var(--navy);padding-bottom:16px}
+.brand .logo{font-size:24px;font-weight:800;color:var(--navy)}
+.brand .logo i{color:#1aa3c8;font-style:normal}
+.brand .tag{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.3px}
+.brand .addr{font-size:11.5px;color:#444;line-height:1.6;margin-top:8px;max-width:340px}
+.qmeta{text-align:right}
+.qmeta h1{font-size:22px;color:var(--navy);letter-spacing:1px;margin-bottom:8px}
+.qmeta .row{font-size:12px;color:#444;margin-bottom:3px}
+.qmeta input{border:none;border-bottom:1px dashed #bbb;font-size:12px;text-align:right;width:130px;padding:2px}
+.parties{display:flex;gap:18px;margin:18px 0;flex-wrap:wrap}
+.party{flex:1;min-width:240px;background:#f7fafc;border:1px solid #e6edf2;border-radius:8px;padding:12px}
+.party h3{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--orange);margin-bottom:8px}
+.party input,.party textarea{width:100%;border:none;background:transparent;font-size:13px;padding:3px 0;resize:none}
+.party input:focus,.party textarea:focus,.qmeta input:focus{outline:none;background:#fffbe9}
+.party label{font-size:10px;color:var(--muted)}
+
+table.items{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+table.items th{background:var(--navy);color:#fff;font-size:11px;text-transform:uppercase;letter-spacing:.4px;padding:9px 8px;text-align:left}
+table.items th.r,table.items td.r{text-align:right}
+table.items th.c,table.items td.c{text-align:center}
+table.items td{padding:7px 8px;border-bottom:1px solid #eef1f3;vertical-align:top}
+table.items input{border:none;width:100%;font-size:13px;padding:2px;background:transparent}
+table.items input:focus{outline:none;background:#fffbe9}
+table.items input.qty,table.items input.rate{text-align:right}
+.delrow{color:#c0392b;cursor:pointer;font-weight:700;border:none;background:none;font-size:15px}
+.amt{font-weight:700;color:#222;white-space:nowrap}
+
+.totwrap{display:flex;justify-content:flex-end;margin-top:14px}
+.totals{width:340px;font-size:13px}
+.totals .tr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0}
+.totals .tr span:first-child{color:#444}
+.totals .tr.grand{border-top:2px solid var(--navy);border-bottom:none;font-size:17px;font-weight:800;color:var(--navy);padding-top:10px;margin-top:4px}
+.totals input{width:90px;border:none;border-bottom:1px dashed #bbb;text-align:right;font-size:13px;padding:2px}
+.totals input.pct{width:48px}
+.totals input:focus{outline:none;background:#fffbe9}
+.gstmode{display:flex;gap:8px;margin:10px 0;align-items:center;font-size:12px}
+.gstmode label{display:flex;align-items:center;gap:4px;cursor:pointer;color:#444}
+.words{font-size:12px;color:#444;margin-top:10px;font-style:italic}
+
+.terms{margin-top:22px}
+.terms h3{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin-bottom:6px}
+.terms textarea{width:100%;border:1px solid #e6edf2;border-radius:8px;padding:10px;font-size:12px;line-height:1.7;min-height:120px;resize:vertical;background:#fcfdfe}
+.terms textarea:focus{outline:none;background:#fffbe9}
+.dfoot{margin-top:26px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid #eee;padding-top:14px;font-size:12px;color:#444}
+.sign{text-align:center;min-width:200px}
+.sign .line{margin-top:40px;border-top:1px solid #999;padding-top:5px;font-weight:600;color:var(--navy)}
+
+.custctrl{display:flex;gap:6px;margin-bottom:10px}
+.custctrl select{flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px}
+.custctrl button{border:1px solid var(--border);background:#f4f8fb;border-radius:6px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--navy);cursor:pointer}
+.bankbox b,.upibox b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--navy);margin-bottom:6px}
+.brow{display:flex;align-items:center;gap:6px;font-size:12px;margin-bottom:3px}
+.brow span{color:var(--muted);min-width:64px}
+.brow input{border:none;border-bottom:1px dashed #ccc;font-size:12px;padding:2px;flex:1;background:transparent}
+.brow input:focus{outline:none;background:#fffbe9}
+.upibox{text-align:center}
+.upiimg{width:120px;height:120px;object-fit:contain;border:1px solid #e6edf2;border-radius:8px;margin:0 auto}
+.upiph{width:120px;height:120px;border:1px dashed #ccc;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;margin:0 auto}
+.upiup{display:inline-block;margin-top:6px;font-size:11px;color:var(--navy);font-weight:700;cursor:pointer;background:#f4f8fb;border:1px solid var(--border);border-radius:6px;padding:5px 10px}
+.signimg{display:block;max-width:170px;max-height:80px;object-fit:contain;margin:8px auto 0}
+@media print{
+  body{background:#fff;padding:0}
+  .toolbar,.searchbox,.no-print,.delrow,.btn-addrow{display:none!important}
+  .doc{box-shadow:none;max-width:100%;padding:6mm 8mm;border-radius:0}
+  input,textarea{background:transparent!important}
+  table.items th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:8mm}
+}
+@media(max-width:600px){.doc{padding:18px 14px}.qmeta{text-align:left}.qmeta input{text-align:left}}
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <div class="t-title">Quotation Maker <small>WTPESTORE Admin</small></div>
+  <button class="btn add" onclick="toggleSearch()">＋ Add Product</button>
+  <button class="btn add btn-addrow" onclick="addRow()">＋ Blank Row</button>
+  <button class="btn save" onclick="saveDefaults()">💾 Save Defaults</button>
+  <button class="btn new" onclick="newQuote()">↺ New</button>
+  <button class="btn wa" onclick="sendWA()">💬 WhatsApp</button>
+  <button class="btn email" onclick="emailQuote()">📧 Email</button>
+  <button class="btn print" onclick="window.print()">🖨 Print / PDF</button>
+</div>
+
+<div class="searchbox no-print" id="searchbox">
+  <input id="psearch" type="search" placeholder="🔍 Search product from catalogue… e.g. rotameter, dosing pump, FRP vessel" oninput="searchProd()">
+  <div class="sres" id="sres"><div style="padding:10px;color:#888;font-size:12px">Loading catalogue…</div></div>
+</div>
+
+<div class="doc" id="doc">
+  <div class="dhead">
+    <div class="brand">
+      <div class="logo">WTP<i>e</i>STORE</div>
+      <div class="tag">powered by Aqua Filtration System</div>
+      <div class="addr">
+        B-198, Ground Floor, Royal Plaza, Green Field Colony, Mathura Road, Faridabad, Haryana 121003<br>
+        <b>GSTIN:</b> 06DMUPS2289L1ZZ &nbsp;|&nbsp; <b>Ph:</b> 9910646950, 9910646957 &nbsp;|&nbsp; 0129-4340856<br>
+        <b>Email:</b> aquazone350@gmail.com &nbsp;|&nbsp; info@aquafiltrationsystem.in &nbsp;|&nbsp; www.wtpestore.co.in
+      </div>
+    </div>
+    <div class="qmeta">
+      <h1>QUOTATION</h1>
+      <div class="row">Quote No: <input id="qno" value=""></div>
+      <div class="row">Date: <input id="qdate" value=""></div>
+      <div class="row">Valid till: <input id="qvalid" value=""></div>
+    </div>
+  </div>
+
+  <div class="parties">
+    <div class="party">
+      <h3>Bill To</h3>
+      <div class="custctrl no-print">
+        <select id="custsel" onchange="loadCustomer()"><option value="">— Saved customers —</option></select>
+        <button type="button" onclick="saveCustomer()">💾 Save</button>
+        <button type="button" onclick="delCustomer()">🗑</button>
+      </div>
+      <label>Customer / Company</label>
+      <input id="cname" placeholder="Customer name / company">
+      <label>Address</label>
+      <textarea id="caddr" rows="2" placeholder="Address"></textarea>
+      <label>GSTIN</label>
+      <input id="cgstin" placeholder="Customer GSTIN (optional)">
+      <label>Email</label>
+      <input id="cemail" type="email" placeholder="Customer email (for sending)">
+      <label>Phone</label>
+      <input id="cphone" placeholder="Phone">
+    </div>
+    <div class="party">
+      <h3>Reference</h3>
+      <label>Kind Attention</label>
+      <input id="cattn" placeholder="Contact person">
+      <label>Subject / Enquiry Ref</label>
+      <input id="csub" placeholder="e.g. Supply of 1000 LPH RO Plant">
+      <label>Prepared By</label>
+      <input id="cby" placeholder="Deewakar Sharma">
+    </div>
+  </div>
+
+  <table class="items">
+    <thead><tr>
+      <th class="c" style="width:38px">#</th>
+      <th>Description</th>
+      <th class="c" style="width:64px">HSN</th>
+      <th class="r" style="width:60px">Qty</th>
+      <th class="c" style="width:60px">Unit</th>
+      <th class="r" style="width:90px">Rate (₹)</th>
+      <th class="r" style="width:104px">Amount (₹)</th>
+      <th class="c no-print" style="width:30px"></th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="gstmode no-print">
+    <b>GST Type:</b>
+    <label><input type="radio" name="gst" value="intra" checked onchange="setGst('intra')"> Within Haryana (CGST + SGST)</label>
+    <label><input type="radio" name="gst" value="inter" onchange="setGst('inter')"> Other State (IGST)</label>
+  </div>
+
+  <div class="totwrap">
+    <div class="totals">
+      <div class="tr"><span>Sub Total</span><span class="amt" id="subtotal">₹0</span></div>
+      <div class="tr"><span>Freight / Packing</span><span><input id="freight" type="number" value="0" oninput="calc()"></span></div>
+      <div class="tr"><span>Taxable Value</span><span class="amt" id="taxable">₹0</span></div>
+      <div class="tr" id="row-cgst"><span>CGST @ <input class="pct" id="cgstp" type="number" value="9" oninput="calc()">%</span><span class="amt" id="cgst">₹0</span></div>
+      <div class="tr" id="row-sgst"><span>SGST @ <input class="pct" id="sgstp" type="number" value="9" oninput="calc()">%</span><span class="amt" id="sgst">₹0</span></div>
+      <div class="tr" id="row-igst" style="display:none"><span>IGST @ <input class="pct" id="igstp" type="number" value="18" oninput="calc()">%</span><span class="amt" id="igst">₹0</span></div>
+      <div class="tr"><span>Round Off</span><span class="amt" id="roundoff">₹0</span></div>
+      <div class="tr grand"><span>Grand Total</span><span id="grand">₹0</span></div>
+    </div>
+  </div>
+  <div class="words" id="words"></div>
+
+  <div class="terms scope" id="scopeblock">
+    <h3>Scope / Notes</h3>
+    <textarea id="scope" placeholder="Optional: extra description, scope of supply, make/brand, exclusions, delivery note…" style="min-height:70px"></textarea>
+  </div>
+
+  <div class="terms">
+    <h3>Terms &amp; Conditions</h3>
+    <textarea id="terms"></textarea>
+  </div>
+
+  <div class="dfoot">
+    <div class="bankbox">
+      <b>Bank Details</b>
+      <div class="brow"><span>A/c Name:</span> <input id="bkname" value="Aqua Filtration System"></div>
+      <div class="brow"><span>Bank:</span> <input id="bkbank" placeholder="Bank name"></div>
+      <div class="brow"><span>A/c No:</span> <input id="bkacc" placeholder="Account number"></div>
+      <div class="brow"><span>IFSC:</span> <input id="bkifsc" placeholder="IFSC code"></div>
+      <div class="brow"><span>Branch:</span> <input id="bkbranch" placeholder="Branch"></div>
+    </div>
+    <div class="upibox">
+      <b>Scan to Pay (UPI)</b>
+      <img id="upiimg" class="upiimg" style="display:none" alt="UPI QR code">
+      <div id="upiph" class="upiph no-print">No QR set</div>
+      <label class="upiup no-print">⬆ Upload UPI QR<input type="file" accept="image/*" onchange="setUPI(event)" hidden></label>
+    </div>
+    <div class="sign">
+      For <b>WTPESTORE — Aqua Filtration System</b>
+      <img id="signimg" class="signimg" style="display:none" alt="Signature / Stamp">
+      <label class="upiup no-print" style="margin-top:6px">⬆ Upload Signature / Stamp<input type="file" accept="image/*" onchange="setSign(event)" hidden></label>
+      <div class="line">Authorised Signatory</div>
+    </div>
+  </div>
+</div>
+
+<script>
+var SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv";
+var WA="919899193589";
+var CAT=[]; // catalogue [{n,p,c,hsn}]
+var gstType='intra';
+
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function rupee(n){n=Math.round((n||0)*100)/100;return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function num(v){var x=parseFloat((''+v).replace(/[^0-9.\-]/g,''));return isNaN(x)?0:x;}
+
+/* ---------- rows ---------- */
+function rowHTML(d,h,q,u,r){
+  return '<tr>'+
+  '<td class="c idx"></td>'+
+  '<td><input class="desc" value="'+esc(d||'')+'" placeholder="Item description"></td>'+
+  '<td class="c"><input class="hsn" value="'+esc(h||'')+'" style="text-align:center"></td>'+
+  '<td class="r"><input class="qty" type="number" value="'+(q||1)+'" oninput="calc()"></td>'+
+  '<td class="c"><input class="unit" value="'+esc(u||'No')+'" style="text-align:center"></td>'+
+  '<td class="r"><input class="rate" type="number" value="'+(r||0)+'" oninput="calc()"></td>'+
+  '<td class="r amt cell-amt">₹0</td>'+
+  '<td class="c no-print"><button class="delrow" onclick="this.closest(\'tr\').remove();calc()">✕</button></td>'+
+  '</tr>';
+}
+function addRow(d,h,q,u,r){document.getElementById('rows').insertAdjacentHTML('beforeend',rowHTML(d,h,q,u,r));calc();}
+
+function calc(){
+  var rows=document.querySelectorAll('#rows tr'),sub=0;
+  rows.forEach(function(tr,i){
+    tr.querySelector('.idx').textContent=(i+1);
+    var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);
+    var a=q*r;sub+=a;tr.querySelector('.cell-amt').textContent=rupee(a);
+  });
+  var freight=num(document.getElementById('freight').value);
+  var taxable=sub+freight;
+  document.getElementById('subtotal').textContent=rupee(sub);
+  document.getElementById('taxable').textContent=rupee(taxable);
+  var cgst=0,sgst=0,igst=0;
+  if(gstType==='intra'){
+    cgst=taxable*num(document.getElementById('cgstp').value)/100;
+    sgst=taxable*num(document.getElementById('sgstp').value)/100;
+  }else{
+    igst=taxable*num(document.getElementById('igstp').value)/100;
+  }
+  document.getElementById('cgst').textContent=rupee(cgst);
+  document.getElementById('sgst').textContent=rupee(sgst);
+  document.getElementById('igst').textContent=rupee(igst);
+  var total=taxable+cgst+sgst+igst;
+  var grand=Math.round(total);
+  var roundoff=grand-total;
+  document.getElementById('roundoff').textContent=(roundoff>=0?'+':'')+rupee(roundoff);
+  document.getElementById('grand').textContent=rupee(grand);
+  document.getElementById('words').textContent='Amount in words: '+inWords(grand)+' Rupees Only';
+}
+
+function setGst(t){gstType=t;
+  document.getElementById('row-cgst').style.display=(t==='intra')?'flex':'none';
+  document.getElementById('row-sgst').style.display=(t==='intra')?'flex':'none';
+  document.getElementById('row-igst').style.display=(t==='inter')?'flex':'none';
+  calc();
+}
+
+/* ---------- number to words (Indian) ---------- */
+function inWords(n){n=Math.round(n);if(n===0)return 'Zero';
+  var a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  var b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function two(x){return x<20?a[x]:b[Math.floor(x/10)]+(x%10?' '+a[x%10]:'');}
+  function three(x){return x>=100?a[Math.floor(x/100)]+' Hundred'+(x%100?' '+two(x%100):''):two(x);}
+  var out='';var crore=Math.floor(n/10000000);n%=10000000;
+  var lakh=Math.floor(n/100000);n%=100000;
+  var thou=Math.floor(n/1000);n%=1000;
+  if(crore)out+=three(crore)+' Crore ';
+  if(lakh)out+=three(lakh)+' Lakh ';
+  if(thou)out+=three(thou)+' Thousand ';
+  if(n)out+=three(n);
+  return out.trim();
+}
+
+/* ---------- catalogue search ---------- */
+function toggleSearch(){var b=document.getElementById('searchbox');b.classList.toggle('open');if(b.classList.contains('open'))document.getElementById('psearch').focus();}
+function searchProd(){
+  var q=(document.getElementById('psearch').value||'').toLowerCase().trim();
+  var box=document.getElementById('sres');
+  if(!q){box.innerHTML='<div style="padding:10px;color:#888;font-size:12px">Type to search '+CAT.length+' products…</div>';return;}
+  var res=CAT.filter(function(p){return (p.n+' '+p.c).toLowerCase().indexOf(q)>-1;}).slice(0,30);
+  if(!res.length){box.innerHTML='<div style="padding:10px;color:#888;font-size:12px">No match.</div>';return;}
+  box.innerHTML=res.map(function(p,i){return '<div class="item" onclick="pick('+CAT.indexOf(p)+')"><span><b>'+esc(p.n)+'</b><br><small style="color:#888">'+esc(p.c)+'</small></span><span class="pr">'+rupee(p.p)+'</span></div>';}).join('');
+}
+function pick(i){var p=CAT[i];if(!p)return;addRow(p.n,p.hsn||'',1,'No',p.p);document.getElementById('psearch').value='';document.getElementById('sres').innerHTML='<div style="padding:10px;color:#067d62;font-size:12px">✓ Added. Search more or close.</div>';}
+
+function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
+function loadCat(){
+  fetch(SHEET).then(function(r){return r.text();}).then(function(t){
+    var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim();});if(rows.length<2)return;
+    var h=rows[0].map(function(x){return (x||'').toLowerCase();});
+    function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
+    var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),hi=ix('hsn');
+    if(ni<0)return;
+    CAT=[];
+    for(var i=1;i<rows.length;i++){var r=rows[i];var nm=(r[ni]||'').trim();if(nm.length<2)continue;
+      CAT.push({n:nm,c:(ci>-1?(r[ci]||'').trim():''),p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,hsn:(hi>-1?(r[hi]||'').trim():'')});}
+    document.getElementById('sres').innerHTML='<div style="padding:10px;color:#888;font-size:12px">Type to search '+CAT.length+' products…</div>';
+  }).catch(function(){document.getElementById('sres').innerHTML='<div style="padding:10px;color:#c0392b;font-size:12px">Catalogue load failed — aap manually rows add kar sakte ho.</div>';});
+}
+
+/* ---------- defaults / new ---------- */
+var DEF_TERMS="1. Prices are Ex-Works Faridabad, exclusive of GST unless stated otherwise.\n2. GST extra as applicable (shown above).\n3. Delivery: 1-2 weeks from receipt of confirmed Purchase Order & advance.\n4. Payment: 50% advance along with PO, balance before dispatch.\n5. Validity: This quotation is valid for 15 days from the date above.\n6. Warranty: As per manufacturer's standard warranty.\n7. Installation & freight charged extra unless mentioned.";
+
+function todayStr(){var d=new Date();return ('0'+d.getDate()).slice(-2)+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+d.getFullYear();}
+function validStr(){var d=new Date();d.setDate(d.getDate()+15);return ('0'+d.getDate()).slice(-2)+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+d.getFullYear();}
+function nextQno(){
+  var n=1;try{n=parseInt(localStorage.getItem('wtpe_qno')||'0')+1;}catch(e){}
+  var y=new Date().getFullYear();
+  return 'WTP/'+y+'/'+('00'+n).slice(-3);
+}
+function bumpQno(){try{var n=parseInt(localStorage.getItem('wtpe_qno')||'0')+1;localStorage.setItem('wtpe_qno',n);}catch(e){}}
+
+function val(id){var e=document.getElementById(id);return e?e.value:'';}
+function setv(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
+
+/* ---- saved customers ---- */
+function customers(){try{return JSON.parse(localStorage.getItem('wtpe_customers')||'[]');}catch(e){return [];}}
+function populateCustomers(){var list=customers();var s=document.getElementById('custsel');if(!s)return;s.innerHTML='<option value="">— Saved customers —</option>'+list.map(function(c,i){return '<option value="'+i+'">'+esc(c.cname||('Customer '+(i+1)))+'</option>';}).join('');}
+function saveCustomer(){var c={cname:val('cname'),caddr:val('caddr'),cgstin:val('cgstin'),cphone:val('cphone'),cattn:val('cattn')};if(!c.cname){alert('Pehle customer ka naam bharo.');return;}var list=customers();var ix=-1;for(var i=0;i<list.length;i++){if((list[i].cname||'').toLowerCase()===c.cname.toLowerCase()){ix=i;break;}}if(ix>-1)list[ix]=c;else list.push(c);try{localStorage.setItem('wtpe_customers',JSON.stringify(list));}catch(e){}populateCustomers();alert('Customer saved: '+c.cname);}
+function loadCustomer(){var i=document.getElementById('custsel').value;if(i==='')return;var c=customers()[i];if(!c)return;['cname','caddr','cgstin','cphone','cattn'].forEach(function(k){setv(k,c[k]||'');});}
+function delCustomer(){var i=document.getElementById('custsel').value;if(i===''){alert('Pehle list se customer chuno.');return;}if(!confirm('Yeh saved customer hata dein?'))return;var list=customers();list.splice(i,1);try{localStorage.setItem('wtpe_customers',JSON.stringify(list));}catch(e){}populateCustomers();}
+
+/* ---- UPI QR ---- */
+function setUPI(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{localStorage.setItem('wtpe_upi',r.result);}catch(e){alert('Image bahut badi hai. Chhoti QR image use karo.');return;}showUPI(r.result);};r.readAsDataURL(f);}
+function showUPI(src){var img=document.getElementById('upiimg'),ph=document.getElementById('upiph');if(src){img.src=src;img.style.display='block';if(ph)ph.style.display='none';}else{img.style.display='none';if(ph)ph.style.display='flex';}}
+
+/* ---- signature / stamp ---- */
+function setSign(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{localStorage.setItem('wtpe_sign',r.result);}catch(e){alert('Image bahut badi hai. Chhoti image use karo.');return;}showSign(r.result);};r.readAsDataURL(f);}
+function showSign(src){var img=document.getElementById('signimg');if(src){img.src=src;img.style.display='block';}else{img.style.display='none';}}
+
+function saveDefaults(){try{
+  localStorage.setItem('wtpe_terms',val('terms'));
+  localStorage.setItem('wtpe_by',val('cby'));
+  localStorage.setItem('wtpe_bank',JSON.stringify({n:val('bkname'),b:val('bkbank'),a:val('bkacc'),i:val('bkifsc'),br:val('bkbranch')}));
+  alert('Saved on this computer: Bank details, Terms, Prepared-By & UPI QR. Agli baar apne aap aa jaayenge.');
+}catch(e){alert('Save not available in this browser.');}}
+
+function newQuote(){
+  if(!confirm('Naya quotation shuru karein? (current saaf ho jaayega)'))return;
+  bumpQno();
+  document.getElementById('rows').innerHTML='';
+  ['cname','caddr','cgstin','cphone','cattn','csub'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('freight').value=0;
+  initMeta();addRow();calc();
+}
+
+function initMeta(){
+  document.getElementById('qno').value=nextQno();
+  document.getElementById('qdate').value=todayStr();
+  document.getElementById('qvalid').value=validStr();
+  var t=DEF_TERMS,by=null;
+  try{t=localStorage.getItem('wtpe_terms')||DEF_TERMS;by=localStorage.getItem('wtpe_by');}catch(e){}
+  document.getElementById('terms').value=t;
+  if(by)setv('cby',by);
+  try{
+    var bk=JSON.parse(localStorage.getItem('wtpe_bank')||'null');
+    if(bk){setv('bkname',bk.n);setv('bkbank',bk.b);setv('bkacc',bk.a);setv('bkifsc',bk.i);setv('bkbranch',bk.br);}
+    var upi=localStorage.getItem('wtpe_upi');if(upi)showUPI(upi);
+    var sg=localStorage.getItem('wtpe_sign');if(sg)showSign(sg);
+  }catch(e){}
+  populateCustomers();
+}
+
+/* hide empty Scope/Notes on print */
+window.addEventListener('beforeprint',function(){var s=document.getElementById('scopeblock');if(s)s.style.display=(val('scope').trim()?'block':'none');});
+window.addEventListener('afterprint',function(){var s=document.getElementById('scopeblock');if(s)s.style.display='block';});
+
+/* ---------- WhatsApp ---------- */
+function sendWA(){
+  var rows=document.querySelectorAll('#rows tr'),lines=[];
+  rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);lines.push((i+1)+'. '+d+' — Qty '+q+' @ '+rupee(r)+' = '+rupee(q*r));});
+  var msg='*WTPESTORE — Quotation*%0A'+
+    document.getElementById('qno').value+' | '+document.getElementById('qdate').value+'%0A'+
+    (document.getElementById('cname').value?('To: '+document.getElementById('cname').value+'%0A'):'')+'%0A'+
+    encodeURIComponent(lines.join('\n'))+'%0A%0A'+
+    'Sub Total: '+document.getElementById('subtotal').textContent+'%0A'+
+    'Taxable: '+document.getElementById('taxable').textContent+'%0A'+
+    (gstType==='intra'?('CGST: '+document.getElementById('cgst').textContent+'%0ASGST: '+document.getElementById('sgst').textContent):('IGST: '+document.getElementById('igst').textContent))+'%0A'+
+    '*Grand Total: '+document.getElementById('grand').textContent+'*%0A%0A'+
+    'Powered by Aqua Filtration System, Faridabad';
+  var ph=(document.getElementById('cphone').value||'').replace(/[^0-9]/g,'');
+  if(ph.length===10)ph='91'+ph;
+  window.open('https://wa.me/'+(ph||'')+'?text='+msg,'_blank');
+}
+
+/* ---------- Email (mailto) ---------- */
+function emailQuote(){
+  var to=(val('cemail')||'').trim();
+  if(!to){alert('Pehle customer ka Email bharo (Bill To me).');return;}
+  var rows=document.querySelectorAll('#rows tr'),lines=[];
+  rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);lines.push((i+1)+'. '+d+' — Qty '+q+' @ '+rupee(r)+' = '+rupee(q*r));});
+  var sub='Quotation '+val('qno')+' — WTPESTORE (Aqua Filtration System)';
+  var body='Dear '+(val('cname')||'Sir/Madam')+',\n\n'+
+    'Thank you for your enquiry. Please find our quotation '+val('qno')+' dated '+val('qdate')+' below:\n\n'+
+    lines.join('\n')+'\n\n'+
+    'Sub Total: '+document.getElementById('subtotal').textContent+'\n'+
+    'Grand Total (incl. GST): '+document.getElementById('grand').textContent+'\n\n'+
+    'The detailed PDF quotation is attached.\n\n'+
+    'Regards,\n'+(val('cby')||'')+'\n'+
+    'WTPESTORE — Aqua Filtration System\n'+
+    'Faridabad | 9910646957 | info@aquafiltrationsystem.in';
+  window.location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
+}
+
+/* init */
+initMeta();addRow();loadCat();calc();
+</script>
+</body></html>
