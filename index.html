@@ -1272,6 +1272,8 @@ function findBySlug(sl){
   sl=(sl||'').toLowerCase();
   for(var i=0;i<STORE_DATA.length;i++){if(pSlug(STORE_DATA[i].n)===sl)return STORE_DATA[i];}
   for(var j=0;j<STORE_DATA.length;j++){if(pSlug(STORE_DATA[j].n).indexOf(sl)===0)return STORE_DATA[j];}
+  try{for(var k=0;k<SEED.length;k++){if(pSlug(SEED[k].n)===sl)return {id:'s'+k,c:SEED[k].c,n:SEED[k].n,p:SEED[k].p};}
+  for(var m=0;m<SEED.length;m++){if(pSlug(SEED[m].n).indexOf(sl)===0)return {id:'s'+m,c:SEED[m].c,n:SEED[m].n,p:SEED[m].p};}}catch(e){}
   return null;
 }
 function pSEO(p){
