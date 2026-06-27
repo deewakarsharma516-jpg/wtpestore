@@ -638,23 +638,20 @@ function openFolder(c){curCat=c;var _ly=document.querySelector('.layout');if(_ly
 
 function prow(p){
   lastProduct=p.n;
-  var imlist=(p.imgs&&p.imgs.length)?p.imgs:(p.img?[p.img]:[]);var _iid="pi"+(p.id!=null?p.id:Math.floor(Math.random()*1e6));var img=imlist.length?'<img id="'+_iid+'" loading="lazy" src="'+esc(imlist[0])+'" alt="'+esc(p.n)+'" onerror="pImgErr(this,'+JSON.stringify(p.c).replace(/"/g,'&quot;')+')" style="cursor:zoom-in" onclick="pLight('+JSON.stringify(imlist).replace(/"/g,"&quot;")+',0)">':'<img loading="lazy" src="'+CAT_PH(p.c,p.n)+'" alt="'+esc(p.c)+'" style="opacity:.92">';var thumbs=imlist.length>1?'<div class="pthumbs">'+imlist.slice(0,4).map(function(u,k){return '<img src="'+esc(u)+'" class="'+(k===0?"on":"")+'" onclick="var m=document.getElementById(\''+_iid+'\');if(m)m.src=this.src;this.parentNode.querySelectorAll(\'img\').forEach(function(t){t.classList.remove(\'on\')});this.classList.add(\'on\')">';}).join("")+'</div>':'';
-  var rows='';
-  if(p.make)rows+='<tr><td class="k">Make</td><td>'+esc(p.make)+'</td></tr>';
-  var _mno=p.model||extractModel(p.n);
-  if(_mno)rows+='<tr><td class="k">Model No</td><td>'+esc(_mno)+'</td></tr>';
-  rows+='<tr><td class="k">Specification</td><td>'+esc(p.spec||p.n)+'</td></tr>';
-  rows+='<tr><td class="k">Category</td><td>'+esc(p.c)+'</td></tr>';
-  var links='';
-  if(p.pdf)links+='<a href="'+esc(p.pdf)+'" target="_blank"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h7l5 5v13H7z" stroke="currentColor" stroke-width="1.6"/></svg> Catalogue</a>';
-  if(p.vid)links+='<a href="'+esc(p.vid)+'" target="_blank"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg> Video</a>';
-  var title=p.model?(esc((p.make?p.make+' ':'')+p.model)):esc(p.n.length>70?p.n.slice(0,68)+'…':p.n);
-  return '<div class="prow"><div class="pimg">'+img+thumbs+'<button class="pshare" title="Share link" onclick="event.stopPropagation();pShare(\''+pSlug(p.n)+'\')">\u{1F517}</button></div>'+
-    '<div class="pmain"><div class="ptitle" onclick="gotoProduct('+JSON.stringify(pSlug(p.n)).replace(/"/g,'&quot;')+')" style="cursor:pointer">'+title+'</div>'+
-    '<table class="pspec">'+rows+'</table>'+(links?'<div class="plinks">'+links+'</div>':'')+'</div>'+
-    '<div class="pbuy"><div class="pprice">'+(p.p>0?rupee(p.p):'On request')+'</div>'+(p.p>0?'<div class="gst">+ GST</div>':'')+
-    '<button class="bq" onclick="openQuote('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+(p.p||0)+')">Get Quotation</button>'+
-    '<button class="bw" onclick="waProduct('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+(p.p||0)+')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2Z"/></svg>WhatsApp</button></div></div>';
+  var imlist=(p.imgs&&p.imgs.length)?p.imgs:(p.img?[p.img]:[]);
+  var imgSrc=imlist.length?imlist[0]:CAT_PH(p.c,p.n);
+  var md=p.model||extractModel(p.n);
+  var nm=esc(p.n);
+  var nameJS=JSON.stringify(p.n).replace(/"/g,'&quot;');
+  var catJS=JSON.stringify(p.c).replace(/"/g,'&quot;');
+  var slug=pSlug(p.n);
+  return '<div class="hpc" onclick="gotoProduct(\''+slug+'\')">'+
+    '<div class="hpc-img"><img loading="lazy" src="'+esc(imgSrc)+'" alt="'+nm+'" onerror="pImgErr(this,'+catJS+')"></div>'+
+    '<div class="hpc-b">'+(md?'<span class="hpc-md">'+esc(md)+'</span>':'')+
+    '<div class="hpc-n">'+nm+'</div>'+
+    '<div class="hpc-f"><div class="hpc-p">'+(p.p>0?rupee(p.p):'On request')+(p.p>0?'<small> +GST</small>':'')+'</div>'+
+    '<button class="hpc-q" onclick="event.stopPropagation();waProduct('+nameJS+','+(p.p||0)+')">Get Quote</button></div>'+
+    '</div></div>';
 }
 function renderList(list){
   document.getElementById('mcount').textContent=list.length+' products';
@@ -1335,6 +1332,21 @@ function routeFromURL(){
 window.addEventListener('popstate',function(){if(!routeFromURL()){if(typeof goHome==='function')goHome();}});
 </script>
 <div class="float-cta"><a class="fcta wa" href="https://wa.me/919899193589" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7.7.7-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.3 0-5.5 4.5-9.9 10-9.9s9.9 4.4 9.9 9.9-4.4 10.2-9.8 10.2zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4z"/></svg></a><a class="fcta call" href="tel:9910646957" aria-label="Call us"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .7-.2 1l-2.3 2.2z"/></svg></a></div>
+<style>
+.hpc{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .15s,transform .15s;cursor:pointer}
+.hpc:hover{box-shadow:0 6px 20px rgba(11,42,74,.12);transform:translateY(-2px);border-color:#bcd9e8}
+.hpc-img{width:100%;aspect-ratio:1/1;background:#f4f8fb;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hpc-img img{width:100%;height:100%;object-fit:cover}
+.hpc-b{padding:10px 11px 12px;display:flex;flex-direction:column;flex:1}
+.hpc-md{font-size:11px;font-weight:700;color:#0B2A4A;background:#eaf4f9;align-self:flex-start;padding:2px 7px;border-radius:5px;margin-bottom:6px}
+.hpc-n{font-size:12.5px;line-height:1.35;color:#222;font-weight:500;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hpc-f{display:flex;align-items:center;justify-content:space-between;margin-top:9px;gap:6px}
+.hpc-p{font-size:14px;font-weight:800;color:#067d62;white-space:nowrap}
+.hpc-p small{font-size:9px;color:#565959;font-weight:500}
+.hpc-q{background:#ff9900;color:#3a2400;font-weight:700;font-size:11px;padding:6px 10px;border-radius:7px;border:none;white-space:nowrap;cursor:pointer}
+.plist{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))!important}
+@media(max-width:600px){.plist{grid-template-columns:repeat(2,1fr)!important;gap:10px}}
+</style>
 <style>
 .pdov{position:fixed;inset:0;background:rgba(8,20,33,.62);z-index:99999;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .pdov.open{display:flex}
