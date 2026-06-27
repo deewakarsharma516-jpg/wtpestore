@@ -192,7 +192,7 @@ function render(){
 function openP(id){var p=DATA[id];if(!p)return;var md=p.model||model(p.n);
   var waMsg='Hi WTPESTORE, I want a quotation for: '+p.n+(BRAND&&BRAND!=='WTPESTORE'?(' ('+BRAND+')'):'')+'. Please share best price.';
   var m=document.getElementById('modal');
-  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+(md?'<div class="m-spec"><b>Model:</b> '+esc(md)+(p.spec?('<br><b>Spec:</b> '+esc(p.spec)):'')+'</div>':(p.spec?'<div class="m-spec"><b>Spec:</b> '+esc(p.spec)+'</div>':''))+'<div class="m-price">'+rupee(p.p)+' <small>+ GST</small></div><div class="m-btns"><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
+  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+(md?'<div class="m-spec"><b>Model:</b> '+esc(md)+(p.spec?('<br><b>Spec:</b> '+esc(p.spec)):'')+'</div>':(p.spec?'<div class="m-spec"><b>Spec:</b> '+esc(p.spec)+'</div>':''))+'<div class="m-price">'+rupee(p.p)+' <small>+ GST</small></div><div class="m-btns"><button class="m-cl" style="background:#0e4d6b;flex:1;min-width:120px" onclick="openEnquiry((document.querySelector(\'#modal h2\')||{}).textContent)">📝 Enquiry</button><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
   document.getElementById('ov').classList.add('open');document.body.style.overflow='hidden';
   try{history.replaceState(null,'','?p='+slug(p.n));}catch(e){}pSEO(p,md);}
 function closeM(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';try{history.replaceState(null,'',location.pathname);}catch(e){}}
@@ -219,5 +219,52 @@ function loadSheet(){if(!CATS.length)return;
   }).catch(function(){});}
 
 render();routeFromURL();loadSheet();
+</script>
+<style>
+.enqfab{position:fixed;left:16px;bottom:18px;z-index:600;background:#0e4d6b;color:#fff;border:none;border-radius:30px;padding:11px 16px;font-weight:700;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;font-family:'Inter',Arial,sans-serif}
+.enqov{position:fixed;inset:0;background:rgba(8,20,33,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:18px}
+.enqov.open{display:flex}
+.enqbox{background:#fff;border-radius:14px;max-width:420px;width:100%;padding:22px;font-family:'Inter',Arial,sans-serif;position:relative;max-height:92vh;overflow-y:auto}
+.enqbox h3{color:#0B2A4A;font-size:18px;margin-bottom:4px}
+.enqbox p{color:#666;font-size:12.5px;margin-bottom:12px}
+.enqbox label{display:block;font-size:12px;color:#444;font-weight:600;margin:8px 0 3px}
+.enqbox input,.enqbox textarea{width:100%;padding:10px;border:1px solid #d5d9d9;border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box}
+.enqbox textarea{resize:vertical;min-height:56px}
+.enqsubmit{width:100%;background:#ff9900;color:#3a2400;font-weight:700;border:none;border-radius:9px;padding:12px;font-size:14px;margin-top:14px;cursor:pointer}
+.enqx{position:absolute;top:12px;right:14px;border:none;background:none;font-size:20px;color:#888;cursor:pointer}
+.enqmsg{font-size:13px;margin-top:10px;display:none}
+</style>
+<button class="enqfab" onclick="openEnquiry('')">📝 Enquiry</button>
+<div class="enqov" id="enqov" onclick="if(event.target===this)enqClose()">
+<div class="enqbox">
+<button class="enqx" onclick="enqClose()">×</button>
+<h3>Send Enquiry / Request Callback</h3>
+<p>Apna number chhodein — hum aapko quotation ke saath call/WhatsApp karenge.</p>
+<label>Name *</label><input id="enqName" placeholder="Your name">
+<label>Phone / WhatsApp *</label><input id="enqPhone" type="tel" placeholder="10-digit mobile">
+<label>Product / Requirement</label><input id="enqItem" placeholder="Product or requirement">
+<label>Quantity</label><input id="enqQty" placeholder="e.g. 2 nos">
+<label>Message</label><textarea id="enqMsg" placeholder="Details (optional)"></textarea>
+<button class="enqsubmit" onclick="submitEnquiry()">Send Enquiry</button>
+<div class="enqmsg" id="enqResult"></div>
+</div></div>
+<script>
+function openEnquiry(prod){try{prod=(prod||'').toString().trim();}catch(e){prod='';}var i=document.getElementById('enqItem');if(i)i.value=prod||i.value||'';
+try{if(typeof pdClose==='function')pdClose();}catch(e){}
+try{var ov=document.getElementById('ov');if(ov)ov.classList.remove('open');}catch(e){}
+document.getElementById('enqov').classList.add('open');document.body.style.overflow='hidden';}
+function enqClose(){document.getElementById('enqov').classList.remove('open');document.body.style.overflow='';}
+function submitEnquiry(){
+  var name=(document.getElementById('enqName').value||'').trim();
+  var phone=(document.getElementById('enqPhone').value||'').trim();
+  var res=document.getElementById('enqResult');res.style.display='block';
+  if(!name||phone.replace(/\D/g,'').length<10){res.style.color='#c0392b';res.textContent='Kripya naam aur sahi 10-digit phone bharein.';return;}
+  var item=document.getElementById('enqItem').value||'';
+  var payload={Name:name,Phone:phone,Product:item,Quantity:document.getElementById('enqQty').value,Message:document.getElementById('enqMsg').value,Page:location.href,_subject:'WTPESTORE Enquiry: '+(item||name)};
+  res.style.color='#666';res.textContent='Bhej rahe hain…';
+  fetch('https://formsubmit.co/ajax/aquazone350@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)})
+  .then(function(r){return r.json();}).then(function(){res.style.color='#067d62';res.textContent='✓ Dhanyavaad! Hum jald aapse sampark karenge.';['enqName','enqPhone','enqQty','enqMsg'].forEach(function(id){document.getElementById(id).value='';});setTimeout(enqClose,2600);})
+  .catch(function(){res.style.color='#c0392b';res.innerHTML='Network issue. Kripya WhatsApp <b>9899193589</b> par message karein.';});
+}
 </script>
 </body></html>
