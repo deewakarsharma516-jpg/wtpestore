@@ -95,22 +95,6 @@ a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer}i
 .bq{background:var(--orange2);border:1px solid #e0a843;color:#111;font-weight:700;font-size:13px;padding:10px 14px;border-radius:8px;width:100%}.bq:hover{background:var(--orange)}
 .bw{background:#fff;border:1px solid #25d366;color:#1a8a45;font-weight:700;font-size:13px;padding:10px 14px;border-radius:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px}.bw:hover{background:#f0fff5}.bw svg{width:16px;height:16px}
 .empty{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:44px;text-align:center;color:var(--muted)}
-.pimg{cursor:pointer}
-.pdetail{max-width:1180px}
-.backlink{display:inline-flex;align-items:center;gap:5px;margin-bottom:16px;color:var(--link);cursor:pointer;font-weight:700;font-size:13px}
-.backlink:hover{text-decoration:underline}
-.pd-grid{display:grid;grid-template-columns:380px 1fr 290px;gap:26px;align-items:start}
-.pd-img{background:linear-gradient(135deg,#f3f7f9,#e6eef2);border-radius:14px;padding:22px;display:grid;place-items:center;min-height:340px}
-.pd-img img{max-width:100%;max-height:380px;object-fit:contain}
-.pd-info h1{font-size:23px;line-height:1.3;margin:0 0 14px;color:var(--text)}
-.pd-info .pspec{margin-top:0;font-size:13px}
-.pd-desc{margin-top:16px;line-height:1.65;color:var(--text);font-size:14.5px;white-space:pre-line}
-.pd-desc h4{margin:0 0 6px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
-.pd-buy{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;position:sticky;top:96px}
-.pd-buy .pprice{font-size:26px;font-weight:800}
-.pd-related{margin-top:46px}
-.pd-related h3{margin-bottom:14px;font-size:18px}
-@media(max-width:980px){.pd-grid{grid-template-columns:1fr}.pd-buy{position:static}.pd-img{min-height:260px}}
 /* Footer */
 .foot-top{background:#37475a;color:#fff;text-align:center;padding:14px;font-size:13px;cursor:pointer;margin-top:16px}
 footer{background:var(--dark2);color:#ddd;padding:32px 0;font-size:13px}
@@ -209,7 +193,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 .hp-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#08233d 0%,#0e4d6b 48%,#0aa2c6 105%);color:#fff;padding:78px 0 96px}
 .hp-hero .hp-inner{position:relative;z-index:3;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
 .hp-hero h1{font-family:'Sora',sans-serif;font-size:clamp(32px,4.6vw,58px);font-weight:800;line-height:1.04;letter-spacing:-.025em;margin:16px 0 18px}
-.hp-hero h1 em{font-style:normal;background:linear-gradient(90deg,#7ff0ff,#37d0c0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hp-hero h1 em{font-style:normal;background:linear-gradient(90deg,#ff9d4d,#ff7a18);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hp-hero p.lead{font-size:17.5px;line-height:1.62;color:#cfe8f4;max-width:540px}
 .hp-hero .hp-eyebrow{color:#7ff0ff}.hp-hero .hp-eyebrow::before{background:#7ff0ff;box-shadow:0 0 0 4px rgba(127,240,255,.2)}
 .hp-cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
@@ -266,7 +250,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 
 /* STATS */
 .hp-stats{background:linear-gradient(135deg,#0B2A4A,#0e4d6b);color:#fff}
-.hp-stats .hp-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding-top:56px;padding-bottom:56px}
+.hp-stats .hp-inner{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding-top:56px;padding-bottom:56px}
 .hp-stat{text-align:center}
 .hp-stat .n{font-family:'Space Grotesk',monospace;font-size:clamp(34px,4.4vw,52px);font-weight:700;color:#7ff0ff;line-height:1}
 .hp-stat .l{font-size:13.5px;color:#bcd9e8;margin-top:8px;font-weight:500}
@@ -332,6 +316,52 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 .hp-rail .prow{min-width:225px;max-width:225px;flex-shrink:0;scroll-snap-align:start}
 @media(max-width:560px){.mega .in{grid-template-columns:repeat(2,1fr)}.hp-rail .prow{min-width:168px;max-width:168px}}
 
+
+/* ===== multi-photo thumbnails + lightbox ===== */
+.pimg{position:relative}
+.pthumbs{position:absolute;left:6px;right:6px;bottom:6px;display:flex;gap:5px;justify-content:center;flex-wrap:wrap}
+.pthumbs img{width:30px;height:30px;object-fit:cover;border-radius:5px;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35);cursor:pointer;background:#fff}
+.pthumbs img.on{border-color:var(--orange)}
+.plight{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.86);display:none;align-items:center;justify-content:center;padding:18px}
+.plight.open{display:flex}
+.plbox{max-width:600px;width:100%;text-align:center;position:relative}
+.plbox #plMain{max-width:100%;max-height:70vh;border-radius:10px;background:#fff;object-fit:contain}
+.plx{position:absolute;top:-8px;right:-8px;background:#fff;border:none;width:38px;height:38px;border-radius:50%;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+.plthumbs{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.plthumbs img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;background:#fff}
+.plthumbs img.on{border-color:var(--orange)}
+.pshare{position:absolute;top:6px;right:6px;background:rgba(255,255,255,.93);border:1px solid #e6edf1;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 5px rgba(0,0,0,.18);z-index:3}
+.pshare:hover{background:var(--orange2)}
+
+/* hero underline + floating WhatsApp/Call (Option B) */
+.hp-underline{display:block;width:96px;height:5px;border-radius:4px;background:linear-gradient(90deg,#ff7a18,#ffb066);margin:2px 0 22px}
+.float-cta{position:fixed;left:16px;bottom:16px;z-index:900;display:flex;flex-direction:column;gap:11px}
+.float-cta .fcta{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 16px rgba(0,0,0,.28);transition:transform .15s}
+.float-cta .fcta:hover{transform:scale(1.08)}
+.float-cta .fcta.wa{background:#25D366}.float-cta .fcta.call{background:#ff7a18}
+.float-cta .fcta svg{width:27px;height:27px;fill:#fff}
+@media(max-width:560px){.float-cta .fcta{width:48px;height:48px}.float-cta .fcta svg{width:24px;height:24px}}
+
+/* About strip + footer map (Option B phase 2) */
+.hp-about-grid{display:grid;grid-template-columns:1.2fr .85fr;gap:42px;align-items:center}
+.hp-about-points{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hp-pt{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:15px 16px}
+.hp-pt b{display:block;color:var(--ink);font-size:14px;margin-bottom:3px}
+.hp-pt span{font-size:12px;color:var(--muted);line-height:1.4}
+.wt-fmap{margin-top:20px}
+.wt-fmap h4{color:#fff;font-size:14px;margin:0 0 8px}
+.wt-fmap iframe{width:100%;height:200px;border:0;border-radius:12px}
+@media(max-width:760px){.hp-about-grid{grid-template-columns:1fr;gap:24px}}
+
+/* clients / industries moving strip */
+.hp-marquee{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:26px 0;overflow:hidden}
+.hp-marquee .mqh{text-align:center;font-family:'Sora',sans-serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.mq-wrap{overflow:hidden;width:100%}
+.mq-track{display:flex;gap:46px;width:max-content;animation:mqscroll 30s linear infinite}
+.hp-marquee:hover .mq-track{animation-play-state:paused}
+.mq-item{display:flex;align-items:center;gap:10px;white-space:nowrap;font-weight:700;color:var(--ink);font-size:16px;opacity:.82}
+.mq-item img{height:40px;width:auto;max-width:140px;object-fit:contain}
+@keyframes mqscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"></head><body>
 
@@ -339,7 +369,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
   <div class="wrap htop">
     <button class="hbtn" id="menuBtn" onclick="document.querySelector('.side').classList.toggle('show')"><b>☰</b><span class="s">Menu</span></button>
     <div class="logo" onclick="goHome()"><span class="logomark"><svg viewBox="0 0 48 48" fill="none"><defs><linearGradient id="wlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19c37d"/><stop offset="1" stop-color="#0aa2c0"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#wlg)"/><path d="M24 9C24 9 14 20 14 28a10 10 0 0 0 20 0C34 20 24 9 24 9Z" fill="#fff"/><path d="M19.5 28.5a4.5 4.5 0 0 0 4.5 4.5" stroke="#0aa2c0" stroke-width="2" stroke-linecap="round"/><path d="M18.5 24h11M20 27.5h8" stroke="#19c37d" stroke-width="1.7" stroke-linecap="round"/></svg></span><span class="logotext"><b>WTP<i>e</i><span>STORE</span></b><small>powered by Aqua Filtration System</small></span></div>
-    <span style="background:var(--orange);color:#111;font-size:10px;font-weight:800;padding:4px 8px;border-radius:5px;flex-shrink:0">v2.2 · CLEAN</span>
+    
     <div class="srch"><input id="search" placeholder="Search products — membrane, dosing pump, flow meter, FRP vessel..." onkeydown="if(event.key==='Enter')doSearch()" oninput="liveSearch()"><button onclick="doSearch()"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.2"/><path d="m20 20-3-3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
     <a class="hbtn" href="tel:9910646957"><span class="s">Call / Help</span><b>9910646957</b></a>
     <div class="hbtn acc" onclick="openZara()"><span class="s">Ask</span><b>Zara AI</b></div>
@@ -483,6 +513,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 <script>
 /* ===== BRANDED CATEGORY PLACEHOLDERS + SEARCH HELPERS (added) ===== */
 function squish(s){return (''+(s||'')).toLowerCase().replace(/[^a-z0-9]/g,'');}
+function pSlug(n){return (''+(n||'')).toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);}
 function extractModel(name){
   if(!name) return '';
   var s=(''+name).toUpperCase();
@@ -605,7 +636,7 @@ function openFolder(c){curCat=c;var _ly=document.querySelector('.layout');if(_ly
 
 function prow(p){
   lastProduct=p.n;
-  var img=p.img?'<img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.n)+'">':'<img loading="lazy" src="'+CAT_PH(p.c,p.n)+'" alt="'+esc(p.c)+'" style="opacity:.92">';
+  var imlist=(p.imgs&&p.imgs.length)?p.imgs:(p.img?[p.img]:[]);var _iid="pi"+(p.id!=null?p.id:Math.floor(Math.random()*1e6));var img=imlist.length?'<img id="'+_iid+'" loading="lazy" src="'+esc(imlist[0])+'" alt="'+esc(p.n)+'" style="cursor:zoom-in" onclick="pLight('+JSON.stringify(imlist).replace(/"/g,"&quot;")+',0)">':'<img loading="lazy" src="'+CAT_PH(p.c,p.n)+'" alt="'+esc(p.c)+'" style="opacity:.92">';var thumbs=imlist.length>1?'<div class="pthumbs">'+imlist.slice(0,4).map(function(u,k){return '<img src="'+esc(u)+'" class="'+(k===0?"on":"")+'" onclick="var m=document.getElementById(\''+_iid+'\');if(m)m.src=this.src;this.parentNode.querySelectorAll(\'img\').forEach(function(t){t.classList.remove(\'on\')});this.classList.add(\'on\')">';}).join("")+'</div>':'';
   var rows='';
   if(p.make)rows+='<tr><td class="k">Make</td><td>'+esc(p.make)+'</td></tr>';
   var _mno=p.model||extractModel(p.n);
@@ -616,8 +647,8 @@ function prow(p){
   if(p.pdf)links+='<a href="'+esc(p.pdf)+'" target="_blank"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h7l5 5v13H7z" stroke="currentColor" stroke-width="1.6"/></svg> Catalogue</a>';
   if(p.vid)links+='<a href="'+esc(p.vid)+'" target="_blank"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg> Video</a>';
   var title=p.model?(esc((p.make?p.make+' ':'')+p.model)):esc(p.n.length>70?p.n.slice(0,68)+'…':p.n);
-  return '<div class="prow"><div class="pimg" onclick="openProductPage('+JSON.stringify(p.n).replace(/"/g,'&quot;')+')">'+img+'</div>'+
-    '<div class="pmain"><div class="ptitle" onclick="openProductPage('+JSON.stringify(p.n).replace(/"/g,'&quot;')+')">'+title+'</div>'+
+  return '<div class="prow"><div class="pimg">'+img+thumbs+'<button class="pshare" title="Share link" onclick="event.stopPropagation();pShare(\''+pSlug(p.n)+'\')">\u{1F517}</button></div>'+
+    '<div class="pmain"><div class="ptitle" onclick="openQuote('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+(p.p||0)+')">'+title+'</div>'+
     '<table class="pspec">'+rows+'</table>'+(links?'<div class="plinks">'+links+'</div>':'')+'</div>'+
     '<div class="pbuy"><div class="pprice">'+(p.p>0?rupee(p.p):'On request')+'</div>'+(p.p>0?'<div class="gst">+ GST</div>':'')+
     '<button class="bq" onclick="openQuote('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+(p.p||0)+')">Get Quotation</button>'+
@@ -629,52 +660,6 @@ function renderList(list){
   if(!list.length){v.innerHTML='<div class="empty">Koi product nahi mila. Doosra naam try karein, ya Zara se poochhein.</div>';return;}
   v.innerHTML='<div class="plist">'+list.map(prow).join('')+'</div>';
 }
-function findProduct(name){return STORE_DATA.find(function(p){return p.n===name;});}
-function productDetailHTML(p){
-  var img=p.img?'<img src="'+esc(p.img)+'" alt="'+esc(p.n)+'">':'<img src="'+CAT_PH(p.c,p.n)+'" alt="'+esc(p.c)+'" style="opacity:.92">';
-  var rows='';
-  if(p.make)rows+='<tr><td class="k">Make</td><td>'+esc(p.make)+'</td></tr>';
-  var _mno=p.model||extractModel(p.n);
-  if(_mno)rows+='<tr><td class="k">Model No</td><td>'+esc(_mno)+'</td></tr>';
-  rows+='<tr><td class="k">Category</td><td>'+esc(p.c)+'</td></tr>';
-  var links='';
-  if(p.pdf)links+='<a href="'+esc(p.pdf)+'" target="_blank"><svg viewBox="0 0 24 24" fill="none"><path d="M7 3h7l5 5v13H7z" stroke="currentColor" stroke-width="1.6"/></svg> Download Catalogue</a>';
-  if(p.vid)links+='<a href="'+esc(p.vid)+'" target="_blank"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="m10 9 5 3-5 3z" fill="currentColor"/></svg> Watch Video</a>';
-  var title=p.model?esc((p.make?p.make+' ':'')+p.model):esc(p.n);
-  var related=STORE_DATA.filter(function(x){return x.c===p.c&&x.n!==p.n;}).slice(0,4);
-  var relatedHTML=related.length?('<div class="pd-related"><h3>More in '+esc(p.c)+'</h3><div class="plist">'+related.map(prow).join('')+'</div></div>'):'';
-  return '<div class="pdetail">'+
-    '<a class="backlink" onclick="openFolder('+JSON.stringify(p.c).replace(/"/g,'&quot;')+')">← Back to '+esc(p.c)+'</a>'+
-    '<div class="pd-grid">'+
-      '<div class="pd-img">'+img+'</div>'+
-      '<div class="pd-info"><h1>'+title+'</h1>'+
-        '<table class="pspec">'+rows+'</table>'+
-        '<div class="pd-desc"><h4>Description</h4>'+esc(p.spec||p.n)+'</div>'+
-        (links?'<div class="plinks">'+links+'</div>':'')+
-      '</div>'+
-      '<div class="pd-buy"><div class="pprice">'+(p.p>0?rupee(p.p):'On request')+'</div>'+(p.p>0?'<div class="gst">+ GST</div>':'')+
-        '<button class="bq" onclick="openQuote('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+(p.p||0)+')">Get Quotation</button>'+
-        '<button class="bw" onclick="waProduct('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+(p.p||0)+')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2Z"/></svg>WhatsApp</button>'+
-      '</div>'+
-    '</div>'+relatedHTML+
-  '</div>';
-}
-function openProductPage(name,skipPush){
-  var p=findProduct(name);
-  if(!p){return;}
-  lastProduct=p.n;
-  var _ly=document.querySelector('.layout');if(_ly)_ly.classList.remove('home');
-  document.getElementById('hero').style.display='none';
-  document.getElementById('ticker').style.display='none';
-  document.getElementById('crumb').innerHTML='<a onclick="goHome()">Home</a> › <a onclick="openFolder('+JSON.stringify(p.c).replace(/"/g,'&quot;')+')">'+esc(p.c)+'</a> › '+esc(p.n.length>50?p.n.slice(0,48)+'…':p.n);
-  document.getElementById('mtitle').textContent='';
-  document.getElementById('mcount').textContent='';
-  document.getElementById('view').innerHTML=productDetailHTML(p);
-  window.scrollTo({top:0,behavior:'smooth'});
-  if(!skipPush){try{history.pushState({prod:p.n},'',window.location.pathname+window.location.search+'#p/'+encodeURIComponent(p.n));}catch(e){}}
-}
-function _checkHashProduct(){var h=location.hash;if(h.indexOf('#p/')===0){var nm=decodeURIComponent(h.slice(3));if(findProduct(nm)){openProductPage(nm,true);return true;}}return false;}
-window.addEventListener('popstate',function(){if(!_checkHashProduct())goHome();});
 function doSearch(){var q=document.getElementById('search').value.trim();if(!q){goHome();return;}lastSearch=q;curCat=null;var _ly=document.querySelector('.layout');if(_ly)_ly.classList.remove('home');document.getElementById('hero').style.display='none';document.getElementById('ticker').style.display='none';document.getElementById('crumb').innerHTML='<a onclick="goHome()">Home</a> › Search: '+esc(q);document.getElementById('mtitle').textContent='Search: '+q;buildSide();
   var sq=squish(q), words=q.toLowerCase().split(/\s+/).filter(Boolean);
   renderList(STORE_DATA.filter(function(p){var t=(p.n+' '+p.c+' '+(p.make||'')+' '+(p.model||'')+' '+extractModel(p.n)).toLowerCase();var ts=squish(t);if(sq.length>=2&&ts.indexOf(sq)>-1)return true;return words.every(function(w){return t.indexOf(w)>-1;});}));}
@@ -815,7 +800,7 @@ function attachFile(input,target){var f=input.files[0];if(!f)return;var lim=targ
 function aAdd(){_eid=null;document.getElementById('eTitle').textContent='Add Product';['eCat','ePrice','eName','eMake','eModel','eSpec','eImg','ePdf','eVid'].forEach(function(i){document.getElementById(i).value='';});document.getElementById('eImgPrev').innerHTML='';document.getElementById('eov').classList.add('open');}
 function aEdit(id){var p=STORE_DATA.find(function(x){return x.id===id;});if(!p)return;_eid=id;document.getElementById('eTitle').textContent='Edit Product';document.getElementById('eCat').value=p.c;document.getElementById('ePrice').value=p.p;document.getElementById('eName').value=p.n;document.getElementById('eMake').value=p.make||'';document.getElementById('eModel').value=p.model||'';document.getElementById('eSpec').value=p.spec||'';document.getElementById('eImg').value=p.img||'';document.getElementById('ePdf').value=p.pdf||'';document.getElementById('eVid').value=p.vid||'';document.getElementById('eImgPrev').innerHTML=p.img?'<img src="'+esc(p.img)+'" style="max-height:74px;border-radius:6px;margin-top:6px;border:1px solid var(--border)">':'';document.getElementById('eov').classList.add('open');}
 function closeEdit(){document.getElementById('eov').classList.remove('open');}
-function saveEdit(){var o={c:document.getElementById('eCat').value.trim()||'General',p:parseInt(document.getElementById('ePrice').value)||0,n:document.getElementById('eName').value.trim(),make:document.getElementById('eMake').value.trim(),model:document.getElementById('eModel').value.trim(),spec:document.getElementById('eSpec').value.trim(),img:fixImgURL(document.getElementById('eImg').value.trim()),pdf:document.getElementById('ePdf').value.trim(),vid:document.getElementById('eVid').value.trim()};if(!o.n){alert('Product name zaroori');return;}
+function saveEdit(){var o={c:document.getElementById('eCat').value.trim()||'General',p:parseInt(document.getElementById('ePrice').value)||0,n:document.getElementById('eName').value.trim(),make:document.getElementById('eMake').value.trim(),model:document.getElementById('eModel').value.trim(),spec:document.getElementById('eSpec').value.trim(),img:document.getElementById('eImg').value.trim(),pdf:document.getElementById('ePdf').value.trim(),vid:document.getElementById('eVid').value.trim()};if(!o.n){alert('Product name zaroori');return;}
   if(_eid){var p=STORE_DATA.find(function(x){return x.id===_eid;});Object.assign(p,o);}else{o.id=Date.now();STORE_DATA.unshift(o);}
   saveStore();closeEdit();aRender();buildSide();if(curCat)openFolder(curCat);else goHome();toast('Product saved');}
 function aDel(id){if(!confirm('Delete this product?'))return;STORE_DATA=STORE_DATA.filter(function(x){return x.id!==id;});saveStore();aRender();buildSide();toast('Deleted');}
@@ -823,27 +808,15 @@ function aExport(){var rows=[['Category','Product','Make','Model','Specification
 function aSaveSettings(){WA_NUM=document.getElementById('setWA').value.trim()||WA_NUM;COMPANY.gstin=document.getElementById('setGST').value.trim();setCfg('sheet',document.getElementById('setSheet').value.trim());setCfg('lead',document.getElementById('setLead').value.trim());var np=document.getElementById('setPass').value.trim();if(np)setCfg('apass',np);setCfg('leadcsv',((document.getElementById('setLeadCsv')||{}).value||'').trim());setCfg('orderscsv',((document.getElementById('setOrdersCsv')||{}).value||'').trim());toast('Settings saved');loadSheet();}
 
 /* ===== Sheet sync (prices + make/model/spec/media) ===== */
-function fixImgURL(u){
-  if(!u) return u;
-  u=u.trim();
-  var m=u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if(!m) m=u.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
-  if(!m) m=u.match(/drive\.google\.com\/uc\?(?:export=view&)?id=([a-zA-Z0-9_-]+)/);
-  if(!m) m=u.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if(m && m[1]) return 'https://lh3.googleusercontent.com/d/'+m[1];
-  if(/dropbox\.com/.test(u)) return u.replace('?dl=0','?raw=1').replace(/(\?dl=1)$/, '?raw=1');
-  return u;
-}
 function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
 var DEFAULT_LEAD='https://script.google.com/macros/s/AKfycbw3733n2mxh9R_dOS9xDx6eNyKM5LSZoImpHd-5pc7rLkcccqTiENgQwJeOfpp1BbZqgg/exec';
 var DEFAULT_ORDERSCSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR_FOGaV_oA9EBqwcBgM2DvpcGIMJ8TxhcGP9oJ-b51KhGQO7wgcqUnQZyVVoxnKsnYfvSBoMlwM1wK/pub?output=csv';
 var DEFAULT_LEADCSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRW32-Uf1m2Ju9Im9MAwAIKnT_NHTL-6TEIcsZjTN3Uoz9qQqOFHUggKxqnWVeJ5r9IAbbciAMMgYNH/pub?output=csv';
 var DEFAULT_SHEET='https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv';
-function loadSheet(){var url=cfg('sheet','')||DEFAULT_SHEET;if(!url)return;fetch(url).then(function(r){return r.text();}).then(function(t){var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim()!=='';});if(!rows.length)return;var h=rows[0].map(function(x){return(x||'').toLowerCase();}),s=0;function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mi=ix('make','brand'),mo=ix('model'),sp=ix('specification','spec'),ii=ix('image','photo'),di=ix('catalogue','catalog','pdf'),vi=ix('video');if(ci>-1||ni>-1||pi>-1)s=1;else{ci=0;ni=1;pi=2;}if(ci<0)ci=0;if(ni<0)ni=1;if(pi<0)pi=2;var o=[];for(var i=s;i<rows.length;i++){var r=rows[i];var nm=(r[ni]||'').trim();if(nm.length<2)continue;var x={id:i,c:(r[ci]||'General').trim()||'General',n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0};if(mi>-1&&r[mi])x.make=r[mi].trim();if(mo>-1&&r[mo])x.model=r[mo].trim();if(sp>-1&&r[sp])x.spec=r[sp].trim();if(ii>-1&&r[ii])x.img=fixImgURL(r[ii].trim());if(di>-1&&r[di])x.pdf=r[di].trim();if(vi>-1&&r[vi])x.vid=r[vi].trim();o.push(x);}if(o.length){STORE_DATA=o;saveStore();buildSide();if(!_checkHashProduct()){if(curCat)openFolder(curCat);else goHome();}}}).catch(function(){});}
+function loadSheet(){var url=cfg('sheet','')||DEFAULT_SHEET;if(!url)return;fetch(url).then(function(r){return r.text();}).then(function(t){var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim()!=='';});if(!rows.length)return;var h=rows[0].map(function(x){return(x||'').toLowerCase();}),s=0;function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mi=ix('make','brand'),mo=ix('model'),sp=ix('specification','spec'),ii=ix('image','photo'),di=ix('catalogue','catalog','pdf'),vi=ix('video'),cgi=ix('catimage','category image','cat image','category photo','cat photo');if(ci>-1||ni>-1||pi>-1)s=1;else{ci=0;ni=1;pi=2;}if(ci<0)ci=0;if(ni<0)ni=1;if(pi<0)pi=2;var o=[];CAT_IMG={};for(var i=s;i<rows.length;i++){var r=rows[i];var nm=(r[ni]||'').trim();if(nm.length<2)continue;var x={id:i,c:(r[ci]||'General').trim()||'General',n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0};if(mi>-1&&r[mi])x.make=r[mi].trim();if(mo>-1&&r[mo])x.model=r[mo].trim();if(sp>-1&&r[sp])x.spec=r[sp].trim();if(ii>-1&&r[ii]){var _ims=r[ii].split(/[,|\n\r]+/);var _i2=ix('image2','photo2','image 2');if(_i2>-1&&r[_i2])_ims.push(r[_i2]);var _i3=ix('image3','photo3','image 3');if(_i3>-1&&r[_i3])_ims.push(r[_i3]);_ims=_ims.map(function(u){return(u||'').trim();}).filter(Boolean);if(_ims.length){x.imgs=_ims;x.img=_ims[0];}}if(di>-1&&r[di])x.pdf=r[di].trim();if(vi>-1&&r[vi])x.vid=r[vi].trim();if(cgi>-1&&r[cgi]&&!CAT_IMG[x.c])CAT_IMG[x.c]=r[cgi].trim();o.push(x);}if(o.length){STORE_DATA=o;saveStore();buildSide();if(typeof routeFromURL==='function'&&routeFromURL()){}else if(curCat)openFolder(curCat);else goHome();}}).catch(function(){});}
 
 document.getElementById('yr').textContent=new Date().getFullYear();
-function _initHome(){buildSide();if(!_checkHashProduct())goHome();loadSheet();}
-if(document.readyState!=='loading') _initHome(); else document.addEventListener('DOMContentLoaded',_initHome);
+buildSide();goHome();loadSheet();
 </script>
 <script>
 /* ===== ADMIN LEADS VIEWER (privacy: admin-only) ===== */
@@ -897,15 +870,28 @@ function hpFeatured(){
   if(feat.length<8){feat=feat.concat(STORE_DATA.filter(function(p){return !p.img;}).slice(0,8-feat.length));}
   return '<div class="plist">'+feat.map(prow).join('')+'</div>';
 }
-function catImage(c){for(var i=0;i<STORE_DATA.length;i++){if(STORE_DATA[i].c===c&&STORE_DATA[i].img)return STORE_DATA[i].img;}return CAT_PH(c);}
+var CAT_IMG={};
+function catImage(c){if(CAT_IMG[c])return CAT_IMG[c];for(var i=0;i<STORE_DATA.length;i++){if(STORE_DATA[i].c===c&&STORE_DATA[i].img)return STORE_DATA[i].img;}return CAT_PH(c);}
 function hpCatCards(){
   var cs=(typeof cats==='function')?cats():[];
   return cs.map(function(c){return {c:c,n:(typeof catCount==='function')?catCount(c):0};})
     .sort(function(a,b){return b.n-a.n;})
-    .map(function(o){return '<button class="hp-cat" onclick="openFolder('+JSON.stringify(o.c).replace(/"/g,'&quot;')+')"><span class="hp-cat-ic">'+hpIcon(o.c)+'</span><span class="hp-cat-n">'+esc(o.c)+'</span><span class="hp-cat-ct">'+o.n+' items</span></button>';}).join('');
+    .map(function(o){return '<button class="hp-cat" onclick="openFolder('+JSON.stringify(o.c).replace(/"/g,'&quot;')+')"><span class="hp-cat-img"><img loading="lazy" src="'+catImage(o.c)+'" alt="'+esc(o.c)+'"></span><span class="hp-cat-n">'+esc(o.c)+'</span><span class="hp-cat-ct">'+o.n+' items</span></button>';}).join('');
 }
 function _ic(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>';}
 
+var WTP_CLIENTS=[
+  /* Apne CLIENT yahan daalo: {n:'Naam', l:'logo-image-link'}  logo na ho to sirf naam */
+  {n:'Hotels & Resorts'},{n:'Hospitals'},{n:'Pharmaceuticals'},{n:'Food & Beverage'},
+  {n:'Textile Industry'},{n:'Apartments & Societies'},{n:'Schools & Colleges'},
+  {n:'Municipal Projects'},{n:'Automobile'},{n:'Dairy & Bottling Plants'}
+];
+function hpMarquee(){
+  if(!WTP_CLIENTS||!WTP_CLIENTS.length) return '';
+  var one=WTP_CLIENTS.map(function(c){return '<div class="mq-item">'+(c.l?'<img src="'+c.l+'" alt="'+(c.n||'')+'">':'')+(c.n?'<span>'+c.n+'</span>':'')+'</div>';}).join('');
+  var hasLogo=WTP_CLIENTS.some(function(c){return c.l;});
+  return '<section class="hp-marquee"><div class="mqh">'+(hasLogo?'Our Clients':'Trusted Across Industries')+'</div><div class="mq-wrap"><div class="mq-track">'+one+one+'</div></div></section>';
+}
 function buildHomepage(){
   var hero=document.getElementById('hero'); if(!hero) return;
   var totalP=STORE_DATA.length, totalC=((typeof cats==='function')?cats():[]).length||32;
@@ -914,8 +900,8 @@ function buildHomepage(){
   /* HERO */
   H+='<section class="hp hp-hero"><div class="hp-inner"><div>'+
       '<span class="hp-eyebrow">Since 2017 · Faridabad, India</span>'+
-      '<h1>Clean Water,<br><em>Engineered Right.</em></h1>'+
-      '<p class="lead">India\'s trusted store for RO &amp; DM plants, water softeners, dosing systems and genuine treatment spares — '+totalP+'+ genuine products.</p>'+
+      '<h1>Your Complete<br><em>Water Treatment Store.</em></h1>'+'<span class="hp-underline"></span>'+
+      '<p class="lead">RO &amp; DM plants, softeners, dosing systems, flow meters, FRP vessels, UV systems and '+totalP+'+ genuine spares  all in one place, at the right price.</p>'+
       '<div class="hp-cta-row">'+
         '<button class="hp-btn primary" onclick="document.getElementById(\'hpShop\').scrollIntoView({behavior:\'smooth\'})">Browse Products</button>'+
         '<button class="hp-btn ghost" onclick="openZara()">Ask Zara AI</button>'+
@@ -938,6 +924,19 @@ function buildHomepage(){
         '<div class="hp-badge"><i>'+_ic('M1 3h15v13H1zM16 8h4l3 3v5h-7M5.5 18.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18.5 18.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4z')+'</i>Fast Delivery</div>'+
       '</div></div></section>';
   /* CATEGORIES */
+  H+='<section class="hp hp-about hp-sec"><div class="hp-inner hp-reveal hp-about-grid">'+
+   '<div><span class="hp-eyebrow">Welcome to WTPESTORE</span>'+
+   '<h2 class="hp-h">Powered by Aqua Filtration System</h2>'+
+   '<p class="hp-sub">Since 2017, Aqua Filtration System has been a trusted manufacturer, trader &amp; supplier of water-treatment solutions from Mathura Road, Faridabad  serving homes, industries and dealers across India.</p>'+
+   '<p class="hp-sub">From RO &amp; DM plants, softeners and dosing systems to genuine spares, every product is 100% genuine and comes with expert guidance, fair pricing and a proper GST invoice.</p>'+
+   '<div class="hp-cta-row"><button class="hp-btn primary" onclick="document.getElementById(\'hpShop\').scrollIntoView({behavior:\'smooth\'})">Browse Products</button><button class="hp-btn ghost" onclick="openPage(\'about\')">More About Us</button></div>'+
+   '</div>'+
+   '<div class="hp-about-points">'+
+   '<div class="hp-pt"><b>Manufacturer &amp; Supplier</b><span>RO/DM plants, softeners, dosing, spares</span></div>'+
+   '<div class="hp-pt"><b>Genuine Brands</b><span>AFS  Aster  Pentair  Vontron</span></div>'+
+   '<div class="hp-pt"><b>Pan-India Delivery</b><span>With tracking, anywhere in India</span></div>'+
+   '<div class="hp-pt"><b>GST Invoice</b><span>GSTIN 06DMUPS2289L1ZZ</span></div>'+
+   '</div></div></section>';
   H+='<section id="hpShop" class="hp hp-cats hp-sec"><div class="hp-inner hp-reveal"><span class="hp-eyebrow">Explore</span><h2 class="hp-h">Shop by Category</h2><p class="hp-sub">From flow meters to complete treatment plants — find exactly what your water needs.</p><div class="hp-cat-grid">'+hpCatCards()+'</div></div></section>';
   /* FEATURED */
   H+=hpRailsSection();
@@ -955,7 +954,7 @@ function buildHomepage(){
       '<div class="hp-stat"><div class="n">'+yrs+'+</div><div class="l">Years of expertise</div></div>'+
       '<div class="hp-stat"><div class="n">'+totalP+'+</div><div class="l">Genuine products</div></div>'+
       '<div class="hp-stat"><div class="n">'+totalC+'</div><div class="l">Product categories</div></div>'+
-      '<div class="hp-stat"><div class="n">5000+</div><div class="l">Happy customers</div></div>'+
+      
      '</div></section>';
   /* PROCESS */
   H+='<section class="hp hp-proc hp-sec"><div class="hp-inner hp-reveal"><span class="hp-eyebrow">Simple &amp; fast</span><h2 class="hp-h">How to order</h2><div class="hp-steps">'+
@@ -972,7 +971,7 @@ function buildHomepage(){
   /* CTA BAND */
   H+='<section class="hp hp-ctaband"><div class="hp-inner"><h2>Not sure what you need?</h2><p>Tell us your water source, TDS and required capacity — get a free expert recommendation and quote.</p><div class="hp-cta-row" style="justify-content:center"><button class="hp-btn light" onclick="openZara()">Ask Zara — Free</button><a class="hp-btn ghost" href="tel:9910646957">Call 9910646957</a></div></div></section>';
 
-  hero.innerHTML=H;
+  H+=hpMarquee();hero.innerHTML=H;
   /* scroll reveal */
   try{
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
@@ -1059,7 +1058,8 @@ function buildHomepage(){
       '</div></div>'+
       '<div class="wt-payrow"><h4>Courier Partners:</h4><div class="wt-courg">'+
         ['DTDC','Delhivery','Blue Dart','India Post','Professional','Gati','Transport (LTL)'].map(function(p){return '<span class="wt-chip">'+p+'</span>';}).join('')+
-      '</div></div>';
+      '</div></div>'+
+      '<div class="wt-fmap"><h4>Find Us  Faridabad, Haryana</h4><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Aqua%20Filtration%20System%20Mathura%20Road%20Faridabad&output=embed"></iframe></div>';
     fb.insertAdjacentHTML('beforebegin', html);
   }
   if(document.readyState!=='loading') enhFooter(); else document.addEventListener('DOMContentLoaded',enhFooter);
@@ -1219,7 +1219,7 @@ function hpRailsSection(){
   var pop=STORE_DATA.filter(function(p){return p.img;}).slice(0,12);
   if(pop.length<12) pop=pop.concat(STORE_DATA.filter(function(p){return !p.img;}).slice(0,12-pop.length));
   var H='<section class="hp hp-feat hp-sec" style="background:#fff"><div class="hp-inner hp-reveal">';
-  H+='<span class="hp-eyebrow">Popular Now</span><h2 class="hp-h">Featured Products</h2><p class="hp-sub">Live prices, ready to quote. GST extra as applicable.</p>';
+  H+='<span class="hp-eyebrow">What We Provide</span><h2 class="hp-h">Wide Range of Products</h2><p class="hp-sub">Genuine branded water-treatment products &amp; spares  live prices, GST extra.</p>';
   H+='<div class="hp-railwrap"><div class="hp-railhd"><h3>Popular Picks</h3></div>'+hpRail(pop)+'</div>';
   var _rseen={}, top=[];
   cs.map(function(c){return {c:c,n:catCount(c)};}).sort(function(a,b){return b.n-a.n;}).forEach(function(o){
@@ -1234,4 +1234,87 @@ function hpRailsSection(){
 }
 </script>
 
+<script>
+/* ===== product photo lightbox (added) ===== */
+function pLight(imgs,idx){
+  if(typeof imgs==='string'){try{imgs=JSON.parse(imgs);}catch(e){imgs=[imgs];}}
+  if(!imgs||!imgs.length)return; idx=idx||0;
+  var ov=document.getElementById('pLightOv');
+  if(!ov){ov=document.createElement('div');ov.id='pLightOv';ov.className='plight';
+    ov.onclick=function(e){if(e.target===ov)pLightClose();};document.body.appendChild(ov);}
+  function esc2(x){return (''+x).replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+  ov.innerHTML='<div class="plbox"><button class="plx" onclick="pLightClose()">\u00d7</button>'
+    +'<img id="plMain" src="'+esc2(imgs[idx])+'">'
+    +'<div class="plthumbs">'+imgs.map(function(u,k){return '<img src="'+esc2(u)+'" class="'+(k===idx?'on':'')
+    +'" onclick="document.getElementById(\'plMain\').src=this.src;this.parentNode.querySelectorAll(\'img\').forEach(function(t){t.classList.remove(\'on\')});this.classList.add(\'on\')">';}).join('')
+    +'</div></div>';
+  ov.classList.add('open');document.body.style.overflow='hidden';
+}
+function pLightClose(){var ov=document.getElementById('pLightOv');if(ov)ov.classList.remove('open');document.body.style.overflow='';}
+</script>
+<script>
+/* ===== product deep-linking + share + sitemap (added) ===== */
+function pUrl(p){return 'https://www.wtpestore.co.in/?p='+pSlug(p.n);}
+function findBySlug(sl){
+  sl=(sl||'').toLowerCase();
+  for(var i=0;i<STORE_DATA.length;i++){if(pSlug(STORE_DATA[i].n)===sl)return STORE_DATA[i];}
+  for(var j=0;j<STORE_DATA.length;j++){if(pSlug(STORE_DATA[j].n).indexOf(sl)===0)return STORE_DATA[j];}
+  return null;
+}
+function pSEO(p){
+  try{
+    document.title=p.n+' | WTPESTORE  powered by Aqua Filtration System';
+    var md=document.querySelector('meta[name="description"]');
+    if(md)md.setAttribute('content',p.n+(p.spec?(' \u2014 '+p.spec):'')+'. Genuine product, best price, GST invoice. WTPESTORE, Faridabad.');
+    var cn=document.querySelector('link[rel="canonical"]');
+    if(!cn){cn=document.createElement('link');cn.rel='canonical';document.head.appendChild(cn);}
+    cn.href=pUrl(p);
+    var old=document.getElementById('pLd'); if(old)old.remove();
+    var ld=document.createElement('script'); ld.type='application/ld+json'; ld.id='pLd';
+    var mdl=(p.model||(typeof extractModel==='function'?extractModel(p.n):''))||undefined;
+    ld.textContent=JSON.stringify({"@context":"https://schema.org","@type":"Product","name":p.n,
+      "image":(p.imgs||(p.img?[p.img]:[])),"category":p.c,"brand":{"@type":"Brand","name":p.make||"AFS"},
+      "sku":mdl,"description":(p.spec||p.n),"url":pUrl(p),
+      "offers":{"@type":"Offer","priceCurrency":"INR","price":(p.p||0),"availability":"https://schema.org/InStock","url":pUrl(p)}});
+    document.head.appendChild(ld);
+  }catch(e){}
+}
+function openProductBySlug(sl){
+  var p=findBySlug(sl); if(!p){if(typeof goHome==='function')goHome();return;}
+  var ly=document.querySelector('.layout'); if(ly)ly.classList.remove('home');
+  renderList([p]); pSEO(p);
+  try{window.scrollTo(0,0);}catch(e){}
+}
+function pShare(sl){
+  var url='https://www.wtpestore.co.in/?p='+sl;
+  if(navigator.share){navigator.share({title:'WTPESTORE Product',url:url}).catch(function(){});return;}
+  try{navigator.clipboard.writeText(url);if(typeof toast==='function')toast('Product link copied!');else alert('Link copied:\n'+url);}
+  catch(e){alert('Link:\n'+url);}
+}
+function genSitemap(){
+  var base='https://www.wtpestore.co.in/';
+  var x='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n';
+  x+='  <url><loc>'+base+'</loc><priority>1.0</priority></url>\n';
+  (STORE_DATA||[]).forEach(function(p){
+    x+='  <url><loc>'+base+'?p='+pSlug(p.n)+'</loc>';
+    (p.imgs||(p.img?[p.img]:[])).forEach(function(im){x+='<image:image><image:loc>'+(''+im).replace(/&/g,'&amp;')+'</image:loc></image:image>';});
+    x+='</url>\n';
+  });
+  return x+'</urlset>';
+}
+function routeFromURL(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('sitemap')==='1'){
+    var blob=new Blob([genSitemap()],{type:'application/xml'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sitemap.xml';
+    document.body.appendChild(a);a.click();a.remove();return true;
+  }
+  var p=q.get('p'), s=q.get('q');
+  if(p){openProductBySlug(p);return true;}
+  if(s){var el=document.getElementById('search');if(el){el.value=s;if(typeof doSearch==='function'){doSearch();return true;}}}
+  return false;
+}
+window.addEventListener('popstate',function(){routeFromURL();});
+</script>
+<div class="float-cta"><a class="fcta wa" href="https://wa.me/919899193589" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7.7.7-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.3 0-5.5 4.5-9.9 10-9.9s9.9 4.4 9.9 9.9-4.4 10.2-9.8 10.2zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4z"/></svg></a><a class="fcta call" href="tel:9910646957" aria-label="Call us"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .7-.2 1l-2.3 2.2z"/></svg></a></div>
 </body></html>
