@@ -1296,6 +1296,7 @@ function pSEO(p){
 }
 function openProductBySlug(sl){
   var p=findBySlug(sl); if(!p){if(typeof goHome==='function')goHome();return;}
+  if(typeof openPModal==='function'){openPModal(p);pSEO(p);return;}
   var ly=document.querySelector('.layout'); if(ly)ly.classList.remove('home');
   renderList([p]); pSEO(p);
   try{window.scrollTo(0,0);}catch(e){}
@@ -1334,4 +1335,61 @@ function routeFromURL(){
 window.addEventListener('popstate',function(){if(!routeFromURL()){if(typeof goHome==='function')goHome();}});
 </script>
 <div class="float-cta"><a class="fcta wa" href="https://wa.me/919899193589" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7.7.7-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.3 0-5.5 4.5-9.9 10-9.9s9.9 4.4 9.9 9.9-4.4 10.2-9.8 10.2zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2.1 3.2 5 4.5.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4z"/></svg></a><a class="fcta call" href="tel:9910646957" aria-label="Call us"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .7-.2 1l-2.3 2.2z"/></svg></a></div>
+<style>
+.pdov{position:fixed;inset:0;background:rgba(8,20,33,.62);z-index:99999;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.pdov.open{display:flex}
+.pdcard{background:#fff;border-radius:16px;max-width:760px;width:100%;margin:auto;overflow:hidden;position:relative;animation:pdpop .2s ease;font-family:'Inter',Arial,sans-serif}
+@keyframes pdpop{from{transform:scale(.96);opacity:.6}to{transform:scale(1);opacity:1}}
+.pdtop{display:flex;flex-wrap:wrap}
+.pdimg{flex:1 1 300px;min-height:280px;background:#f4f8fb;display:flex;align-items:center;justify-content:center;padding:18px}
+.pdimg img{max-width:100%;max-height:340px;object-fit:contain;border-radius:8px}
+.pdinfo{flex:1 1 320px;padding:22px;display:flex;flex-direction:column}
+.pdcat{font-size:11px;font-weight:700;color:#ff9900;text-transform:uppercase;letter-spacing:.5px}
+.pdinfo h2{font-size:18px;color:#0B2A4A;line-height:1.3;margin:6px 0 10px;font-weight:800}
+.pdspec{font-size:13px;color:#444;line-height:1.6;background:#f7fafc;border-radius:8px;padding:10px 12px;margin-bottom:12px}
+.pdspec b{color:#0B2A4A}
+.pdprice{font-size:24px;font-weight:800;color:#067d62;margin-bottom:2px}
+.pdprice small{font-size:12px;color:#565959;font-weight:500}
+.pdbtns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.pdwa{flex:1;background:#25d366;color:#fff;font-weight:700;font-size:14px;padding:12px;border-radius:10px;text-align:center;min-width:150px;border:none;cursor:pointer}
+.pdcl{flex:1;background:#0B2A4A;color:#fff;font-weight:700;font-size:14px;padding:12px;border-radius:10px;text-align:center;min-width:110px;text-decoration:none}
+.pdsh{background:#eef3f6;color:#0B2A4A;font-weight:700;font-size:13px;padding:12px 14px;border-radius:10px;border:none;cursor:pointer}
+.pdcat2{font-size:12px;color:#007185;font-weight:600;margin-top:12px;text-decoration:none;display:inline-block}
+.pdx{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.92);border:none;width:34px;height:34px;border-radius:50%;font-size:18px;color:#333;z-index:2;cursor:pointer}
+@media(max-width:600px){.pdimg{min-height:200px}}
+</style>
+<div class="pdov" id="pdov" onclick="if(event.target===this)pdClose()"><div class="pdcard" id="pdcard"></div></div>
+<script>
+function openPModal(p){
+  try{
+    var imlist=(p.imgs&&p.imgs.length)?p.imgs:(p.img?[p.img]:[]);
+    var imgSrc=imlist.length?imlist[0]:(typeof CAT_PH==='function'?CAT_PH(p.c,p.n):'');
+    var md=p.model||(typeof extractModel==='function'?extractModel(p.n):'');
+    var pr=(p.p>0)?(rupee(p.p)+' <small>+ GST</small>'):'On request';
+    var nameJS=JSON.stringify(p.n).replace(/"/g,'&quot;');
+    var slug=(typeof pSlug==='function')?pSlug(p.n):'';
+    var html='<button class="pdx" onclick="pdClose()">\u00d7</button><div class="pdtop">'+
+      '<div class="pdimg"><img src="'+esc(imgSrc)+'" alt="'+esc(p.n)+'"></div>'+
+      '<div class="pdinfo"><div class="pdcat">'+esc(p.c||'')+'</div><h2>'+esc(p.n)+'</h2>'+
+      (md?'<div class="pdspec"><b>Model:</b> '+esc(md)+(p.spec?('<br><b>Spec:</b> '+esc(p.spec)):'')+'</div>':(p.spec?'<div class="pdspec"><b>Spec:</b> '+esc(p.spec)+'</div>':''))+
+      '<div class="pdprice">'+pr+'</div>'+
+      '<div class="pdbtns">'+
+      '<button class="pdwa" onclick="waProduct('+nameJS+','+(p.p||0)+')">\ud83d\udcac Get Quotation</button>'+
+      '<a class="pdcl" href="tel:+919910646957">\ud83d\udcde Call</a>'+
+      '<button class="pdsh" onclick="pShare(\''+slug+'\')">\ud83d\udd17 Share</button>'+
+      '</div>'+
+      (p.pdf?'<a class="pdcat2" href="'+esc(p.pdf)+'" target="_blank" rel="noopener">\ud83d\udcc4 Download Catalogue</a>':'')+
+      '</div></div>';
+    document.getElementById('pdcard').innerHTML=html;
+    document.getElementById('pdov').classList.add('open');
+    document.body.style.overflow='hidden';
+  }catch(e){}
+}
+function pdClose(){
+  var ov=document.getElementById('pdov'); if(ov)ov.classList.remove('open');
+  document.body.style.overflow='';
+  try{history.replaceState(null,'',location.pathname);}catch(e){}
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')pdClose();});
+</script>
 </body></html>
