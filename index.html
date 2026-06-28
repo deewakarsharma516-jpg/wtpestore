@@ -1047,6 +1047,7 @@ function buildHomepage(){
       '<a onclick="openPage(\'my-account\')">My Account</a><span class="sep hideM">|</span>'+
       '<a class="hideM" onclick="openPage(\'faqs\')">FAQ</a><span class="sep hideM">|</span>'+
       '<a class="hideM" onclick="openPage(\'contact\')">Contact</a>'+
+      '<a href="payment.html" style="color:#ffcf66;font-weight:800;margin-left:14px">💳 Pay Now</a>'+
       '<span class="grow"></span>'+
       '<span class="hideM">Need help? </span><a class="ph" href="tel:9910646957">9910646957</a>'+
     '</div></div>');
@@ -1069,10 +1070,10 @@ function buildHomepage(){
         '<a onclick="openPage(\'track-order\')">Track Order</a></div>'+
       '</div>'+
       '<div class="wt-payrow"><h4>Payments:</h4><div class="wt-payg">'+
-        ['UPI','RuPay','Visa','Mastercard','Net Banking','NEFT / RTGS','Cash on Delivery'].map(function(p){return '<span class="wt-chip">'+p+'</span>';}).join('')+
+        ['UPI','RuPay','Visa','Mastercard','Net Banking','NEFT / RTGS'].map(function(p){return '<span class="wt-chip">'+p+'</span>';}).join('')+
       '</div></div>'+
       '<div class="wt-payrow"><h4>Courier Partners:</h4><div class="wt-courg">'+
-        ['DTDC','Delhivery','Blue Dart','India Post','Professional','Gati','Transport (LTL)'].map(function(p){return '<span class="wt-chip">'+p+'</span>';}).join('')+
+        ['DTDC','Delhivery','Blue Dart','Shree Maruti','Professional','Gati','Transport (LTL)'].map(function(p){return '<span class="wt-chip">'+p+'</span>';}).join('')+
       '</div></div>'+
       '<div class="wt-fmap"><h4>Find Us  Faridabad, Haryana</h4><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Aqua%20Filtration%20System%20Mathura%20Road%20Faridabad&output=embed"></iframe></div>';
     fb.insertAdjacentHTML('beforebegin', html);
@@ -1155,13 +1156,13 @@ function wtContact(){
 var WT_C='<div class="wt-card"><b>WTPESTORE</b> — powered by Aqua Filtration System<br>Faridabad, Haryana · GSTIN 06DMUPS2289L1ZZ<br>📞 9910646950 · 9910646957 · 0129-4340856<br>✉ aquazone350@gmail.com</div>';
 var WT_PAGES={
  'about':{t:'About Us',h:'<p><b>WTPESTORE — powered by Aqua Filtration System</b> is a water-treatment products store serving homes, businesses and industries across India since <b>2017</b>, based in Faridabad, Haryana.</p><p>We supply genuine, branded water-treatment equipment and spares — RO &amp; DM plants, water softeners, dosing systems, FRP vessels, UV systems, flow meters, filters and consumables — from trusted brands like <b>AFS, Aster, Pentair and Vontron</b>.</p><h3>What we do</h3><ul><li>Supply of genuine water-treatment products at fair prices</li><li>Custom plant design based on your water source &amp; capacity</li><li>Installation guidance, AMC and after-sales service</li><li>Pan-India delivery with proper GST invoicing</li></ul><h3>Why customers trust us</h3><p>9+ years of hands-on water-treatment expertise, honest advice, and dependable support on call &amp; WhatsApp.</p>'+WT_C},
- 'how-to-buy':{t:'How to Buy',h:'<p>Ordering from WTPESTORE is simple:</p><div class="wt-dt"><b>1. Browse or ask Zara</b><br>Search products, or open <a onclick="closePage();openZara()">Zara AI</a> and tell us your water problem &amp; required capacity (LPH).</div><div class="wt-dt"><b>2. Get a quotation</b><br>Tap <b>“Get Quotation”</b> on any product, or message us on WhatsApp. You’ll get a clear, GST-ready quote.</div><div class="wt-dt"><b>3. Confirm &amp; pay</b><br>Confirm the order and pay via UPI / Net Banking / NEFT. (Cash on Delivery available on select items.)</div><div class="wt-dt"><b>4. Delivery &amp; support</b><br>We dispatch pan-India and support you through installation and service.</div><p>Need help choosing? <a onclick="closePage();openZara()">Ask Zara</a> or call <a href="tel:9910646957">9910646957</a>.</p>'},
+ 'how-to-buy':{t:'How to Buy',h:'<p>Ordering from WTPESTORE is simple:</p><div class="wt-dt"><b>1. Browse or ask Zara</b><br>Search products, or open <a onclick="closePage();openZara()">Zara AI</a> and tell us your water problem &amp; required capacity (LPH).</div><div class="wt-dt"><b>2. Get a quotation</b><br>Tap <b>“Get Quotation”</b> on any product, or message us on WhatsApp. You’ll get a clear, GST-ready quote.</div><div class="wt-dt"><b>3. Confirm &amp; pay</b><br>Confirm the order and pay via UPI / Net Banking / NEFT / RTGS.</div><div class="wt-dt"><b>4. Delivery &amp; support</b><br>We dispatch pan-India and support you through installation and service.</div><p>Need help choosing? <a onclick="closePage();openZara()">Ask Zara</a> or call <a href="tel:9910646957">9910646957</a>.</p>'},
  'faqs':{t:"FAQ's",h:'<details><summary>How do I get a price/quotation?</summary><p>Open any product and tap “Get Quotation”, or chat with Zara, or WhatsApp us at 9910646957. Prices are exclusive of GST.</p></details>'+
    '<details><summary>Are products genuine and branded?</summary><p>Yes. We supply only authentic AFS, Aster, Pentair and Vontron products — no local duplicates.</p></details>'+
    '<details><summary>Do you deliver across India?</summary><p>Yes, we dispatch pan-India through reputed courier &amp; transport partners with tracking.</p></details>'+
    '<details><summary>Which RO/plant capacity do I need?</summary><p>It depends on your water source, TDS and daily requirement (LPH). Tell Zara these details and we’ll recommend the right system.</p></details>'+
    '<details><summary>Do you provide installation &amp; AMC?</summary><p>Yes — we guide installation and offer annual maintenance &amp; service support.</p></details>'+
-   '<details><summary>What payment methods are accepted?</summary><p>UPI, RuPay/Visa/Mastercard, Net Banking, NEFT/RTGS, and Cash on Delivery on select items.</p></details>'+
+   '<details><summary>What payment methods are accepted?</summary><p>UPI, RuPay/Visa/Mastercard, Net Banking and NEFT/RTGS.</p></details>'+
    '<details><summary>Is GST invoice provided?</summary><p>Yes, a valid GST invoice is provided on every order. GSTIN: 06DMUPS2289L1ZZ.</p></details>'},
  'contact':{t:'Contact Us',h:WT_C+'<h3>Send us a message</h3><div class="wt-form"><input id="wtCn" placeholder="Your name"><input id="wtCp" placeholder="Phone / WhatsApp"><textarea id="wtCm" rows="4" placeholder="Your requirement / message"></textarea><button onclick="wtContact()">Send on WhatsApp</button></div><p style="font-size:13px;color:#8b9aa5">We usually reply within working hours. For urgent help, call 9910646957.</p>'},
  'track-order':{t:'Track Order',h:'<p>Apna Order ID aur phone daalein — live status yahin dikhega.</p><div class="wt-form"><input id="wtTOid" placeholder="Order ID (e.g. WTP1048)"><input id="wtTOph" placeholder="Registered phone number"><button onclick="wtTrack()">Track Order</button></div><div id="wtTOres"></div><p style="font-size:13px;color:#8b9aa5">Order na mile to hum WhatsApp pe madad karenge, ya call 9910646957.</p>'},
