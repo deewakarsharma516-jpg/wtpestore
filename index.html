@@ -897,13 +897,22 @@ function hpMarquee(){
   return '<section class="hp-marquee"><div class="mqh">'+(hasLogo?'Our Clients':'Trusted Across Industries')+'</div><div class="mq-wrap"><div class="mq-track">'+one+one+'</div></div></section>';
 }
 var WTP_BRANDS=[
-  /* logo bhi chahiye? {n:'Naam', l:'logo-link'} */
-  {n:'Aster'},{n:'Initiative Engineering'},{n:'Initiative'},{n:'Edose'},{n:'UKL'},
-  {n:'Gopani Filter'},{n:'Alfa UV'},{n:'AFS'},{n:'Pentair'},{n:'Vontron'}
+  /* Brand logos (external URLs). Reliability ke liye baad me inhe download karke logos/ folder me daal sakte ho. */
+  {n:'Aster', l:'https://astertechnologies.in/wp-content/uploads/2023/08/aster-logo-on-product.png'},
+  {n:'Initiative Engineering', l:'https://initiativewater.com/wp-content/uploads/2021/02/initiative-tagline-2.png'},
+  {n:'Edose', l:'https://www.admin.edose-pumps.com/uploads/1/68b408df34cb6_logo1.png'},
+  {n:'UKL', l:'https://static.wixstatic.com/media/c7ecd2_0e9c1372b691456dbc80ae7f12766ce0~mv2.png/v1/fill/w_90,h_104,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Asset%203dd2dDf11.png'},
+  {n:'Gopani Filter', l:'https://gopani.com/filters/assets/images/site-logo.webp'},
+  {n:'Alfa UV', l:'https://cdn-eenlf.nitrocdn.com/yAgGFkQxyrVMkgCqubJHOXaSRFSiAUCV/assets/images/optimized/rev-b764552/www.alfaauv.com/wp-content/uploads/Alfaa-logo-new.png'},
+  {n:'AFS', l:'https://5.imimg.com/data5/MS/PJ/MY-26821624/aqua-filtration-system-90x90.jpg'},
+  {n:'Pentair', l:'https://foodandbeverage.pentair.com/content/dam/ift/pentair/misc/pentair-logo-web.svg'},
+  {n:'Milton Roy', l:'https://azure-na-images.contentstack.com/v3/assets/blt0059fca0b8e21d36/blt72025eb3caee865f/67e17104fa74e4161d58ea7e/miltonroy-logo.jpg?format=pjpeg&width=400&quality=75&auto=webp'},
+  {n:'CRI', l:'https://www.crigroups.com/wp-content/uploads/2021/04/cropped-CRI-fav-270x270.png'},
+  {n:'Vontron'}
 ];
 function hpBrands(){
   if(!WTP_BRANDS||!WTP_BRANDS.length)return '';
-  var one=WTP_BRANDS.map(function(b){return '<div class="mq-item">'+(b.l?'<img src="'+b.l+'" alt="'+(b.n||'')+'">':'')+(b.n?'<span>'+b.n+'</span>':'')+'</div>';}).join('');
+  var one=WTP_BRANDS.map(function(b){return '<div class="mq-item">'+(b.l?'<img src="'+b.l+'" alt="'+(b.n||'')+'" onerror="this.style.display=\'none\'">':'')+(b.n?'<span>'+b.n+'</span>':'')+'</div>';}).join('');
   return '<section class="hp-marquee hp-brands"><div class="mqh">Our Brands</div><div class="mq-wrap"><div class="mq-track">'+one+one+'</div></div></section>';
 }
 function buildHomepage(){
