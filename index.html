@@ -921,7 +921,7 @@ function buildHomepage(){
         '<button class="hp-btn ghost" onclick="openZara()">Ask Zara AI</button>'+
         '<a class="hp-btn wa" href="https://wa.me/919899193589" target="_blank">WhatsApp Us</a>'+
       '</div>'+
-      '<div class="hp-trustchips"><span>✔ <b>Genuine</b>&nbsp;branded products</span><span>🚚 <b>Pan-India</b>&nbsp;delivery</span><span>🧾 GSTIN <b>06DMUPS2289L1ZZ</b></span></div>'+
+      '<div class="hp-trustchips"><span>✔ <b>Genuine</b>&nbsp;branded products</span><span>🚚 <b>Pan-India</b>&nbsp;delivery</span><span>🧾 GSTIN <b>06DMUPS2289L1ZZ</b></span><span>⚡ <b>Same-day</b>&nbsp;quote · reply in 2 hrs</span></div>'+
      '</div>'+
      '<div class="hp-visual"><div class="hp-disc"></div><div class="hp-ring"></div><div class="hp-ring"></div><div class="hp-ring"></div>'+
        '<svg class="hp-drop" viewBox="0 0 100 100" fill="none"><defs><linearGradient id="hpd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bdf3ff"/><stop offset=".5" stop-color="#37d0c0"/><stop offset="1" stop-color="#0aa2c6"/></linearGradient></defs><path d="M50 8C50 8 20 42 20 64a30 30 0 0 0 60 0C80 42 50 8 50 8Z" fill="url(#hpd)"/><path d="M38 60a12 12 0 0 0 9 11" stroke="#fff" stroke-width="3.4" stroke-linecap="round" opacity=".85"/></svg>'+
@@ -937,6 +937,19 @@ function buildHomepage(){
         '<div class="hp-badge"><i>'+_ic('M3 11l18-5v13M3 11v6l18 0M3 11l9 3')+'</i>Expert Support</div>'+
         '<div class="hp-badge"><i>'+_ic('M1 3h15v13H1zM16 8h4l3 3v5h-7M5.5 18.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18.5 18.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4z')+'</i>Fast Delivery</div>'+
       '</div></div></section>';
+  /* FREE SURVEY / OFFER BANNER */
+  H+='<section class="hp" style="background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff">'+
+     '<div class="hp-inner" style="padding-top:38px;padding-bottom:38px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px">'+
+       '<div style="flex:1;min-width:260px">'+
+         '<div style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:5px 12px;border-radius:100px;font-size:12px;font-weight:700;margin-bottom:12px">🎁 Free for new customers</div>'+
+         '<h2 style="font-family:\'Sora\',sans-serif;font-size:clamp(21px,2.6vw,30px);font-weight:800;margin:0 0 8px;line-height:1.25">Free Site Survey &amp; Water Test</h2>'+
+         '<p style="font-size:15px;opacity:.95;margin:0;max-width:520px">Tell us your water source &amp; problem — our team will assess your TDS/hardness and recommend the right system. <b>Same-day GST quote · we reply within 2 working hours.</b></p>'+
+       '</div>'+
+       '<div style="display:flex;flex-wrap:wrap;gap:11px">'+
+         '<a class="hp-btn" style="background:#25D366;color:#fff;border:none" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%27d%20like%20a%20free%20site%20survey%20%2F%20water%20test%20and%20a%20quotation." target="_blank">💬 WhatsApp Us</a>'+
+         '<a class="hp-btn" style="background:#fff;color:#0e4d6b;border:none" href="tel:9910646957">📞 Call 9910646957</a>'+
+       '</div>'+
+     '</div></section>';
   /* CATEGORIES */
   H+='<section class="hp hp-about hp-sec"><div class="hp-inner hp-reveal hp-about-grid">'+
    '<div><span class="hp-eyebrow">Welcome to WTPESTORE</span>'+
@@ -1431,6 +1444,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')pdClose();})
 <button class="enqx" onclick="enqClose()">×</button>
 <h3>Send Enquiry / Request Callback</h3>
 <p>Apna number chhodein — hum aapko quotation ke saath call/WhatsApp karenge.</p>
+<div style="display:flex;align-items:center;gap:7px;background:#eafaf3;border:1px solid #bfe9d6;color:#0e7a52;font-size:12.5px;font-weight:700;padding:8px 11px;border-radius:8px;margin:0 0 12px">⚡ We reply within 2 working hours · Mon–Sat</div>
 <label>Name *</label><input id="enqName" placeholder="Your name">
 <label>Phone / WhatsApp *</label><input id="enqPhone" type="tel" placeholder="10-digit mobile">
 <label>Product / Requirement</label><input id="enqItem" placeholder="Product or requirement">
