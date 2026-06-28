@@ -813,7 +813,7 @@ function aSaveSettings(btn){WA_NUM=document.getElementById('setWA').value.trim()
 
 /* ===== Sheet sync (prices + make/model/spec/media) ===== */
 function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
-var DEFAULT_LEAD='https://script.google.com/macros/s/AKfycbyFMVbbaXrZH7StO_KPJf9plpmsLHq1h3H68-zYX-08IJ6vxnCS3YX-cGiZcZXlIzjCOQ/exec';
+var DEFAULT_LEAD='https://script.google.com/macros/s/AKfycby095CBZFXcbe6Cbk9zdrBGpIU1EyHHzudxmCaAx3yrB8Ng3hv4Rl5LCPS9AsOL5M13/exec';
 var DEFAULT_ORDERSCSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR_FOGaV_oA9EBqwcBgM2DvpcGIMJ8TxhcGP9oJ-b51KhGQO7wgcqUnQZyVVoxnKsnYfvSBoMlwM1wK/pub?output=csv';
 var DEFAULT_LEADCSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRW32-Uf1m2Ju9Im9MAwAIKnT_NHTL-6TEIcsZjTN3Uoz9qQqOFHUggKxqnWVeJ5r9IAbbciAMMgYNH/pub?output=csv';
 var DEFAULT_SHEET='https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv';
