@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Water treatment illustration">
+<defs>
+<linearGradient id="gbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0B2A4A"/><stop offset="1" stop-color="#0e4d6b"/></linearGradient>
+<linearGradient id="gdrop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfeefb"/><stop offset="1" stop-color="#2bb9d6"/></linearGradient>
+</defs>
+<rect width="640" height="360" fill="url(#gbg)"/>
+<g stroke="#ffffff" stroke-opacity="0.05"><path d="M0 90H640M0 180H640M0 270H640"/></g>
+<!-- central drop with check -->
+<g>
+<path d="M320 70c0 0 80 90 80 146a80 80 0 0 1-160 0c0-56 80-146 80-146Z" fill="url(#gdrop)"/>
+<path d="M288 218l22 22 44-50" fill="none" stroke="#0B2A4A" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<!-- orbit dots -->
+<g fill="none" stroke="#7ff0ff" stroke-opacity="0.3"><ellipse cx="320" cy="216" rx="170" ry="80"/></g>
+<g fill="#ff9900"><circle cx="150" cy="216" r="8"/></g>
+<g fill="#7ff0ff"><circle cx="490" cy="216" r="8"/><circle cx="320" cy="136" r="6"/></g>
+<!-- ripples -->
+<g fill="none" stroke="#7ff0ff" stroke-opacity="0.4"><ellipse cx="320" cy="312" rx="90" ry="12"/><ellipse cx="320" cy="312" rx="140" ry="20" stroke-opacity="0.22"/></g>
+<!-- title chip -->
+<g><rect x="40" y="38" width="250" height="40" rx="20" fill="#ffffff" fill-opacity="0.10" stroke="#7ff0ff" stroke-opacity="0.4"/><circle cx="64" cy="58" r="9" fill="#7ff0ff"/><text x="84" y="64" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="800" fill="#ffffff">Water Treatment</text></g>
+</svg>

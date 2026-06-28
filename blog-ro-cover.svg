@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Industrial RO plant illustration">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#0B2A4A"/><stop offset="1" stop-color="#0e4d6b"/>
+</linearGradient>
+<linearGradient id="ves" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#bfeefb"/><stop offset="1" stop-color="#7ff0ff"/>
+</linearGradient>
+<linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#7ff0ff"/><stop offset="1" stop-color="#2bb9d6"/>
+</linearGradient>
+</defs>
+<rect width="640" height="360" fill="url(#bg)"/>
+<!-- soft grid -->
+<g stroke="#ffffff" stroke-opacity="0.05">
+<path d="M0 90H640M0 180H640M0 270H640"/>
+</g>
+<!-- ground -->
+<rect x="0" y="300" width="640" height="60" fill="#08213b"/>
+<rect x="0" y="298" width="640" height="4" fill="#7ff0ff" opacity="0.35"/>
+<!-- skid base -->
+<rect x="70" y="288" width="420" height="14" rx="3" fill="#10324f" stroke="#274b66"/>
+<!-- membrane vessels (3) -->
+<g>
+<g>
+<rect x="110" y="120" width="44" height="170" rx="22" fill="url(#ves)" stroke="#0e4d6b" stroke-width="2"/>
+<rect x="110" y="150" width="44" height="14" fill="#0e4d6b" opacity="0.25"/>
+<rect x="110" y="220" width="44" height="14" fill="#0e4d6b" opacity="0.25"/>
+<circle cx="132" cy="120" r="9" fill="#ff9900"/>
+</g>
+<g>
+<rect x="172" y="120" width="44" height="170" rx="22" fill="url(#ves)" stroke="#0e4d6b" stroke-width="2"/>
+<rect x="172" y="150" width="44" height="14" fill="#0e4d6b" opacity="0.25"/>
+<rect x="172" y="220" width="44" height="14" fill="#0e4d6b" opacity="0.25"/>
+<circle cx="194" cy="120" r="9" fill="#ff9900"/>
+</g>
+<g>
+<rect x="234" y="120" width="44" height="170" rx="22" fill="url(#ves)" stroke="#0e4d6b" stroke-width="2"/>
+<rect x="234" y="150" width="44" height="14" fill="#0e4d6b" opacity="0.25"/>
+<rect x="234" y="220" width="44" height="14" fill="#0e4d6b" opacity="0.25"/>
+<circle cx="256" cy="120" r="9" fill="#ff9900"/>
+</g>
+</g>
+<!-- top manifold pipe -->
+<rect x="120" y="100" width="168" height="9" rx="4" fill="#cfe6f2"/>
+<!-- pump -->
+<g>
+<rect x="330" y="250" width="70" height="40" rx="6" fill="#13384f" stroke="#2b5a74"/>
+<circle cx="350" cy="270" r="20" fill="#0e4d6b" stroke="#7ff0ff" stroke-width="3"/>
+<circle cx="350" cy="270" r="7" fill="#7ff0ff"/>
+<rect x="386" y="262" width="22" height="16" rx="3" fill="#ff9900"/>
+</g>
+<!-- pipe from vessels to pump -->
+<path d="M288 200 H320 a8 8 0 0 1 8 8 V250" fill="none" stroke="#7ff0ff" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+<!-- control panel -->
+<g>
+<rect x="420" y="150" width="120" height="140" rx="8" fill="#10324f" stroke="#2b5a74" stroke-width="2"/>
+<rect x="436" y="166" width="88" height="46" rx="4" fill="#062033"/>
+<rect x="444" y="176" width="58" height="8" rx="4" fill="#7ff0ff"/>
+<rect x="444" y="190" width="40" height="7" rx="3.5" fill="#ff9900"/>
+<circle cx="450" cy="236" r="9" fill="#0e7d52"/>
+<circle cx="478" cy="236" r="9" fill="#ff9900"/>
+<circle cx="506" cy="236" r="9" fill="#cc3b3b"/>
+<rect x="444" y="258" width="72" height="9" rx="4" fill="#274b66"/>
+</g>
+<!-- clean water out + drops -->
+<path d="M540 220 H580 a10 10 0 0 1 10 10 V270" fill="none" stroke="url(#water)" stroke-width="7" stroke-linecap="round"/>
+<g fill="#7ff0ff">
+<path d="M590 282c0 6-4 10-9 10s-9-4-9-10 9-16 9-16 9 10 9 16Z"/>
+<circle cx="572" cy="300" r="4" opacity="0.7"/>
+<circle cx="600" cy="298" r="3" opacity="0.6"/>
+</g>
+<!-- title chip -->
+<g>
+<rect x="40" y="38" width="220" height="40" rx="20" fill="#ffffff" fill-opacity="0.10" stroke="#7ff0ff" stroke-opacity="0.4"/>
+<circle cx="64" cy="58" r="9" fill="#ff9900"/>
+<text x="84" y="64" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="800" fill="#ffffff">Industrial RO Plant</text>
+</g>
+</svg>

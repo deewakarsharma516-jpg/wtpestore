@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Water TDS and quality illustration">
+<defs>
+<linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#0B2A4A"/><stop offset="1" stop-color="#0e4d6b"/>
+</linearGradient>
+<linearGradient id="drop" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#bfeefb"/><stop offset="1" stop-color="#2bb9d6"/>
+</linearGradient>
+<linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#7ff0ff" stop-opacity="0.5"/><stop offset="1" stop-color="#2bb9d6" stop-opacity="0.85"/>
+</linearGradient>
+</defs>
+<rect width="640" height="360" fill="url(#bg2)"/>
+<g stroke="#ffffff" stroke-opacity="0.05"><path d="M0 90H640M0 180H640M0 270H640"/></g>
+<!-- big water drop -->
+<g>
+<path d="M170 70c0 0 70 78 70 128a70 70 0 0 1-140 0c0-50 70-128 70-128Z" fill="url(#drop)"/>
+<path d="M138 200a32 32 0 0 0 24 22" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="6" stroke-linecap="round"/>
+<text x="170" y="205" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="34" font-weight="800" fill="#0B2A4A">H₂O</text>
+</g>
+<!-- ripples under drop -->
+<g fill="none" stroke="#7ff0ff" stroke-opacity="0.45">
+<ellipse cx="170" cy="300" rx="80" ry="12"/>
+<ellipse cx="170" cy="300" rx="120" ry="20" stroke-opacity="0.25"/>
+</g>
+<!-- TDS digital meter -->
+<g>
+<rect x="360" y="120" width="150" height="200" rx="14" fill="#10324f" stroke="#2b5a74" stroke-width="2"/>
+<rect x="378" y="140" width="114" height="74" rx="6" fill="#062033"/>
+<text x="392" y="170" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="700" fill="#7ff0ff">TDS ppm</text>
+<text x="392" y="202" font-family="Inter,Arial,sans-serif" font-size="34" font-weight="800" fill="#ff9900">320</text>
+<rect x="378" y="232" width="114" height="8" rx="4" fill="#274b66"/>
+<rect x="378" y="232" width="58" height="8" rx="4" fill="#0e7d52"/>
+<circle cx="395" cy="268" r="11" fill="#0e7d52"/>
+<circle cx="430" cy="268" r="11" fill="#274b66"/>
+<circle cx="465" cy="268" r="11" fill="#274b66"/>
+<rect x="430" y="300" width="10" height="40" fill="#cfe6f2"/>
+</g>
+<!-- glass of water -->
+<g>
+<path d="M548 150 l10 150 a8 8 0 0 0 8 7 h20 a8 8 0 0 0 8 -7 l10 -150 Z" fill="#0e3450" stroke="#3a6580" stroke-width="2"/>
+<path d="M553 196 l7 104 a8 8 0 0 0 8 7 h20 a8 8 0 0 0 8 -7 l7 -104 Z" fill="url(#glass)"/>
+<ellipse cx="574" cy="196" rx="22" ry="5" fill="#bfeefb" opacity="0.7"/>
+</g>
+<!-- title chip -->
+<g>
+<rect x="40" y="38" width="250" height="40" rx="20" fill="#ffffff" fill-opacity="0.10" stroke="#7ff0ff" stroke-opacity="0.4"/>
+<circle cx="64" cy="58" r="9" fill="#7ff0ff"/>
+<text x="84" y="64" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="800" fill="#ffffff">Water TDS &amp; Quality</text>
+</g>
+</svg>
