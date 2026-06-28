@@ -221,7 +221,7 @@ function loadSheet(){if(!CATS.length)return;
 render();routeFromURL();loadSheet();
 </script>
 <style>
-.enqfab{position:fixed;left:16px;bottom:18px;z-index:600;background:#0e4d6b;color:#fff;border:none;border-radius:30px;padding:11px 16px;font-weight:700;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;font-family:'Inter',Arial,sans-serif}
+.enqfab{position:fixed;right:16px;bottom:142px;z-index:61;background:#0e4d6b;color:#fff;border:none;border-radius:30px;padding:11px 16px;font-weight:700;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;font-family:'Inter',Arial,sans-serif}
 .enqov{position:fixed;inset:0;background:rgba(8,20,33,.62);z-index:100000;display:none;align-items:center;justify-content:center;padding:18px}
 .enqov.open{display:flex}
 .enqbox{background:#fff;border-radius:14px;max-width:420px;width:100%;padding:22px;font-family:'Inter',Arial,sans-serif;position:relative;max-height:92vh;overflow-y:auto}
@@ -262,6 +262,7 @@ function submitEnquiry(){
   var item=document.getElementById('enqItem').value||'';
   var payload={Name:name,Phone:phone,Product:item,Quantity:document.getElementById('enqQty').value,Message:document.getElementById('enqMsg').value,Page:location.href,_subject:'WTPESTORE Enquiry: '+(item||name)};
   res.style.color='#666';res.textContent='Bhej rahe hain…';
+  try{var _sd=new URLSearchParams();_sd.append('Name',name);_sd.append('Phone',phone);_sd.append('Product',item);_sd.append('Quantity',document.getElementById('enqQty').value);_sd.append('Message',document.getElementById('enqMsg').value);_sd.append('Page',location.href);fetch('https://script.google.com/macros/s/AKfycbzMzEEmrxHPXNH9wFq4yTet4OzZq54ZkIkR5fSmSxNK13oft6L8D7TibHVkn6lU4aa5/exec',{method:'POST',mode:'no-cors',body:_sd});}catch(e){}
   fetch('https://formsubmit.co/ajax/aquazone350@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)})
   .then(function(r){return r.json();}).then(function(){res.style.color='#067d62';res.textContent='✓ Dhanyavaad! Hum jald aapse sampark karenge.';['enqName','enqPhone','enqQty','enqMsg'].forEach(function(id){document.getElementById(id).value='';});setTimeout(enqClose,2600);})
   .catch(function(){res.style.color='#c0392b';res.innerHTML='Network issue. Kripya WhatsApp <b>9899193589</b> par message karein.';});

@@ -375,7 +375,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
     <a class="hbtn" href="tel:9910646957"><span class="s">Call / Help</span><b>9910646957</b></a>
     <div class="hbtn acc" onclick="openZara()"><span class="s">Ask</span><b>Zara AI</b></div>
   </div>
-  <div class="subnav"><div class="wrap subnav-in" id="subnav"><a class="b" onclick="goHome()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> All Categories</a></div></div>
+  <div class="subnav"><div class="wrap subnav-in" id="subnav"><a class="b" onclick="goHome()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> All Categories</a><a class="b" href="/blog.html">📝 Blog</a></div></div>
 </header>
 <div class="catbar"><div class="in"><button class="catbtn" onclick="toggleMega()">▤ All Categories</button><span id="catChips"></span></div></div>
 <div class="megaback" id="megaBack" onclick="toggleMega(true)"></div>
@@ -635,7 +635,7 @@ function buildSide(){
   el.innerHTML='<div class="scat'+(curCat===null?' on':'')+'" onclick="goHome()"><span>All Products</span><span class="ct">'+STORE_DATA.length+'</span></div>'+
     cats().map(function(c){return '<div class="scat'+(curCat===c?' on':'')+'" onclick="openFolder('+JSON.stringify(c).replace(/"/g,'&quot;')+')"><span class="fld" style="margin-right:6px;opacity:.75">📁</span><span>'+esc(c)+'</span><span class="ct">'+catCount(c)+'</span></div>';}).join('');
   var sub=document.getElementById('subnav');var b=sub.querySelector('.b').outerHTML;
-  sub.innerHTML=b;
+  sub.innerHTML=b+'<a class="b" href="/blog.html">📝 Blog</a>';
 }
 function goHome(){curCat=null;var _ly=document.querySelector('.layout');if(_ly)_ly.classList.add('home');document.getElementById('hero').style.display='block';document.getElementById('ticker').style.display='block';buildTicker();document.getElementById('crumb').innerHTML='';document.getElementById('mtitle').textContent='All Products';buildSide();renderList(STORE_DATA);if(typeof buildHomepage==='function')buildHomepage();if(typeof buildMega==='function')buildMega();}
 function buildTicker(){var cs=cats();var picks=[];cs.forEach(function(c){var arr=STORE_DATA.filter(function(p){return p.c===c&&p.p>0;});if(arr.length)picks.push(arr[Math.floor(Math.random()*arr.length)]);});picks=picks.slice(0,16);if(picks.length<5){document.getElementById('ticker').style.display='none';return;}var chip=function(p){return '<div class="tchip" onclick="openQuote('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+p.p+')"><div class="ti">'+(p.img?'<img src="'+esc(p.img)+'">':boxIcon())+'</div><div class="tn">'+esc(p.n.length>40?p.n.slice(0,38)+'…':p.n)+'</div><div class="tp">'+rupee(p.p)+'</div></div>';};var html=picks.map(chip).join('');document.getElementById('tickerTrack').innerHTML=html+html;}
