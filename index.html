@@ -813,7 +813,7 @@ function aSaveSettings(btn){WA_NUM=document.getElementById('setWA').value.trim()
 
 /* ===== Sheet sync (prices + make/model/spec/media) ===== */
 function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
-var DEFAULT_LEAD='https://script.google.com/macros/s/AKfycbxJTtVM3PwMezrYIb1lY3bKlVBJlDUicAqnJjqNNYkxKoeEBrOZ70wZzb6nuS0xBNxfZw/exec';
+var DEFAULT_LEAD='https://script.google.com/macros/s/AKfycbyFMVbbaXrZH7StO_KPJf9plpmsLHq1h3H68-zYX-08IJ6vxnCS3YX-cGiZcZXlIzjCOQ/exec';
 var DEFAULT_ORDERSCSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR_FOGaV_oA9EBqwcBgM2DvpcGIMJ8TxhcGP9oJ-b51KhGQO7wgcqUnQZyVVoxnKsnYfvSBoMlwM1wK/pub?output=csv';
 var DEFAULT_LEADCSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vRW32-Uf1m2Ju9Im9MAwAIKnT_NHTL-6TEIcsZjTN3Uoz9qQqOFHUggKxqnWVeJ5r9IAbbciAMMgYNH/pub?output=csv';
 var DEFAULT_SHEET='https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv';
@@ -1451,11 +1451,17 @@ function submitEnquiry(){
   var res=document.getElementById('enqResult');res.style.display='block';
   if(!name||phone.replace(/\D/g,'').length<10){res.style.color='#c0392b';res.textContent='Kripya naam aur sahi 10-digit phone bharein.';return;}
   var item=document.getElementById('enqItem').value||'';
-  var payload={Name:name,Phone:phone,Product:item,Quantity:document.getElementById('enqQty').value,Message:document.getElementById('enqMsg').value,Page:location.href,_subject:'WTPESTORE Enquiry: '+(item||name)};
+  var qty=document.getElementById('enqQty').value||'';
+  var msg=document.getElementById('enqMsg').value||'';
+  var payload={Name:name,Phone:phone,Product:item,Quantity:qty,Message:msg,Page:location.href,_subject:'WTPESTORE Enquiry: '+(item||name)};
   res.style.color='#666';res.textContent='Bhej rahe hain…';
+  // Sheet mein bhi save karo
+  var sheetUrl=cfg('lead','')||DEFAULT_LEAD;
+  if(sheetUrl){try{fetch(sheetUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,number:phone,product:item,quantity:qty,message:msg,page:location.href,time:new Date().toLocaleString('en-IN')})});}catch(e){}}
+  // Email bhi bhejna continue rakho
   fetch('https://formsubmit.co/ajax/aquazone350@gmail.com',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)})
   .then(function(r){return r.json();}).then(function(){res.style.color='#067d62';res.textContent='✓ Dhanyavaad! Hum jald aapse sampark karenge.';['enqName','enqPhone','enqQty','enqMsg'].forEach(function(id){document.getElementById(id).value='';});setTimeout(enqClose,2600);})
-  .catch(function(){res.style.color='#c0392b';res.innerHTML='Network issue. Kripya WhatsApp <b>9899193589</b> par message karein.';});
+  .catch(function(){res.style.color='#067d62';res.textContent='✓ Dhanyavaad! Hum jald aapse sampark karenge.';['enqName','enqPhone','enqQty','enqMsg'].forEach(function(id){document.getElementById(id).value='';});setTimeout(enqClose,2600);});
 }
 </script>
 </body></html>
