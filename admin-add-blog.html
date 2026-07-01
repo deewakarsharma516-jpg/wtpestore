@@ -79,7 +79,7 @@ Baaki lines paragraph banengi. Khali line = naya paragraph."></textarea>
 <script>
 function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
 var ADMIN_PIN   = cfg('wtpe_admin_pin','2289');
-var APPS_URL    = cfg('wtpe_addproduct_url','');     // wahi Add Product wala URL (blog bhi isi se)
+var APPS_URL    = cfg('wtpe_addproduct_url','https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec');     // wahi Add Product wala URL (blog bhi isi se)
 var SECRET      = cfg('wtpe_addproduct_secret','wtp-add-2026');
 
 function unlock(){if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';}else{document.getElementById('pinerr').style.display='block';}}

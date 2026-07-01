@@ -445,7 +445,12 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
     <div style="font-size:15px;font-weight:700;margin-bottom:12px">Owner Login</div>
     <input id="aPass" type="password" placeholder="Password" style="padding:11px 14px;border:1px solid var(--border);border-radius:8px;max-width:240px;width:100%" onkeydown="if(event.key==='Enter')aUnlock()">
     <div style="margin-top:12px"><button class="qsv" style="padding:11px 24px;border:none;border-radius:8px;font-weight:700" onclick="aUnlock()">Unlock</button></div>
-    
+    <div style="margin-top:12px"><a href="#" onclick="aForgot();return false" style="font-size:12.5px;color:#0e4d6b;font-weight:600">Forgot password?</a></div>
+    <div id="aForgotBox" style="display:none;margin-top:12px;max-width:240px;margin-left:auto;margin-right:auto">
+      <input id="aOtp" inputmode="numeric" placeholder="Enter OTP" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;width:100%;text-align:center;letter-spacing:3px">
+      <div style="margin-top:8px"><button class="qsv" style="padding:10px 20px;border:none;border-radius:8px;font-weight:700" onclick="aVerifyForgot()">Verify &amp; Reset</button></div>
+      <div style="font-size:11px;color:#8a5a00;margin-top:8px">OTP aapke email/mobile par aayega. Reset ke baad default password <b>admin@123</b> se login hoga.</div>
+    </div>
   </div>
   <div id="aMain" style="display:none">
     <div class="atabs">
@@ -803,6 +808,26 @@ setTimeout(showLead,60000);
 function openAdmin(){document.getElementById('aov').classList.add('open');if(aAuthed){aShow();}else{document.getElementById('aLock').style.display='block';document.getElementById('aMain').style.display='none';}}
 function closeAdmin(){document.getElementById('aov').classList.remove('open');}
 function aUnlock(){var v=document.getElementById('aPass').value;if(v===cfg('apass','admin@123')){aAuthed=true;aShow();}else toast('Galat password');}
+function aJsonp(url,cb){var fn='acb_'+Math.floor(Math.random()*1e9);window[fn]=function(r){try{cb(r);}finally{try{delete window[fn];s.remove();}catch(e){}}};var s=document.createElement('script');s.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;s.onerror=function(){cb({ok:false,error:'network'});try{delete window[fn];s.remove();}catch(e){}};document.body.appendChild(s);}
+function aOtpUrl(){return cfg('otp_url','https://script.google.com/macros/s/AKfycbynPDNbRvUJHr-owF9Do6ugdTpstHtHS3TFoYm9KtBjO_1UraUu2UfJ41-SjkSRdiV73w/exec');}
+function aForgot(){
+  var url=aOtpUrl();
+  if(!url){toast('Is device par OTP setup nahi hai. Doosre laptop par default password admin@123 se login karein.');return;}
+  toast('OTP bheja ja raha hai…');
+  aJsonp(url+'?action=send&token='+encodeURIComponent(cfg('otp_secret','wtp-otp-2026')),function(r){
+    if(r&&r.ok){document.getElementById('aForgotBox').style.display='block';toast('OTP aapke email/mobile par bhej diya');}
+    else toast('OTP nahi bhej paye: '+((r&&r.error)||'error'));
+  });
+}
+function aVerifyForgot(){
+  var otp=(document.getElementById('aOtp').value||'').trim();
+  if(!otp){toast('OTP daalein');return;}
+  var url=aOtpUrl();if(!url){toast('OTP URL nahi mila');return;}
+  aJsonp(url+'?action=verify&token='+encodeURIComponent(cfg('otp_secret','wtp-otp-2026'))+'&otp='+encodeURIComponent(otp),function(r){
+    if(r&&r.ok){try{localStorage.removeItem('wtpe_apass');}catch(e){}aAuthed=true;aShow();toast('OTP sahi! Login ho gaya. Naya password Settings me set karein.');}
+    else toast('Galat/expired OTP: '+((r&&r.error)||'error'));
+  });
+}
 function aShow(){document.getElementById('aLock').style.display='none';document.getElementById('aMain').style.display='block';document.getElementById('setWA').value=WA_NUM;document.getElementById('setSheet').value=cfg('sheet','')||DEFAULT_SHEET;document.getElementById('setLead').value=cfg('lead','')||DEFAULT_LEAD||DEFAULT_LEAD;var _lc=document.getElementById('setLeadCsv');if(_lc)_lc.value=cfg('leadcsv','')||DEFAULT_LEADCSV;var _oc=document.getElementById('setOrdersCsv');if(_oc)_oc.value=cfg('orderscsv','')||DEFAULT_ORDERSCSV;var _ap=document.getElementById('setAddProd');if(_ap)_ap.value=cfg('addproduct_url','');var _qu=document.getElementById('setQuote');if(_qu)_qu.value=cfg('quote_url','');var _ot=document.getElementById('setOtp');if(_ot)_ot.value=cfg('otp_url','');aRender();aLoadLeads();aLoadOrders();}
 function aTab(t,el){document.querySelectorAll('.atab').forEach(function(x){x.classList.remove('on');});el.classList.add('on');document.querySelectorAll('.apane').forEach(function(x){x.classList.remove('on');});document.getElementById('ap-'+t).classList.add('on');}
 function aRender(){var q=(document.getElementById('aSearch').value||'').toLowerCase();document.getElementById('adCount').textContent=STORE_DATA.length;document.getElementById('adCats').textContent=cats().length;

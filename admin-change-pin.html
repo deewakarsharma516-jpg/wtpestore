@@ -52,8 +52,9 @@ input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
 
 <script>
 /* ===== CONFIG ===== */
-var APPS_SCRIPT_URL = "";        // <-- OTP Apps Script ka /exec URL paste karo
-var SECRET = "wtp-otp-2026";     // <-- Apps Script wala same ADMIN_SECRET
+function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
+var APPS_SCRIPT_URL = cfg('wtpe_otp_url','https://script.google.com/macros/s/AKfycbynPDNbRvUJHr-owF9Do6ugdTpstHtHS3TFoYm9KtBjO_1UraUu2UfJ41-SjkSRdiV73w/exec');       // OTP Apps Script /exec URL
+var SECRET = cfg('wtpe_otp_secret','wtp-otp-2026'); // Apps Script wala same ADMIN_SECRET
 /* ================== */
 
 function showMsg(t,c){var m=document.getElementById('msg');m.className='msg '+c;m.textContent=t;}
