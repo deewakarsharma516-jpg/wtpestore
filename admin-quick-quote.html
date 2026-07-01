@@ -1,0 +1,333 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Quick Quotation — WTPeSTORE Admin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMxOWMzN2QiLz48cGF0aCBkPSJNMzIgMTBDMzIgMTAgMTYgMzAgMTYgNDJhMTYgMTYgMCAwIDAgMzIgMEM0OCAzMCAzMiAxMCAzMiAxMFoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B2A4A;--navy2:#0e4d6b;--green:#19c37d;--teal:#0aa2c0;--orange:#ff9900;--bg:#eef2f5;--card:#fff;--border:#d5d9d9;--muted:#5b6b76;--ink:#0f1111}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',Arial,sans-serif;background:var(--bg);color:var(--ink);padding:0 0 40px}
+.toolbar{background:var(--navy);color:#fff;padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:sticky;top:0;z-index:20}
+.toolbar .t-title{font-weight:800;font-size:15px;margin-right:auto}
+.toolbar .t-title small{font-weight:500;color:#aecbe0;font-size:11px}
+.toolbar a.hub{color:#cfe0ea;font-size:12px;font-weight:600;margin-right:8px}
+.btn{border:none;border-radius:8px;padding:9px 13px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;background:#274b66;color:#fff}
+.btn.add{background:#146a45}.btn.new{background:#7a8790}.btn.pv{background:#5b6770}.btn.wa{background:#25d366}.btn.mail{background:var(--green)}.btn.print{background:var(--orange);color:#111}
+.searchbox{background:#fff;border-bottom:1px solid var(--border);padding:12px 14px;display:none}
+.searchbox.show{display:block}
+.searchbox input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit}
+.sres{max-height:230px;overflow:auto;margin-top:8px;border:1px solid var(--border);border-radius:9px;display:none}
+.sres.show{display:block}
+.sres div.item{padding:9px 12px;border-bottom:1px solid #eef2f5;cursor:pointer;font-size:13px}
+.sres div.item:hover{background:#f0f9f4}
+.sres .mk{color:var(--green);font-weight:700;font-size:11px}
+.sres .pr{color:var(--orange);font-weight:800;float:right}
+/* document */
+.doc{max-width:860px;margin:16px auto;background:#fff;border:1px solid var(--border);border-radius:12px;padding:26px 30px;box-shadow:0 2px 12px rgba(11,42,74,.06)}
+.dhead{display:flex;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap}
+.logo{font-size:24px;font-weight:800;color:var(--navy)}.logo i{color:var(--green);font-style:normal;font-size:.7em}.logo u{color:var(--orange);text-decoration:none}
+.tag{font-size:11px;color:var(--muted);font-weight:600}
+.addr{font-size:11px;color:#444;margin-top:6px;line-height:1.6}
+.qmeta{text-align:right;min-width:210px}
+.qmeta h1{font-size:22px;color:var(--navy);letter-spacing:1px}
+.qmeta .row{font-size:12.5px;margin-top:4px}
+.qmeta input{border:none;border-bottom:1px dashed #bbb;text-align:right;font-family:inherit;font-size:12.5px;width:120px;padding:2px}
+.parties{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px}
+.box{border:1px solid var(--border);border-radius:9px;padding:10px 12px}
+.box h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin-bottom:6px}
+.box input{width:100%;border:none;border-bottom:1px solid #eee;font-family:inherit;font-size:13px;padding:5px 2px;margin-bottom:2px}
+.box input:focus{outline:none;border-bottom-color:var(--teal)}
+table.items{width:100%;border-collapse:collapse;margin:6px 0}
+table.items th,table.items td{border:1px solid var(--border);padding:7px 8px;font-size:13px}
+table.items th{background:#0B2A4A;color:#fff;font-weight:700;font-size:12px}
+table.items td.c{text-align:center}table.items td.r{text-align:right}
+table.items input{width:100%;border:none;font-family:inherit;font-size:13px}
+table.items input.qty,table.items input.rate,table.items input.disc{text-align:right}
+table.items input:focus{outline:1px solid var(--teal)}
+.delrow{background:#fdecec;color:#b3261e;border:none;border-radius:5px;cursor:pointer;font-weight:700;padding:2px 7px}
+.totwrap{display:flex;justify-content:flex-end;margin-top:10px}
+.totals{width:320px;max-width:100%}
+.totals .tr{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid #f0f0f0}
+.totals .tr.grand{font-weight:800;color:var(--navy);font-size:16px;border-top:2px solid var(--navy);border-bottom:none;margin-top:4px;padding-top:8px}
+.totals input{width:80px;text-align:right;border:1px solid var(--border);border-radius:5px;font-family:inherit;padding:3px}
+.pct{width:42px!important}
+.gstmode{font-size:12.5px;margin:10px 0}.gstmode label{margin-right:14px}
+.words{font-size:12.5px;color:#333;margin:8px 0;font-style:italic}
+.terms{margin-top:14px}.terms h4{font-size:12px;color:var(--navy);margin-bottom:5px}
+.terms textarea{width:100%;min-height:130px;border:1px solid var(--border);border-radius:8px;padding:10px;font-family:inherit;font-size:12.5px;line-height:1.6;resize:vertical}
+.dfoot{margin-top:16px;border-top:1px solid var(--border);padding-top:10px;font-size:11.5px;color:#444;line-height:1.7;text-align:center}
+.dfoot b{color:var(--navy)}
+.msg{max-width:860px;margin:0 auto 10px;padding:11px 14px;border-radius:9px;font-size:13px;font-weight:600;display:none}
+.msg.ok{background:#e7f8f0;color:#0e7d52;border:1px solid #b6e6d1;display:block}
+.msg.err{background:#fdecec;color:#b3261e;border:1px solid #f3c2bf;display:block}
+.msg.info{background:#eef6fb;color:#0e4d6b;border:1px solid #c3e0ef;display:block}
+/* PIN gate */
+#gate{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:80}
+#gate .g{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
+#gate h2{color:var(--navy);font-size:18px;margin-bottom:6px}#gate p{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+#gate input{text-align:center;font-size:20px;letter-spacing:6px;width:100%;padding:11px;border:1px solid var(--border);border-radius:9px}
+#gate button{margin-top:12px;width:100%;background:var(--green);color:#fff;border:none;padding:12px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer}
+/* PREVIEW mode */
+#previewbar{display:none}
+body.preview{background:#5b6770}
+body.preview .toolbar,body.preview .searchbox,body.preview .msg{display:none!important}
+body.preview .no-print,body.preview .delrow{display:none!important}
+body.preview .doc{margin:78px auto 40px;box-shadow:0 8px 34px rgba(0,0,0,.45)}
+body.preview input,body.preview textarea{border-color:transparent!important;background:transparent!important;resize:none}
+body.preview .terms textarea{overflow:hidden;height:auto}
+body.preview #previewbar{display:flex;position:fixed;top:0;left:0;right:0;z-index:1000;background:#0B2A4A;color:#fff;padding:10px 14px;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+#previewbar .pvtxt{font-weight:700;font-size:13px;margin-right:6px}
+#previewbar button{border:none;border-radius:8px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+#previewbar .c{background:#fff;color:#0B2A4A}#previewbar .p{background:var(--orange);color:#111}#previewbar .m{background:var(--green);color:#fff}#previewbar .w{background:#25d366;color:#fff}
+@media print{
+  body{background:#fff}.toolbar,.searchbox,.msg,.no-print,.delrow,#previewbar{display:none!important}
+  .doc{box-shadow:none;border:none;max-width:100%;margin:0;border-radius:0;padding:6mm 8mm}
+  input,textarea{background:transparent!important;border-color:transparent!important}
+  .terms textarea{height:auto;overflow:hidden;min-height:0}
+  table.items th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:8mm}
+}
+@media(max-width:640px){.parties{grid-template-columns:1fr}.dhead{flex-direction:column}.qmeta{text-align:left}.qmeta input{text-align:left}.doc{padding:18px 15px}}
+</style></head><body>
+
+<div id="gate"><div class="g">
+<div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Enter PIN for Quick Quotation</p>
+<input id="pin" type="password" inputmode="numeric" placeholder="••••" onkeydown="if(event.key==='Enter')unlock()">
+<button onclick="unlock()">Unlock</button>
+<div id="pinerr" style="color:#b3261e;font-size:12.5px;margin-top:8px;display:none">Wrong PIN</div>
+</div></div>
+
+<div id="previewbar">
+  <span class="pvtxt">👁 Preview — customer ko aise dikhega</span>
+  <button class="c" onclick="closePreview()">✖ Close</button>
+  <button class="p" onclick="reserveNo();window.print()">🖨 Save PDF</button>
+  <button class="m" onclick="closePreview();emailDirect()">📤 Email</button>
+  <button class="w" onclick="closePreview();sendWA()">💬 WhatsApp</button>
+</div>
+
+<div class="toolbar">
+  <div class="t-title">⚡ Quick Quotation <small>WTPESTORE Admin</small></div>
+  <a class="hub" href="/admin.html">← Hub</a>
+  <button class="btn add" onclick="toggleSearch()">＋ Add Product</button>
+  <button class="btn" onclick="addRow()">＋ Blank Row</button>
+  <button class="btn new" onclick="newQuote()">↺ New</button>
+  <button class="btn pv" onclick="showPreview()">👁 Preview</button>
+  <button class="btn wa" onclick="sendWA()">💬 WhatsApp</button>
+  <button class="btn mail" onclick="emailDirect()">📤 Email</button>
+  <button class="btn print" onclick="reserveNo();window.print()">🖨 Print/PDF</button>
+</div>
+
+<div class="searchbox" id="searchbox">
+  <input id="psearch" type="search" placeholder="🔍 Product dhoondho — click karke add karo (e.g. rotameter, dosing pump, FRP vessel)" oninput="searchProd()">
+  <div class="sres" id="sres"></div>
+</div>
+
+<div class="msg" id="msg"></div>
+
+<div class="doc" id="doc">
+  <div class="dhead">
+    <div>
+      <div class="logo">WTP<i>e</i><u>STORE</u></div>
+      <div class="tag">powered by Aqua Filtration System</div>
+      <div class="addr">
+        B-198, Ground Floor, Royal Plaza, Green Field Colony, Mathura Road, Faridabad, Haryana 121003<br>
+        <b>GSTIN:</b> 06DMUPS2289L1ZZ &nbsp;|&nbsp; <b>Ph:</b> 9910646950, 9910646957, 9599895683<br>
+        <b>WhatsApp:</b> 9899193589 &nbsp;|&nbsp; 0129-4340856 &nbsp;|&nbsp; info@aquafiltrationsystem.in
+      </div>
+    </div>
+    <div class="qmeta">
+      <h1>QUOTATION</h1>
+      <div class="row">No: <input id="qno" value=""></div>
+      <div class="row">Date: <input id="qdate" value=""></div>
+    </div>
+  </div>
+
+  <div class="parties">
+    <div class="box"><h4>Bill To</h4>
+      <input id="cname" placeholder="Customer name">
+      <input id="cphone" placeholder="Phone (WhatsApp)">
+      <input id="cemail" placeholder="Email">
+      <input id="caddr" placeholder="Address / City">
+    </div>
+    <div class="box"><h4>Subject</h4>
+      <input id="csub" placeholder="Quotation for…">
+      <input id="cgstin" placeholder="Customer GSTIN (optional)">
+    </div>
+  </div>
+
+  <table class="items">
+    <thead><tr>
+      <th style="width:34px">#</th><th>Description</th>
+      <th class="c" style="width:56px">Qty</th><th class="c" style="width:52px">Unit</th>
+      <th class="r" style="width:88px">Rate (₹)</th><th class="r" style="width:52px">Disc %</th>
+      <th class="r" style="width:96px">Amount (₹)</th><th class="no-print" style="width:26px"></th>
+    </tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="gstmode no-print"><b>GST:</b>
+    <label><input type="radio" name="gst" value="intra" checked onchange="setGst('intra')"> Within Haryana (CGST+SGST)</label>
+    <label><input type="radio" name="gst" value="inter" onchange="setGst('inter')"> Other State (IGST)</label>
+  </div>
+
+  <div class="totwrap"><div class="totals">
+    <div class="tr"><span>Sub Total</span><span id="subtotal">₹0</span></div>
+    <div class="tr" id="row-disc" style="display:none"><span>Discount</span><span id="disctot">-₹0</span></div>
+    <div class="tr"><span>Freight / Packing</span><span><input id="freight" type="number" value="0" oninput="calc()"></span></div>
+    <div class="tr"><span>Taxable Value</span><span id="taxable">₹0</span></div>
+    <div class="tr" id="r-cgst"><span>CGST @ <input class="pct" id="cgstp" type="number" value="9" oninput="calc()">%</span><span id="cgst">₹0</span></div>
+    <div class="tr" id="r-sgst"><span>SGST @ <input class="pct" id="sgstp" type="number" value="9" oninput="calc()">%</span><span id="sgst">₹0</span></div>
+    <div class="tr" id="r-igst" style="display:none"><span>IGST @ <input class="pct" id="igstp" type="number" value="18" oninput="calc()">%</span><span id="igst">₹0</span></div>
+    <div class="tr"><span>Round Off</span><span id="roundoff">₹0</span></div>
+    <div class="tr grand"><span>Grand Total</span><span id="grand">₹0</span></div>
+  </div></div>
+  <div class="words" id="words"></div>
+
+  <div class="terms">
+    <h4>Terms &amp; Conditions (editable)</h4>
+    <textarea id="terms"></textarea>
+  </div>
+
+  <div class="dfoot">
+    <b>Thank you for your business!</b><br>
+    WTPESTORE — powered by Aqua Filtration System · Faridabad<br>
+    📞 9910646950, 9910646957, 9599895683 · 💬 WhatsApp 9899193589 · ✉ info@aquafiltrationsystem.in
+  </div>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+var PRODUCTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv";
+var QUOTE_APPS_URL = "";        // <-- Email-Direct Apps Script /exec URL (setup file me steps)
+var QUOTE_SECRET   = "wtp-quote-2026";
+var WA_BUSINESS    = "919899193589"; // WhatsApp number
+/* ========================================== */
+
+var DEF_TERMS="1. Prices are Ex-Works Faridabad, exclusive of GST unless stated otherwise.\n2. GST extra as applicable (shown above).\n3. Freight, packing & installation charged EXTRA unless mentioned.\n4. Delivery: 1-2 weeks from receipt of confirmed Purchase Order & advance.\n5. Availability: Please confirm stock / availability with our executive before placing the order.\n6. Payment: 50% advance along with PO, balance before dispatch.\n7. Validity: This quotation is valid for 15 days from the date above.\n8. Warranty: As per manufacturer's standard warranty.";
+
+var ADMIN_PIN=(function(){try{return localStorage.getItem('wtpe_admin_pin')||'2289';}catch(e){return '2289';}})();
+function unlock(){if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';loadCat();}else{document.getElementById('pinerr').style.display='block';}}
+
+var gstType='intra', CAT=[];
+function val(id){return (document.getElementById(id).value||'').trim();}
+function num(v){var x=parseFloat((''+v).replace(/[^0-9.\-]/g,''));return isNaN(x)?0:x;}
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function rupee(n){n=Math.round((n||0)*100)/100;return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function todayStr(){var d=new Date();return ('0'+d.getDate()).slice(-2)+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+d.getFullYear();}
+
+/* number */
+function nextNo(){var n=1;try{n=parseInt(localStorage.getItem('wtpe_qq_no')||'0')+1;}catch(e){}return 'PQ/'+new Date().getFullYear()+'/'+('00'+n).slice(-3);}
+function reserveNo(){try{var m=(val('qno')||'').match(/(\d+)\s*$/);if(!m)return;var n=parseInt(m[1],10),cur=parseInt(localStorage.getItem('wtpe_qq_no')||'0');if(n>cur)localStorage.setItem('wtpe_qq_no',n);}catch(e){}}
+
+/* rows */
+function rowHTML(d,q,u,r,disc){return '<tr>'+
+ '<td class="c idx"></td>'+
+ '<td><input class="desc" value="'+esc(d||'')+'" placeholder="Item description"></td>'+
+ '<td class="c"><input class="qty" type="number" value="'+(q||1)+'" oninput="calc()"></td>'+
+ '<td class="c"><input class="unit" value="'+esc(u||'No')+'" style="text-align:center"></td>'+
+ '<td class="r"><input class="rate" type="number" value="'+(r||0)+'" oninput="calc()"></td>'+
+ '<td class="r"><input class="disc" type="number" value="'+(disc||0)+'" oninput="calc()"></td>'+
+ '<td class="r amt cell-amt">₹0</td>'+
+ '<td class="c no-print"><button class="delrow" onclick="this.closest(\'tr\').remove();calc()">✕</button></td></tr>';}
+function addRow(d,q,u,r,disc){document.getElementById('rows').insertAdjacentHTML('beforeend',rowHTML(d,q,u,r,disc));calc();}
+
+function calc(){
+  var rows=document.querySelectorAll('#rows tr'),sub=0,td=0;
+  rows.forEach(function(tr,i){tr.querySelector('.idx').textContent=(i+1);
+    var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value),dp=num(tr.querySelector('.disc').value);
+    var g=q*r;sub+=g;td+=g*dp/100;tr.querySelector('.cell-amt').textContent=rupee(g);});
+  var freight=num(val('freight')),taxable=sub-td+freight;
+  document.getElementById('subtotal').textContent=rupee(sub);
+  var dr=document.getElementById('row-disc');document.getElementById('disctot').textContent='-'+rupee(td);dr.style.display=td>0?'flex':'none';
+  document.getElementById('taxable').textContent=rupee(taxable);
+  var cg=0,sg=0,ig=0;
+  if(gstType==='intra'){cg=taxable*num(val('cgstp'))/100;sg=taxable*num(val('sgstp'))/100;}else{ig=taxable*num(val('igstp'))/100;}
+  document.getElementById('cgst').textContent=rupee(cg);document.getElementById('sgst').textContent=rupee(sg);document.getElementById('igst').textContent=rupee(ig);
+  var total=taxable+cg+sg+ig,grand=Math.round(total);
+  document.getElementById('roundoff').textContent=(grand-total>=0?'+':'')+rupee(grand-total);
+  document.getElementById('grand').textContent=rupee(grand);
+  document.getElementById('words').textContent='Amount in words: '+inWords(grand)+' Rupees Only';
+}
+function setGst(t){gstType=t;document.getElementById('r-cgst').style.display=t==='intra'?'flex':'none';document.getElementById('r-sgst').style.display=t==='intra'?'flex':'none';document.getElementById('r-igst').style.display=t==='inter'?'flex':'none';calc();}
+
+/* words */
+function inWords(n){n=Math.round(n);if(n===0)return 'Zero';var a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'],b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function two(x){return x<20?a[x]:b[Math.floor(x/10)]+(x%10?' '+a[x%10]:'');}
+  function three(x){return (Math.floor(x/100)?a[Math.floor(x/100)]+' Hundred'+(x%100?' ':''):'')+(x%100?two(x%100):'');}
+  var out='',cr=Math.floor(n/10000000);n%=10000000;var lk=Math.floor(n/100000);n%=100000;var th=Math.floor(n/1000);n%=1000;
+  if(cr)out+=three(cr)+' Crore ';if(lk)out+=three(lk)+' Lakh ';if(th)out+=three(th)+' Thousand ';if(n)out+=three(n);return out.trim();}
+
+/* product search */
+function toggleSearch(){var s=document.getElementById('searchbox');s.classList.toggle('show');if(s.classList.contains('show'))document.getElementById('psearch').focus();}
+function parseCSV(t){var rows=[],row=[],cur='',q=false;for(var i=0;i<t.length;i++){var c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){cur+='"';i++;}else q=false;}else cur+=c;}else{if(c=='"')q=true;else if(c==','){row.push(cur);cur='';}else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur='';}else if(c!='\r')cur+=c;}}if(cur!==''||row.length){row.push(cur);rows.push(row);}return rows;}
+function loadCat(){
+  if(!PRODUCTS_CSV_URL)return;
+  fetch(PRODUCTS_CSV_URL).then(function(r){return r.text();}).then(function(t){
+    var rows=parseCSV(t);if(!rows.length)return;var h=rows[0].map(function(x){return String(x).trim().toLowerCase();});
+    var pi=h.indexOf('product');if(pi<0)pi=1;var ri=h.indexOf('price');if(ri<0)ri=5;var mi=h.indexOf('make');
+    CAT=[];for(var i=1;i<rows.length;i++){var n=(rows[i][pi]||'').trim();if(!n)continue;CAT.push({n:n,p:num(rows[i][ri]),make:mi>=0?(rows[i][mi]||''):''});}
+  }).catch(function(){});
+}
+function searchProd(){
+  var q=val('psearch').toLowerCase(),box=document.getElementById('sres');
+  if(!q){box.classList.remove('show');box.innerHTML='';return;}
+  var res=CAT.filter(function(p){return (p.n+' '+p.make).toLowerCase().indexOf(q)>=0;}).slice(0,25);
+  box.classList.add('show');
+  box.innerHTML=res.length?res.map(function(p,i){return '<div class="item" onclick="pick('+CAT.indexOf(p)+')"><span class="pr">'+rupee(p.p)+'</span><span class="mk">'+esc(p.make)+'</span> '+esc(p.n)+'</div>';}).join(''):'<div class="item" style="color:#888">Kuch nahi mila.</div>';
+}
+function pick(i){var p=CAT[i];if(!p)return;addRow(p.n,1,'No',p.p);var b=document.getElementById('sres');b.innerHTML='<div class="item" style="color:#0e7d52">✓ Added: '+esc(p.n)+'. Aur search karo ya close karo.</div>';document.getElementById('psearch').value='';}
+
+/* preview */
+function showPreview(){var ta=document.getElementById('terms');ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';document.body.classList.add('preview');window.scrollTo(0,0);}
+function closePreview(){document.body.classList.remove('preview');document.getElementById('terms').style.height='';}
+
+/* build text + html */
+function lineItems(){var rows=document.querySelectorAll('#rows tr'),L=[];rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value),dp=num(tr.querySelector('.disc').value);L.push({i:i+1,d:d,q:q,r:r,dp:dp,g:q*r});});return L;}
+function totalsText(){var dr=document.getElementById('row-disc');return {sub:document.getElementById('subtotal').textContent,disc:(dr.style.display!=='none')?document.getElementById('disctot').textContent:'',tax:document.getElementById('taxable').textContent,grand:document.getElementById('grand').textContent};}
+
+function sendWA(){
+  reserveNo();
+  var L=lineItems(),t=totalsText();
+  var msg='*WTPESTORE — Quotation*%0A'+val('qno')+' | '+val('qdate')+'%0A'+(val('cname')?('To: '+val('cname')+'%0A'):'')+'%0A'+
+    encodeURIComponent(L.map(function(x){return x.i+'. '+x.d+' — Qty '+x.q+' @ '+rupee(x.r)+(x.dp>0?(' (-'+x.dp+'%)'):'')+' = '+rupee(x.g);}).join('\n'))+'%0A%0A'+
+    'Sub Total: '+t.sub+'%0A'+(t.disc?('Discount: '+t.disc+'%0A'):'')+'Taxable: '+t.tax+'%0A*Grand Total: '+t.grand+'*%0A%0A'+
+    encodeURIComponent(val('terms'))+'%0A%0APowered by Aqua Filtration System, Faridabad';
+  var ph=(val('cphone')||'').replace(/[^0-9]/g,'');if(ph.length===10)ph='91'+ph;
+  window.open('https://wa.me/'+(ph||'')+'?text='+msg,'_blank');
+}
+
+function buildEmailHTML(){
+  var L=lineItems(),t=totalsText();
+  var rows=L.map(function(x){return '<tr><td align="center">'+x.i+'</td><td>'+esc(x.d)+'</td><td align="center">'+x.q+'</td><td align="right">'+rupee(x.r)+'</td><td align="center">'+(x.dp||0)+'%</td><td align="right">'+rupee(x.g)+'</td></tr>';}).join('');
+  var terms=esc(val('terms')).replace(/\n/g,'<br>');
+  return '<div style="font-family:Arial,sans-serif;max-width:660px;color:#222">'+
+    '<h2 style="color:#0B2A4A;margin:0">WTP<span style="color:#19c37d">e</span><span style="color:#ff9900">STORE</span> — Quotation</h2>'+
+    '<div style="font-size:12px;color:#666">powered by Aqua Filtration System &nbsp;|&nbsp; '+esc(val('qno'))+' &nbsp;|&nbsp; '+esc(val('qdate'))+'</div>'+
+    '<p>Dear '+esc(val('cname')||'Sir/Madam')+',<br>Please find our quotation below:</p>'+
+    '<table cellpadding="7" cellspacing="0" border="1" style="border-collapse:collapse;width:100%;font-size:13px">'+
+    '<tr style="background:#0B2A4A;color:#fff"><th>#</th><th align="left">Description</th><th>Qty</th><th>Rate</th><th>Disc</th><th>Amount</th></tr>'+rows+'</table>'+
+    '<p style="text-align:right;font-size:14px;margin:10px 0">Sub Total: '+t.sub+'<br>'+(t.disc?('Discount: '+t.disc+'<br>'):'')+'Taxable: '+t.tax+'<br><b style="color:#0B2A4A">Grand Total (incl. GST): '+t.grand+'</b></p>'+
+    '<div style="font-size:12px;background:#f5f8fa;border-radius:8px;padding:12px"><b>Terms &amp; Conditions:</b><br>'+terms+'</div>'+
+    '<hr style="border:none;border-top:1px solid #ddd;margin:14px 0"><div style="font-size:12px;color:#555">WTPESTORE — Aqua Filtration System, Faridabad<br>📞 9910646950, 9910646957, 9599895683 &nbsp;|&nbsp; 💬 WhatsApp 9899193589 &nbsp;|&nbsp; ✉ info@aquafiltrationsystem.in &nbsp;|&nbsp; www.wtpestore.co.in</div></div>';
+}
+
+function emailDirect(){
+  var to=val('cemail');
+  if(!to){showMsg('Pehle customer ka Email bharo (Bill To me).','err');return;}
+  reserveNo();
+  if(!QUOTE_APPS_URL){showMsg('Email Direct ke liye Apps Script URL set nahi hai (CONFIG me daalein). Filhaal WhatsApp/Print use karein.','info');return;}
+  showMsg('📤 Quotation email bheja ja raha hai…','info');
+  var payload={token:QUOTE_SECRET,to:to,subject:'Quotation '+val('qno')+' — WTPESTORE (Aqua Filtration System)',html:buildEmailHTML()};
+  fetch(QUOTE_APPS_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(payload)})
+    .then(function(){showMsg('✅ Quotation email bhej diya gaya '+to+' par. (Customer ko mil jaayega.)','ok');})
+    .catch(function(){showMsg('Network issue — dobara try karein.','err');});
+}
+function showMsg(t,c){var m=document.getElementById('msg');m.className='msg '+c;m.textContent=t;window.scrollTo(0,0);}
+
+function newQuote(){if(!confirm('Naya quotation? (current saaf ho jaayega)'))return;reserveNo();document.getElementById('rows').innerHTML='';['cname','cphone','cemail','caddr','csub','cgstin'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('freight').value=0;initMeta();addRow();calc();}
+function initMeta(){document.getElementById('qno').value=nextNo();document.getElementById('qdate').value=todayStr();document.getElementById('terms').value=DEF_TERMS;}
+
+initMeta();addRow();calc();
+</script>
+</body></html>
