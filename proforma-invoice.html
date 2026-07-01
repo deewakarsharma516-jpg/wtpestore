@@ -402,7 +402,7 @@ function newQuote(){
 function initMeta(){
   document.getElementById('qno').value=nextQno();
   document.getElementById('qdate').value=todayStr();
-  document.getElementById('qvalid').value=validStr();
+  var _qv=document.getElementById('qvalid');if(_qv)_qv.value=validStr();
   var t=DEF_TERMS,by=null;
   try{t=localStorage.getItem('wtpe_terms')||DEF_TERMS;by=localStorage.getItem('wtpe_by');}catch(e){}
   document.getElementById('terms').value=t;

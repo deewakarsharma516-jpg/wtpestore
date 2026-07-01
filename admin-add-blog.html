@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Create Blog — WTPeSTORE Admin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMxOWMzN2QiLz48cGF0aCBkPSJNMzIgMTBDMzIgMTAgMTYgMzAgMTYgNDJhMTYgMTYgMCAwIDAgMzIgMEM0OCAzMCAzMiAxMCAzMiAxMFoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B2A4A;--green:#19c37d;--teal:#0aa2c0;--orange:#ff9900;--bg:#eef2f5;--card:#fff;--border:#d5d9d9;--muted:#5b6b76}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',Arial,sans-serif;background:var(--bg);color:#0f1111}
+header{background:var(--navy);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+header .l{font-weight:800;font-size:17px}header .l i{color:var(--green);font-style:normal}header .l u{color:var(--orange);text-decoration:none}
+header a{margin-left:auto;color:#cfe0ea;font-size:13px;font-weight:600}
+.wrap{max-width:820px;margin:20px auto;padding:0 14px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+h1{font-size:19px;color:var(--navy);margin-bottom:4px}.sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+label{display:block;font-size:12.5px;font-weight:700;color:var(--navy);margin:12px 0 5px}
+input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;background:#fcfdfe}
+input:focus,textarea:focus{outline:2px solid var(--teal);border-color:var(--teal)}
+textarea{min-height:200px;resize:vertical;line-height:1.6}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{background:var(--green);color:#fff;border:none;padding:13px 20px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:18px}
+.btn:hover{background:#15a86b}.btn.sec{background:#fff;color:var(--navy);border:1.5px solid var(--border);margin-top:10px}
+.hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+.msg{margin-top:14px;padding:12px 14px;border-radius:9px;font-size:13px;font-weight:600;display:none;line-height:1.5}
+.msg.ok{background:#e7f8f0;color:#0e7d52;border:1px solid #b6e6d1;display:block}
+.msg.err{background:#fdecec;color:#b3261e;border:1px solid #f3c2bf;display:block}
+.codebox{background:#0b2a4a;color:#cfe6f2;font-size:12px;padding:12px;border-radius:8px;word-break:break-all;margin-top:8px;display:none;font-family:monospace;white-space:pre-wrap}
+#gate{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .box{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
+#gate h2{color:var(--navy);font-size:18px;margin-bottom:6px}#gate p{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+#gate input{text-align:center;font-size:20px;letter-spacing:6px}
+.cover{width:100%;border-radius:10px;border:1px solid var(--border);margin-top:8px;display:none}
+</style></head><body>
+
+<div id="gate"><div class="box">
+<div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Enter your PIN to create a blog</p>
+<input id="pin" type="password" inputmode="numeric" placeholder="••••" onkeydown="if(event.key==='Enter')unlock()">
+<button class="btn" onclick="unlock()">Unlock</button>
+<div id="pinerr" style="color:#b3261e;font-size:12.5px;margin-top:8px;display:none">Wrong PIN</div>
+</div></div>
+
+<header><span class="l">💧 WTP<i>e</i><u>STORE</u> Admin</span><a href="/admin.html">← Admin Hub</a></header>
+
+<div class="wrap">
+<div class="card">
+<h1>Create a Blog Post</h1>
+<div class="sub">Form bharo → neeche "Generate" dabao → ready blog page (.html) download hoga. Use GitHub par upload karo. Photo ke liye Image URL do.</div>
+
+<label>Blog Title *</label>
+<input id="f_title" placeholder="e.g. How to Maintain Your RO Plant" oninput="preview()">
+
+<div class="row">
+<div><label>Category</label><input id="f_category" placeholder="e.g. RO Plant" oninput="preview()"></div>
+<div><label>Date</label><input id="f_date" placeholder="e.g. 01 Jul 2026"></div>
+</div>
+
+<label>Cover Image URL (photo)</label>
+<input id="f_image" placeholder="images/ro-maintenance.jpg or https://... or blog-generic-cover.svg" oninput="preview()">
+<div class="hint">Photo pehle GitHub images folder me daalo, phir yahan path likho. Khali chhodo to default cover lagega.</div>
+<img id="cover" class="cover" alt="cover">
+
+<label>Short Description (1-2 lines, for the list &amp; Google)</label>
+<textarea id="f_excerpt" style="min-height:60px" placeholder="Ek chhota summary jo blog list aur Google me dikhega." oninput="preview()"></textarea>
+
+<label>Blog Content *</label>
+<textarea id="f_content" placeholder="Yahan blog likho.
+
+Formatting (simple):
+## Badi heading
+### Chhoti heading
+- Bullet point
+Baaki normal lines paragraph ban jaayengi. Khali line se naya paragraph."></textarea>
+<div class="hint">## = badi heading, ### = chhoti heading, - = bullet. Baaki text paragraph banega.</div>
+
+<button class="btn" onclick="genBlog()">⬇ Generate &amp; Download Blog Page</button>
+<div class="msg" id="msg"></div>
+<div class="codebox" id="listline"></div>
+</div>
+</div>
+
+<script>
+var ADMIN_PIN = (function(){try{return localStorage.getItem('wtpe_admin_pin')||'2289';}catch(e){return '2289';}})();
+function unlock(){if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';}else{document.getElementById('pinerr').style.display='block';}}
+function val(id){return (document.getElementById(id).value||'').trim();}
+function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'post';}
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+function preview(){
+  var img=val('f_image'),c=document.getElementById('cover');
+  if(img){c.src=img;c.style.display='block';c.onerror=function(){c.style.display='none';};}else c.style.display='none';
+}
+function todayStr(){var d=new Date();var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return ('0'+d.getDate()).slice(-2)+' '+m[d.getMonth()]+' '+d.getFullYear();}
+
+/* content -> HTML */
+function contentToHtml(t){
+  var lines=t.split(/\r?\n/),out=[],inList=false;
+  function closeList(){if(inList){out.push('</ul>');inList=false;}}
+  for(var i=0;i<lines.length;i++){
+    var ln=lines[i].trim();
+    if(ln===''){closeList();continue;}
+    if(ln.indexOf('## ')===0&&ln.indexOf('### ')!==0){closeList();out.push('<h2>'+esc(ln.slice(3))+'</h2>');}
+    else if(ln.indexOf('### ')===0){closeList();out.push('<h3>'+esc(ln.slice(4))+'</h3>');}
+    else if(ln.indexOf('- ')===0){if(!inList){out.push('<ul>');inList=true;}out.push('<li>'+esc(ln.slice(2))+'</li>');}
+    else {closeList();out.push('<p>'+esc(ln)+'</p>');}
+  }
+  closeList();return out.join('\n');
+}
+
+function buildHTML(d){
+  var cover=d.image?('<img src="'+esc(d.image)+'" alt="'+esc(d.title)+'" onerror="this.style.display=\'none\'">'):'';
+  var iso=new Date().toISOString().slice(0,10);
+  return '<!DOCTYPE html><html lang="en"><head>\n'+
+  '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">\n'+
+  '<title>'+esc(d.title)+' | WTPESTORE</title>\n'+
+  '<meta name="description" content="'+esc(d.excerpt||d.title)+'">\n'+
+  '<link rel="canonical" href="https://www.wtpestore.co.in/'+d.slug+'.html">\n'+
+  '<meta name="theme-color" content="#0B2A4A">\n'+
+  '<meta property="og:type" content="article"><meta property="og:title" content="'+esc(d.title)+' | WTPESTORE">\n'+
+  '<meta property="og:url" content="https://www.wtpestore.co.in/'+d.slug+'.html">\n'+
+  '<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"'+esc(d.title).replace(/"/g,'\\"')+'","description":"'+esc(d.excerpt||'').replace(/"/g,'\\"')+'","datePublished":"'+iso+'","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"Aqua Filtration System"},"mainEntityOfPage":"https://www.wtpestore.co.in/'+d.slug+'.html"}<\/script>\n'+
+  '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">\n'+
+  '<style>\n'+BLOG_CSS+'\n</style></head><body>\n'+
+  '<header><div class="hbar"><a href="/" class="logo">\uD83D\uDCA7 <span><b>WTP<i>e</i>STORE</b><small>powered by Aqua Filtration System</small></span></a><div class="hspace"></div><div class="langbox">\uD83C\uDF10 <div id="google_translate_element"></div></div><a href="tel:+919910646957" class="hcall">\uD83D\uDCDE 9910646957</a></div>\n'+
+  '<div class="catbar"><div class="catbar-in"><a href="/blog.html">\uD83D\uDCDD Blog</a><a href="/ro-plant.html">RO Plant</a><a href="/water-softener.html">Water Softener</a><a href="/dm-plant.html">DM Plant</a><a href="/uv-systems.html">UV Systems</a><a href="/ro-membrane.html">RO Membrane</a><a href="/water-test-kits.html">Test Kits</a></div></div></header>\n'+
+  '<div class="wrap"><nav class="bc"><a href="/">Home</a> \u203A <a href="/blog.html">Blog</a> \u203A Article</nav>\n'+
+  '<article class="article"><span class="tag">'+esc(d.category||'Water Treatment')+'</span>\n'+
+  '<h1>'+esc(d.title)+'</h1>\n'+
+  '<div class="pmeta">\uD83D\uDCC5 '+esc(d.date||todayStr())+' \u00B7 \u270D\uFE0F Aqua Filtration System</div>\n'+
+  (cover?('<div style="margin:0 0 18px">'+cover+'</div>'):'')+
+  (d.excerpt?('<p class="lead">'+esc(d.excerpt)+'</p>\n'):'')+
+  d.body+'\n'+
+  '<a class="backlink" href="/blog.html">\u2190 Back to all blogs</a></article>\n'+
+  '<div class="ctaband"><div class="ctab-h">Need the right water treatment solution?</div><div class="ctab-s">Share your water, TDS or requirement \u2014 we\'ll suggest the right system and send a GST quotation.</div><div class="ctab-btns"><a class="cta-wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20guidance%20%26%20a%20quotation." target="_blank" rel="noopener">\uD83D\uDCAC WhatsApp Us</a><a class="cta-cl" href="tel:+919910646957">\uD83D\uDCDE Call 9910646957</a></div></div></div>\n'+
+  '<footer><div class="wrapw"><b>WTPESTORE \u2014 powered by Aqua Filtration System</b><br>Mathura Road, Faridabad, Haryana 121003 \u00B7 GSTIN 06DMUPS2289L1ZZ<br>\uD83D\uDCDE 9910646950 \u00B7 9910646957 \u00B7 \u2709 info@aquafiltrationsystem.in</div></footer>\n'+
+  '<script type="text/javascript">function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:"en",includedLanguages:"en,hi,pa,bn,ta,te,mr,gu,kn,ml,or,ur",layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},"google_translate_element");}<\/script>\n'+
+  '<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"><\/script>\n'+
+  '</body></html>';
+}
+
+function genBlog(){
+  var title=val('f_title'),content=val('f_content');
+  if(!title){showMsg('Title zaroori hai.','err');return;}
+  if(!content){showMsg('Content zaroori hai.','err');return;}
+  var slug='blog-'+slugify(title);
+  var d={title:title,slug:slug,category:val('f_category')||'Water Treatment',date:val('f_date'),image:val('f_image'),excerpt:val('f_excerpt'),body:contentToHtml(content)};
+  var html=buildHTML(d);
+  var blob=new Blob([html],{type:'text/html'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=slug+'.html';a.click();
+  showMsg('\u2705 Blog page ban gaya: '+slug+'.html download ho gaya. Ab: (1) yeh file GitHub par upload karo, (2) neeche wali line blog.html ki BLOG_POSTS list me sabse upar paste karo.','ok');
+  var line='{t:"'+title.replace(/"/g,'\\"')+'", d:"'+(val('f_excerpt')||title).replace(/"/g,'\\"')+'", cat:"'+(val('f_category')||'Water Treatment')+'", url:"'+slug+'.html", date:"'+(val('f_date')||todayStr())+'", icon:"\uD83D\uDCA7", img:"'+(val('f_image')||'')+'"},';
+  var cb=document.getElementById('listline');cb.style.display='block';cb.textContent='// blog.html me BLOG_POSTS list me sabse upar yeh line paste karein:\n'+line;
+}
+function showMsg(t,c){var m=document.getElementById('msg');m.className='msg '+c;m.textContent=t;}
+
+var BLOG_CSS=":root{--navy:#0B2A4A;--navy2:#0e4d6b;--aqua:#7ff0ff;--orange:#ff9900;--bg:#eaeded;--card:#fff;--text:#0f1111;--muted:#565959;--border:#d5d9d9;--green:#067d62}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',Arial,sans-serif;background:var(--bg);color:var(--text)}a{color:inherit;text-decoration:none}img{display:block;max-width:100%}.wrap{max-width:840px;margin:0 auto;padding:0 14px}.wrapw{max-width:1180px;margin:0 auto;padding:0 14px}header{background:var(--navy);color:#fff;position:sticky;top:0;z-index:50}.hbar{display:flex;align-items:center;gap:10px;padding:11px 14px;max-width:1180px;margin:0 auto}.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:18px;color:#fff}.logo b i{color:var(--aqua);font-style:normal}.logo small{display:block;font-size:9.5px;font-weight:500;color:#bcdff0}.hspace{flex:1}.hcall{color:#fff;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,.3);padding:7px 12px;border-radius:8px;white-space:nowrap}.langbox{display:flex;align-items:center;gap:5px;color:#fff;font-size:13px}.catbar{background:var(--navy2)}.catbar-in{display:flex;gap:2px;overflow-x:auto;max-width:1180px;margin:0 auto;padding:0 14px}.catbar a{color:#dceff7;font-size:12.5px;font-weight:600;padding:10px 12px;white-space:nowrap}.bc{font-size:12.5px;color:var(--muted);padding:14px 0 0}.bc a{color:var(--green);font-weight:600}.article{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px 30px;margin:14px 0}.tag{display:inline-block;font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}.article h1{font-size:27px;color:var(--navy);font-weight:800;line-height:1.25;margin-bottom:12px}.pmeta{font-size:13px;color:var(--muted);margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)}.article img{width:100%;border-radius:12px;border:1px solid var(--border)}.article h2{font-size:21px;color:var(--navy);font-weight:800;margin:26px 0 10px}.article h3{font-size:16px;color:var(--navy2);font-weight:700;margin:18px 0 8px}.article p{font-size:15.5px;line-height:1.8;color:#2a2a2a;margin-bottom:14px}.article ul{margin:0 0 16px 22px}.article li{font-size:15.5px;line-height:1.75;color:#2a2a2a;margin-bottom:7px}.lead{font-size:16.5px;color:#1a1a1a;font-weight:500}.backlink{display:inline-block;margin:6px 0 20px;color:var(--green);font-weight:700;font-size:14px}.ctaband{background:linear-gradient(135deg,#0e4d6b,#0B2A4A);color:#fff;border-radius:16px;padding:26px 22px;text-align:center;margin:14px 0 22px}.ctab-h{font-size:19px;font-weight:800;margin-bottom:6px}.ctab-s{font-size:13.5px;color:#cfe6f2;max-width:600px;margin:0 auto 16px}.ctab-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.cta-wa{background:#25d366;color:#fff;font-weight:700;font-size:14px;padding:12px 20px;border-radius:10px}.cta-cl{background:#fff;color:var(--navy);font-weight:700;font-size:14px;padding:12px 20px;border-radius:10px}footer{background:var(--navy2);color:#cfe0ea;padding:26px 0;font-size:13px;line-height:1.8;margin-top:10px}#google_translate_element{display:inline-block}.goog-te-banner-frame{display:none!important}body{top:0!important}@media(max-width:600px){.article{padding:20px 18px}.article h1{font-size:22px}.logo small,.hcall{display:none}}";
+</script>
+</body></html>

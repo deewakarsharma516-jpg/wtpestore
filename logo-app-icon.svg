@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="WTPeSTORE app icon">
+<defs><linearGradient id="sqA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19c37d"/><stop offset="1" stop-color="#0aa2c0"/></linearGradient></defs>
+<rect width="512" height="512" rx="116" fill="url(#sqA)"/>
+<g transform="translate(106,86) scale(2.5)"><path d="M60 10 C60 10 98 58 98 80 A38 38 0 0 1 22 80 C22 58 60 10 60 10 Z" fill="#ffffff"/>
+<path d="M40 78 a20 20 0 0 0 20 20" fill="none" stroke="#0aa2c0" stroke-width="4" stroke-linecap="round"/>
+<path d="M37 58h46M43 70h34" stroke="#19c37d" stroke-width="3.4" stroke-linecap="round" opacity="0.9"/></g></svg>

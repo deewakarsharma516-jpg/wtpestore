@@ -111,7 +111,7 @@ table.items input.qty,table.items input.rate{text-align:right}
   <button class="btn new" onclick="newQuote()">↺ New</button>
   <button class="btn wa" onclick="sendWA()">💬 WhatsApp</button>
   <button class="btn email" onclick="emailQuote()">📧 Email</button>
-  <button class="btn print" onclick="window.print()">🖨 Print / PDF</button>
+  <button class="btn print" onclick="reserveQno();window.print()">🖨 Print / PDF</button>
 </div>
 
 <div class="searchbox no-print" id="searchbox">
@@ -176,6 +176,7 @@ table.items input.qty,table.items input.rate{text-align:right}
       <th class="r" style="width:60px">Qty</th>
       <th class="c" style="width:60px">Unit</th>
       <th class="r" style="width:90px">Rate (₹)</th>
+      <th class="r" style="width:54px">Disc %</th>
       <th class="r" style="width:104px">Amount (₹)</th>
       <th class="c no-print" style="width:30px"></th>
     </tr></thead>
@@ -191,6 +192,7 @@ table.items input.qty,table.items input.rate{text-align:right}
   <div class="totwrap">
     <div class="totals">
       <div class="tr"><span>Sub Total</span><span class="amt" id="subtotal">₹0</span></div>
+      <div class="tr" id="row-disc" style="display:none"><span>Discount</span><span class="amt" id="disctot">-₹0</span></div>
       <div class="tr"><span>Freight / Packing</span><span><input id="freight" type="number" value="0" oninput="calc()"></span></div>
       <div class="tr"><span>Taxable Value</span><span class="amt" id="taxable">₹0</span></div>
       <div class="tr" id="row-cgst"><span>CGST @ <input class="pct" id="cgstp" type="number" value="9" oninput="calc()">%</span><span class="amt" id="cgst">₹0</span></div>
@@ -247,7 +249,7 @@ function rupee(n){n=Math.round((n||0)*100)/100;return '₹'+n.toLocaleString('en
 function num(v){var x=parseFloat((''+v).replace(/[^0-9.\-]/g,''));return isNaN(x)?0:x;}
 
 /* ---------- rows ---------- */
-function rowHTML(d,h,q,u,r){
+function rowHTML(d,h,q,u,r,disc){
   return '<tr>'+
   '<td class="c idx"></td>'+
   '<td><input class="desc" value="'+esc(d||'')+'" placeholder="Item description"></td>'+
@@ -255,22 +257,28 @@ function rowHTML(d,h,q,u,r){
   '<td class="r"><input class="qty" type="number" value="'+(q||1)+'" oninput="calc()"></td>'+
   '<td class="c"><input class="unit" value="'+esc(u||'No')+'" style="text-align:center"></td>'+
   '<td class="r"><input class="rate" type="number" value="'+(r||0)+'" oninput="calc()"></td>'+
+  '<td class="r"><input class="disc" type="number" value="'+(disc||0)+'" oninput="calc()"></td>'+
   '<td class="r amt cell-amt">₹0</td>'+
   '<td class="c no-print"><button class="delrow" onclick="this.closest(\'tr\').remove();calc()">✕</button></td>'+
   '</tr>';
 }
-function addRow(d,h,q,u,r){document.getElementById('rows').insertAdjacentHTML('beforeend',rowHTML(d,h,q,u,r));calc();}
+function addRow(d,h,q,u,r,disc){document.getElementById('rows').insertAdjacentHTML('beforeend',rowHTML(d,h,q,u,r,disc));calc();}
 
 function calc(){
-  var rows=document.querySelectorAll('#rows tr'),sub=0;
+  var rows=document.querySelectorAll('#rows tr'),sub=0,totalDisc=0;
   rows.forEach(function(tr,i){
     tr.querySelector('.idx').textContent=(i+1);
     var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);
-    var a=q*r;sub+=a;tr.querySelector('.cell-amt').textContent=rupee(a);
+    var dc=tr.querySelector('.disc'),dp=dc?num(dc.value):0;
+    var gross=q*r; var d=gross*dp/100;
+    sub+=gross; totalDisc+=d;
+    tr.querySelector('.cell-amt').textContent=rupee(gross);
   });
   var freight=num(document.getElementById('freight').value);
-  var taxable=sub+freight;
+  var taxable=sub-totalDisc+freight;
   document.getElementById('subtotal').textContent=rupee(sub);
+  var dr=document.getElementById('row-disc');
+  if(dr){document.getElementById('disctot').textContent='-'+rupee(totalDisc);dr.style.display=totalDisc>0?'flex':'none';}
   document.getElementById('taxable').textContent=rupee(taxable);
   var cgst=0,sgst=0,igst=0;
   if(gstType==='intra'){
@@ -351,6 +359,14 @@ function nextQno(){
   return 'WTP/'+y+'/'+('00'+n).slice(-3);
 }
 function bumpQno(){try{var n=parseInt(localStorage.getItem('wtpe_qno')||'0')+1;localStorage.setItem('wtpe_qno',n);}catch(e){}}
+/* Jab quotation actually use ho (print/PDF/WhatsApp/Email) tab uska number reserve kar lo,
+   taaki wahi number dobara kabhi na aaye. Idempotent hai — do baar chalne par bhi galat nahi hoga. */
+function reserveQno(){try{
+  var qv=document.getElementById('qno').value||'';
+  var m=qv.match(/(\d+)\s*$/); if(!m)return;
+  var n=parseInt(m[1],10); var cur=parseInt(localStorage.getItem('wtpe_qno')||'0');
+  if(n>cur)localStorage.setItem('wtpe_qno',n);
+}catch(e){}}
 
 function val(id){var e=document.getElementById(id);return e?e.value:'';}
 function setv(id,v){var e=document.getElementById(id);if(e&&v!=null)e.value=v;}
@@ -379,7 +395,7 @@ function saveDefaults(){try{
 
 function newQuote(){
   if(!confirm('Naya quotation shuru karein? (current saaf ho jaayega)'))return;
-  bumpQno();
+  reserveQno();
   document.getElementById('rows').innerHTML='';
   ['cname','caddr','cgstin','cphone','cattn','csub'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('freight').value=0;
@@ -409,13 +425,17 @@ window.addEventListener('afterprint',function(){var s=document.getElementById('s
 
 /* ---------- WhatsApp ---------- */
 function sendWA(){
+  reserveQno();
   var rows=document.querySelectorAll('#rows tr'),lines=[];
-  rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);lines.push((i+1)+'. '+d+' — Qty '+q+' @ '+rupee(r)+' = '+rupee(q*r));});
+  rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);var dc=tr.querySelector('.disc'),dp=dc?num(dc.value):0;lines.push((i+1)+'. '+d+' — Qty '+q+' @ '+rupee(r)+(dp>0?(' (-'+dp+'%)'):'')+' = '+rupee(q*r));});
+  var dr=document.getElementById('row-disc');
+  var discLine=(dr&&dr.style.display!=='none')?('Discount: '+document.getElementById('disctot').textContent+'%0A'):'';
   var msg='*WTPESTORE — Quotation*%0A'+
     document.getElementById('qno').value+' | '+document.getElementById('qdate').value+'%0A'+
     (document.getElementById('cname').value?('To: '+document.getElementById('cname').value+'%0A'):'')+'%0A'+
     encodeURIComponent(lines.join('\n'))+'%0A%0A'+
     'Sub Total: '+document.getElementById('subtotal').textContent+'%0A'+
+    discLine+
     'Taxable: '+document.getElementById('taxable').textContent+'%0A'+
     (gstType==='intra'?('CGST: '+document.getElementById('cgst').textContent+'%0ASGST: '+document.getElementById('sgst').textContent):('IGST: '+document.getElementById('igst').textContent))+'%0A'+
     '*Grand Total: '+document.getElementById('grand').textContent+'*%0A%0A'+
@@ -429,13 +449,17 @@ function sendWA(){
 function emailQuote(){
   var to=(val('cemail')||'').trim();
   if(!to){alert('Pehle customer ka Email bharo (Bill To me).');return;}
+  reserveQno();
   var rows=document.querySelectorAll('#rows tr'),lines=[];
-  rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);lines.push((i+1)+'. '+d+' — Qty '+q+' @ '+rupee(r)+' = '+rupee(q*r));});
+  rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);var dc=tr.querySelector('.disc'),dp=dc?num(dc.value):0;lines.push((i+1)+'. '+d+' — Qty '+q+' @ '+rupee(r)+(dp>0?(' (-'+dp+'%)'):'')+' = '+rupee(q*r));});
+  var dr=document.getElementById('row-disc');
+  var discLine=(dr&&dr.style.display!=='none')?('Discount: '+document.getElementById('disctot').textContent+'\n'):'';
   var sub='Quotation '+val('qno')+' — WTPESTORE (Aqua Filtration System)';
   var body='Dear '+(val('cname')||'Sir/Madam')+',\n\n'+
     'Thank you for your enquiry. Please find our quotation '+val('qno')+' dated '+val('qdate')+' below:\n\n'+
     lines.join('\n')+'\n\n'+
     'Sub Total: '+document.getElementById('subtotal').textContent+'\n'+
+    discLine+
     'Grand Total (incl. GST): '+document.getElementById('grand').textContent+'\n\n'+
     'The detailed PDF quotation is attached.\n\n'+
     'Regards,\n'+(val('cby')||'')+'\n'+

@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Add Product — WTPeSTORE Admin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMxOWMzN2QiLz48cGF0aCBkPSJNMzIgMTBDMzIgMTAgMTYgMzAgMTYgNDJhMTYgMTYgMCAwIDAgMzIgMEM0OCAzMCAzMiAxMCAzMiAxMFoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B2A4A;--navy2:#0e4d6b;--green:#19c37d;--teal:#0aa2c0;--orange:#ff9900;--bg:#eef2f5;--card:#fff;--border:#d5d9d9;--muted:#5b6b76;--text:#0f1111}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--navy);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+header .l{font-weight:800;font-size:17px}
+header .l i{color:var(--green);font-style:normal}header .l u{color:var(--orange);text-decoration:none}
+header a{margin-left:auto;color:#cfe0ea;font-size:13px;font-weight:600}
+.wrap{max-width:760px;margin:20px auto;padding:0 14px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+h1{font-size:19px;color:var(--navy);margin-bottom:4px}
+.sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+label{display:block;font-size:12.5px;font-weight:700;color:var(--navy);margin:12px 0 5px}
+input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;background:#fcfdfe}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--teal);border-color:var(--teal)}
+textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{background:var(--green);color:#fff;border:none;padding:13px 20px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:18px}
+.btn:hover{background:#15a86b}
+.btn.sec{background:#fff;color:var(--navy);border:1.5px solid var(--border);margin-top:10px}
+.hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+.msg{margin-top:14px;padding:11px 14px;border-radius:9px;font-size:13.5px;font-weight:600;display:none}
+.msg.ok{background:#e7f8f0;color:#0e7d52;border:1px solid #b6e6d1;display:block}
+.msg.err{background:#fdecec;color:#b3261e;border:1px solid #f3c2bf;display:block}
+.msg.info{background:#eef6fb;color:#0e4d6b;border:1px solid #c3e0ef;display:block}
+.prev{display:flex;gap:14px;align-items:flex-start;border:1px dashed var(--border);border-radius:12px;padding:14px;background:#fafcfd}
+.prev .img{width:90px;height:90px;border-radius:10px;background:#e7eef3;display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;flex:none}
+.prev .img img{width:100%;height:100%;object-fit:cover}
+.prev .nm{font-weight:800;color:var(--navy);font-size:15px}
+.prev .mk{font-size:12px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.prev .ds{font-size:12.5px;color:var(--muted);margin:5px 0;line-height:1.5}
+.prev .rt{font-weight:800;color:var(--orange);font-size:16px}
+#gate{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .box{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
+#gate h2{color:var(--navy);font-size:18px;margin-bottom:6px}
+#gate p{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+#gate input{text-align:center;font-size:20px;letter-spacing:6px}
+.copyrow{margin-top:10px;font-size:12px;color:var(--muted);word-break:break-all;background:#f4f7f9;border:1px solid var(--border);border-radius:8px;padding:10px;display:none;white-space:pre-wrap}
+</style>
+</head>
+<body>
+
+<div id="gate"><div class="box">
+<div style="font-size:34px">🔒</div>
+<h2>Admin Login</h2>
+<p>Enter your PIN to add products</p>
+<input id="pin" type="password" inputmode="numeric" placeholder="••••" onkeydown="if(event.key==='Enter')unlock()">
+<button class="btn" onclick="unlock()">Unlock</button>
+<div id="pinerr" style="color:#b3261e;font-size:12.5px;margin-top:8px;display:none">Wrong PIN</div>
+</div></div>
+
+<header>
+<span class="l">💧 WTP<i>e</i><u>STORE</u> Admin</span>
+<a href="/admin.html">← Admin Hub</a>
+</header>
+
+<div class="wrap">
+<div class="card">
+<h1>Add New Product</h1>
+<div class="sub">Product seedhe aapki Google Sheet price list me add hoga, aur website par bhi aa jaayega (2-5 min me).</div>
+
+<label>Product Name *</label>
+<input id="f_product" placeholder="e.g. Aster Digital Flow Meter 1 inch" oninput="preview()">
+
+<label>Category *</label>
+<select id="f_category" onchange="catChange();preview()">
+  <option value="">— Loading categories… —</option>
+</select>
+<input id="f_newcat" placeholder="Type new category name" style="display:none;margin-top:8px" oninput="preview()">
+<div class="hint" id="cathint">Apni list me se category chunein, ya "➕ Add new category" se nayi banayein.</div>
+
+<div class="row">
+<div><label>Make / Brand</label><input id="f_make" placeholder="e.g. Aster" oninput="preview()"></div>
+<div><label>Model</label><input id="f_model" placeholder="e.g. AFM-25" oninput="preview()"></div>
+</div>
+
+<label>Specification / Description</label>
+<textarea id="f_specification" placeholder="Size, material, range, features etc." oninput="preview()"></textarea>
+
+<div class="row">
+<div><label>Price (₹, excl. GST)</label><input id="f_price" type="number" placeholder="e.g. 4500" oninput="preview()"></div>
+<div><label>Image URL</label><input id="f_image" placeholder="images/flow-meter.jpg or https://..." oninput="preview()"></div>
+</div>
+
+<div class="row">
+<div><label>Catalogue / PDF link (optional)</label><input id="f_catalogue" placeholder="https://... .pdf"></div>
+<div><label>Video link (optional)</label><input id="f_video" placeholder="https://youtu.be/..."></div>
+</div>
+
+<button class="btn" onclick="addProduct()">＋ Add to Price List</button>
+<button class="btn sec" onclick="copyRow()">📋 Copy row (manual paste in Sheet)</button>
+<div class="msg" id="msg"></div>
+<div class="copyrow" id="copyrow"></div>
+</div>
+
+<div class="card">
+<div class="sub" style="margin-bottom:10px">Live Preview</div>
+<div class="prev">
+<div class="img" id="p_img">🧴</div>
+<div>
+<div class="mk" id="p_make">BRAND</div>
+<div class="nm" id="p_name">Product name…</div>
+<div class="ds" id="p_desc">Specification…</div>
+<div class="rt" id="p_rate">₹ —</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+/* ===================== CONFIG — yahan apni settings daalo =====================
+   1) ADMIN_PIN        : apna secret PIN. Ise zaroor badlo.
+   2) APPS_SCRIPT_URL  : Google Apps Script deploy karke uska /exec URL paste karo.
+   3) SECRET           : wahi secret jo Apps Script me daala hai.
+   4) PRODUCTS_CSV_URL : (already set) categories isi se load hoti hain.
+   ============================================================================ */
+var ADMIN_PIN = (function(){try{return localStorage.getItem('wtpe_admin_pin')||"2289";}catch(e){return "2289";}})();
+var APPS_SCRIPT_URL = "";
+var SECRET = "wtp-add-2026";
+var PRODUCTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv";
+
+function unlock(){
+  if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';loadCategories();}
+  else{document.getElementById('pinerr').style.display='block';}
+}
+function val(id){return (document.getElementById(id).value||'').trim();}
+
+/* ---- CSV parse + load unique categories ---- */
+function parseCSV(text){
+  var rows=[],row=[],cur='',q=false;
+  for(var i=0;i<text.length;i++){var c=text[i];
+    if(q){ if(c=='"'){ if(text[i+1]=='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else { if(c=='"')q=true; else if(c==','){row.push(cur);cur='';} else if(c=='\n'){row.push(cur);rows.push(row);row=[];cur='';} else if(c!='\r')cur+=c; }
+  }
+  if(cur!==''||row.length){row.push(cur);rows.push(row);}
+  return rows;
+}
+function loadCategories(){
+  var sel=document.getElementById('f_category');
+  if(!PRODUCTS_CSV_URL){sel.innerHTML='<option value="">— Select / type category —</option><option value="__new__">➕ Add new category</option>';return;}
+  fetch(PRODUCTS_CSV_URL).then(function(r){return r.text();}).then(function(t){
+    var rows=parseCSV(t); if(!rows.length)throw 0;
+    var hdr=rows[0].map(function(h){return String(h).trim().toLowerCase();});
+    var ci=hdr.indexOf('category'); if(ci<0)ci=0;
+    var set={};
+    for(var i=1;i<rows.length;i++){var v=(rows[i][ci]||'').trim();if(v)set[v]=1;}
+    var cats=Object.keys(set).sort();
+    var html='<option value="">— Select category —</option>';
+    cats.forEach(function(c){html+='<option value="'+c.replace(/"/g,'&quot;')+'">'+c+'</option>';});
+    html+='<option value="__new__">➕ Add new category</option>';
+    sel.innerHTML=html;
+  }).catch(function(){
+    sel.innerHTML='<option value="">— Type category below —</option><option value="__new__" selected>➕ Add new category</option>';
+    catChange();
+    document.getElementById('cathint').textContent='Categories load nahi ho payi — neeche category naam type karein.';
+  });
+}
+function catChange(){
+  var nw=document.getElementById('f_category').value==='__new__';
+  document.getElementById('f_newcat').style.display=nw?'block':'none';
+}
+function categoryValue(){
+  var s=document.getElementById('f_category').value;
+  return s==='__new__' ? val('f_newcat') : s;
+}
+
+function preview(){
+  document.getElementById('p_name').textContent=val('f_product')||'Product name…';
+  document.getElementById('p_make').textContent=(val('f_make')||'BRAND').toUpperCase();
+  document.getElementById('p_desc').textContent=val('f_specification')||'Specification…';
+  var r=val('f_price');document.getElementById('p_rate').textContent=r?('₹ '+Number(r).toLocaleString('en-IN')):'₹ —';
+  var img=val('f_image'),box=document.getElementById('p_img');
+  box.innerHTML=img?('<img src="'+img+'" onerror="this.parentNode.innerHTML=\'🧴\'">'):'🧴';
+}
+function data(){return {token:SECRET,category:categoryValue(),product:val('f_product'),make:val('f_make'),model:val('f_model'),specification:val('f_specification'),price:val('f_price'),image:val('f_image'),catalogue:val('f_catalogue'),video:val('f_video')};}
+function showMsg(t,cls){var m=document.getElementById('msg');m.className='msg '+cls;m.textContent=t;}
+
+function addProduct(){
+  if(!val('f_product')){showMsg('Product name zaroori hai.','err');return;}
+  if(!categoryValue()){showMsg('Category chunein ya nayi banayein.','err');return;}
+  if(!APPS_SCRIPT_URL){showMsg('Apps Script URL set nahi hai. Abhi "Copy row" se sheet me paste karein.','info');copyRow();return;}
+  showMsg('Adding… please wait.','info');
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(data())})
+    .then(function(){
+      showMsg('✅ Product add ho gaya! Website par 2-5 min me dikhega. (Sheet me check kar lein.)','ok');
+      ['f_product','f_make','f_model','f_specification','f_price','f_image','f_catalogue','f_video','f_newcat'].forEach(function(i){document.getElementById(i).value='';});
+      preview();
+    })
+    .catch(function(){showMsg('Network issue. Dobara try karein ya "Copy row" use karein.','err');});
+}
+function copyRow(){
+  var d=data();
+  var row=[d.category,d.product,d.make,d.model,d.specification,d.price,d.image,d.catalogue,d.video].join('\t');
+  var cr=document.getElementById('copyrow');cr.style.display='block';
+  cr.textContent='Yeh row copy karke Google Sheet ki nayi line me paste karein (column order: Category, Product, Make, Model, Specification, Price, Image, Catalogue, Video):\n\n'+row;
+  if(navigator.clipboard){navigator.clipboard.writeText(row).then(function(){showMsg('📋 Row clipboard me copy ho gayi — Sheet me paste karein.','ok');});}
+}
+preview();
+</script>
+</body></html>
