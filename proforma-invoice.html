@@ -440,23 +440,33 @@ function sendWA(){
 
 function toggleShip(){var on=document.getElementById('samebill').checked;document.getElementById('saddr').disabled=on;if(on){document.getElementById('saddr').value='';document.getElementById('saddr').placeholder='Same as Bill To';}else{document.getElementById('saddr').placeholder='Ship-to / delivery address';}}
 toggleShip();
-/* ---------- Email (mailto) ---------- */
+/* ---------- Email: auto-send via Apps Script (aquazone350) ---------- */
+function _qcfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
+var QUOTE_APPS_URL=_qcfg('wtpe_quote_url','https://script.google.com/macros/s/AKfycbxPhsED_MxkdeTUufMAJtwU7_Cro2AY1Y7w0kLODkd9p1wlRdVhgh8ATSgkh79vYNZs/exec');
+var QUOTE_SECRET=_qcfg('wtpe_quote_secret','wtp-quote-2026');
+function _txt(id){var el=document.getElementById(id);return el?el.textContent:'';}
+function buildPIEmailHTML(){
+  var rows=document.querySelectorAll('#rows tr'),tr='';
+  rows.forEach(function(row,i){var d=row.querySelector('.desc').value;if(!d)return;var q=num(row.querySelector('.qty').value),r=num(row.querySelector('.rate').value);tr+='<tr><td align="center">'+(i+1)+'</td><td>'+d+'</td><td align="center">'+q+'</td><td align="right">'+rupee(r)+'</td><td align="right">'+rupee(q*r)+'</td></tr>';});
+  var termsEl=document.getElementById('terms');var terms=termsEl?(''+termsEl.value).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}).replace(/\n/g,'<br>'):'';
+  return '<div style="font-family:Arial,sans-serif;max-width:660px;color:#222">'+
+    '<h2 style="color:#0B2A4A;margin:0">WTP<span style="color:#19c37d">e</span><span style="color:#ff9900">STORE</span> — Proforma Invoice</h2>'+
+    '<div style="font-size:12px;color:#666">powered by Aqua Filtration System &nbsp;|&nbsp; '+val('qno')+' &nbsp;|&nbsp; '+val('qdate')+'</div>'+
+    '<p>Dear '+(val('cname')||'Sir/Madam')+',<br>Please find our Proforma Invoice below:</p>'+
+    '<table cellpadding="7" cellspacing="0" border="1" style="border-collapse:collapse;width:100%;font-size:13px">'+
+    '<tr style="background:#0B2A4A;color:#fff"><th>#</th><th align="left">Description</th><th>Qty</th><th>Rate</th><th>Amount</th></tr>'+tr+'</table>'+
+    '<p style="text-align:right;font-size:14px;margin:10px 0">Sub Total: '+_txt('subtotal')+'<br>Taxable: '+_txt('taxable')+'<br><b style="color:#0B2A4A">Grand Total (incl. GST): '+_txt('grand')+'</b></p>'+
+    (terms?('<div style="font-size:12px;background:#f5f8fa;border-radius:8px;padding:12px"><b>Terms &amp; Conditions:</b><br>'+terms+'</div>'):'')+
+    '<p style="font-size:12.5px">Kindly confirm to proceed.</p>'+
+    '<hr style="border:none;border-top:1px solid #ddd;margin:14px 0"><div style="font-size:12px;color:#555">WTPESTORE — Aqua Filtration System, Faridabad<br>📞 9910646950, 9910646957, 9599895683 &nbsp;|&nbsp; 💬 WhatsApp 9899193589 &nbsp;|&nbsp; ✉ info@aquafiltrationsystem.in</div></div>';
+}
 function emailQuote(){
   var to=(val('cemail')||'').trim();
   if(!to){alert('Pehle customer ka Email bharo (Bill To me).');return;}
-  var rows=document.querySelectorAll('#rows tr'),lines=[];
-  rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value);lines.push((i+1)+'. '+d+' \u2014 Qty '+q+' @ '+rupee(r)+' = '+rupee(q*r));});
-  var sub='Proforma Invoice '+val('qno')+' \u2014 WTPESTORE (Aqua Filtration System)';
-  var body='Dear '+(val('cname')||'Sir/Madam')+',\n\n'+
-    'Please find our Proforma Invoice '+val('qno')+' dated '+val('qdate')+' below:\n\n'+
-    lines.join('\n')+'\n\n'+
-    'Sub Total: '+document.getElementById('subtotal').textContent+'\n'+
-    'Grand Total (incl. GST): '+document.getElementById('grand').textContent+'\n\n'+
-    'The detailed PDF Proforma Invoice is attached. Kindly confirm to proceed.\n\n'+
-    'Regards,\n'+(val('cby')||'')+'\n'+
-    'WTPESTORE \u2014 Aqua Filtration System\n'+
-    'Faridabad | 9910646957 | info@aquafiltrationsystem.in';
-  window.location.href='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
+  if(!QUOTE_APPS_URL){alert('Email setup nahi hai (Settings me Email Quotation URL daalein).');return;}
+  var payload={token:QUOTE_SECRET,to:to,subject:'Proforma Invoice '+val('qno')+' — WTPESTORE (Aqua Filtration System)',html:buildPIEmailHTML()};
+  try{fetch(QUOTE_APPS_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(payload)});}catch(e){}
+  alert('✅ Proforma Invoice email bhej diya gaya '+to+' par (aquazone350 se). Customer ko 1-2 min me mil jaayega.');
 }
 
 /* init */
