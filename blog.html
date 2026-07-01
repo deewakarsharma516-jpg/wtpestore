@@ -72,6 +72,17 @@ footer{background:var(--navy2);color:#cfe0ea;padding:26px 0;font-size:13px;line-
 .goog-te-gadget-icon{display:none!important}
 .goog-te-banner-frame,.skiptranslate>iframe{display:none!important}
 body{top:0!important}
+.post{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px 30px;margin:6px 0 18px}
+.post .tag{display:inline-block;font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.post h1{font-size:26px;color:var(--navy);font-weight:800;line-height:1.25;margin-bottom:10px}
+.post .pmeta{font-size:13px;color:var(--muted);margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.post img.cov{width:100%;border-radius:12px;border:1px solid var(--border);margin-bottom:16px}
+.post h2{font-size:20px;color:var(--navy);margin:22px 0 9px}
+.post h3{font-size:16px;color:var(--navy2);margin:16px 0 7px}
+.post p{font-size:15.5px;line-height:1.8;color:#2a2a2a;margin-bottom:13px}
+.post ul{margin:0 0 15px 22px}.post li{font-size:15.5px;line-height:1.75;margin-bottom:6px}
+.post .lead{font-size:16.5px;color:#1a1a1a;font-weight:500}
+.post .back{display:inline-block;margin:4px 0 16px;color:var(--green);font-weight:700;font-size:14px}
 @media(max-width:900px){.bgrid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.bgrid{grid-template-columns:1fr}.hero h1{font-size:21px}.logo small{display:none}.hcall{display:none}}
 </style>
@@ -100,6 +111,7 @@ body{top:0!important}
 
 <div class="bgrid" id="grid"></div>
 <div class="empty" id="empty" style="display:none">No blog on this topic yet. Coming soon!</div>
+<article class="post" id="post" style="display:none"></article>
 
 <div class="ctaband">
 <div class="ctab-h">Need help choosing the right water treatment system?</div>
@@ -123,53 +135,87 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 
 <script>
 /* ============================================================
-   BLOG POSTS LIST — naya blog add karne ke liye:
-   1) blog-post-template.html ko copy karke nayi file banao
-      (jaise: blog-water-softener-guide.html)
-   2) Neeche is list me sabse upar ek nayi line add karo:
-      {t:"Title", d:"2-line description", cat:"Category",
-       url:"blog-water-softener-guide.html", date:"15 Jul 2026", icon:"💧", img:""}
-   3) img:"" rakho to icon dikhega; ya img:"logos/koi-photo.jpg" do.
-   NOTE: Title aur description ENGLISH me likho (reader 🌐 se translate kar lega).
+   BLOG — ab Google Sheet ke "Blog" tab se apne aap load hota hai.
+   Naya blog admin "Create Blog" se add karo — koi file nahi banani.
+   (Neeche BLOG_CSV_URL aapki sheet ke Blog tab ko padhta hai.)
    ============================================================ */
-var BLOG_POSTS=[
+var BLOG_CSV_URL="https://docs.google.com/spreadsheets/d/1tKZnBdZN6QmOoJm06-EAvRpxjyhdVZaUrtZhDz6_ZEA/gviz/tq?tqx=out:csv&sheet=Blog";
+
+/* purane 2 featured blog (alag files) — inhe rehne do */
+var STATIC=[
   {t:"How to Choose an Industrial RO Plant: Capacity, TDS & Cost Guide", d:"LPH capacity, feed-water TDS, pump and membrane — what to check before buying an RO plant, with an easy checklist.", cat:"RO Plant", url:"blog-industrial-ro-plant-guide.html", date:"20 Jun 2026", icon:"🏭", img:"blog-ro-cover.svg"},
   {t:"Borewell Water TDS: What's Safe & When Do You Need RO?", d:"The right TDS range for drinking water, the BIS limit, and when RO or a softener is actually needed — explained with numbers.", cat:"Water Quality", url:"blog-borewell-water-tds-guide.html", date:"18 Jun 2026", icon:"🧪", img:"blog-tds-cover.svg"}
 ];
+var SHEET=[], BLOG_POSTS=STATIC.slice(), cats=["All"], activeCat="All";
 
-var cats=["All"]; BLOG_POSTS.forEach(function(p){if(cats.indexOf(p.cat)<0)cats.push(p.cat);});
-var activeCat="All";
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function slugify(s){return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'post';}
+function parseCSV(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch!='\r')c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
+function contentToHtml(t){var lines=(t||'').split(/\r?\n/),out=[],inL=false;function cl(){if(inL){out.push('</ul>');inL=false;}}for(var i=0;i<lines.length;i++){var ln=lines[i].trim();if(ln===''){cl();continue;}if(ln.indexOf('## ')===0&&ln.indexOf('### ')!==0){cl();out.push('<h2>'+esc(ln.slice(3))+'</h2>');}else if(ln.indexOf('### ')===0){cl();out.push('<h3>'+esc(ln.slice(4))+'</h3>');}else if(ln.indexOf('- ')===0){if(!inL){out.push('<ul>');inL=true;}out.push('<li>'+esc(ln.slice(2))+'</li>');}else{cl();out.push('<p>'+esc(ln)+'</p>');}}cl();return out.join('');}
 
-function drawChips(){
-  document.getElementById('chips').innerHTML=cats.map(function(c){
-    return '<button class="chip'+(c===activeCat?' on':'')+'" onclick="setCat(\''+c.replace(/'/g,"\\'")+'\')">'+c+'</button>';
-  }).join('');
+function loadSheet(){
+  if(!BLOG_CSV_URL){finish();return;}
+  fetch(BLOG_CSV_URL).then(function(r){return r.text();}).then(function(t){
+    var rows=parseCSV(t).filter(function(r){return r.join('').trim();});
+    if(rows.length<2){finish();return;}
+    var h=rows[0].map(function(x){return String(x).trim().toLowerCase();});
+    function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
+    var ti=ix('title','name'),ci=ix('category','cat'),di=ix('date'),ii=ix('image','photo','cover'),ei=ix('excerpt','summary','description'),coi=ix('content','body','article'),si=ix('slug','url');
+    SHEET=[];
+    for(var i=1;i<rows.length;i++){var title=(rows[i][ti]||'').trim();if(!title)continue;
+      var slug=(si>-1&&(rows[i][si]||'').trim())?(rows[i][si]||'').trim():slugify(title);
+      SHEET.push({t:title,d:(ei>-1?rows[i][ei]:'')||'',cat:(ci>-1?rows[i][ci]:'')||'Water Treatment',url:'blog.html?post='+encodeURIComponent(slug),date:(di>-1?rows[i][di]:'')||'',icon:'💧',img:(ii>-1?rows[i][ii]:'')||'',content:(coi>-1?rows[i][coi]:'')||'',slug:slug});}
+    finish();
+  }).catch(function(){finish();});
 }
+function finish(){BLOG_POSTS=SHEET.concat(STATIC);cats=["All"];BLOG_POSTS.forEach(function(p){if(cats.indexOf(p.cat)<0)cats.push(p.cat);});drawChips();route();}
+
+function drawChips(){document.getElementById('chips').innerHTML=cats.map(function(c){return '<button class="chip'+(c===activeCat?' on':'')+'" onclick="setCat(\''+c.replace(/'/g,"\\'")+'\')">'+c+'</button>';}).join('');}
 function setCat(c){activeCat=c;drawChips();render();}
+
+function route(){
+  var m=(location.search||'').match(/[?&]post=([^&]+)/);
+  if(m){var sl=decodeURIComponent(m[1]);for(var i=0;i<SHEET.length;i++){if(SHEET[i].slug===sl){showPost(SHEET[i]);return;}}}
+  showList();
+}
+function showList(){
+  document.getElementById('post').style.display='none';
+  document.getElementById('grid').style.display='';
+  var s=document.querySelector('.srch');if(s)s.style.display='';
+  document.getElementById('chips').style.display='';
+  render();
+}
+function showPost(p){
+  document.getElementById('grid').style.display='none';
+  document.getElementById('empty').style.display='none';
+  var s=document.querySelector('.srch');if(s)s.style.display='none';
+  document.getElementById('chips').style.display='none';
+  var cov=p.img?'<img class="cov" src="'+esc(p.img)+'" alt="'+esc(p.t)+'" onerror="this.style.display=\'none\'">':'';
+  var el=document.getElementById('post');el.style.display='block';
+  el.innerHTML='<a class="back" href="blog.html">← Back to all blogs</a>'+
+    '<span class="tag">'+esc(p.cat)+'</span><h1>'+esc(p.t)+'</h1>'+
+    '<div class="pmeta">📅 '+esc(p.date)+' · ✍️ Aqua Filtration System</div>'+
+    cov+(p.d?('<p class="lead">'+esc(p.d)+'</p>'):'')+contentToHtml(p.content);
+  try{document.title=p.t+' | WTPESTORE';}catch(e){}
+  window.scrollTo(0,0);
+}
 
 function render(){
   var q=(document.getElementById('q').value||'').toLowerCase();
-  var list=BLOG_POSTS.filter(function(p){
-    var okCat=(activeCat==="All"||p.cat===activeCat);
-    var okQ=!q||(p.t+' '+p.d+' '+p.cat).toLowerCase().indexOf(q)>=0;
-    return okCat&&okQ;
-  });
+  var list=BLOG_POSTS.filter(function(p){var okCat=(activeCat==="All"||p.cat===activeCat);var okQ=!q||(p.t+' '+p.d+' '+p.cat).toLowerCase().indexOf(q)>=0;return okCat&&okQ;});
   var g=document.getElementById('grid'), e=document.getElementById('empty');
   if(!list.length){g.innerHTML='';e.style.display='block';return;}
   e.style.display='none';
   g.innerHTML=list.map(function(p){
-    var img=p.img?'<img src="'+p.img+'" alt="'+p.t+'" onerror="this.parentNode.innerHTML=\''+(p.icon||'💧')+'\'">':(p.icon||'💧');
+    var img=p.img?'<img src="'+esc(p.img)+'" alt="'+esc(p.t)+'" onerror="this.parentNode.innerHTML=\''+(p.icon||'💧')+'\'">':(p.icon||'💧');
     return '<a class="bcard" href="'+p.url+'">'+
       '<div class="bcard-img">'+img+'</div>'+
-      '<div class="bcard-b">'+
-        '<div class="bcat">'+p.cat+'</div>'+
-        '<h2>'+p.t+'</h2>'+
-        '<p>'+p.d+'</p>'+
-        '<div class="bmeta"><span>'+p.date+'</span><span class="bread">Read more →</span></div>'+
-      '</div></a>';
+      '<div class="bcard-b"><div class="bcat">'+esc(p.cat)+'</div><h2>'+esc(p.t)+'</h2><p>'+esc(p.d)+'</p>'+
+      '<div class="bmeta"><span>'+esc(p.date)+'</span><span class="bread">Read more →</span></div></div></a>';
   }).join('');
 }
-drawChips();render();
+/* pehle static dikha do, phir sheet load hone par sab */
+drawChips();render();loadSheet();
 </script>
 <script type="text/javascript">
 function googleTranslateElementInit(){new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'en,hi,pa,bn,ta,te,mr,gu,kn,ml,or,ur',layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},'google_translate_element');}
