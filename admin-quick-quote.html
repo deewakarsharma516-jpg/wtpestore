@@ -76,6 +76,10 @@ body.preview .no-print,body.preview .delrow{display:none!important}
 body.preview .doc{margin:78px auto 40px;box-shadow:0 8px 34px rgba(0,0,0,.45)}
 body.preview input,body.preview textarea{border-color:transparent!important;background:transparent!important;resize:none}
 body.preview .terms textarea{overflow:hidden;height:auto}
+body.preview input::placeholder,body.preview textarea::placeholder{color:transparent!important}
+body.preview .pw{display:none!important}
+body.preview .pv{display:block;white-space:pre-wrap;word-break:break-word;font-size:13px;min-height:16px}
+.pv{display:none}
 body.preview #previewbar{display:flex;position:fixed;top:0;left:0;right:0;z-index:1000;background:#0B2A4A;color:#fff;padding:10px 14px;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;box-shadow:0 2px 10px rgba(0,0,0,.3)}
 #previewbar .pvtxt{font-weight:700;font-size:13px;margin-right:6px}
 #previewbar button{border:none;border-radius:8px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
@@ -84,6 +88,9 @@ body.preview #previewbar{display:flex;position:fixed;top:0;left:0;right:0;z-inde
   body{background:#fff}.toolbar,.searchbox,.msg,.no-print,.delrow,#previewbar{display:none!important}
   .doc{box-shadow:none;border:none;max-width:100%;margin:0;border-radius:0;padding:6mm 8mm}
   input,textarea{background:transparent!important;border-color:transparent!important}
+  input::placeholder,textarea::placeholder{color:transparent!important}
+  .pw{display:none!important}
+  .pv{display:block!important;white-space:pre-wrap;word-break:break-word;min-height:14px}
   .terms textarea{height:auto;overflow:hidden;min-height:0}
   table.items th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{size:A4;margin:8mm}
@@ -145,14 +152,14 @@ body.preview #previewbar{display:flex;position:fixed;top:0;left:0;right:0;z-inde
 
   <div class="parties">
     <div class="box"><h4>Bill To</h4>
-      <input id="cname" placeholder="Customer name">
-      <input id="cphone" placeholder="Phone (WhatsApp)">
-      <input id="cemail" placeholder="Email">
-      <input id="caddr" placeholder="Address / City">
+      <input id="cname" class="pw" placeholder="Customer name"><span class="pv"></span>
+      <input id="cphone" class="pw" placeholder="Phone (WhatsApp)"><span class="pv"></span>
+      <input id="cemail" class="pw" placeholder="Email"><span class="pv"></span>
+      <input id="caddr" class="pw" placeholder="Address / City"><span class="pv"></span>
     </div>
     <div class="box"><h4>Subject</h4>
-      <input id="csub" placeholder="Quotation for…">
-      <input id="cgstin" placeholder="Customer GSTIN (optional)">
+      <input id="csub" class="pw" placeholder="Quotation for…"><span class="pv"></span>
+      <input id="cgstin" class="pw" placeholder="Customer GSTIN (optional)"><span class="pv"></span>
     </div>
   </div>
 
@@ -185,7 +192,7 @@ body.preview #previewbar{display:flex;position:fixed;top:0;left:0;right:0;z-inde
   <div class="words" id="words"></div>
 
   <div class="terms">
-    <h4>Terms &amp; Conditions (editable)</h4>
+    <h4>Terms &amp; Conditions <span class="no-print">(editable)</span></h4>
     <textarea id="terms"></textarea>
   </div>
 
@@ -224,7 +231,7 @@ function reserveNo(){try{var m=(val('qno')||'').match(/(\d+)\s*$/);if(!m)return;
 /* rows */
 function rowHTML(d,q,u,r,disc){return '<tr>'+
  '<td class="c idx"></td>'+
- '<td><input class="desc" value="'+esc(d||'')+'" placeholder="Item description"></td>'+
+ '<td><input class="desc pw" value="'+esc(d||'')+'" placeholder="Item description"><span class="pv"></span></td>'+
  '<td class="c"><input class="qty" type="number" value="'+(q||1)+'" oninput="calc()"></td>'+
  '<td class="c"><input class="unit" value="'+esc(u||'No')+'" style="text-align:center"></td>'+
  '<td class="r"><input class="rate" type="number" value="'+(r||0)+'" oninput="calc()"></td>'+
@@ -280,7 +287,9 @@ function searchProd(){
 function pick(i){var p=CAT[i];if(!p)return;addRow(p.n,1,'No',p.p);var b=document.getElementById('sres');b.innerHTML='<div class="item" style="color:#0e7d52">✓ Added: '+esc(p.n)+'. Aur search karo ya close karo.</div>';document.getElementById('psearch').value='';}
 
 /* preview */
-function showPreview(){var ta=document.getElementById('terms');ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';document.body.classList.add('preview');window.scrollTo(0,0);}
+function syncPrint(){document.querySelectorAll('.pw').forEach(function(inp){var pv=inp.nextElementSibling;if(pv&&pv.classList.contains('pv'))pv.textContent=inp.value||'';});}
+window.onbeforeprint=syncPrint;
+function showPreview(){syncPrint();var ta=document.getElementById('terms');ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';document.body.classList.add('preview');window.scrollTo(0,0);}
 function closePreview(){document.body.classList.remove('preview');document.getElementById('terms').style.height='';}
 
 /* build text + html */
