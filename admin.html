@@ -1,102 +1,119 @@
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Admin Tools — WTPESTORE</title>
-<meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMwQjJBNEEiLz48cGF0aCBkPSJNMzIgMTBDMzIgMTAgMTYgMzAgMTYgNDJhMTYgMTYgMCAwIDAgMzIgMEM0OCAzMCAzMiAxMCAzMiAxMFoiIGZpbGw9IiM3ZmYwZmYiLz48L3N2Zz4=">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="robots" content="noindex">
+<title>Settings — WTPeSTORE Admin</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTQiIGZpbGw9IiMxOWMzN2QiLz48cGF0aCBkPSJNMzIgMTBDMzIgMTAgMTYgMzAgMTYgNDJhMTYgMTYgMCAwIDAgMzIgMEM0OCAzMCAzMiAxMCAzMiAxMFoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0B2A4A;--navy2:#0e4d6b;--aqua:#7ff0ff;--orange:#ff9900;--border:#d5d9d9;--muted:#565959}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',Arial,sans-serif;background:#eef1f3;color:#0f1111;min-height:100vh}
-.top{background:var(--navy);color:#fff;padding:16px 0}
-.wrap{max-width:880px;margin:0 auto;padding:0 16px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
-.logo i{color:var(--aqua);font-style:normal}
-.logo small{display:block;font-size:10px;font-weight:500;color:#bcdff0}
-.hero{margin:26px 0 18px}
-.hero h1{font-size:23px;color:var(--navy);font-weight:800}
-.hero p{color:var(--muted);font-size:13.5px;margin-top:4px}
-.lock{font-size:12px;color:#8a6d00;background:#fff7e0;border:1px solid #ffe6a3;border-radius:8px;padding:8px 12px;margin-bottom:18px;display:inline-block}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px;transition:.15s;position:relative;overflow:hidden}
-.card:hover{box-shadow:0 10px 26px rgba(11,42,74,.14);transform:translateY(-3px);border-color:#bcd9e8}
-.card .ic{width:46px;height:46px;border-radius:11px;background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:center;font-size:22px}
-.card h3{font-size:16px;color:var(--navy);font-weight:800}
-.card p{font-size:12.5px;color:var(--muted);line-height:1.5}
-.card .go{margin-top:auto;font-size:12.5px;font-weight:700;color:var(--orange)}
-.card.soon{opacity:.6}
-.card.soon .go{color:var(--muted)}
-.foot{margin:30px 0 20px;text-align:center;font-size:12px;color:var(--muted)}
-.foot a{color:var(--navy);font-weight:600;text-decoration:none}
-</style>
-</head>
-<body>
-<div class="top"><div class="wrap">
-  <div class="logo">💧 <span>WTP<i>e</i>STORE <small>Admin Tools — powered by Aqua Filtration System</small></span></div>
+:root{--navy:#0B2A4A;--green:#19c37d;--teal:#0aa2c0;--orange:#ff9900;--bg:#eef2f5;--card:#fff;--border:#d5d9d9;--muted:#5b6b76}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',Arial,sans-serif;background:var(--bg);color:#0f1111}
+header{background:var(--navy);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+header .l{font-weight:800;font-size:17px}header .l i{color:var(--green);font-style:normal}header .l u{color:var(--orange);text-decoration:none}
+header a{margin-left:auto;color:#cfe0ea;font-size:13px;font-weight:600}
+.wrap{max-width:640px;margin:20px auto;padding:0 14px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px}
+h1{font-size:19px;color:var(--navy);margin-bottom:4px}.sub{font-size:13px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+h3{font-size:13px;color:var(--navy);margin:16px 0 4px;border-top:1px solid #eef2f5;padding-top:14px}
+h3:first-of-type{border-top:none;padding-top:0}
+label{display:block;font-size:12px;font-weight:700;color:#334;margin:10px 0 4px}
+input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;background:#fcfdfe}
+input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
+.hint{font-size:11px;color:var(--muted);margin-top:3px}
+.btn{background:var(--green);color:#fff;border:none;padding:13px 20px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;width:100%;margin-top:18px}
+.btn:hover{background:#15a86b}.btn.sec{background:#fff;color:var(--navy);border:1.5px solid var(--border);margin-top:10px}
+.msg{margin-top:14px;padding:11px 14px;border-radius:9px;font-size:13px;font-weight:600;display:none}
+.msg.ok{background:#e7f8f0;color:#0e7d52;border:1px solid #b6e6d1;display:block}
+.note{background:#fff8e6;border:1px solid #ffe0a3;border-radius:9px;padding:11px 13px;font-size:12px;color:#8a5a00;line-height:1.5;margin-top:8px}
+#gate{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:50}
+#gate .g{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
+#gate h2{color:var(--navy);font-size:18px;margin-bottom:6px}#gate p{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+#gate input{text-align:center;font-size:20px;letter-spacing:6px}
+#gate button{margin-top:12px;width:100%;background:var(--green);color:#fff;border:none;padding:12px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer}
+</style></head><body>
+
+<div id="gate"><div class="g">
+<div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Enter PIN to open Settings</p>
+<input id="pin" type="password" inputmode="numeric" placeholder="••••" onkeydown="if(event.key==='Enter')unlock()">
+<button onclick="unlock()">Unlock</button>
+<div id="pinerr" style="color:#b3261e;font-size:12.5px;margin-top:8px;display:none">Wrong PIN</div>
 </div></div>
 
-<div class="wrap">
-  <div class="hero">
-    <h1>Admin Tools</h1>
-    <p>Yeh page sirf aapke (admin) ke liye hai. Yahin se quotation aur proforma invoice banao.</p>
-  </div>
-  <div class="lock">🔒 Yeh page customer menu me nahi hai — sirf aapke paas iska link hai. Ise bookmark kar lo.</div>
+<header><span class="l">💧 WTP<i>e</i><u>STORE</u> Admin</span><a href="/admin.html">← Admin Hub</a></header>
 
-  <div class="grid">
-    <a class="card" href="quotation.html">
-      <div class="ic">📄</div>
-      <h3>Quotation</h3>
-      <p>Customer ko bhejne ke liye GST quotation banao — CGST/SGST/IGST, freight, terms, UPI QR, signature sab editable.</p>
-      <span class="go">Open Quotation →</span>
-    </a>
+<div class="wrap"><div class="card">
+<h1>⚙️ Settings — ek jagah sab</h1>
+<div class="sub">Yahan se saari admin cheezein set karo. Baaki saare admin pages yahin se padh lenge — har file alag kholne ki zaroorat nahi.</div>
 
-    <a class="card" href="proforma-invoice.html">
-      <div class="ic">🧾</div>
-      <h3>Proforma Invoice</h3>
-      <p>PI banao — Ship To, PO ref, Place of Supply, declaration ke saath. Quotation jaise saare features.</p>
-      <span class="go">Open Proforma Invoice →</span>
-    </a>
+<h3>🔑 Admin PIN</h3>
+<label>Admin PIN (all admin pages)</label>
+<input id="s_pin" placeholder="e.g. 2289">
+<div class="hint">Yeh PIN sab admin pages kholne ke liye. (OTP se badalna ho to "Change PIN" page use karo.)</div>
 
-    <a class="card" href="admin-add-product.html">
-      <div class="ic">➕</div>
-      <h3>Add Product</h3>
-      <p>Naya product seedhe price list me add karo — image, description, rate, make. Google Sheet aur website dono me aa jaayega.</p>
-      <span class="go">Open Add Product →</span>
-    </a>
+<h3>📊 Products Google Sheet</h3>
+<label>Published CSV URL</label>
+<input id="s_csv" placeholder="https://docs.google.com/.../pub?output=csv">
+<div class="hint">Isse product search & category dropdown load hote hain. (Pehle se bhara hai — sheet badle to hi change karein.)</div>
 
-    <a class="card" href="admin-quick-quote.html">
-      <div class="ic">⚡</div>
-      <h3>Quick Quotation</h3>
-      <p>Product click karke turant quotation banao, terms edit karo, preview dekho, aur Email/WhatsApp se customer ko bhejo.</p>
-      <span class="go">Open Quick Quotation →</span>
-    </a>
+<h3>➕ Add Product (Apps Script)</h3>
+<label>Apps Script /exec URL</label>
+<input id="s_addurl" placeholder="https://script.google.com/macros/s/.../exec">
+<label>Secret</label>
+<input id="s_addsec" placeholder="wtp-add-2026">
 
-    <a class="card" href="admin-add-blog.html">
-      <div class="ic">📝</div>
-      <h3>Create Blog</h3>
-      <p>Photo ke saath naya blog banao — form bharo, ready page download karo, GitHub par upload.</p>
-      <span class="go">Open Create Blog →</span>
-    </a>
+<h3>📤 Email Quotation (Apps Script)</h3>
+<label>Apps Script /exec URL</label>
+<input id="s_quoteurl" placeholder="https://script.google.com/macros/s/.../exec">
+<label>Secret</label>
+<input id="s_quotesec" placeholder="wtp-quote-2026">
 
-    <a class="card" href="admin-change-pin.html">
-      <div class="ic">🔑</div>
-      <h3>Change PIN (OTP)</h3>
-      <p>Admin PIN badlo — OTP mobile/email par aayega, phir naya PIN set karo.</p>
-      <span class="go">Change PIN →</span>
-    </a>
+<h3>🔐 OTP — PIN Change (Apps Script)</h3>
+<label>Apps Script /exec URL</label>
+<input id="s_otpurl" placeholder="https://script.google.com/macros/s/.../exec">
+<label>Secret</label>
+<input id="s_otpsec" placeholder="wtp-otp-2026">
 
-    <a class="card" href="/" >
-      <div class="ic">🛒</div>
-      <h3>View Store</h3>
-      <p>Apni WTPESTORE website kholo — products, pages aur enquiries.</p>
-      <span class="go">Open Store →</span>
-    </a>
-  </div>
+<button class="btn" onclick="saveAll()">💾 Save Settings</button>
+<button class="btn sec" onclick="resetDefaults()">↺ Reset to defaults</button>
+<div class="msg" id="msg"></div>
 
-  <div class="foot">
-    WTPESTORE — powered by Aqua Filtration System · Faridabad ·
-    <a href="https://www.wtpestore.co.in">www.wtpestore.co.in</a>
-  </div>
-</div>
+<div class="note"><b>Dhyaan do:</b> Settings isi browser/device me save hoti hain (localStorage). Agar aap doosre laptop/phone se admin use karo, to wahan bhi ek baar yeh Settings bharni hongi. Isliye admin hamesha ek hi device se use karna aasaan rahega.</div>
+</div></div>
+
+<script>
+var DEF_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv";
+function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
+var ADMIN_PIN=cfg('wtpe_admin_pin','2289');
+function unlock(){if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';load();}else{document.getElementById('pinerr').style.display='block';}}
+
+function load(){
+  document.getElementById('s_pin').value=cfg('wtpe_admin_pin','2289');
+  document.getElementById('s_csv').value=cfg('wtpe_csv_url',DEF_CSV);
+  document.getElementById('s_addurl').value=cfg('wtpe_addproduct_url','');
+  document.getElementById('s_addsec').value=cfg('wtpe_addproduct_secret','wtp-add-2026');
+  document.getElementById('s_quoteurl').value=cfg('wtpe_quote_url','');
+  document.getElementById('s_quotesec').value=cfg('wtpe_quote_secret','wtp-quote-2026');
+  document.getElementById('s_otpurl').value=cfg('wtpe_otp_url','');
+  document.getElementById('s_otpsec').value=cfg('wtpe_otp_secret','wtp-otp-2026');
+}
+function setLS(k,v){try{if(v&&v.trim()!=='')localStorage.setItem(k,v.trim());else localStorage.removeItem(k);}catch(e){}}
+function saveAll(){
+  var pin=document.getElementById('s_pin').value.trim();
+  if(pin.length<4){msg('PIN kam se kam 4 digit ka ho.','err');return;}
+  setLS('wtpe_admin_pin',pin);
+  setLS('wtpe_csv_url',document.getElementById('s_csv').value);
+  setLS('wtpe_addproduct_url',document.getElementById('s_addurl').value);
+  setLS('wtpe_addproduct_secret',document.getElementById('s_addsec').value);
+  setLS('wtpe_quote_url',document.getElementById('s_quoteurl').value);
+  setLS('wtpe_quote_secret',document.getElementById('s_quotesec').value);
+  setLS('wtpe_otp_url',document.getElementById('s_otpurl').value);
+  setLS('wtpe_otp_secret',document.getElementById('s_otpsec').value);
+  msg('✅ Settings save ho gayi! Ab saare admin pages inhi settings se chalenge.','ok');
+}
+function resetDefaults(){
+  if(!confirm('Sab settings default par le aayein? (Apps Script URLs khali ho jaayenge)'))return;
+  ['wtpe_csv_url','wtpe_addproduct_url','wtpe_addproduct_secret','wtpe_quote_url','wtpe_quote_secret','wtpe_otp_url','wtpe_otp_secret'].forEach(function(k){try{localStorage.removeItem(k);}catch(e){}});
+  load();msg('Defaults restore ho gaye (PIN waisa hi raha).','ok');
+}
+function msg(t,c){var m=document.getElementById('msg');m.className='msg '+(c||'ok');m.textContent=t;}
+</script>
 </body></html>
