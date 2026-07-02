@@ -80,7 +80,7 @@ input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
 </div></div>
 
 <script>
-var DEF_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv";
+var DEF_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
 function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
 var ADMIN_PIN=cfg('wtpe_admin_pin','2289');
 function unlock(){if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';load();}else{document.getElementById('pinerr').style.display='block';}}

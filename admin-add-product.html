@@ -124,7 +124,7 @@ function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:
 var ADMIN_PIN = cfg('wtpe_admin_pin','2289');
 var APPS_SCRIPT_URL = cfg('wtpe_addproduct_url','https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec');
 var SECRET = cfg('wtpe_addproduct_secret','wtp-add-2026');
-var PRODUCTS_CSV_URL = cfg('wtpe_csv_url','https://docs.google.com/spreadsheets/d/e/2PACX-1vTriqShY3OhAZDVCVblFVTM02HjCZrkOz4mgx0xhzHLaWmsrVxkefO1WxeMPOUn5A/pub?output=csv');
+var PRODUCTS_CSV_URL = cfg('wtpe_csv_url','https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv');
 
 function unlock(){
   if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';loadCategories();}
