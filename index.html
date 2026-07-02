@@ -234,7 +234,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 /* CATEGORIES */
 .hp-cats{background:linear-gradient(180deg,#fff,#f4f9fb)}
 .hp-cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:34px}
-.hp-cat{background:#fff;border:1px solid #e6edf1;border-radius:16px;padding:0;overflow:hidden;cursor:pointer;text-align:center;display:flex;flex-direction:column;transition:transform .16s,box-shadow .16s,border-color .16s;font-family:inherit}
+.hp-cat{background:#fff;border:1px solid #e6edf1;border-radius:16px;padding:0;overflow:hidden;cursor:pointer;text-align:center;display:flex;flex-direction:column;transition:transform .16s,box-shadow .16s,border-color .16s;font-family:inherit;text-decoration:none;color:inherit}
 .hp-cat:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(11,42,74,.12);border-color:var(--aqua)}
 .hp-cat-img{width:100%;aspect-ratio:1/1;background:#0B2A4A;overflow:hidden;display:block}.hp-cat-img img{width:100%;height:100%;object-fit:cover;display:block}
 .hp-cat-n{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.25;padding:10px 8px 2px}
@@ -642,7 +642,7 @@ function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function boxIcon(){return '<svg viewBox="0 0 24 24" fill="none"><path d="M3 8l9-5 9 5v8l-9 5-9-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 8l9 5 9-5M12 13v8" stroke="currentColor" stroke-width="1.5"/></svg>';}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(t._);t._=setTimeout(function(){t.style.display='none';},2200);}
 
-function cats(){var seen=[],o=[];STORE_DATA.forEach(function(p){if(seen.indexOf(p.c)<0){seen.push(p.c);o.push(p.c);}});return o.sort();}
+function cats(){var EX=["EUREKA FORBES WATER SOFTENER","ZERO SCALE WATER SOFTENER"];var seen=[],o=[];STORE_DATA.forEach(function(p){if(EX.indexOf((p.c||'').toUpperCase())>-1)return;if(seen.indexOf(p.c)<0){seen.push(p.c);o.push(p.c);}});return o.sort();}
 function catCount(c){return STORE_DATA.filter(function(p){return p.c===c;}).length;}
 
 function buildSide(){
@@ -917,7 +917,10 @@ function hpCatCards(){
   var cs=(typeof cats==='function')?cats():[];
   return cs.map(function(c){return {c:c,n:(typeof catCount==='function')?catCount(c):0};})
     .sort(function(a,b){return b.n-a.n;})
-    .map(function(o){return '<button class="hp-cat" onclick="openFolder('+JSON.stringify(o.c).replace(/"/g,'&quot;')+')"><span class="hp-cat-img"><img loading="lazy" src="'+catImage(o.c)+'" alt="'+esc(o.c)+'"></span><span class="hp-cat-n">'+esc(o.c)+'</span><span class="hp-cat-ct">'+o.n+' items</span></button>';}).join('');
+    .map(function(o){return '<button class="hp-cat" onclick="openFolder('+JSON.stringify(o.c).replace(/"/g,'&quot;')+')"><span class="hp-cat-img"><img loading="lazy" src="'+catImage(o.c)+'" alt="'+esc(o.c)+'"></span><span class="hp-cat-n">'+esc(o.c)+'</span><span class="hp-cat-ct">'+o.n+' items</span></button>';}).join('')
+    + '<a class="hp-cat" href="/eureka-forbes-water-softener.html"><span class="hp-cat-img" style="display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#e8f5ff,#d3ecfa)">💧</span><span class="hp-cat-n">Eureka Forbes Water Softener</span><span class="hp-cat-ct">Authorized Distributor →</span></a>'
+    + '<a class="hp-cat" href="/zero-scale-water-softener.html"><span class="hp-cat-img" style="display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#eafaf1,#d3f2e2)">💧</span><span class="hp-cat-n">Zero Scale Water Softener</span><span class="hp-cat-ct">View range →</span></a>'
+    + '<a class="hp-cat" href="/more-products.html"><span class="hp-cat-img" style="display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#fff4e0,#ffe6bf)">★</span><span class="hp-cat-n">More Products &amp; New Arrivals</span><span class="hp-cat-ct">Latest additions →</span></a>';
 }
 function _ic(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>';}
 
