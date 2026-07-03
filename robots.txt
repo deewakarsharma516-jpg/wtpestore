@@ -1,3 +1,12 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /admin-add-product.html
+Disallow: /admin-add-blog.html
+Disallow: /admin-quick-quote.html
+Disallow: /admin-change-pin.html
+Disallow: /admin-settings.html
+Disallow: /quotation.html
+Disallow: /proforma-invoice.html
+Disallow: /blog-post-template.html
 Sitemap: https://www.wtpestore.co.in/sitemap.xml
