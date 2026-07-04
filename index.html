@@ -740,8 +740,15 @@ var ZINTENT=[
   {k:['test kit','sdi','hardness kit','test'], t:['TEST']},
   {k:['carbon','acf'], t:['CARBON']}
 ];
+var ZHINDI=[[/डोज़?िंग|डोजिंग|dozing/g,'dosing'],[/पंप|पम्प/g,'pump'],[/मेम्?ब्रेन|झिल्ली/g,'membrane'],[/वेसल|वेस्सल/g,'vessel'],[/सॉफ़?्टनर|सॉफ्टनर|softner/g,'softener'],[/रोटामीटर/g,'rotameter'],[/फ्लो\s*मीटर|फ्लोमीटर/g,'flow meter'],[/वाल्?व/g,'valve'],[/फ़?िल्टर/g,'filter'],[/कार्ट्रिज|कार्टरिज/g,'cartridge'],[/यूवी|यू\.?वी\.?/g,'uv'],[/क्लोरीन/g,'chlorine'],[/एंटीस्केलेंट|एंटीस्केलैंट|antiscalent/g,'antiscalant'],[/प्रेशर|दाब/g,'pressure'],[/गेज|गेज़/g,'gauge'],[/हाउसिंग/g,'housing'],[/स्विच/g,'switch'],[/मीटर/g,'meter'],[/टीडीएस/g,'tds'],[/पानी|पाणी/g,'water'],[/प्लांट|प्लान्ट/g,'plant'],[/आर\.?ओ\.?|आरओ/g,'ro'],[/डी\.?एम\.?|डीएम/g,'dm'],[/एफ\.?आर\.?पी\.?|एफआरपी/g,'frp'],[/यू\.?एफ\.?|यूएफ/g,'uf'],[/सोलेनॉ?इड|सोलेनोइड/g,'solenoid'],[/लेवल/g,'level'],[/कंट्रोलर|कन्ट्रोलर/g,'controller'],[/पैनल/g,'panel'],[/मल्टीपोर्ट|मल्टिपोर्ट/g,'multiport'],[/पूल|स्विमिंग/g,'pool'],[/लाइट|लाईट/g,'light'],[/टेस्ट\s*किट/g,'test kit'],[/हार्डनेस|कठोरता/g,'hardness'],[/टर्बिडिटी|गंदलापन/g,'turbidity'],[/पी\.?एच\.?|पीएच/g,'ph'],[/कंडक्टिविटी/g,'conductivity'],[/डिस्पें?सर/g,'dispenser'],[/एटीएम/g,'atm'],[/केमिकल|रसायन/g,'chemical'],[/स्केल|परत/g,'scale'],[/कपलिंग/g,'coupling'],[/डिस्क|स्क्रीन/g,'disc screen'],[/नोज़?ल|नोजल/g,'nozzle']];
+function zHi2En(q){ZHINDI.forEach(function(p){q=q.replace(p[0],p[1]);});
+  q=q.replace(/([0-9.]+)\s*बार/g,'$1 bar');
+  /* bar -> kg/cm2 hint: 3.5 bar tak = 4kg pump */
+  var bm=q.match(/([0-9.]+)\s*bar/); if(bm && parseFloat(bm[1])<=4) q+=' 4kg';
+  q=q.replace(/डोजिंग|dosing/g,'dose dosing');
+  return q;}
 function lookup(q){
-  q=(q||'').toLowerCase();
+  q=zHi2En(q||'').toLowerCase();
   var sq=squish(q);
   var toks=q.split(/[^a-z0-9.]+/).filter(function(x){return x.length>=2 && ZSTOP.indexOf(x)<0;});
   if(!toks.length && sq.length<2) return [];
@@ -811,6 +818,7 @@ function zSys(m){
   +"\n- RO plant size: daily zaroorat (litre/din) ÷ chalne ke ghante = LPH. (Jaise 5000 L/din, 10 ghante = 500 LPH plant)."
   +"\n- Antiscalant dosing: 3-4 ppm feed water me. Dose (ml/hr) ≈ Feed LPH × 3.5 ÷ 1000 × (1000÷solution %). Simple bolo: 1000 LPH plant ≈ 3.5 ml/hr pure antiscalant."
   +"\n- Softener size: Hardness (ppm) × daily litre ÷ 1000 = grains-type hisaab; seedha bolo: hardness aur daily use batao, main resin litre suggest karti hoon (approx: daily litre × hardness ÷ 55000 = resin litre, min 25L)."
+  +"\n- Pressure conversion: 1 bar = 1.02 kg/cm2. EDOSE pumps 4 kg/cm2 (approx 3.9 bar) tak ke hain — matlab 3.5 bar ya kam ki requirement ke liye 4Kg/cm2 wala EDOSE model bilkul sahi hai. Customer bar me bole to kg/cm2 wale card se hi recommend karo, mat bolo ki available nahi hai."
   +"\n- Hamesha bolo: final sizing ke liye free consultation — WhatsApp 9899193589."
   +"\n\nQUOTATION FLOW: Customer ko product pasand aaye to poochho 'Kitni quantity chahiye?' Quantity mil jaye to bolo: price card par **Quote** button dabayein — usme quantity daal ke turant GST quotation banega jo WhatsApp/email ho sakta hai. Ya seedha number de dein, team bhej degi."
   +"\n\nCONTACT: 9910646950, 9910646957, 0129-4340856. WhatsApp 9899193589. Email info@aquafiltrationsystem.in. GSTIN 06DMUPS2289L1ZZ."
