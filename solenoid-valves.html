@@ -10,6 +10,11 @@ gtag('config', 'G-3XGD177T0C');
 
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Solenoid Valves (SS304, 15NB to 50NB) for Water Plants | WTPESTORE</title>
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
 <meta name="description" content="Brass &amp; SS304 pilot/diaphragm operated solenoid valves 15NB–50NB (NC) at best price. Supplier in Faridabad. GST invoice. WhatsApp 9899193589.">
 <link rel="canonical" href="https://www.wtpestore.co.in/solenoid-valves.html">
 <meta name="theme-color" content="#0B2A4A">
@@ -277,4 +282,35 @@ function submitEnquiry(){
   .catch(function(){res.style.color='#c0392b';res.innerHTML='Network issue. Kripya WhatsApp <b>9899193589</b> par message karein.';});
 }
 </script>
+
+<!-- WTP Share Button -->
+<style>
+.wtp-share-fab{position:fixed;right:20px;bottom:88px;z-index:899;width:52px;height:52px;border-radius:50%;background:#0b2545;color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 16px rgba(0,0,0,.28);cursor:pointer;transition:transform .15s}
+.wtp-share-fab:hover{transform:scale(1.08)}
+.wtp-share-menu{position:fixed;right:20px;bottom:150px;z-index:899;background:#fff;border-radius:12px;box-shadow:0 10px 34px rgba(0,0,0,.25);padding:8px;display:none;flex-direction:column;gap:4px;min-width:170px}
+.wtp-share-menu a,.wtp-share-menu button{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#0f1111;text-decoration:none;border:none;background:none;cursor:pointer;font-family:inherit;text-align:left;width:100%}
+.wtp-share-menu a:hover,.wtp-share-menu button:hover{background:#f1f5f9}
+</style>
+<button class="wtp-share-fab" onclick="wtpShare()" aria-label="Share this page" title="Share">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+</button>
+<div class="wtp-share-menu" id="wtpShareMenu">
+<a id="wtpShWA" target="_blank" rel="noopener">🟢 WhatsApp</a>
+<a id="wtpShFB" target="_blank" rel="noopener">🔵 Facebook</a>
+<button onclick="wtpCopyLink()">🔗 Copy link</button>
+</div>
+<script>
+function wtpShare(){var u=location.href,t=document.title;
+if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return;}
+var m=document.getElementById('wtpShareMenu');
+document.getElementById('wtpShWA').href='https://wa.me/?text='+encodeURIComponent(t+'\n'+u);
+document.getElementById('wtpShFB').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(u);
+m.style.display=(m.style.display==='flex')?'none':'flex';}
+function wtpCopyLink(){var u=location.href;
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){alert('Link copy ho gaya!')});}
+else{var i=document.createElement('input');i.value=u;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i);alert('Link copy ho gaya!');}
+document.getElementById('wtpShareMenu').style.display='none';}
+document.addEventListener('click',function(e){var m=document.getElementById('wtpShareMenu');if(m&&m.style.display==='flex'&&!e.target.closest('.wtp-share-menu')&&!e.target.closest('.wtp-share-fab')){m.style.display='none';}});
+</script>
+
 </body></html>

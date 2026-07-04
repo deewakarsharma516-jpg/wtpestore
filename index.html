@@ -800,7 +800,38 @@ function openQuote(name,price){_qi={name:name,price:price};lastProduct=name;docu
 function closeQuote(){document.getElementById('qov').classList.remove('open');}
 function genQuote(){var qty=parseInt(document.getElementById('qQty').value)||1,rate=parseFloat(document.getElementById('qRate').value)||0,gst=parseFloat(document.getElementById('qGst').value)||0;var sub=qty*rate,ga=Math.round(sub*gst/100),tot=sub+ga;var qno='WTP/Q/'+Date.now().toString().slice(-6),dt=new Date().toLocaleDateString('en-IN');var nm=document.getElementById('qName').value||'Valued Customer',comp=document.getElementById('qComp').value,city=document.getElementById('qCity').value;
 document.getElementById('quoteOut').innerHTML='<div class="qpaper" id="qpaper"><div class="qp-top"><div><h2>WTPE<span>STORE</span></h2><div class="sub">'+COMPANY.sub+'<br>'+COMPANY.addr+'<br>'+COMPANY.ph+'<br>'+COMPANY.email+'<br>GSTIN: '+COMPANY.gstin+'</div></div><div class="qp-meta"><b>QUOTATION</b><br>No: '+qno+'<br>Date: '+dt+'<br>Valid: 15 days</div></div><div style="font-size:12.5px;margin-bottom:8px"><b>To:</b> '+esc(nm)+(comp?', '+esc(comp):'')+(city?'<br>'+esc(city):'')+'</div><table class="qp-table"><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody><tr><td>1</td><td>'+esc(_qi.name)+'</td><td>'+qty+'</td><td>'+rupee(rate)+'</td><td>'+rupee(sub)+'</td></tr></tbody></table><div class="qp-tot">Subtotal: '+rupee(sub)+'<br>GST @'+gst+'%: '+rupee(ga)+'<br><b>Grand Total: '+rupee(tot)+'</b></div><div class="qp-words"><b>In words:</b> Rupees '+numWords(tot)+' Only</div><div class="qp-terms"><b>Terms:</b> Prices Ex-Faridabad. GST as above. Freight extra at actual. Delivery subject to stock. Payment as agreed. Computer-generated quotation by '+COMPANY.name+'.</div></div>';}
-function quotePrint(){var w=window.open('','_blank');w.document.write('<html><head><title>Quotation</title><style>body{font-family:Inter,Arial,sans-serif;padding:24px}h2{margin:0}.qp-table{width:100%;border-collapse:collapse;margin:12px 0}.qp-table th{background:#f0f2f2;text-align:left;padding:8px}.qp-table td{padding:8px;border-bottom:1px solid #eee}.qp-tot{text-align:right;line-height:1.9}.qp-words{background:#f0f7f4;padding:9px 12px;border-radius:6px;margin-top:8px}.qp-terms{font-size:11px;color:#666;margin-top:14px;border-top:1px dashed #ccc;padding-top:10px}.qp-top{display:flex;justify-content:space-between;border-bottom:2px solid #232f3e;padding-bottom:12px}.qp-meta{text-align:right;font-size:12px}</style></head><body>'+document.getElementById('qpaper').innerHTML+'</body></html>');w.document.close();setTimeout(function(){w.print();},300);}
+function quotePrint(){var w=window.open('','_blank');w.document.write('<html><head><title>Quotation</title><style>body{font-family:Inter,Arial,sans-serif;padding:24px}h2{margin:0}.qp-table{width:100%;border-collapse:collapse;margin:12px 0}.qp-table th{background:#f0f2f2;text-align:left;padding:8px}.qp-table td{padding:8px;border-bottom:1px solid #eee}.qp-tot{text-align:right;line-height:1.9}.qp-words{background:#f0f7f4;padding:9px 12px;border-radius:6px;margin-top:8px}.qp-terms{font-size:11px;color:#666;margin-top:14px;border-top:1px dashed #ccc;padding-top:10px}.qp-top{display:flex;justify-content:space-between;border-bottom:2px solid #232f3e;padding-bottom:12px}.qp-meta{text-align:right;font-size:12px}</style></head><body>'+document.getElementById('qpaper').innerHTML+'
+<!-- WTP Share Button -->
+<style>
+.wtp-share-fab{position:fixed;right:20px;bottom:88px;z-index:899;width:52px;height:52px;border-radius:50%;background:#0b2545;color:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 16px rgba(0,0,0,.28);cursor:pointer;transition:transform .15s}
+.wtp-share-fab:hover{transform:scale(1.08)}
+.wtp-share-menu{position:fixed;right:20px;bottom:150px;z-index:899;background:#fff;border-radius:12px;box-shadow:0 10px 34px rgba(0,0,0,.25);padding:8px;display:none;flex-direction:column;gap:4px;min-width:170px}
+.wtp-share-menu a,.wtp-share-menu button{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#0f1111;text-decoration:none;border:none;background:none;cursor:pointer;font-family:inherit;text-align:left;width:100%}
+.wtp-share-menu a:hover,.wtp-share-menu button:hover{background:#f1f5f9}
+</style>
+<button class="wtp-share-fab" onclick="wtpShare()" aria-label="Share this page" title="Share">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+</button>
+<div class="wtp-share-menu" id="wtpShareMenu">
+<a id="wtpShWA" target="_blank" rel="noopener">🟢 WhatsApp</a>
+<a id="wtpShFB" target="_blank" rel="noopener">🔵 Facebook</a>
+<button onclick="wtpCopyLink()">🔗 Copy link</button>
+</div>
+<script>
+function wtpShare(){var u=location.href,t=document.title;
+if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return;}
+var m=document.getElementById('wtpShareMenu');
+document.getElementById('wtpShWA').href='https://wa.me/?text='+encodeURIComponent(t+'\n'+u);
+document.getElementById('wtpShFB').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(u);
+m.style.display=(m.style.display==='flex')?'none':'flex';}
+function wtpCopyLink(){var u=location.href;
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){alert('Link copy ho gaya!')});}
+else{var i=document.createElement('input');i.value=u;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i);alert('Link copy ho gaya!');}
+document.getElementById('wtpShareMenu').style.display='none';}
+document.addEventListener('click',function(e){var m=document.getElementById('wtpShareMenu');if(m&&m.style.display==='flex'&&!e.target.closest('.wtp-share-menu')&&!e.target.closest('.wtp-share-fab')){m.style.display='none';}});
+</script>
+
+</body></html>');w.document.close();setTimeout(function(){w.print();},300);}
 function quoteWA(){var qty=parseInt(document.getElementById('qQty').value)||1,rate=parseFloat(document.getElementById('qRate').value)||0,gst=parseFloat(document.getElementById('qGst').value)||0;var sub=qty*rate,tot=sub+Math.round(sub*gst/100);var msg='*WTPESTORE Quotation*%0A%0AProduct: '+encodeURIComponent(_qi.name)+'%0AQty: '+qty+'%0ARate: '+rupee(rate)+'%0ASubtotal: '+rupee(sub)+'%0AGST @'+gst+'%25%0A*Total: '+rupee(tot)+'*%0A%0AName: '+encodeURIComponent(document.getElementById('qName').value||'')+'%0ACity: '+encodeURIComponent(document.getElementById('qCity').value||'')+'%0A%0APlease confirm.';window.open('https://wa.me/'+WA_NUM+'?text='+msg,'_blank');}
 
 /* ===== Lead (1 min) ===== */
