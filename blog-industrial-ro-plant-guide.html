@@ -196,13 +196,14 @@ function googleTranslateElementInit(){new google.translate.TranslateElement({pag
 <div class="wtp-share-menu" id="wtpShareMenu">
 <a id="wtpShWA" target="_blank" rel="noopener">🟢 WhatsApp</a>
 <a id="wtpShFB" target="_blank" rel="noopener">🔵 Facebook</a>
+<a href="https://wa.me/?text=WTPESTORE%20%E2%80%94%20Water%20Treatment%20Products%20Online%20Store%3A%20https%3A%2F%2Fwww.wtpestore.co.in" target="_blank" rel="noopener">🌐 Share Website</a>
 <button onclick="wtpCopyLink()">🔗 Copy link</button>
 </div>
 <script>
 function wtpShare(){var u=location.href,t=document.title;
-if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});return;}
+if(navigator.share){navigator.share({title:t,text:t+' — ',url:u}).catch(function(){});return;}
 var m=document.getElementById('wtpShareMenu');
-document.getElementById('wtpShWA').href='https://wa.me/?text='+encodeURIComponent(t+'\n'+u);
+document.getElementById('wtpShWA').href='https://wa.me/?text='+encodeURIComponent(t+' — '+u);
 document.getElementById('wtpShFB').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(u);
 m.style.display=(m.style.display==='flex')?'none':'flex';}
 function wtpCopyLink(){var u=location.href;
