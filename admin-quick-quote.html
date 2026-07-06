@@ -294,14 +294,17 @@ function closePreview(){document.body.classList.remove('preview');document.getEl
 
 /* build text + html */
 function lineItems(){var rows=document.querySelectorAll('#rows tr'),L=[];rows.forEach(function(tr,i){var d=tr.querySelector('.desc').value;if(!d)return;var q=num(tr.querySelector('.qty').value),r=num(tr.querySelector('.rate').value),dp=num(tr.querySelector('.disc').value);L.push({i:i+1,d:d,q:q,r:r,dp:dp,g:q*r});});return L;}
-function totalsText(){var dr=document.getElementById('row-disc');return {sub:document.getElementById('subtotal').textContent,disc:(dr.style.display!=='none')?document.getElementById('disctot').textContent:'',tax:document.getElementById('taxable').textContent,grand:document.getElementById('grand').textContent};}
+function totalsText(){var dr=document.getElementById('row-disc');
+  var g=(gstType==='intra')?('CGST @'+document.getElementById('cgstp').value+'%: '+document.getElementById('cgst').textContent+'\nSGST @'+document.getElementById('sgstp').value+'%: '+document.getElementById('sgst').textContent):('IGST @'+document.getElementById('igstp').value+'%: '+document.getElementById('igst').textContent);
+  var gh=(gstType==='intra')?('CGST @'+document.getElementById('cgstp').value+'%: '+document.getElementById('cgst').textContent+'<br>SGST @'+document.getElementById('sgstp').value+'%: '+document.getElementById('sgst').textContent):('IGST @'+document.getElementById('igstp').value+'%: '+document.getElementById('igst').textContent);
+  return {sub:document.getElementById('subtotal').textContent,disc:(dr.style.display!=='none')?document.getElementById('disctot').textContent:'',tax:document.getElementById('taxable').textContent,gst:g,gstHtml:gh,grand:document.getElementById('grand').textContent};}
 
 function sendWA(){
   reserveNo();
   var L=lineItems(),t=totalsText();
   var msg='*WTPESTORE — Quotation*%0A'+val('qno')+' | '+val('qdate')+'%0A'+(val('cname')?('To: '+val('cname')+'%0A'):'')+'%0A'+
     encodeURIComponent(L.map(function(x){return x.i+'. '+x.d+' — Qty '+x.q+' @ '+rupee(x.r)+(x.dp>0?(' (-'+x.dp+'%)'):'')+' = '+rupee(x.g);}).join('\n'))+'%0A%0A'+
-    'Sub Total: '+t.sub+'%0A'+(t.disc?('Discount: '+t.disc+'%0A'):'')+'Taxable: '+t.tax+'%0A*Grand Total: '+t.grand+'*%0A%0A'+
+    'Sub Total: '+t.sub+'%0A'+(t.disc?('Discount: '+t.disc+'%0A'):'')+'Taxable: '+t.tax+'%0A'+encodeURIComponent(t.gst)+'%0A*Grand Total: '+t.grand+'*%0A%0A'+
     encodeURIComponent(val('terms'))+'%0A%0APowered by Aqua Filtration System, Faridabad';
   var ph=(val('cphone')||'').replace(/[^0-9]/g,'');if(ph.length===10)ph='91'+ph;
   window.open('https://wa.me/'+(ph||'')+'?text='+msg,'_blank');
@@ -317,7 +320,7 @@ function buildEmailHTML(){
     '<p>Dear '+esc(val('cname')||'Sir/Madam')+',<br>Please find our quotation below:</p>'+
     '<table cellpadding="7" cellspacing="0" border="1" style="border-collapse:collapse;width:100%;font-size:13px">'+
     '<tr style="background:#0B2A4A;color:#fff"><th>#</th><th align="left">Description</th><th>Qty</th><th>Rate</th><th>Disc</th><th>Amount</th></tr>'+rows+'</table>'+
-    '<p style="text-align:right;font-size:14px;margin:10px 0">Sub Total: '+t.sub+'<br>'+(t.disc?('Discount: '+t.disc+'<br>'):'')+'Taxable: '+t.tax+'<br><b style="color:#0B2A4A">Grand Total (incl. GST): '+t.grand+'</b></p>'+
+    '<p style="text-align:right;font-size:14px;margin:10px 0">Sub Total: '+t.sub+'<br>'+(t.disc?('Discount: '+t.disc+'<br>'):'')+'Taxable: '+t.tax+'<br>'+t.gstHtml+'<br><b style="color:#0B2A4A">Grand Total (incl. GST): '+t.grand+'</b></p>'+
     '<div style="font-size:12px;background:#f5f8fa;border-radius:8px;padding:12px"><b>Terms &amp; Conditions:</b><br>'+terms+'</div>'+
     '<hr style="border:none;border-top:1px solid #ddd;margin:14px 0"><div style="font-size:12px;color:#555">WTPESTORE — Aqua Filtration System, Faridabad<br>📞 9910646950, 9910646957, 9599895683 &nbsp;|&nbsp; 💬 WhatsApp 9899193589 &nbsp;|&nbsp; ✉ info@aquafiltrationsystem.in &nbsp;|&nbsp; www.wtpestore.co.in</div></div>';
 }
