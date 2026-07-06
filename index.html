@@ -845,7 +845,7 @@ function zSend(){var inp=document.getElementById('zin');var msg=(inp.value||'').
   /* Zara lead capture: message me 10-digit number mila to lead save karo */
   try{var zph=(msg.replace(/[^0-9]/g,'').match(/[6-9][0-9]{9}/)||[])[0];
   if(zph&&!zLeadDone){zLeadDone=true;
-    var zlead={token:'WTP2025AFS',number:zph,name:'',search:'Zara Chat',product:((matches[0]&&matches[0].n)||lastProduct||zHist.slice(-3).map(function(h){return h.role==='user'?h.content:''}).join(' ').trim().slice(0,90)||'Zara enquiry'),time:new Date().toLocaleString('en-IN'),page:location.href+' (Zara Chat)'};
+    var zlead={token:'WTP2025AFS',number:zph,name:'',search:'Zara Chat',product:((matches[0]&&matches[0].n)||lastProduct||zHist.slice(-3).map(function(h){return h.role==='user'?h.content:''}).join(' ').trim().slice(0,90)||'Zara enquiry'),time:new Date().toLocaleString('en-IN'),page:location.href+' (Zara Chat)',link:((matches[0]&&matches[0].n)?location.origin+'/?p='+pSlug(matches[0].n):(lastProduct?location.origin+'/?p='+pSlug(lastProduct):location.href))};
     var zurl=cfg('lead','')||DEFAULT_LEAD;
     if(zurl){try{fetch(zurl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(zlead)});}catch(e){}}
     zAdd('bot','Dhanyavaad! 🙏 Aapka number humari team ko mil gaya — jaldi hi WhatsApp par exact quotation aayega. Tab tak aur kuch poochna ho to batayein.');
@@ -867,7 +867,7 @@ function quoteWA(){var qty=parseInt(document.getElementById('qQty').value)||1,ra
 function showLead(){if(leadShown||document.getElementById('aov').classList.contains('open'))return;leadShown=true;document.getElementById('leadCtx').innerHTML='You viewed: <b>'+esc(lastSearch||lastProduct||'water treatment products')+'</b>';document.getElementById('lov').classList.add('open');}
 function closeLead(){document.getElementById('lov').classList.remove('open');}
 function submitLead(){var no=(document.getElementById('leadNo').value||'').replace(/[^0-9]/g,'');if(no.length<10){alert('Sahi 10-digit WhatsApp number daalein');return;}
-  var lead={token:'WTP2025AFS',number:no,name:document.getElementById('leadName').value||'',search:lastSearch||'',product:lastProduct||'',time:new Date().toLocaleString('en-IN'),page:location.href};
+  var lead={token:'WTP2025AFS',number:no,name:document.getElementById('leadName').value||'',search:lastSearch||'',product:lastProduct||'',time:new Date().toLocaleString('en-IN'),page:location.href,link:(lastProduct?location.origin+'/?p='+pSlug(lastProduct):location.href)};
   var url=cfg('lead','')||DEFAULT_LEAD;if(url){try{fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(lead)});}catch(e){}}
   closeLead();toast('Dhanyavaad! Hum jaldi sampark karenge.');
   window.open('https://wa.me/'+WA_NUM+'?text='+('Namaste WTPESTORE!%0AQuotation chahiye.%0AProduct/Search: '+encodeURIComponent(lead.product||lead.search)+'%0AName: '+encodeURIComponent(lead.name)+'%0AMy number: '+no),'_blank');}
