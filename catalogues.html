@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Product Catalogues — Download PDF | WTPESTORE</title>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-3XGD177T0C');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Download product catalogues (PDF) — Zero Scale water softeners & plants, Eureka Forbes, EDOSE dosing pumps, Aster flow meters, FRP vessels, UV systems & more. WTPESTORE Faridabad.">
+<link rel="canonical" href="https://www.wtpestore.co.in/catalogues.html">
+<meta property="og:title" content="Product Catalogues — Download PDF | WTPESTORE">
+<meta property="og:description" content="Zero Scale, Eureka Forbes, EDOSE, Aster, QFLO — sab brands ke catalogues ek jagah. Free PDF download.">
+<meta property="og:url" content="https://www.wtpestore.co.in/catalogues.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{--navy:#0b2545;--orange:#f97316;--border:#e5e7eb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#f6f7f9;color:#0f1111}
+header{background:var(--navy);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header a{color:#fff;text-decoration:none;font-weight:800;font-size:20px}
+header a small{display:block;font-size:11px;font-weight:500;color:#9fb3c8}
+header .back{margin-left:auto;font-size:13.5px;font-weight:600;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+.wrap{max-width:1050px;margin:0 auto;padding:26px 16px 60px}
+h1{font-size:26px;color:var(--navy);margin-bottom:6px}
+.sub{color:#555;font-size:14.5px;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:box-shadow .15s}
+.card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.card .ic{width:44px;height:44px;border-radius:10px;background:#eef4ff;display:flex;align-items:center;justify-content:center;font-size:22px}
+.card .nm{font-weight:700;font-size:14.5px;line-height:1.35;flex:1}
+.card a.dl{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:700;text-decoration:none}
+.card a.dl:hover{background:#123a6b}
+.card .soon{display:inline-flex;align-items:center;justify-content:center;padding:9px 12px;border-radius:9px;background:#f1f5f9;color:#8a94a6;font-size:13px;font-weight:700}
+.sect{margin:34px 0 12px;font-size:17px;font-weight:800;color:var(--navy);border-left:4px solid var(--orange);padding-left:10px}
+.note{background:#fff8ee;border:1px solid #ffd9a8;border-radius:10px;padding:12px 14px;font-size:13.5px;color:#7a4a00;margin-top:26px}
+footer{max-width:1050px;margin:0 auto;padding:18px 16px;color:#777;font-size:13px;text-align:center}
+footer a{color:var(--navy)}
+</style>
+</head>
+<body>
+<header>
+  <a href="/">WTP<span style="color:var(--orange)">e</span>STORE<small>powered by Aqua Filtration System</small></a>
+  <a class="back" href="/">← Store par wapas</a>
+</header>
+<div class="wrap">
+  <h1>📚 Product Catalogues</h1>
+  <p class="sub">Sab brands ke catalogues ek jagah — click karke PDF download karein. Enquiry ke liye WhatsApp <b>9899193589</b>.</p>
+
+  <div class="sect">Brand & Product Catalogues</div>
+  <div class="grid" id="mainGrid"><p style="color:#888">Loading…</p></div>
+
+  <div id="sheetSect" style="display:none">
+    <div class="sect">Product-wise Datasheets (Store se)</div>
+    <div class="grid" id="sheetGrid"></div>
+  </div>
+
+  <div class="note">📞 Kisi catalogue me apna product nahi mil raha? Call/WhatsApp karein <b>9910646950</b> — hum turant PDF ya quotation bhej denge.</div>
+</div>
+<footer>© Aqua Filtration System · WTPESTORE · <a href="/">wtpestore.co.in</a></footer>
+
+<script>
+var FALLBACK=[{"n":"Zero Scale Water Softener","f":"zero-scale-water-softener.pdf"},{"n":"Eureka Forbes Water Softener","f":"eureka-forbes.pdf"}];
+var PRODUCTS_CSV="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+function card(name, url, available){
+  return '<div class="card"><div class="ic">📄</div><div class="nm">'+esc(name)+'</div>'+
+    (available===false
+      ? '<span class="soon">Jald aa raha hai</span>'
+      : '<a class="dl" href="'+esc(url)+'" target="_blank" rel="noopener">📥 Download PDF</a>')+
+    '</div>';
+}
+
+/* Main list: catalogues/list.json se */
+fetch('catalogues/list.json',{cache:'no-store'}).then(function(r){return r.json();}).catch(function(){return FALLBACK;})
+.then(function(list){
+  var host=document.getElementById('mainGrid');
+  host.innerHTML=list.map(function(c){return card(c.n,'catalogues/'+c.f,true);}).join('');
+  /* availability check: jo PDF abhi upload nahi hua use "Jald aa raha hai" dikhao */
+  list.forEach(function(c,idx){
+    fetch('catalogues/'+c.f,{method:'HEAD'}).then(function(r){
+      if(!r.ok){var cards=host.querySelectorAll('.card');if(cards[idx])cards[idx].outerHTML=card(c.n,'',false);}
+    }).catch(function(){});
+  });
+});
+
+/* Sheet ke Catalogue column se product-wise datasheets (category-wise unique) */
+function parseCSVline(line){var out=[],cur='',q=false;for(var i=0;i<line.length;i++){var ch=line[i];
+  if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;}
+  else if(ch===','&&!q){out.push(cur);cur='';}else cur+=ch;}out.push(cur);return out;}
+fetch(PRODUCTS_CSV).then(function(r){return r.text();}).then(function(t){
+  var rows=t.split(/\r?\n/).map(parseCSVline);
+  if(rows.length<2)return;
+  var hdr=rows[0].map(function(h){return String(h).trim().toLowerCase();});
+  function ix(){for(var a=0;a<arguments.length;a++){var k=hdr.indexOf(arguments[a]);if(k>-1)return k;}return -1;}
+  var ci=ix('category'),ni=ix('product','name'),pf=ix('pdf','catalogue','catalog','brochure','datasheet');
+  if(pf<0)return;
+  var seen={},items=[];
+  for(var i=1;i<rows.length;i++){
+    var link=(rows[i][pf]||'').trim();if(!link)continue;
+    if(!/^https?:\/\//i.test(link)){if(/^(www\.|drive\.google|docs\.google|[a-z0-9-]+\.[a-z]{2,})/i.test(link))link='https://'+link.replace(/^\/*/,'');else continue;}
+    var label=((rows[i][ci]||'').trim())||((rows[i][ni]||'').trim());
+    var key=label+'|'+link;if(seen[key])continue;seen[key]=1;
+    items.push({n:label,u:link});
+    if(items.length>=40)break;
+  }
+  if(items.length){
+    document.getElementById('sheetSect').style.display='block';
+    document.getElementById('sheetGrid').innerHTML=items.map(function(c){return card(c.n,c.u,true);}).join('');
+  }
+}).catch(function(){});
+</script>
+</body>
+</html>
