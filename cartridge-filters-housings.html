@@ -159,8 +159,11 @@ var WA="919899193589", CALL="919910646957", BRAND="WTPESTORE";
 var SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
 var CATS=["CARTRIDGE FILTERS", "CARTRIDGE HOUSINGS"];
 var SECT={"CARTRIDGE FILTERS": "Cartridge Filters (PP Spun & Micron)", "CARTRIDGE HOUSINGS": "Filter Housings (Slim, Jumbo, SS)"};
-var DATA=SEED.map(function(x,i){return {id:i,c:x.c,n:x.n,p:x.p,img:x.img||"",spec:x.spec||"",model:x.model||""};});
+var DATA=SEED.map(function(x,i){return {id:i,c:x.c,n:x.n,p:x.p,img:x.img||"",spec:x.spec||"",model:x.model||"",pdf:x.pdf||""};});
 
+function zsPdf(p){var u=(p.pdf||'').trim();
+  if(u&&!/^https?:\/\//i.test(u)){ if(/^(www\.|drive\.google|docs\.google|[a-z0-9-]+\.[a-z]{2,})/i.test(u)) u='https://'+u.replace(/^\/*/,''); else u=''; }
+  return u||(typeof PAGE_PDF!=='undefined'?PAGE_PDF:'');}
 function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function slug(n){return (''+(n||'')).toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);}
@@ -185,7 +188,7 @@ function ph(c){var lbl=(BRAND||'WTPESTORE').toUpperCase().slice(0,16);
 function pImg(p){return p.img?esc(p.img):ph(p.c);}
 
 function card(p){var md=p.model||model(p.n);
-  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+rupee(p.p)+'<small> +GST</small></div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button></div></div></div>';}
+  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+rupee(p.p)+'<small> +GST</small></div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Catalogue PDF" style="margin-left:6px;font-size:17px;text-decoration:none">📄</a>':'')+'</div></div></div>';}
 
 function render(){
   var host=document.getElementById('products'); if(!host)return;
@@ -206,7 +209,7 @@ function render(){
 function openP(id){var p=DATA[id];if(!p)return;var md=p.model||model(p.n);
   var waMsg='Hi WTPESTORE, I want a quotation for: '+p.n+(BRAND&&BRAND!=='WTPESTORE'?(' ('+BRAND+')'):'')+'. Please share best price.';
   var m=document.getElementById('modal');
-  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+(md?'<div class="m-spec"><b>Model:</b> '+esc(md)+(p.spec?('<br><b>Spec:</b> '+esc(p.spec)):'')+'</div>':(p.spec?'<div class="m-spec"><b>Spec:</b> '+esc(p.spec)+'</div>':''))+'<div class="m-price">'+rupee(p.p)+' <small>+ GST</small></div><div class="m-avail" style="font-size:12px;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:8px;padding:7px 10px;margin:8px 0;line-height:1.5">⚠️ Order se pehle <b>availability</b> ke liye hamare executive se baat karein — 📞 <a href="tel:+919899193589" style="color:#8a5a00;font-weight:700">9899193589</a></div><div class="m-btns"><button class="m-cl" style="background:#0e4d6b;flex:1;min-width:120px" onclick="openEnquiry((document.querySelector(\'#modal h2\')||{}).textContent)">📝 Enquiry</button><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
+  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+(md?'<div class="m-spec"><b>Model:</b> '+esc(md)+(p.spec?('<br><b>Spec:</b> '+esc(p.spec)):'')+'</div>':(p.spec?'<div class="m-spec"><b>Spec:</b> '+esc(p.spec)+'</div>':''))+'<div class="m-price">'+rupee(p.p)+' <small>+ GST</small></div>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;margin:10px 0 2px;padding:9px 16px;background:#0b2545;color:#fff;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none">📄 Download Catalogue (PDF)</a>':'')+'<div class="m-avail" style="font-size:12px;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:8px;padding:7px 10px;margin:8px 0;line-height:1.5">⚠️ Order se pehle <b>availability</b> ke liye hamare executive se baat karein — 📞 <a href="tel:+919899193589" style="color:#8a5a00;font-weight:700">9899193589</a></div><div class="m-btns"><button class="m-cl" style="background:#0e4d6b;flex:1;min-width:120px" onclick="openEnquiry((document.querySelector(\'#modal h2\')||{}).textContent)">📝 Enquiry</button><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
   document.getElementById('ov').classList.add('open');document.body.style.overflow='hidden';
   try{history.replaceState(null,'','?p='+slug(p.n));}catch(e){}pSEO(p,md);}
 function closeM(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';try{history.replaceState(null,'',location.pathname);}catch(e){}}
@@ -221,14 +224,14 @@ function loadSheet(){if(!CATS.length)return;
     var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim();});if(rows.length<2)return;
     var h=rows[0].map(function(x){return (x||'').toLowerCase();});
     function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
-    var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mo=ix('model'),sp=ix('specification','spec'),ii=ix('image','photo');
+    var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mo=ix('model'),sp=ix('specification','spec'),ii=ix('image','photo'),pf=ix('pdf','catalogue','catalog','brochure','datasheet');
     if(ci<0||ni<0)return;
     var CU=CATS.map(function(x){return x.toUpperCase();});
     var fresh=[];
     for(var i=1;i<rows.length;i++){var r=rows[i];var cat=(r[ci]||'').trim();
       if(CATS.indexOf(cat)<0 && CU.indexOf(cat.toUpperCase())<0)continue;
       var nm=(r[ni]||'').trim();if(nm.length<2)continue;
-      fresh.push({id:fresh.length,c:cat,n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,img:(ii>-1?(r[ii]||'').trim():''),spec:(sp>-1?(r[sp]||'').trim():''),model:(mo>-1?(r[mo]||'').trim():'')});}
+      fresh.push({id:fresh.length,c:cat,n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,img:(ii>-1?(r[ii]||'').trim():''),spec:(sp>-1?(r[sp]||'').trim():''),model:(mo>-1?(r[mo]||'').trim():''),pdf:(pf>-1?(r[pf]||'').trim():'')});}
     if(fresh.length){DATA=fresh;render();routeFromURL();}
   }).catch(function(){});}
 
