@@ -243,6 +243,11 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 /* CATEGORIES */
 .hp-cats{background:linear-gradient(180deg,#fff,#f4f9fb)}
 .hp-cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:34px}
+.hp-cat-rotor{margin-top:34px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.hp-cat-rotor-track{display:flex;gap:14px;width:max-content;animation:catrotor 70s linear infinite}
+.hp-cat-rotor:hover .hp-cat-rotor-track{animation-play-state:paused}
+@keyframes catrotor{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hp-cat-rotor .hp-cat{width:190px;flex-shrink:0}
 .hp-cat{background:#fff;border:1px solid #e6edf1;border-radius:16px;padding:0;overflow:hidden;cursor:pointer;text-align:center;display:flex;flex-direction:column;transition:transform .16s,box-shadow .16s,border-color .16s;font-family:inherit;text-decoration:none;color:inherit}
 .hp-cat:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(11,42,74,.12);border-color:var(--aqua)}
 .hp-cat-img{width:100%;aspect-ratio:1/1;background:#0B2A4A;overflow:hidden;display:block}.hp-cat-img img{width:100%;height:100%;object-fit:cover;display:block}
@@ -367,6 +372,19 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 @media(max-width:760px){.hp-about-grid{grid-template-columns:1fr;gap:24px}}
 
 /* clients / industries moving strip */
+.hp-fp{background:linear-gradient(135deg,#08233d,#0e4d6b);padding:22px 0;overflow:hidden;margin:0 0 8px}
+.hp-fp .fph{text-align:center;font-family:'Sora',sans-serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#7ff0ff;margin-bottom:16px}
+.hp-fp-wrap{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.hp-fp-track{display:flex;gap:16px;width:max-content;animation:fpscroll 60s linear infinite}
+.hp-fp:hover .hp-fp-track{animation-play-state:paused}
+@keyframes fpscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.fp-card{width:190px;background:#fff;border-radius:13px;overflow:hidden;cursor:pointer;flex-shrink:0;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:transform .15s}
+.fp-card:hover{transform:translateY(-4px)}
+.fp-card .fp-img{height:130px;background:#f4f7fa;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.fp-card .fp-img img{width:100%;height:100%;object-fit:cover}
+.fp-card .fp-b{padding:10px 12px}
+.fp-card .fp-n{font-size:12.5px;font-weight:600;color:#0f1111;line-height:1.3;height:33px;overflow:hidden}
+.fp-card .fp-p{font-size:14px;font-weight:800;color:#0e4d6b;margin-top:5px}
 .hp-marquee{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:26px 0;overflow:hidden}
 .hp-marquee .mqh{text-align:center;font-family:'Sora',sans-serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
 .mq-wrap{overflow:hidden;width:100%}
@@ -1027,6 +1045,22 @@ function hpBrands(){
   var one=WTP_BRANDS.map(function(b){return '<div class="mq-item">'+(b.l?'<img src="'+b.l+'" alt="'+(b.n||'')+'" onerror="this.style.display=\'none\'">':'')+(b.n?'<span>'+b.n+'</span>':'')+'</div>';}).join('');
   return '<section class="hp-marquee hp-brands"><div class="mqh">Our Brands</div><div class="mq-wrap"><div class="mq-track">'+one+one+'</div></div></section>';
 }
+function fpStrip(){
+  var all=(typeof STORE_DATA!=='undefined'?STORE_DATA:[]);
+  if(!all.length)return '';
+  /* pehle image wale products, phir baaki — taaki strip hamesha bhara dikhe */
+  var withImg=all.filter(function(p){return p.img&&p.n;});
+  var list=withImg.length>=6?withImg.slice(0,26):all.slice(0,26);
+  function sl(n){return (typeof pSlug==='function')?pSlug(n):encodeURIComponent(n);}
+  function box(){return '<div style="font-size:30px;color:#0e4d6b;opacity:.5">📦</div>';}
+  var one=list.map(function(p){
+    var im=p.img?'<img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.n)+'">':box();
+    return '<div class="fp-card" onclick="location.href=\'/?p=\'+encodeURIComponent(sl(p.n))">'+
+      '<div class="fp-img">'+im+'</div>'+
+      '<div class="fp-b"><div class="fp-n">'+esc(p.n)+'</div>'+(p.p?'<div class="fp-p">₹'+(p.p).toLocaleString('en-IN')+'</div>':'')+'</div></div>';
+  }).join('');
+  return '<section class="hp-fp"><div class="fph">● Featured Products · Live Prices</div><div class="hp-fp-wrap"><div class="hp-fp-track">'+one+one+'</div></div></section>';
+}
 function buildHomepage(){
   var hero=document.getElementById('hero'); if(!hero) return;
   var totalP=STORE_DATA.length, totalC=((typeof cats==='function')?cats():[]).length||32;
@@ -1086,6 +1120,7 @@ function buildHomepage(){
    '<div class="hp-pt"><b>GST Invoice</b><span>GSTIN 06DMUPS2289L1ZZ</span></div>'+
    '</div></div></section>';
   H+=hpBrands();
+  H+='<section class="hp-fp"><div class="fph">● Shop by Category</div><div class="hp-fp-wrap"><div class="hp-cat-rotor-track">'+hpCatCards()+hpCatCards()+'</div></div></section>';
   H+='<section id="hpShop" class="hp hp-cats hp-sec"><div class="hp-inner hp-reveal"><span class="hp-eyebrow">Explore</span><h2 class="hp-h">Shop by Category</h2><p class="hp-sub">From flow meters to complete treatment plants — find exactly what your water needs.</p><div class="hp-cat-grid">'+hpCatCards()+'</div></div></section>';
   /* FEATURED */
   H+=hpRailsSection();
