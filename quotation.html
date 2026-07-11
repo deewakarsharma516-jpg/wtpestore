@@ -342,7 +342,7 @@ function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t
 function loadCat(){
   fetch(SHEET).then(function(r){return r.text();}).then(function(t){
     var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim();});if(rows.length<2)return;
-    var h=rows[0].map(function(x){return (x||'').toLowerCase();});
+    var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim().toLowerCase();});
     function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
     var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),hi=ix('hsn');
     if(ni<0)return;

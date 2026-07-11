@@ -1271,7 +1271,7 @@ function wtFetchOrders(cb){
   fetch(url).then(function(r){return r.text();}).then(function(t){
     var rows=csvP(t).filter(function(r){return r&&r.join('').trim();});
     if(rows.length<2){cb([]);return;}
-    var h=rows[0].map(function(x){return (x||'').toLowerCase();});
+    var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim().toLowerCase();});
     function col(ns){for(var i=0;i<h.length;i++)for(var j=0;j<ns.length;j++)if(h[i].indexOf(ns[j])>=0)return i;return -1;}
     var ii=col(['order id','orderid','order','id']),ni=col(['customer','name','naam']),pi=col(['phone','number','whatsapp','mobile']),pri=col(['product','item']),ai=col(['amount','total','price']),yi=col(['payment','pay']),si=col(['status']),di=col(['date','time']);
     var out=[];

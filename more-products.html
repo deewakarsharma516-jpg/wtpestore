@@ -227,13 +227,13 @@ function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t
 function loadSheet(){
   fetch(SHEET).then(function(r){return r.text();}).then(function(t){
     var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim();});if(rows.length<2)return;
-    var h=rows[0].map(function(x){return (x||'').toLowerCase();});
+    var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim().toLowerCase();});
     function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
     var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mo=ix('model'),sp=ix('specification','spec'),ii=ix('image','photo'),pf=ix('pdf','catalogue','catalog','brochure','datasheet');
     if(ci<0||ni<0)return;
     var CU=CATS.map(function(x){return x.toUpperCase();});
     var fresh=[];
-    for(var i=1;i<rows.length;i++){var r=rows[i];var cat=(r[ci]||'').trim();
+    for(var i=1;i<rows.length;i++){var r=rows[i];var cat=String(r[ci]||'').replace(/^\uFEFF/,'').replace(/\s+/g,' ').trim();
       if(!cat)continue; if(KNOWN.indexOf(cat.toUpperCase())>-1)continue;
       var nm=(r[ni]||'').trim();if(nm.length<2)continue;
       fresh.push({id:fresh.length,c:cat,n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,img:(ii>-1?(r[ii]||'').trim():''),spec:(sp>-1?(r[sp]||'').trim():''),model:(mo>-1?(r[mo]||'').trim():''),pdf:(pf>-1?(r[pf]||'').trim():'')});}
