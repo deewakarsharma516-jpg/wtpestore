@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Free Plant Design Calculators — RO, Softener, DM, ETP, STP, UF | WTPESTORE</title>
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-3XGD177T0C');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Free water treatment plant design calculators — RO plant sizing (LPH), water softener resin, DM plant, ETP aeration, STP capacity & UF membrane calculator. By WTPESTORE Faridabad.">
+<link rel="canonical" href="https://www.wtpestore.co.in/plant-calculators.html">
+<meta property="og:title" content="Free Plant Design Calculators | WTPESTORE">
+<meta property="og:description" content="RO, Softener, DM, ETP, STP, UF — instant sizing calculators for engineers & contractors. Free.">
+<meta property="og:url" content="https://www.wtpestore.co.in/plant-calculators.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{--navy:#0b2545;--orange:#f97316;--border:#e5e7eb;--green:#0e7a3d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#f6f7f9;color:#0f1111}
+header{background:var(--navy);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header a.logo{color:#fff;text-decoration:none;font-weight:800;font-size:20px}
+header a.logo small{display:block;font-size:11px;font-weight:500;color:#9fb3c8}
+header .back{margin-left:auto;font-size:13.5px;font-weight:600;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px;color:#fff;text-decoration:none}
+.wrap{max-width:1050px;margin:0 auto;padding:26px 16px 60px}
+h1{font-size:25px;color:var(--navy)}
+.sub{color:#555;font-size:14px;margin:6px 0 8px}
+.disc{background:#fff8ee;border:1px solid #ffd9a8;border-radius:10px;padding:10px 14px;font-size:12.5px;color:#7a4a00;margin:12px 0 22px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tab{padding:10px 16px;border-radius:999px;border:1.5px solid var(--border);background:#fff;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
+.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.calc{display:none;background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px}
+.calc.on{display:block}
+.calc h2{font-size:18px;color:var(--navy);margin-bottom:4px}
+.calc .ch{font-size:12.5px;color:#666;margin-bottom:14px}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:14px}
+label{font-size:12.5px;font-weight:600;color:#333;display:block;margin-bottom:4px}
+input,select{width:100%;padding:10px 12px;border:1.5px solid #d5d9d9;border-radius:9px;font-size:14px;font-family:inherit}
+.btn{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:11px 22px;font-weight:800;font-size:14.5px;cursor:pointer;font-family:inherit}
+.res{display:none;margin-top:16px;background:#f0f7ff;border:1.5px solid #bcd9f5;border-radius:12px;padding:16px}
+.res.on{display:block}
+.res h3{font-size:15px;color:var(--navy);margin-bottom:8px}
+.rrow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed #cfe0f0;font-size:13.5px}
+.rrow:last-of-type{border:none}
+.rrow b{color:var(--navy)}
+.wa{display:inline-flex;align-items:center;gap:8px;margin-top:12px;background:#25d366;color:#fff;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13.5px;text-decoration:none}
+.note{font-size:12px;color:#777;margin-top:8px}
+footer{max-width:1050px;margin:0 auto;padding:18px 16px;color:#777;font-size:13px;text-align:center}
+footer a{color:var(--navy)}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="/">WTP<span style="color:var(--orange)">e</span>STORE<small>powered by Aqua Filtration System</small></a>
+  <a class="back" href="/">← Store</a>
+</header>
+<div class="wrap">
+<h1>🧮 Free Plant Design Calculators</h1>
+<p class="sub">Engineers & contractors ke liye — instant sizing. Koi login nahi, bilkul free.</p>
+<div class="disc">⚠️ Yeh calculators <b>approximate/preliminary sizing</b> dete hain (standard thumb-rules par). Final design ke liye water analysis zaroori hai — <b>free consultation: WhatsApp 9899193589</b></div>
+
+<div class="tabs">
+  <button class="tab on" onclick="show('ro',this)">RO Plant</button>
+  <button class="tab" onclick="show('soft',this)">Softener</button>
+  <button class="tab" onclick="show('dm',this)">DM Plant</button>
+  <button class="tab" onclick="show('etp',this)">ETP</button>
+  <button class="tab" onclick="show('stp',this)">STP</button>
+  <button class="tab" onclick="show('uf',this)">UF Plant</button>
+</div>
+
+<!-- ============ RO ============ -->
+<div class="calc on" id="c-ro">
+<h2>RO Plant Sizing Calculator</h2>
+<div class="ch">Daily zaroorat se plant capacity (LPH), feed water aur model suggestion</div>
+<div class="frow">
+  <div><label>Daily treated water requirement (Litre/din)</label><input type="number" id="ro_d" placeholder="e.g. 5000"></div>
+  <div><label>Plant chalne ke ghante/din</label><input type="number" id="ro_h" value="10"></div>
+  <div><label>Feed water TDS (ppm)</label><input type="number" id="ro_tds" placeholder="e.g. 1200"></div>
+</div>
+<button class="btn" onclick="calcRO()">Calculate</button>
+<div class="res" id="r-ro"></div>
+</div>
+
+<!-- ============ SOFTENER ============ -->
+<div class="calc" id="c-soft">
+<h2>Water Softener Sizing Calculator</h2>
+<div class="ch">Hardness aur daily use se resin quantity, salt aur vessel suggestion</div>
+<div class="frow">
+  <div><label>Raw water hardness (ppm as CaCO₃)</label><input type="number" id="s_h" placeholder="e.g. 400"></div>
+  <div><label>Daily water use (Litre/din)</label><input type="number" id="s_d" placeholder="e.g. 5000"></div>
+  <div><label>Regeneration har kitne din me</label><input type="number" id="s_r" value="1"></div>
+</div>
+<button class="btn" onclick="calcSoft()">Calculate</button>
+<div class="res" id="r-soft"></div>
+</div>
+
+<!-- ============ DM ============ -->
+<div class="calc" id="c-dm">
+<h2>DM Plant Sizing Calculator (SAC + SBA)</h2>
+<div class="ch">Feed TDS aur daily volume se resin quantities (two-bed)</div>
+<div class="frow">
+  <div><label>Feed water TDS (ppm)</label><input type="number" id="dm_tds" placeholder="e.g. 800"></div>
+  <div><label>Daily DM water requirement (Litre/din)</label><input type="number" id="dm_d" placeholder="e.g. 3000"></div>
+  <div><label>Regeneration har kitne din me</label><input type="number" id="dm_r" value="1"></div>
+</div>
+<button class="btn" onclick="calcDM()">Calculate</button>
+<div class="res" id="r-dm"></div>
+</div>
+
+<!-- ============ ETP ============ -->
+<div class="calc" id="c-etp">
+<h2>ETP Sizing Calculator (Basic)</h2>
+<div class="ch">Effluent flow aur BOD se tank sizing (equalization, aeration, settling)</div>
+<div class="frow">
+  <div><label>Effluent flow (KLD = m³/din)</label><input type="number" id="e_f" placeholder="e.g. 20"></div>
+  <div><label>Inlet BOD (mg/L)</label><input type="number" id="e_bod" placeholder="e.g. 350"></div>
+</div>
+<button class="btn" onclick="calcETP()">Calculate</button>
+<div class="res" id="r-etp"></div>
+</div>
+
+<!-- ============ STP ============ -->
+<div class="calc" id="c-stp">
+<h2>STP Sizing Calculator (MBBR basis)</h2>
+<div class="ch">Logon ki sankhya ya seedha flow se STP capacity</div>
+<div class="frow">
+  <div><label>Kitne log (residents/staff)</label><input type="number" id="st_p" placeholder="e.g. 200"></div>
+  <div><label>YA seedha flow (KLD) — bharo to yahi chalega</label><input type="number" id="st_f" placeholder="optional"></div>
+</div>
+<button class="btn" onclick="calcSTP()">Calculate</button>
+<div class="res" id="r-stp"></div>
+</div>
+
+<!-- ============ UF ============ -->
+<div class="calc" id="c-uf">
+<h2>UF Plant Sizing Calculator</h2>
+<div class="ch">Required flow se UF membrane modules aur pump sizing</div>
+<div class="frow">
+  <div><label>Required UF output (LPH)</label><input type="number" id="u_f" placeholder="e.g. 2000"></div>
+  <div><label>Membrane size</label><select id="u_m"><option value="300">4046 (~300 LPH/module)</option><option value="2000">8060 (~2000 LPH/module)</option></select></div>
+</div>
+<button class="btn" onclick="calcUF()">Calculate</button>
+<div class="res" id="r-uf"></div>
+</div>
+
+</div>
+<footer>© Aqua Filtration System · WTPESTORE · <a href="/">wtpestore.co.in</a> · <a href="/catalogues.html">Catalogues</a></footer>
+
+<script>
+function show(id,btn){
+  document.querySelectorAll('.calc').forEach(function(c){c.classList.remove('on');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  document.getElementById('c-'+id).classList.add('on'); btn.classList.add('on');
+}
+function fmt(n){return Number(n).toLocaleString('en-IN',{maximumFractionDigits:1});}
+function row(k,v){return '<div class="rrow"><span>'+k+'</span><b>'+v+'</b></div>';}
+function waBtn(txt){
+  var msg='Namaste WTPESTORE! Calculator se sizing nikali hai:\n'+txt+'\nKripya quotation bhejein.';
+  return '<a class="wa" target="_blank" rel="noopener" href="https://wa.me/919899193589?text='+encodeURIComponent(msg)+'">📱 WhatsApp par Quotation lein</a>';
+}
+function out(id,title,rows,wa,note){
+  var el=document.getElementById(id);
+  el.innerHTML='<h3>'+title+'</h3>'+rows+waBtn(wa)+(note?'<div class="note">'+note+'</div>':'');
+  el.classList.add('on');
+}
+
+/* ===== RO ===== */
+function calcRO(){
+  var d=+document.getElementById('ro_d').value||0,h=+document.getElementById('ro_h').value||10,tds=+document.getElementById('ro_tds').value||0;
+  if(!d){alert('Daily requirement bharein');return;}
+  var lph=Math.ceil(d/h*1.2);   /* 20% margin */
+  var rec=tds>2000?0.6:(tds>1000?0.65:0.7);
+  var feed=Math.ceil(lph/rec), rej=feed-lph;
+  var models=[100,200,250,500,1000,2000,3000,5000,10000],m=models.find(function(x){return x>=lph;})||'10000+ (custom)';
+  var rows=row('Required plant capacity (20% margin)',fmt(lph)+' LPH')
+    +row('Suggested model','ZS-RO'+(typeof m==='number'?m:' Custom')+' ('+(typeof m==='number'?m+' LPH':m)+')')
+    +row('Expected recovery @ '+fmt(tds)+' TDS',Math.round(rec*100)+'%')
+    +row('Feed water needed',fmt(feed)+' LPH')
+    +row('Reject water (~)',fmt(rej)+' LPH');
+  out('r-ro','RO Plant Sizing Result',rows,'RO Plant: '+d+' L/day, '+h+' hrs, TDS '+tds+' → '+lph+' LPH (Model ZS-RO'+m+')','Antiscalant dosing (~3.5 ppm) aur pre-treatment (MGF+ACF) recommended. High TDS par recovery kam hoti hai.');
+}
+
+/* ===== SOFTENER ===== */
+function calcSoft(){
+  var hd=+document.getElementById('s_h').value||0,d=+document.getElementById('s_d').value||0,r=+document.getElementById('s_r').value||1;
+  if(!hd||!d){alert('Hardness aur daily use bharein');return;}
+  var resin=Math.max(25,Math.ceil(hd*d*r/55000));  /* 55 g CaCO3 per L resin */
+  var salt=Math.ceil(resin*0.15*10)/10;             /* ~150 g/L */
+  var vessel=resin<=25?'1054':resin<=40?'1354':resin<=60?'1465':resin<=100?'1665':resin<=150?'2160':'2469+';
+  var obr=Math.round(resin*55000/hd);
+  var rows=row('Resin required',fmt(resin)+' Litre')
+    +row('Suggested FRP vessel',vessel)
+    +row('Salt per regeneration (~)',fmt(salt)+' kg')
+    +row('Output between regenerations (OBR)',fmt(obr)+' Litre')
+    +row('Regeneration cycle','Har '+r+' din');
+  out('r-soft','Softener Sizing Result',rows,'Softener: hardness '+hd+' ppm, '+d+' L/day → '+resin+'L resin, vessel '+vessel,'Output hardness <5 ppm maani gayi hai. Iron/turbidity ho to pre-filter zaroori.');
+}
+
+/* ===== DM ===== */
+function calcDM(){
+  var tds=+document.getElementById('dm_tds').value||0,d=+document.getElementById('dm_d').value||0,r=+document.getElementById('dm_r').value||1;
+  if(!tds||!d){alert('TDS aur daily requirement bharein');return;}
+  var load=tds*d*r/1000; /* g/cycle approx as CaCO3 */
+  var sac=Math.max(25,Math.ceil(load/50)); /* 50 g/L SAC */
+  var sba=Math.max(25,Math.ceil(load/35)); /* 35 g/L SBA */
+  var rows=row('Ionic load per cycle (~)',fmt(load)+' g as CaCO₃')
+    +row('SAC (Cation) resin',fmt(sac)+' Litre')
+    +row('SBA (Anion) resin',fmt(sba)+' Litre')
+    +row('Regenerants','HCl (~'+fmt(sac*0.08)+' kg) + NaOH (~'+fmt(sba*0.06)+' kg) per regen')
+    +row('Expected output quality','<10 µS/cm (two-bed); MB polisher se <1 µS/cm');
+  out('r-dm','DM Plant Sizing Result',rows,'DM Plant: TDS '+tds+', '+d+' L/day → SAC '+sac+'L + SBA '+sba+'L','Boiler/process grade ke liye MB (Mixed Bed) polisher add karein.');
+}
+
+/* ===== ETP ===== */
+function calcETP(){
+  var f=+document.getElementById('e_f').value||0,bod=+document.getElementById('e_bod').value||0;
+  if(!f||!bod){alert('Flow aur BOD bharein');return;}
+  var bodkg=f*bod/1000;
+  var eq=Math.ceil(f*10/24*10)/10;       /* 10 hr */
+  var aer=Math.ceil(bodkg/0.4*10)/10;    /* 0.4 kg BOD/m3/day loading */
+  var set=Math.ceil(f/24*2.5*10)/10;     /* 2.5 hr settling */
+  var rows=row('BOD load','~'+fmt(bodkg)+' kg/din')
+    +row('Equalization tank (10 hr)',fmt(eq)+' m³')
+    +row('Aeration tank (@0.4 kg BOD/m³/d)',fmt(aer)+' m³')
+    +row('Settling/clarifier (2.5 hr)',fmt(set)+' m³')
+    +row('Air blower (thumb)','~'+fmt(bodkg*60)+' m³/hr air');
+  out('r-etp','ETP Basic Sizing Result',rows,'ETP: '+f+' KLD, BOD '+bod+' → Aeration '+aer+' m3, EQ '+eq+' m3','COD/oil/pH ke hisab se primary treatment (screening, oil trap, flash mixer) alag se. Yeh sirf biological section ka basic size hai.');
+}
+
+/* ===== STP ===== */
+function calcSTP(){
+  var p=+document.getElementById('st_p').value||0,fd=+document.getElementById('st_f').value||0;
+  var f=fd||Math.ceil(p*135/1000*10)/10;
+  if(!f){alert('Log ya flow bharein');return;}
+  var eq=Math.ceil(f*8/24*10)/10;
+  var aer=Math.ceil(f*7/24*10)/10;   /* 7 hr HRT MBBR */
+  var set=Math.ceil(f/24*2.5*10)/10;
+  var models=[5,10,15,20,25,30,50,75,100,150,200],m=models.find(function(x){return x>=f;})||Math.ceil(f);
+  var rows=row('Design flow',fmt(f)+' KLD'+(p&&!fd?' ('+p+' log × 135 LPD)':''))
+    +row('Suggested STP capacity',fmt(m)+' KLD')
+    +row('Equalization tank (8 hr)',fmt(eq)+' m³')
+    +row('MBBR aeration tank (7 hr HRT)',fmt(aer)+' m³ (media 40–50% fill)')
+    +row('Settling tank (2.5 hr)',fmt(set)+' m³');
+  out('r-stp','STP Sizing Result',rows,'STP: '+(p?p+' persons, ':'')+f+' KLD → '+m+' KLD MBBR plant','Treated water NGT norms ke liye pressure sand filter + ACF + chlorination add hota hai.');
+}
+
+/* ===== UF ===== */
+function calcUF(){
+  var f=+document.getElementById('u_f').value||0,per=+document.getElementById('u_m').value;
+  if(!f){alert('Required LPH bharein');return;}
+  var n=Math.ceil(f/per);
+  var pump=Math.ceil(f*1.25);
+  var rows=row('Membrane modules required',n+' × '+(per==300?'4046':'8060'))
+    +row('Feed pump capacity (25% margin)',fmt(pump)+' LPH')
+    +row('Backwash provision','~2× filtration flux (auto/manual valve)')
+    +row('CIP tank','200–500 L (citric/NaOCl cleaning)');
+  out('r-uf','UF Plant Sizing Result',rows,'UF: '+f+' LPH → '+n+' modules '+(per==300?'4046':'8060'),'Feed turbidity <5 NTU chahiye — zyada ho to pre-filter (MGF/disc filter) lagayein.');
+}
+</script>
+</body>
+</html>
