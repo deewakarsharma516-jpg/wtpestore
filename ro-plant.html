@@ -126,6 +126,7 @@ footer b{color:#fff}
 
 <div class="wrap">
 <nav class="bc"><a href="/">Home</a> › Industrial &amp; Commercial RO Plants</nav>
+<button onclick="wtpSendTo(document.title.split('|')[0].trim(),location.origin+location.pathname)" style="margin:8px 0 0;background:#0b2545;color:#fff;border:none;border-radius:8px;padding:8px 15px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit">📤 Ye page customer ko bhejein</button>
 
 <div class="hero">
 <h1>Industrial & Commercial RO Plants</h1>
@@ -170,27 +171,42 @@ function zsPdf(p){var u=(p.pdf||'').trim();
   if(CAT_PDF[ck])return '/catalogues/'+CAT_PDF[ck];
   return (typeof PAGE_PDF!=='undefined'?PAGE_PDF:'');}
 function specTable(sp,md){
-  sp=String(sp||'').trim(); if(!sp&&!md)return '';
-  var KEYS=['Technical Information','Dimension (HxDxW) cm','Dimension (HxDxW)','Dimension','GeolexTM media (kg)','Geolex media (kg)','Media (kg)','Resin Volume (L)','Resin Volume','Max. Input Flow Rate (LPH)','Max. Input Flow Rate','Input Flow Rate (LPH)','Input Flow Rate','Flow Rate (LPH)','Flow Rate','Max. Input Hardness (ppm)','Max. Input Hardness','Input Hardness (ppm)','Input Hardness','Max. Input TDS (ppm)','Input Working Pressure (kg/cm2)','Input Working Pressure','Working Pressure (kg/cm2)','Working Pressure','Input Working Temperature (°C)','Working Temperature (°C)','Working Temperature','Max. Iron (ppm)','Max. Turbidity (NTU)','Output Between Regeneration (@500 ppm Hardness) (L)','Output Between Regeneration','Rated Power (W)','Rated Power','Salt Consumption Per Regeneration (kg)','Salt Consumption','Salt Storage Capacity (kg)','Salt Storage Capacity','Technology','Regeneration Mode','Regeneration Type','Total Unit Weight (kg)','Unit Weight (kg)','Unit Weight','Voltage','Warranty','MOC','Material','End Connection','Connection','Size','Capacity','Model','Make','Brand','Type','Application','Recommended Use','Raw Water Requirement','Pre-Treatment','High Pressure Pump','Control Panel','Frame / Skid','Frame/Skid','Inlet / Outlet Connection','Power Supply','Membrane','Vessel','Pump','Range','Accuracy','Display','Output','Mounting','Body','Pressure','Temperature','Weight','Length','Diameter'];
-  KEYS=KEYS.slice().sort(function(a,b){return b.length-a.length;});
-  function rxq(x){return x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
-  var rx=new RegExp('('+KEYS.map(rxq).join('|')+')\\s*[:\\-]?\\s*','gi');
-  var parts=[],m,last=null,lastIdx=0;
-  while((m=rx.exec(sp))!==null){
-    if(last!==null)parts.push([last,sp.slice(lastIdx,m.index)]);
-    last=m[0].replace(/[:\-\s]+$/,'').trim(); lastIdx=rx.lastIndex;
+  sp=String(sp||'').replace(/\r/g,'').trim(); if(!sp&&!md)return '';
+  function row(k,v){k=String(k||'').replace(/^[\s:•\-–|]+|[\s:•\-–|]+$/g,'').trim();v=String(v||'').replace(/^[\s:=,\-–|]+|[\s,;|]+$/g,'').trim();
+    if(!k||!v||/^technical information$/i.test(k))return '';
+    if(k.length>60)return ''; return '<tr><td>'+esc(k)+'</td><td>'+esc(v)+'</td></tr>';}
+  var rows=''; if(md)rows+='<tr><td>Model</td><td>'+esc(md)+'</td></tr>';
+  var body='';
+  /* --- 1) Line / | / ; se alag likha ho (RECOMMENDED) --- */
+  var lines=sp.split(/\n|\||;/).map(function(x){return x.trim();}).filter(function(x){return x;});
+  if(lines.length>=2){
+    var ok=0,tmp='';
+    lines.forEach(function(L){var m=L.match(/^([^:=]{2,60})[:=]\s*(.+)$/);
+      if(m){var r=row(m[1],m[2]); if(r){tmp+=r;ok++;}}
+      else{var m2=L.match(/^(.{2,45}?)\s{2,}(.+)$/); if(m2){var r2=row(m2[1],m2[2]); if(r2){tmp+=r2;ok++;}}}});
+    if(ok>=2)body=tmp;
   }
-  if(last!==null)parts.push([last,sp.slice(lastIdx)]);
-  var rows='';
-  if(md)rows+='<tr><td>Model</td><td>'+esc(md)+'</td></tr>';
-  if(parts.length>=2){
-    parts.forEach(function(p){
-      var k=p[0].trim(), v=String(p[1]||'').replace(/^[\s:\-,]+|[\s,;]+$/g,'').trim();
-      if(!v||/^(Technical Information)$/i.test(k))return;
-      rows+='<tr><td>'+esc(k)+'</td><td>'+esc(v)+'</td></tr>';
-    });
+  /* --- 2) Comma se "Key: Value, Key: Value" --- */
+  if(!body&&/:/.test(sp)){
+    var cs=sp.split(/,(?=[^,:]{2,60}\s*:)/),ok2=0,t2='';
+    cs.forEach(function(L){var m=L.trim().match(/^([^:]{2,60}):\s*(.+)$/); if(m){var r=row(m[1],m[2]); if(r){t2+=r;ok2++;}}});
+    if(ok2>=2)body=t2;
   }
-  if(!rows)return sp?'<div class="m-spec"><b>Spec:</b> '+esc(sp)+'</div>':'';
+  /* --- 3) Known keys (purana tarika — "Key Value Key Value") --- */
+  if(!body){
+    var KEYS=['Technical Information','Dimension (HxDxW) cm','Dimension (HxDxW)','Dimension','GeolexTM media (kg)','Media (kg)','Resin Volume (L)','Resin Volume','Max. Input Flow Rate (LPH)','Max. Input Flow Rate','Input Flow Rate (LPH)','Input Flow Rate','Flow Rate (LPH)','Flow Rate','Max. Input Hardness (ppm)','Max. Input Hardness','Input Hardness (ppm)','Input Hardness','Max. Input TDS (ppm)','Input Working Pressure (kg/cm2)','Input Working Pressure','Working Pressure (kg/cm2)','Working Pressure','Input Working Temperature (°C)','Working Temperature (°C)','Working Temperature','Max. Iron (ppm)','Max. Turbidity (NTU)','Output Between Regeneration (@500 ppm Hardness) (L)','Output Between Regeneration','Rated Power (W)','Rated Power','Salt Consumption Per Regeneration (kg)','Salt Consumption','Salt Storage Capacity (kg)','Salt Storage Capacity','Technology','Regeneration Mode','Regeneration Type','Total Unit Weight (kg)','Unit Weight (kg)','Unit Weight','Voltage','Warranty','MOC','Material','Micron Rating','Micron','Thread Size','Thread','End Connection','Connection','Size','Capacity','Model','Make','Brand','Type','Application','Recommended Use','Raw Water Requirement','Pre-Treatment','High Pressure Pump','Control Panel','Frame / Skid','Frame/Skid','Inlet / Outlet Connection','Power Supply','Membrane Type','Membrane','Vessel','Pump','Range','Accuracy','Display','Output','Mounting','Body','Pressure','Temperature','Weight','Length','Diameter','Colour','Color','Finish','Standard','Certification','Country of Origin','Packaging','Quantity per Box'];
+    KEYS=KEYS.slice().sort(function(a,b){return b.length-a.length;});
+    function rxq(x){return x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+    var rx=new RegExp('('+KEYS.map(rxq).join('|')+')\s*[:\-]?\s*','gi');
+    var parts=[],m,last=null,lastIdx=0;
+    while((m=rx.exec(sp))!==null){ if(last!==null)parts.push([last,sp.slice(lastIdx,m.index)]);
+      last=m[0].replace(/[:\-\s]+$/,'').trim(); lastIdx=rx.lastIndex; }
+    if(last!==null)parts.push([last,sp.slice(lastIdx)]);
+    if(parts.length>=2){var t3='';parts.forEach(function(p){t3+=row(p[0],p[1]);});body=t3;}
+  }
+  rows+=body;
+  if(!rows)return sp?'<div class="m-spec pdspec"><b>Spec:</b> '+esc(sp)+'</div>':'';
+  if(!body&&md&&sp)rows+='<tr><td>Specification</td><td>'+esc(sp)+'</td></tr>';
   return '<table class="spec-tbl"><tbody>'+rows+'</tbody></table>';
 }
 function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -217,7 +233,7 @@ function ph(c){var lbl=(BRAND||'WTPESTORE').toUpperCase().slice(0,16);
 function pImg(p){return p.img?esc(p.img):ph(p.c);}
 
 function card(p){var md=p.model||model(p.n);
-  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+rupee(p.p)+'<small> +GST</small></div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Catalogue PDF" style="margin-left:6px;font-size:17px;text-decoration:none">📄</a>':'')+'</div></div></div>';}
+  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+rupee(p.p)+'<small> +GST</small></div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button><button class="pc-q" style="background:#0b2545" onclick="event.stopPropagation();wtpSendTo('+JSON.stringify(p.n).replace(/"/g,'&quot;')+',location.origin+location.pathname+\'?p=\'+slug(p.n))" title="Customer ko bhejein">📤</button>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Catalogue PDF" style="margin-left:6px;font-size:17px;text-decoration:none">📄</a>':'')+'</div></div></div>';}
 
 function render(){
   var host=document.getElementById('products'); if(!host)return;
@@ -347,5 +363,35 @@ if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){alert('
 else{var i=document.createElement('input');i.value=u;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i);alert('Link copy ho gaya!');}
 document.getElementById('wtpShareMenu').style.display='none';}
 document.addEventListener('click',function(e){var m=document.getElementById('wtpShareMenu');if(m&&m.style.display==='flex'&&!e.target.closest('.wtp-share-menu')&&!e.target.closest('.wtp-share-fab')){m.style.display='none';}});
+
+/* ===== Send to Customer (direct WhatsApp) ===== */
+function wtpSendTo(title,url){
+  var old=document.getElementById('wtpSendOv'); if(old)old.remove();
+  var d=document.createElement('div'); d.id='wtpSendOv';
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  d.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;padding:20px;font-family:Inter,system-ui,Arial,sans-serif">'
+   +'<div style="font-size:16px;font-weight:800;color:#0b2545;margin-bottom:4px">📤 Customer ko bhejein</div>'
+   +'<div style="font-size:12.5px;color:#666;margin-bottom:12px;line-height:1.4">'+String(title||'').replace(/[<>]/g,'').slice(0,80)+'</div>'
+   +'<label style="font-size:12.5px;font-weight:600;color:#333">Customer ka WhatsApp number</label>'
+   +'<div style="display:flex;gap:8px;margin:6px 0 14px"><span style="padding:11px 10px;background:#f1f5f9;border-radius:9px;font-size:14px;font-weight:700">+91</span>'
+   +'<input id="wtpSendNo" type="tel" maxlength="10" inputmode="numeric" placeholder="10-digit number" style="flex:1;padding:11px;border:1.5px solid #d5d9d9;border-radius:9px;font-size:15px;font-family:inherit"></div>'
+   +'<div style="display:flex;gap:8px"><button onclick="wtpSendGo()" style="flex:1;background:#25d366;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">💬 WhatsApp par bhejein</button>'
+   +'<button onclick="document.getElementById(\'wtpSendOv\').remove()" style="background:#f1f5f9;border:none;border-radius:10px;padding:12px 14px;cursor:pointer;font-family:inherit">✖</button></div>'
+   +'<div style="font-size:11.5px;color:#888;margin-top:10px">Number daalte hi WhatsApp khulega, message tayaar milega.</div></div>';
+  d.onclick=function(e){if(e.target===d)d.remove();};
+  document.body.appendChild(d);
+  window._wtpSendMsg=String(title||'')+'\n'+url;
+  var inp=document.getElementById('wtpSendNo'); inp.focus();
+  inp.onkeydown=function(e){if(e.key==='Enter')wtpSendGo();};
+}
+function wtpSendGo(){
+  var v=(document.getElementById('wtpSendNo')||{}).value||'';
+  var n=v.replace(/[^0-9]/g,''); if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);
+  if(!/^[6-9][0-9]{9}$/.test(n)){alert('Sahi 10-digit number daalein');return;}
+  var msg='Namaste! 🙏\n'+window._wtpSendMsg+'\n\nWTPESTORE — powered by Aqua Filtration System\nGST bill · Best price · Faridabad\nEnquiry: 9899193589';
+  window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(msg),'_blank');
+  var o=document.getElementById('wtpSendOv'); if(o)o.remove();
+}
+
 </script>
 </body></html>
