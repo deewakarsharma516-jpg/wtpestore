@@ -96,16 +96,27 @@ table.items input.qty,table.items input.rate{text-align:right}
 .upiup{display:inline-block;margin-top:6px;font-size:11px;color:var(--navy);font-weight:700;cursor:pointer;background:#f4f8fb;border:1px solid var(--border);border-radius:6px;padding:5px 10px}
 .signimg{display:block;max-width:170px;max-height:80px;object-fit:contain;margin:8px auto 0}
 @media print{
+  textarea{display:none!important}
+  .pmirror{display:block!important;white-space:pre-wrap;word-break:break-word;font-size:12.5px;line-height:1.65;color:#111;padding:2px 0}
+  .terms,.dfoot,.bankbox,.termsbox,.qphotos{page-break-inside:avoid}
+  .qphotos.hidden{display:none!important}
   body{background:#fff;padding:0}
   .toolbar,.searchbox,.no-print,.delrow,.btn-addrow{display:none!important}
   .doc{box-shadow:none;max-width:100%;padding:6mm 8mm;border-radius:0}
   input,textarea{background:transparent!important}
-  textarea{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;resize:none!important;border:none!important;page-break-inside:avoid}
-  .dfoot,.bankbox,.termsbox{page-break-inside:avoid}
   table.items th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{size:A4;margin:8mm}
 }
 @media(max-width:600px){.doc{padding:18px 14px}.qmeta{text-align:left}.qmeta input{text-align:left}}
+
+.pmirror{display:none}
+textarea{overflow:hidden!important;resize:none!important}
+.qphotos{margin:14px 0}
+.qphotos h4{font-size:13px;color:#0B2A4A;margin-bottom:8px}
+.qphotos .qpgrid{display:flex;gap:10px;flex-wrap:wrap}
+.qphotos .qpitem{position:relative;width:150px}
+.qphotos .qpitem img{width:100%;border:1px solid #e6edf2;border-radius:8px}
+.qphotos .qpx{position:absolute;top:4px;right:4px;background:#fff;border:1px solid #ccc;border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:13px;line-height:1}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#0B2A4A">
@@ -218,6 +229,17 @@ table.items input.qty,table.items input.rate{text-align:right}
     </div>
   </div>
   <div class="words" id="words"></div>
+
+  <div class="qphotos" id="qphotos">
+    <h4>📷 Product Photos <span class="no-print" style="font-weight:400;color:#777;font-size:11.5px">(quotation ke saath jayengi)</span></h4>
+    <div class="no-print" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+      <input type="file" id="qpFile" accept="image/*" multiple style="font-size:12px">
+      <label style="font-size:12.5px;display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="qpShow" checked onchange="qpToggle()"> Photo ke saath bhejein</label>
+      <button class="no-print" onclick="qpClear()" style="border:1px solid #ddd;background:#f8fafc;border-radius:7px;padding:5px 10px;cursor:pointer;font-size:12px;font-family:inherit">Sab hatao</button>
+    </div>
+    <div class="qpgrid" id="qpGrid"></div>
+  </div>
+
 
   <div class="terms scope" id="scopeblock">
     <h3>Scope / Notes</h3>
@@ -495,13 +517,7 @@ function emailQuote(){
 /* init */
 initMeta();addRow();loadCat();calc();
 
-/* ===== Terms/Scope print fix: textarea auto-grow ===== */
-function autoGrow(){try{var ts=document.querySelectorAll('textarea');
-  for(var i=0;i<ts.length;i++){ts[i].style.height='auto';ts[i].style.height=(ts[i].scrollHeight+6)+'px';}}catch(e){}}
-document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA'){e.target.style.height='auto';e.target.style.height=(e.target.scrollHeight+6)+'px';}});
-window.addEventListener('load',function(){setTimeout(autoGrow,400);});
-window.addEventListener('beforeprint',autoGrow);
-(function(){var _p=window.print;window.print=function(){autoGrow();setTimeout(function(){_p.call(window);},60);};})();
+
 
 /* ===== SAVE / LOAD Quotations ===== */
 var QKEY='wtpe_saved_docs';
@@ -514,7 +530,7 @@ function qSnap(){
   if(tb)Array.prototype.forEach.call(tb.querySelectorAll('tr'),function(tr){
     var v=[];Array.prototype.forEach.call(tr.querySelectorAll('input,textarea,select'),function(x){v.push(x.value);});
     if(v.length)rows.push(v);});
-  return {f:f,rows:rows};
+  return {f:f,rows:rows,imgs:qpImgs.slice(0,6)};
 }
 function qSave(){
   var nm=(document.getElementById('cname')||{}).value||'';
@@ -536,6 +552,7 @@ function qRestore(d){
         for(var c=0;c<els.length&&c<d.rows[r].length;c++)els[c].value=d.rows[r][c];}}
     Object.keys(d.f||{}).forEach(function(k){var el=document.getElementById(k);
       if(el&&/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))el.value=d.f[k];});
+    if(d.imgs){qpImgs=d.imgs.slice(0,6);qpRender();}
     if(typeof calc==='function')calc();
     if(typeof renderRows==='function')try{renderRows();}catch(e){}
     setTimeout(autoGrow,150);
@@ -577,5 +594,66 @@ window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtp
   setTimeout(function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();},20000);
 });
 window.addEventListener('appinstalled',function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();});
+
+/* ===== Print mirror: textarea ka poora text print me aaye (scroll ka issue khatam) ===== */
+function buildMirrors(){try{
+  var ts=document.querySelectorAll('textarea');
+  for(var i=0;i<ts.length;i++){
+    var t=ts[i], m=t.nextElementSibling;
+    if(!m||!m.classList||!m.classList.contains('pmirror')){
+      m=document.createElement('div'); m.className='pmirror';
+      t.parentNode.insertBefore(m, t.nextSibling);
+    }
+    m.textContent=t.value||'';
+  }}catch(e){}}
+function autoGrow(){try{var ts=document.querySelectorAll('textarea');
+  for(var i=0;i<ts.length;i++){ts[i].style.height='auto';ts[i].style.height=(ts[i].scrollHeight+6)+'px';}}catch(e){}}
+document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA'){e.target.style.height='auto';e.target.style.height=(e.target.scrollHeight+6)+'px';buildMirrors();}});
+window.addEventListener('load',function(){setTimeout(function(){autoGrow();buildMirrors();},400);});
+window.addEventListener('beforeprint',function(){autoGrow();buildMirrors();});
+
+/* ===== Product Photos (quotation ke saath) ===== */
+var qpImgs=[];
+function qpRender(){
+  var g=document.getElementById('qpGrid'); if(!g)return;
+  g.innerHTML=qpImgs.map(function(src,i){
+    return '<div class="qpitem"><img src="'+src+'" alt="product photo"><button class="qpx no-print" onclick="qpDel('+i+')" title="hatao">✖</button></div>';
+  }).join('');
+  var box=document.getElementById('qphotos');
+  if(box)box.style.display=qpImgs.length?'block':'none';
+}
+function qpDel(i){qpImgs.splice(i,1);qpRender();}
+function qpClear(){qpImgs=[];qpRender();}
+function qpToggle(){
+  var on=(document.getElementById('qpShow')||{}).checked;
+  var box=document.getElementById('qphotos');
+  if(box)box.classList.toggle('hidden',!on);
+}
+function qpCompress(file,cb){
+  var r=new FileReader();
+  r.onload=function(ev){
+    var im=new Image();
+    im.onload=function(){
+      var mx=900, w=im.width, h=im.height;
+      if(w>mx){h=Math.round(h*mx/w);w=mx;}
+      var c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(im,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.72));
+    };
+    im.src=ev.target.result;
+  };
+  r.readAsDataURL(file);
+}
+(function(){
+  var inp=document.getElementById('qpFile'); if(!inp)return;
+  inp.addEventListener('change',function(){
+    var fs=Array.prototype.slice.call(inp.files||[]);
+    fs.slice(0,6).forEach(function(f){qpCompress(f,function(d){if(qpImgs.length<6){qpImgs.push(d);qpRender();}});});
+    inp.value='';
+  });
+  qpRender();
+})();
+
+(function(){var _p=window.print;window.print=function(){autoGrow();buildMirrors();setTimeout(function(){_p.call(window);},80);};})();
 </script>
 </body></html>
