@@ -193,14 +193,19 @@ function calcSoft(){
   if(!hd||!d){alert('Hardness aur daily use bharein');return;}
   var resin=Math.max(25,Math.ceil(hd*d*r/55000));  /* 55 g CaCO3 per L resin */
   var salt=Math.ceil(resin*0.15*10)/10;             /* ~150 g/L */
-  var vessel=resin<=25?'1054':resin<=40?'1354':resin<=60?'1465':resin<=100?'1665':resin<=150?'2160':'2469+';
+  var VES=[['0844',8,44],['1054',10,54],['1354',13,54],['1465',14,65],['1665',16,65],['1865',18,65],['2160',21,60],['2469',24,69],['3072',30,72]];
+  var vessel='3072+',vvol=0,vfill=0;
+  for(var vi=0;vi<VES.length;vi++){
+    var vv=Math.PI*Math.pow(VES[vi][1]*2.54/2,2)*(VES[vi][2]*2.54)/1000;  /* litre */
+    if(resin<=vv*0.6){vessel=VES[vi][0];vvol=Math.round(vv);vfill=Math.round(resin/vv*100);break;}
+  }
   var obr=Math.round(resin*55000/hd);
   var rows=row('Resin required',fmt(resin)+' Litre')
-    +row('Suggested FRP vessel',vessel)
+    +row('Suggested FRP vessel',vessel+(vvol?' ('+vvol+' L vessel, '+vfill+'% resin fill)':''))
     +row('Salt per regeneration (~)',fmt(salt)+' kg')
     +row('Output between regenerations (OBR)',fmt(obr)+' Litre')
     +row('Regeneration cycle','Har '+r+' din');
-  out('r-soft','Softener Sizing Result',rows,'Softener: hardness '+hd+' ppm, '+d+' L/day → '+resin+'L resin, vessel '+vessel,'Output hardness <5 ppm maani gayi hai. Iron/turbidity ho to pre-filter zaroori.');
+  out('r-soft','Softener Sizing Result',rows,'Softener: hardness '+hd+' ppm, '+d+' L/day → '+resin+'L resin, vessel '+vessel,'Vessel selection: resin volume ≤60% of vessel volume (40% freeboard backwash ke liye). Output hardness <5 ppm maani gayi hai.');
 }
 
 /* ===== DM ===== */
