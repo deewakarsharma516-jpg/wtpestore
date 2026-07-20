@@ -793,7 +793,8 @@ function prow(p){
     '<div class="hpc-b">'+(md?'<span class="hpc-md">'+esc(md)+'</span>':'')+
     '<div class="hpc-n">'+nm+'</div>'+
     '<div class="hpc-f"><div class="hpc-p">'+(p.p>0?rupee(p.p):'On request')+(p.p>0?'<small> +GST</small>':'')+'</div>'+
-    '<button class="hpc-q" onclick="event.stopPropagation();waProduct('+nameJS+','+(p.p||0)+')">Get Quote</button></div>'+
+    '<button class="hpc-q" onclick="event.stopPropagation();waProduct('+nameJS+','+(p.p||0)+')">Get Quote</button>'+
+    '<button class="hpc-q" style="background:#0b2545;margin-left:5px;padding-left:9px;padding-right:9px" title="Customer ko bhejein" onclick="event.stopPropagation();wtpSendTo('+nameJS+',\'https://www.wtpestore.co.in/?p='+slug+'\')">\ud83d\udce4</button></div>'+
     '</div></div>';
 }
 function renderList(list){
