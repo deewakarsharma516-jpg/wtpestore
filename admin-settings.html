@@ -29,7 +29,15 @@ input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
 #gate h2{color:var(--navy);font-size:18px;margin-bottom:6px}#gate p{font-size:12.5px;color:var(--muted);margin-bottom:14px}
 #gate input{text-align:center;font-size:20px;letter-spacing:6px}
 #gate button{margin-top:12px;width:100%;background:var(--green);color:#fff;border:none;padding:12px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer}
-</style></head><body>
+</style><link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0B2A4A">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WTPeSTORE">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+</head><body>
 
 <div id="gate"><div class="g">
 <div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Enter PIN to open Settings</p>
@@ -115,5 +123,20 @@ function resetDefaults(){
   load();msg('Defaults restore ho gaye (PIN waisa hi raha).','ok');
 }
 function msg(t,c){var m=document.getElementById('msg');m.className='msg '+(c||'ok');m.textContent=t;}
+</script>
+<script>
+/* PWA: service worker + install button */
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+var wtpInstall=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtpInstall=e;
+  if(document.getElementById('wtpInstallBtn'))return;
+  var b=document.createElement('button');b.id='wtpInstallBtn';
+  b.innerHTML='\u2b07\ufe0f App Install karein';
+  b.style.cssText='position:fixed;left:16px;bottom:16px;z-index:940;background:#0B2A4A;color:#fff;border:none;border-radius:30px;padding:12px 18px;font-size:13.5px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.28);cursor:pointer;font-family:inherit';
+  b.onclick=function(){if(!wtpInstall)return;wtpInstall.prompt();wtpInstall.userChoice.then(function(){b.remove();wtpInstall=null;});};
+  document.body.appendChild(b);
+  setTimeout(function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();},20000);
+});
+window.addEventListener('appinstalled',function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();});
 </script>
 </body></html>

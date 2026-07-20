@@ -88,6 +88,8 @@ body.preview #previewbar{display:flex;position:fixed;top:0;left:0;right:0;z-inde
   body{background:#fff}.toolbar,.searchbox,.msg,.no-print,.delrow,#previewbar{display:none!important}
   .doc{box-shadow:none;border:none;max-width:100%;margin:0;border-radius:0;padding:6mm 8mm}
   input,textarea{background:transparent!important;border-color:transparent!important}
+  textarea{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;resize:none!important;border:none!important;page-break-inside:avoid}
+  .terms,.dfoot{page-break-inside:avoid}
   input::placeholder,textarea::placeholder{color:transparent!important}
   .pw{display:none!important}
   .pv{display:block!important;white-space:pre-wrap;word-break:break-word;min-height:14px}
@@ -96,7 +98,15 @@ body.preview #previewbar{display:flex;position:fixed;top:0;left:0;right:0;z-inde
   @page{size:A4;margin:8mm}
 }
 @media(max-width:640px){.parties{grid-template-columns:1fr}.dhead{flex-direction:column}.qmeta{text-align:left}.qmeta input{text-align:left}.doc{padding:18px 15px}}
-</style></head><body>
+</style><link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0B2A4A">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WTPeSTORE">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+</head><body>
 
 <div id="gate"><div class="g">
 <div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Enter PIN for Quick Quotation</p>
@@ -342,5 +352,88 @@ function newQuote(){if(!confirm('Naya quotation? (current saaf ho jaayega)'))ret
 function initMeta(){document.getElementById('qno').value=nextNo();document.getElementById('qdate').value=todayStr();document.getElementById('terms').value=DEF_TERMS;}
 
 initMeta();addRow();calc();
+
+/* ===== Terms/Scope print fix: textarea auto-grow ===== */
+function autoGrow(){try{var ts=document.querySelectorAll('textarea');
+  for(var i=0;i<ts.length;i++){ts[i].style.height='auto';ts[i].style.height=(ts[i].scrollHeight+6)+'px';}}catch(e){}}
+document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA'){e.target.style.height='auto';e.target.style.height=(e.target.scrollHeight+6)+'px';}});
+window.addEventListener('load',function(){setTimeout(autoGrow,400);});
+window.addEventListener('beforeprint',autoGrow);
+(function(){var _p=window.print;window.print=function(){autoGrow();setTimeout(function(){_p.call(window);},60);};})();
+
+/* ===== SAVE / LOAD Quotations ===== */
+var QKEY='wtpe_saved_docs';
+function qGetAll(){try{return JSON.parse(localStorage.getItem(QKEY)||'[]');}catch(e){return [];}}
+function qSetAll(a){try{localStorage.setItem(QKEY,JSON.stringify(a));}catch(e){alert('Storage full — kuch purane delete karein');}}
+function qSnap(){
+  var f={};document.querySelectorAll('[id]').forEach(function(el){
+    if(/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)&&el.id&&el.type!=='file'&&el.type!=='search')f[el.id]=el.value;});
+  var rows=[];var tb=document.getElementById('rows');
+  if(tb)Array.prototype.forEach.call(tb.querySelectorAll('tr'),function(tr){
+    var v=[];Array.prototype.forEach.call(tr.querySelectorAll('input,textarea,select'),function(x){v.push(x.value);});
+    if(v.length)rows.push(v);});
+  return {f:f,rows:rows};
+}
+function qSave(){
+  var nm=(document.getElementById('cname')||{}).value||'';
+  var no=(document.getElementById('qno')||document.getElementById('pno')||document.getElementById('no')||{}).value||'';
+  var label=prompt('Is quotation ka naam (pehchan ke liye):',(no?no+' — ':'')+(nm||'Untitled'));
+  if(label===null)return;
+  var all=qGetAll();
+  all.unshift({id:'D'+Date.now(),label:label||'Untitled',date:new Date().toLocaleString('en-IN'),data:qSnap()});
+  if(all.length>60)all=all.slice(0,60);
+  qSetAll(all);alert('✅ Save ho gaya: '+label);
+}
+function qRestore(d){
+  try{
+    var tb=document.getElementById('rows');
+    if(tb&&d.rows){tb.innerHTML='';for(var i=0;i<d.rows.length;i++){addRow();}
+      var trs=tb.querySelectorAll('tr');
+      for(var r=0;r<trs.length&&r<d.rows.length;r++){
+        var els=trs[r].querySelectorAll('input,textarea,select');
+        for(var c=0;c<els.length&&c<d.rows[r].length;c++)els[c].value=d.rows[r][c];}}
+    Object.keys(d.f||{}).forEach(function(k){var el=document.getElementById(k);
+      if(el&&/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))el.value=d.f[k];});
+    if(typeof calc==='function')calc();
+    if(typeof renderRows==='function')try{renderRows();}catch(e){}
+    setTimeout(autoGrow,150);
+    qCloseList();
+  }catch(e){alert('Load me problem: '+e.message);}
+}
+function qList(){
+  var all=qGetAll();
+  var h='<div style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px" id="qlistov" onclick="if(event.target===this)qCloseList()">'
+   +'<div style="background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:80vh;overflow:auto;padding:18px;font-family:inherit">'
+   +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><b style="font-size:17px;color:#0B2A4A">📂 Saved Quotations</b>'
+   +'<button onclick="qCloseList()" style="margin-left:auto;border:none;background:#f1f5f9;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit">✖ Close</button></div>';
+  if(!all.length)h+='<p style="color:#777;font-size:14px">Abhi koi save nahi hai. Toolbar me 💾 Save dabayein.</p>';
+  all.forEach(function(x,i){
+    h+='<div style="border:1px solid #e6edf2;border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+     +'<div style="flex:1;min-width:180px"><b style="font-size:14px">'+String(x.label).replace(/[<>]/g,'')+'</b><div style="font-size:11.5px;color:#888">'+x.date+'</div></div>'
+     +'<button onclick="qLoad('+i+')" style="background:#0B2A4A;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-family:inherit">Open / Edit</button>'
+     +'<button onclick="qDel('+i+')" style="background:#fee;color:#b00;border:1px solid #fbb;border-radius:8px;padding:8px 12px;cursor:pointer;font-family:inherit">🗑</button></div>';
+  });
+  h+='</div></div>';
+  var d=document.createElement('div');d.id='qlistwrap';d.innerHTML=h;document.body.appendChild(d);
+}
+function qCloseList(){var w=document.getElementById('qlistwrap');if(w)w.remove();}
+function qLoad(i){var all=qGetAll();if(all[i])qRestore(all[i].data);}
+function qDel(i){var all=qGetAll();if(!all[i])return;if(!confirm('Delete: '+all[i].label+'?'))return;all.splice(i,1);qSetAll(all);qCloseList();qList();}
+
+</script>
+<script>
+/* PWA: service worker + install button */
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+var wtpInstall=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtpInstall=e;
+  if(document.getElementById('wtpInstallBtn'))return;
+  var b=document.createElement('button');b.id='wtpInstallBtn';
+  b.innerHTML='\u2b07\ufe0f App Install karein';
+  b.style.cssText='position:fixed;left:16px;bottom:16px;z-index:940;background:#0B2A4A;color:#fff;border:none;border-radius:30px;padding:12px 18px;font-size:13.5px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.28);cursor:pointer;font-family:inherit';
+  b.onclick=function(){if(!wtpInstall)return;wtpInstall.prompt();wtpInstall.userChoice.then(function(){b.remove();wtpInstall=null;});};
+  document.body.appendChild(b);
+  setTimeout(function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();},20000);
+});
+window.addEventListener('appinstalled',function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();});
 </script>
 </body></html>

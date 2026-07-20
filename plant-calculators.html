@@ -55,6 +55,14 @@ input,select{width:100%;padding:10px 12px;border:1.5px solid #d5d9d9;border-radi
 footer{max-width:1050px;margin:0 auto;padding:18px 16px;color:#777;font-size:13px;text-align:center}
 footer a{color:var(--navy)}
 </style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0B2A4A">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WTPeSTORE">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 </head>
 <body>
 <header>
@@ -268,6 +276,21 @@ function calcUF(){
     +row('CIP tank','200–500 L (citric/NaOCl cleaning)');
   out('r-uf','UF Plant Sizing Result',rows,'UF: '+f+' LPH → '+n+' modules '+(per==300?'4046':'8060'),'Feed turbidity <5 NTU chahiye — zyada ho to pre-filter (MGF/disc filter) lagayein.');
 }
+</script>
+<script>
+/* PWA: service worker + install button */
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+var wtpInstall=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtpInstall=e;
+  if(document.getElementById('wtpInstallBtn'))return;
+  var b=document.createElement('button');b.id='wtpInstallBtn';
+  b.innerHTML='\u2b07\ufe0f App Install karein';
+  b.style.cssText='position:fixed;left:16px;bottom:16px;z-index:940;background:#0B2A4A;color:#fff;border:none;border-radius:30px;padding:12px 18px;font-size:13.5px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.28);cursor:pointer;font-family:inherit';
+  b.onclick=function(){if(!wtpInstall)return;wtpInstall.prompt();wtpInstall.userChoice.then(function(){b.remove();wtpInstall=null;});};
+  document.body.appendChild(b);
+  setTimeout(function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();},20000);
+});
+window.addEventListener('appinstalled',function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();});
 </script>
 </body>
 </html>
