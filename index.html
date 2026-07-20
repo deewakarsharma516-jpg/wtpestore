@@ -394,6 +394,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 .mq-item img{height:40px;width:auto;max-width:140px;object-fit:contain}
 @keyframes mqscroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .hp-brands{background:#fbfdff}.hp-brands .mq-item{font-size:17px;color:var(--dark)}
+.spec-tbl{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:13px;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}.spec-tbl td{padding:8px 11px;border-bottom:1px solid #eef1f4;vertical-align:top}.spec-tbl tr:nth-child(odd){background:#f8fafc}.spec-tbl tr:last-child td{border-bottom:none}.spec-tbl td:first-child{width:44%;font-weight:600;color:#0b2545}.spec-tbl td:last-child{color:#333}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"></head><body>
 
@@ -720,6 +721,30 @@ function saveStore(){try{localStorage.setItem('wtpe_products',JSON.stringify(STO
 function cfg(k,d){try{return localStorage.getItem('wtpe_'+k)||d;}catch(e){return d;}}
 function setCfg(k,v){try{localStorage.setItem('wtpe_'+k,v);}catch(e){}}
 
+function specTable(sp,md){
+  sp=String(sp||'').trim(); if(!sp&&!md)return '';
+  var KEYS=['Technical Information','Dimension (HxDxW) cm','Dimension (HxDxW)','Dimension','GeolexTM media (kg)','Geolex media (kg)','Media (kg)','Resin Volume (L)','Resin Volume','Max. Input Flow Rate (LPH)','Max. Input Flow Rate','Input Flow Rate (LPH)','Input Flow Rate','Flow Rate (LPH)','Flow Rate','Max. Input Hardness (ppm)','Max. Input Hardness','Input Hardness (ppm)','Input Hardness','Max. Input TDS (ppm)','Input Working Pressure (kg/cm2)','Input Working Pressure','Working Pressure (kg/cm2)','Working Pressure','Input Working Temperature (°C)','Working Temperature (°C)','Working Temperature','Max. Iron (ppm)','Max. Turbidity (NTU)','Output Between Regeneration (@500 ppm Hardness) (L)','Output Between Regeneration','Rated Power (W)','Rated Power','Salt Consumption Per Regeneration (kg)','Salt Consumption','Salt Storage Capacity (kg)','Salt Storage Capacity','Technology','Regeneration Mode','Regeneration Type','Total Unit Weight (kg)','Unit Weight (kg)','Unit Weight','Voltage','Warranty','MOC','Material','End Connection','Connection','Size','Capacity','Model','Make','Brand','Type','Application','Recommended Use','Raw Water Requirement','Pre-Treatment','High Pressure Pump','Control Panel','Frame / Skid','Frame/Skid','Inlet / Outlet Connection','Power Supply','Membrane','Vessel','Pump','Range','Accuracy','Display','Output','Mounting','Body','Pressure','Temperature','Weight','Length','Diameter'];
+  KEYS=KEYS.slice().sort(function(a,b){return b.length-a.length;});
+  function rxq(x){return x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+  var rx=new RegExp('('+KEYS.map(rxq).join('|')+')\\s*[:\\-]?\\s*','gi');
+  var parts=[],m,last=null,lastIdx=0;
+  while((m=rx.exec(sp))!==null){
+    if(last!==null)parts.push([last,sp.slice(lastIdx,m.index)]);
+    last=m[0].replace(/[:\-\s]+$/,'').trim(); lastIdx=rx.lastIndex;
+  }
+  if(last!==null)parts.push([last,sp.slice(lastIdx)]);
+  var rows='';
+  if(md)rows+='<tr><td>Model</td><td>'+esc(md)+'</td></tr>';
+  if(parts.length>=2){
+    parts.forEach(function(p){
+      var k=p[0].trim(), v=String(p[1]||'').replace(/^[\s:\-,]+|[\s,;]+$/g,'').trim();
+      if(!v||/^(Technical Information)$/i.test(k))return;
+      rows+='<tr><td>'+esc(k)+'</td><td>'+esc(v)+'</td></tr>';
+    });
+  }
+  if(!rows)return sp?'<div class="pdspec"><b>Spec:</b> '+esc(sp)+'</div>':'';
+  return '<table class="spec-tbl"><tbody>'+rows+'</tbody></table>';
+}
 function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function boxIcon(){return '<svg viewBox="0 0 24 24" fill="none"><path d="M3 8l9-5 9 5v8l-9 5-9-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 8l9 5 9-5M12 13v8" stroke="currentColor" stroke-width="1.5"/></svg>';}
@@ -1612,7 +1637,7 @@ function openPModal(p){
     var html='<button class="pdx" onclick="pdClose()">\u00d7</button><div class="pdtop">'+
       '<div class="pdimg"><img src="'+esc(imgSrc)+'" alt="'+esc(p.n)+'"></div>'+
       '<div class="pdinfo"><div class="pdcat">'+esc(p.c||'')+'</div><h2>'+esc(p.n)+'</h2>'+
-      (md?'<div class="pdspec"><b>Model:</b> '+esc(md)+(p.spec?('<br><b>Spec:</b> '+esc(p.spec)):'')+'</div>':(p.spec?'<div class="pdspec"><b>Spec:</b> '+esc(p.spec)+'</div>':''))+
+      specTable(p.spec,md)+
       '<div class="pdprice">'+pr+'</div>'+
       '<div class="pdbtns">'+'<button class="pdwa" style="background:#0e4d6b" onclick="openEnquiry((document.querySelector(\'#pdcard h2\')||{}).textContent)">📝 Enquiry</button>'+
       '<button class="pdwa" onclick="waProduct('+nameJS+','+(p.p||0)+')">\ud83d\udcac Get Quotation</button>'+
