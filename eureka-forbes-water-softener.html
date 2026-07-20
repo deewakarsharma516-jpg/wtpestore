@@ -162,51 +162,24 @@ var SECT={"EUREKA FORBES WATER SOFTENER": "Eureka Forbes Water Softeners"};
 var DATA=SEED.map(function(x,i){return {id:i,c:x.c,n:x.n,p:x.p,img:x.img||"",spec:x.spec||"",model:x.model||"",pdf:x.pdf||""};});
 
 var CAT_PDF={"ZERO SCALE WATER SOFTENER": "zero-scale-water-softener.pdf", "EUREKA FORBES WATER SOFTENER": "eureka-forbes.pdf", "INDUSTRIAL RO PLANT": "zero-scale-ro-plant.pdf", "DM PLANT": "zero-scale-dm-plant.pdf", "WATER SOFTENER PLANT": "zero-scale-water-softener.pdf", "ETP PLANT": "zero-scale-etp-plant.pdf", "STP PLANT": "zero-scale-stp-plant.pdf", "UF PLANT": "zero-scale-uf-plant.pdf", "EDOSE METERING PUMPS": "edose-pumps.pdf", "ASTER ROTAMETERS & DIGITAL FLOW METERS": "aster-flow-meters.pdf", "ASTER ELECTROMAGNETIC FLOWMETERS": "aster-flow-meters.pdf", "ASTER ROTAMETERS": "aster-flow-meters.pdf", "ASTER INSTRUMENTS": "aster-instruments.pdf", "EMBARK INSTRUMENTS": "embark-instruments.pdf", "ASTERO CONTROLLERS": "astero-controllers.pdf", "PENTAIR FRP VESSELS & DIFFUSERS": "pentair-frp-vessels.pdf", "QFLO FRP VESSELS": "qflo-frp-vessels.pdf", "QFLO U.V. PURIFICATION SYSTEMS": "qflo-uv-systems.pdf", "INITIATIVE ENGINEERING MULTIPORT VALVES": "initiative-multiport-valves.pdf", "EVERFLOW U.F. MEMBRANES": "everflow-uf-membranes.pdf", "CHINESE U.F. MEMBRANES": "everflow-uf-membranes.pdf", "R.O. MEMBRANE HOUSINGS & PIPE JOINT COUPLINGS": "ro-membranes.pdf", "CARTRIDGE FILTERS": "cartridge-filters.pdf", "CARTRIDGE HOUSINGS": "cartridge-filters.pdf"};
-function zsPdf(p){var u=(p.pdf||'').trim();
-  if(u&&!/^https?:\/\//i.test(u)){ if(/^(www\.|drive\.google|docs\.google|[a-z0-9-]+\.[a-z]{2,})/i.test(u)) u='https://'+u.replace(/^\/*/,''); else u=''; }
+function zsPdf(p){var u=String((p&&p.pdf)||'').trim();
+  var ck=String((p&&p.c)||'').toUpperCase().replace(/\s+/g,' ').trim();
+  var localCat=(typeof CAT_PDF!=='undefined'&&CAT_PDF[ck])?('/catalogues/'+CAT_PDF[ck]):'';
+  /* 1) Sheet me local path diya ho */
+  if(/^\/?catalogues\//i.test(u))return '/'+u.replace(/^\/+/,'');
+  /* 2) Google Drive link => permission bachane ke liye pehle LOCAL file use karo */
+  var isDrive=/drive\.google|docs\.google/i.test(u);
+  if(isDrive&&localCat)return localCat;
+  if(isDrive){
+    var id=(u.match(/\/d\/([a-zA-Z0-9_-]{20,})/)||u.match(/[?&]id=([a-zA-Z0-9_-]{20,})/)||[])[1];
+    return id?('https://drive.google.com/uc?export=download&id='+id):u;
+  }
+  /* 3) normal http link */
+  if(u&&!/^https?:\/\//i.test(u)){ if(/^(www\.|[a-z0-9-]+\.[a-z]{2,})/i.test(u)) u='https://'+u.replace(/^\/*/,''); else u=''; }
   if(u)return u;
-  var ck=(p.c||'').toUpperCase().replace(/\s+/g,' ').trim();
-  if(CAT_PDF[ck])return '/catalogues/'+CAT_PDF[ck];
+  /* 4) category-mapped local catalogue */
+  if(localCat)return localCat;
   return (typeof PAGE_PDF!=='undefined'?PAGE_PDF:'');}
-function specTable(sp,md){
-  sp=String(sp||'').replace(/\r/g,'').trim(); if(!sp&&!md)return '';
-  function row(k,v){k=String(k||'').replace(/^[\s:•\-–|]+|[\s:•\-–|]+$/g,'').trim();v=String(v||'').replace(/^[\s:=,\-–|]+|[\s,;|]+$/g,'').trim();
-    if(!k||!v||/^technical information$/i.test(k))return '';
-    if(k.length>60)return ''; return '<tr><td>'+esc(k)+'</td><td>'+esc(v)+'</td></tr>';}
-  var rows=''; if(md)rows+='<tr><td>Model</td><td>'+esc(md)+'</td></tr>';
-  var body='';
-  /* --- 1) Line / | / ; se alag likha ho (RECOMMENDED) --- */
-  var lines=sp.split(/\n|\||;/).map(function(x){return x.trim();}).filter(function(x){return x;});
-  if(lines.length>=2){
-    var ok=0,tmp='';
-    lines.forEach(function(L){var m=L.match(/^([^:=]{2,60})[:=]\s*(.+)$/);
-      if(m){var r=row(m[1],m[2]); if(r){tmp+=r;ok++;}}
-      else{var m2=L.match(/^(.{2,45}?)\s{2,}(.+)$/); if(m2){var r2=row(m2[1],m2[2]); if(r2){tmp+=r2;ok++;}}}});
-    if(ok>=2)body=tmp;
-  }
-  /* --- 2) Comma se "Key: Value, Key: Value" --- */
-  if(!body&&/:/.test(sp)){
-    var cs=sp.split(/,(?=[^,:]{2,60}\s*:)/),ok2=0,t2='';
-    cs.forEach(function(L){var m=L.trim().match(/^([^:]{2,60}):\s*(.+)$/); if(m){var r=row(m[1],m[2]); if(r){t2+=r;ok2++;}}});
-    if(ok2>=2)body=t2;
-  }
-  /* --- 3) Known keys (purana tarika — "Key Value Key Value") --- */
-  if(!body){
-    var KEYS=['Technical Information','Dimension (HxDxW) cm','Dimension (HxDxW)','Dimension','GeolexTM media (kg)','Media (kg)','Resin Volume (L)','Resin Volume','Max. Input Flow Rate (LPH)','Max. Input Flow Rate','Input Flow Rate (LPH)','Input Flow Rate','Flow Rate (LPH)','Flow Rate','Max. Input Hardness (ppm)','Max. Input Hardness','Input Hardness (ppm)','Input Hardness','Max. Input TDS (ppm)','Input Working Pressure (kg/cm2)','Input Working Pressure','Working Pressure (kg/cm2)','Working Pressure','Input Working Temperature (°C)','Working Temperature (°C)','Working Temperature','Max. Iron (ppm)','Max. Turbidity (NTU)','Output Between Regeneration (@500 ppm Hardness) (L)','Output Between Regeneration','Rated Power (W)','Rated Power','Salt Consumption Per Regeneration (kg)','Salt Consumption','Salt Storage Capacity (kg)','Salt Storage Capacity','Technology','Regeneration Mode','Regeneration Type','Total Unit Weight (kg)','Unit Weight (kg)','Unit Weight','Voltage','Warranty','MOC','Material','Micron Rating','Micron','Thread Size','Thread','End Connection','Connection','Size','Capacity','Model','Make','Brand','Type','Application','Recommended Use','Raw Water Requirement','Pre-Treatment','High Pressure Pump','Control Panel','Frame / Skid','Frame/Skid','Inlet / Outlet Connection','Power Supply','Membrane Type','Membrane','Vessel','Pump','Range','Accuracy','Display','Output','Mounting','Body','Pressure','Temperature','Weight','Length','Diameter','Colour','Color','Finish','Standard','Certification','Country of Origin','Packaging','Quantity per Box'];
-    KEYS=KEYS.slice().sort(function(a,b){return b.length-a.length;});
-    function rxq(x){return x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
-    var rx=new RegExp('('+KEYS.map(rxq).join('|')+')\s*[:\-]?\s*','gi');
-    var parts=[],m,last=null,lastIdx=0;
-    while((m=rx.exec(sp))!==null){ if(last!==null)parts.push([last,sp.slice(lastIdx,m.index)]);
-      last=m[0].replace(/[:\-\s]+$/,'').trim(); lastIdx=rx.lastIndex; }
-    if(last!==null)parts.push([last,sp.slice(lastIdx)]);
-    if(parts.length>=2){var t3='';parts.forEach(function(p){t3+=row(p[0],p[1]);});body=t3;}
-  }
-  rows+=body;
-  if(!rows)return sp?'<div class="m-spec pdspec"><b>Spec:</b> '+esc(sp)+'</div>':'';
-  if(!body&&md&&sp)rows+='<tr><td>Specification</td><td>'+esc(sp)+'</td></tr>';
-  return '<table class="spec-tbl"><tbody>'+rows+'</tbody></table>';
-}
 function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function slug(n){return (''+(n||'')).toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);}

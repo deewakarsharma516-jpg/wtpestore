@@ -760,6 +760,25 @@ function specTable(sp,md){
   if(!body&&md&&sp)rows+='<tr><td>Specification</td><td>'+esc(sp)+'</td></tr>';
   return '<table class="spec-tbl"><tbody>'+rows+'</tbody></table>';
 }
+var CAT_PDF={"ZERO SCALE WATER SOFTENER":"zero-scale-water-softener.pdf","EUREKA FORBES WATER SOFTENER":"eureka-forbes.pdf","INDUSTRIAL RO PLANT":"zero-scale-ro-plant.pdf","DM PLANT":"zero-scale-dm-plant.pdf","WATER SOFTENER PLANT":"zero-scale-water-softener.pdf","ETP PLANT":"zero-scale-etp-plant.pdf","STP PLANT":"zero-scale-stp-plant.pdf","UF PLANT":"zero-scale-uf-plant.pdf","EDOSE METERING PUMPS":"edose-pumps.pdf","ASTER ROTAMETERS & DIGITAL FLOW METERS":"aster-flow-meters.pdf","ASTER ELECTROMAGNETIC FLOWMETERS":"aster-flow-meters.pdf","ASTER ROTAMETERS":"aster-flow-meters.pdf","ASTER INSTRUMENTS":"aster-instruments.pdf","EMBARK INSTRUMENTS":"embark-instruments.pdf","ASTERO CONTROLLERS":"astero-controllers.pdf","PENTAIR FRP VESSELS & DIFFUSERS":"pentair-frp-vessels.pdf","QFLO FRP VESSELS":"qflo-frp-vessels.pdf","QFLO U.V. PURIFICATION SYSTEMS":"qflo-uv-systems.pdf","INITIATIVE ENGINEERING MULTIPORT VALVES":"initiative-multiport-valves.pdf","EVERFLOW U.F. MEMBRANES":"everflow-uf-membranes.pdf","CHINESE U.F. MEMBRANES":"everflow-uf-membranes.pdf","R.O. MEMBRANE HOUSINGS & PIPE JOINT COUPLINGS":"ro-membranes.pdf","CARTRIDGE FILTERS":"cartridge-filters.pdf","CARTRIDGE HOUSINGS":"cartridge-filters.pdf"};
+function zsPdf(p){var u=String((p&&p.pdf)||'').trim();
+  var ck=String((p&&p.c)||'').toUpperCase().replace(/\s+/g,' ').trim();
+  var localCat=(typeof CAT_PDF!=='undefined'&&CAT_PDF[ck])?('/catalogues/'+CAT_PDF[ck]):'';
+  /* 1) Sheet me local path diya ho */
+  if(/^\/?catalogues\//i.test(u))return '/'+u.replace(/^\/+/,'');
+  /* 2) Google Drive link => permission bachane ke liye pehle LOCAL file use karo */
+  var isDrive=/drive\.google|docs\.google/i.test(u);
+  if(isDrive&&localCat)return localCat;
+  if(isDrive){
+    var id=(u.match(/\/d\/([a-zA-Z0-9_-]{20,})/)||u.match(/[?&]id=([a-zA-Z0-9_-]{20,})/)||[])[1];
+    return id?('https://drive.google.com/uc?export=download&id='+id):u;
+  }
+  /* 3) normal http link */
+  if(u&&!/^https?:\/\//i.test(u)){ if(/^(www\.|[a-z0-9-]+\.[a-z]{2,})/i.test(u)) u='https://'+u.replace(/^\/*/,''); else u=''; }
+  if(u)return u;
+  /* 4) category-mapped local catalogue */
+  if(localCat)return localCat;
+  return (typeof PAGE_PDF!=='undefined'?PAGE_PDF:'');}
 function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function boxIcon(){return '<svg viewBox="0 0 24 24" fill="none"><path d="M3 8l9-5 9 5v8l-9 5-9-5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M3 8l9 5 9-5M12 13v8" stroke="currentColor" stroke-width="1.5"/></svg>';}
@@ -1678,7 +1697,7 @@ function openPModal(p){
       '<button class="pdsh" onclick="pShare(\''+slug+'\')">\ud83d\udd17 Share</button>'+
       '<button class="pdsh" onclick="wtpSendTo('+nameJS+',\'https://www.wtpestore.co.in/?p='+slug+'\')">\ud83d\udce4 Send to Customer</button>'+
       '</div>'+
-      (p.pdf?'<a class="pdcat2" href="'+esc(p.pdf)+'" target="_blank" rel="noopener">\ud83d\udcc4 Download Catalogue</a>':'')+
+      (zsPdf(p)?'<a class="pdcat2" href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener">\ud83d\udcc4 Download Catalogue</a>':'')+
       '</div></div>';
     document.getElementById('pdcard').innerHTML=html;
     document.getElementById('pdov').classList.add('open');
