@@ -111,12 +111,21 @@ footer b{color:#fff}
 .fab svg{width:26px;height:26px}
 @media(max-width:880px){.grid{grid-template-columns:repeat(3,1fr)}.specs{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:20px}.hcall{display:none}.m-img{min-height:200px}}
+.spec-tbl{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:13px;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}.spec-tbl td{padding:8px 11px;border-bottom:1px solid #eef1f4;vertical-align:top}.spec-tbl tr:nth-child(odd){background:#f8fafc}.spec-tbl tr:last-child td{border-bottom:none}.spec-tbl td:first-child{width:44%;font-weight:600;color:#0b2545}.spec-tbl td:last-child{color:#333}
 </style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0B2A4A">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WTPeSTORE">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 </head>
 <body>
 <header>
 <div class="wrap hbar">
-<a href="/" class="logo">💧 <span><b>WTP<i>e</i>STORE<sup style="font-size:.5em;font-weight:700;vertical-align:super">&trade;</sup></b><small>powered by Aqua Filtration System</small></span></a>
+<a href="/" class="logo"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System" style="height:42px;width:auto;display:block"></a>
 <div class="hspace"></div>
 <a href="tel:+919910646957" class="hcall">📞 9910646957</a>
 </div>
@@ -125,6 +134,7 @@ footer b{color:#fff}
 
 <div class="wrap">
 <nav class="bc"><a href="/">Home</a> › Zero Scale Water Softeners</nav>
+<button onclick="wtpSendTo(document.title.split('|')[0].trim(),location.origin+location.pathname)" style="margin:8px 0 0;background:#0b2545;color:#fff;border:none;border-radius:8px;padding:8px 15px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit">📤 Ye page customer ko bhejein</button>
 
 <div class="hero">
 <h1>Zero Scale Water Softeners</h1>
@@ -166,6 +176,38 @@ function zsPdf(p){var u=(p.pdf||'').trim();
   var ck=(p.c||'').toUpperCase().replace(/\s+/g,' ').trim();
   if(CAT_PDF[ck])return '/catalogues/'+CAT_PDF[ck];
   return (typeof PAGE_PDF!=='undefined'?PAGE_PDF:'');}
+function specTable(sp,md){
+  sp=String(sp||'').replace(/\r/g,'').trim(); if(!sp&&!md)return '';
+  function row(k,v){k=String(k||'').replace(/^[\s:•\-–|]+|[\s:•\-–|]+$/g,'').trim();v=String(v||'').replace(/^[\s:=,\-–|]+|[\s,;|]+$/g,'').trim();
+    if(!k||!v||/^technical information$/i.test(k))return '';
+    if(k.length>60)return ''; return '<tr><td>'+esc(k)+'</td><td>'+esc(v)+'</td></tr>';}
+  var rows=''; if(md)rows+='<tr><td>Model</td><td>'+esc(md)+'</td></tr>';
+  var body='';
+  var lines=sp.split(/\n|\||;/).map(function(x){return x.trim();}).filter(function(x){return x;});
+  if(lines.length>=2){var ok=0,tmp='';
+    lines.forEach(function(L){var m=L.match(/^([^:=]{2,60})[:=]\s*(.+)$/);
+      if(m){var r=row(m[1],m[2]); if(r){tmp+=r;ok++;}}
+      else{var m2=L.match(/^(.{2,45}?)\s{2,}(.+)$/); if(m2){var r2=row(m2[1],m2[2]); if(r2){tmp+=r2;ok++;}}}});
+    if(ok>=2)body=tmp;}
+  if(!body&&/:/.test(sp)){var cs=sp.split(/,(?=[^,:]{2,60}\s*:)/),ok2=0,t2='';
+    cs.forEach(function(L){var m=L.trim().match(/^([^:]{2,60}):\s*(.+)$/); if(m){var r=row(m[1],m[2]); if(r){t2+=r;ok2++;}}});
+    if(ok2>=2)body=t2;}
+  if(!body){
+    var KEYS=['Technical Information','Dimension (HxDxW) cm','Dimension (HxDxW)','Dimension','GeolexTM media (kg)','Media (kg)','Resin Volume (L)','Resin Volume','Max. Input Flow Rate (LPH)','Max. Input Flow Rate','Input Flow Rate (LPH)','Input Flow Rate','Flow Rate (LPH)','Flow Rate','Max. Input Hardness (ppm)','Max. Input Hardness','Input Hardness (ppm)','Input Hardness','Max. Input TDS (ppm)','Input Working Pressure (kg/cm2)','Input Working Pressure','Working Pressure (kg/cm2)','Working Pressure','Input Working Temperature (°C)','Working Temperature (°C)','Working Temperature','Max. Iron (ppm)','Max. Turbidity (NTU)','Output Between Regeneration (@500 ppm Hardness) (L)','Output Between Regeneration','Rated Power (W)','Rated Power','Salt Consumption Per Regeneration (kg)','Salt Consumption','Salt Storage Capacity (kg)','Salt Storage Capacity','Technology','Regeneration Mode','Regeneration Type','Total Unit Weight (kg)','Unit Weight (kg)','Unit Weight','Voltage','Warranty','MOC','Material','Micron Rating','Micron','Thread Size','Thread','End Connection','Connection','Size','Capacity','Model','Make','Brand','Type','Application','Recommended Use','Raw Water Requirement','Pre-Treatment','High Pressure Pump','Control Panel','Frame / Skid','Frame/Skid','Inlet / Outlet Connection','Power Supply','Membrane Type','Membrane','Vessel','Pump','Range','Accuracy','Display','Output','Mounting','Body','Pressure','Temperature','Weight','Length','Diameter','Colour','Color','Finish','Standard','Certification','Country of Origin','Packaging','Quantity per Box'];
+    KEYS=KEYS.slice().sort(function(a,b){return b.length-a.length;});
+    function rxq(x){return x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+    var rx=new RegExp('('+KEYS.map(rxq).join('|')+')\s*[:\-]?\s*','gi');
+    var parts=[],m,last=null,lastIdx=0;
+    while((m=rx.exec(sp))!==null){ if(last!==null)parts.push([last,sp.slice(lastIdx,m.index)]);
+      last=m[0].replace(/[:\-\s]+$/,'').trim(); lastIdx=rx.lastIndex; }
+    if(last!==null)parts.push([last,sp.slice(lastIdx)]);
+    if(parts.length>=2){var t3='';parts.forEach(function(p){t3+=row(p[0],p[1]);});body=t3;}
+  }
+  rows+=body;
+  if(!rows)return sp?'<div class="m-spec pdspec"><b>Spec:</b> '+esc(sp)+'</div>':'';
+  if(!body&&md&&sp)rows+='<tr><td>Specification</td><td>'+esc(sp)+'</td></tr>';
+  return '<table class="spec-tbl"><tbody>'+rows+'</tbody></table>';
+}
 function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function slug(n){return (''+(n||'')).toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);}
@@ -190,7 +232,7 @@ function ph(c){var lbl=(BRAND||'WTPESTORE').toUpperCase().slice(0,16);
 function pImg(p){return p.img?esc(p.img):ph(p.c);}
 
 function card(p){var md=p.model||model(p.n);
-  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+rupee(p.p)+'<small> +GST</small></div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Catalogue PDF" style="margin-left:6px;font-size:17px;text-decoration:none">📄</a>':'')+'</div></div></div>';}
+  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+rupee(p.p)+'<small> +GST</small></div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button><button class="pc-q" style="background:#0b2545" onclick="event.stopPropagation();wtpSendTo('+JSON.stringify(p.n).replace(/"/g,'&quot;')+',location.origin+location.pathname+\'?p=\'+slug(p.n))" title="Customer ko bhejein">📤</button>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Catalogue PDF" style="margin-left:6px;font-size:17px;text-decoration:none">📄</a>':'')+'</div></div></div>';}
 
 function render(){
   var host=document.getElementById('products'); if(!host)return;
@@ -211,7 +253,7 @@ function render(){
 function openP(id){var p=DATA[id];if(!p)return;var md=p.model||model(p.n);
   var waMsg='Hi WTPESTORE, I want a quotation for: '+p.n+(BRAND&&BRAND!=='WTPESTORE'?(' ('+BRAND+')'):'')+'.\nLink: '+location.origin+location.pathname+'?p='+slug(p.n)+'\nPlease share best price.';
   var m=document.getElementById('modal');
-  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+(md?'<div class="m-spec"><b>Model:</b> '+esc(md)+(p.spec?('<br><b>Spec:</b> '+esc(p.spec)):'')+'</div>':(p.spec?'<div class="m-spec"><b>Spec:</b> '+esc(p.spec)+'</div>':''))+'<div class="m-price">'+rupee(p.p)+' <small>+ GST</small></div>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;margin:10px 0 2px;padding:9px 16px;background:#0b2545;color:#fff;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none">📄 Download Catalogue (PDF)</a>':'')+'<div class="m-avail" style="font-size:12px;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:8px;padding:7px 10px;margin:8px 0;line-height:1.5">⚠️ Order se pehle <b>availability</b> ke liye hamare executive se baat karein — 📞 <a href="tel:+919899193589" style="color:#8a5a00;font-weight:700">9899193589</a></div><div class="m-btns"><button class="m-cl" style="background:#0e4d6b;flex:1;min-width:120px" onclick="openEnquiry((document.querySelector(\'#modal h2\')||{}).textContent)">📝 Enquiry</button><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
+  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+specTable(p.spec,md)+'<div class="m-price">'+rupee(p.p)+' <small>+ GST</small></div>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;margin:10px 0 2px;padding:9px 16px;background:#0b2545;color:#fff;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none">📄 Download Catalogue (PDF)</a>':'')+'<div class="m-avail" style="font-size:12px;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:8px;padding:7px 10px;margin:8px 0;line-height:1.5">⚠️ Order se pehle <b>availability</b> ke liye hamare executive se baat karein — 📞 <a href="tel:+919899193589" style="color:#8a5a00;font-weight:700">9899193589</a></div><div class="m-btns"><button class="m-cl" style="background:#0e4d6b;flex:1;min-width:120px" onclick="openEnquiry((document.querySelector(\'#modal h2\')||{}).textContent)">📝 Enquiry</button><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
   document.getElementById('ov').classList.add('open');document.body.style.overflow='hidden';
   try{history.replaceState(null,'','?p='+slug(p.n));}catch(e){}pSEO(p,md);}
 function closeM(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';try{history.replaceState(null,'',location.pathname);}catch(e){}}
@@ -320,5 +362,44 @@ if(navigator.clipboard){navigator.clipboard.writeText(u).then(function(){alert('
 else{var i=document.createElement('input');i.value=u;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i);alert('Link copy ho gaya!');}
 document.getElementById('wtpShareMenu').style.display='none';}
 document.addEventListener('click',function(e){var m=document.getElementById('wtpShareMenu');if(m&&m.style.display==='flex'&&!e.target.closest('.wtp-share-menu')&&!e.target.closest('.wtp-share-fab')){m.style.display='none';}});
+</script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+var wtpInstall=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtpInstall=e;
+  if(document.getElementById('wtpInstallBtn'))return;
+  var b=document.createElement('button');b.id='wtpInstallBtn';b.innerHTML='\u2b07\ufe0f App Install karein';
+  b.style.cssText='position:fixed;left:16px;bottom:16px;z-index:940;background:#0B2A4A;color:#fff;border:none;border-radius:30px;padding:12px 18px;font-size:13.5px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.28);cursor:pointer;font-family:inherit';
+  b.onclick=function(){if(!wtpInstall)return;wtpInstall.prompt();wtpInstall.userChoice.then(function(){b.remove();wtpInstall=null;});};
+  document.body.appendChild(b);setTimeout(function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();},20000);});
+/* ===== Send to Customer (direct WhatsApp) ===== */
+function wtpSendTo(title,url){
+  var old=document.getElementById('wtpSendOv'); if(old)old.remove();
+  var d=document.createElement('div'); d.id='wtpSendOv';
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  d.innerHTML='<div style="background:#fff;border-radius:14px;max-width:380px;width:100%;padding:20px;font-family:Inter,system-ui,Arial,sans-serif">'
+   +'<div style="font-size:16px;font-weight:800;color:#0b2545;margin-bottom:4px">📤 Customer ko bhejein</div>'
+   +'<div style="font-size:12.5px;color:#666;margin-bottom:12px;line-height:1.4">'+String(title||'').replace(/[<>]/g,'').slice(0,80)+'</div>'
+   +'<label style="font-size:12.5px;font-weight:600;color:#333">Customer ka WhatsApp number</label>'
+   +'<div style="display:flex;gap:8px;margin:6px 0 14px"><span style="padding:11px 10px;background:#f1f5f9;border-radius:9px;font-size:14px;font-weight:700">+91</span>'
+   +'<input id="wtpSendNo" type="tel" maxlength="10" inputmode="numeric" placeholder="10-digit number" style="flex:1;padding:11px;border:1.5px solid #d5d9d9;border-radius:9px;font-size:15px;font-family:inherit"></div>'
+   +'<div style="display:flex;gap:8px"><button onclick="wtpSendGo()" style="flex:1;background:#25d366;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">💬 WhatsApp par bhejein</button>'
+   +'<button onclick="document.getElementById(\'wtpSendOv\').remove()" style="background:#f1f5f9;border:none;border-radius:10px;padding:12px 14px;cursor:pointer;font-family:inherit">✖</button></div>'
+   +'<div style="font-size:11.5px;color:#888;margin-top:10px">Number daalte hi WhatsApp khulega, message tayaar milega.</div></div>';
+  d.onclick=function(e){if(e.target===d)d.remove();};
+  document.body.appendChild(d);
+  window._wtpSendMsg=String(title||'')+'\n'+url;
+  var inp=document.getElementById('wtpSendNo'); inp.focus();
+  inp.onkeydown=function(e){if(e.key==='Enter')wtpSendGo();};
+}
+function wtpSendGo(){
+  var v=(document.getElementById('wtpSendNo')||{}).value||'';
+  var n=v.replace(/[^0-9]/g,''); if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);
+  if(!/^[6-9][0-9]{9}$/.test(n)){alert('Sahi 10-digit number daalein');return;}
+  var msg='Namaste! 🙏\n'+window._wtpSendMsg+'\n\nWTPESTORE — powered by Aqua Filtration System\nGST bill · Best price · Faridabad\nEnquiry: 9899193589';
+  window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(msg),'_blank');
+  var o=document.getElementById('wtpSendOv'); if(o)o.remove();
+}
+
 </script>
 </body></html>

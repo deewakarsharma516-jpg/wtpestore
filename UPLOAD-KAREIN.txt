@@ -1,0 +1,14 @@
+WTPESTORE — Poora Update (Logo + Table + Share fix)
+====================================================
+
+1) SAARI 47 HTML files  →  repo ki ROOT me upload (replace) → Commit
+2) icons/logo-white.png aur icons/logo-dark.png  →  repo ke "icons" FOLDER me upload → Commit
+3) 5 minute ruko → site par Ctrl+Shift+R
+
+KYA THEEK HUA:
+- Logo: ab SAB 47 pages par bilkul EK JAISA (™ ke saath, same colors)
+     dark header wale pages → logo-white.png
+     white background wale (payment, quotation, proforma, admin) → logo-dark.png
+- Spec TABLE: 30 pages par function wapas laga (galti se delete ho gaya tha) — ETP/STP samet sab theek
+- ETP/STP/RO/DM/UF/Softener/RO-Membrane: products ka section add (ab Sheet ke products page par dikhenge)
+- Zero Scale Water Softener page: share button + catalogue + table + PWA — sab laga
