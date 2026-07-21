@@ -230,6 +230,25 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
 .hp-wave{position:absolute;left:0;right:0;bottom:-1px;z-index:2;line-height:0}
 .hp-wave svg{width:100%;height:70px;display:block}
 
+
+/* ===== OUR CLIENTS (moving) ===== */
+.hp-clients{background:linear-gradient(135deg,#f7fbff,#eef4fa);padding:34px 0 30px;border-top:1px solid #e6eef5;border-bottom:1px solid #e6eef5;overflow:hidden}
+.hp-clients .hpc-h{text-align:center;margin-bottom:6px}
+.hp-clients .hpc-h span{display:inline-block;font-family:'Sora',sans-serif;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:#0e7a3d;background:#e7f7ee;border:1px solid #bfe6cf;padding:5px 14px;border-radius:999px;font-weight:700}
+.hp-clients h2{text-align:center;font-size:26px;color:var(--navy);font-weight:800;margin:10px 0 4px}
+.hp-clients .hpc-sub{text-align:center;color:#6b7a88;font-size:13.5px;margin-bottom:20px}
+.hpc-row{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.hpc-track{display:flex;gap:14px;width:max-content;padding:7px 0}
+.hpc-track.l{animation:hpcL 46s linear infinite}
+.hpc-track.r{animation:hpcR 52s linear infinite}
+.hp-clients:hover .hpc-track{animation-play-state:paused}
+@keyframes hpcL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes hpcR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.hpc-chip{background:#fff;border:1px solid #e3ecf4;border-radius:12px;padding:13px 20px;font-weight:800;font-size:15px;white-space:nowrap;box-shadow:0 3px 12px rgba(11,37,69,.07);display:flex;align-items:center;gap:9px;transition:transform .15s,box-shadow .15s}
+.hpc-chip:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(11,37,69,.14)}
+.hpc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.hp-clients .hpc-foot{text-align:center;margin-top:18px;font-size:13px;color:#6b7a88}
+@media(max-width:600px){.hp-clients h2{font-size:21px}.hpc-chip{font-size:13.5px;padding:11px 15px}}
 /* TRUST BAR */
 .hp-trust{background:#fff;border-bottom:1px solid #eef2f4}
 .hp-trust .hp-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px;padding-top:26px;padding-bottom:26px}
@@ -1166,6 +1185,18 @@ var WTP_BRANDS=[
   {n:'Vontron'},
   {n:'Eureka Forbes'}
 ];
+function hpClients(){
+  var C=[["Adani Total Gas Limited", "#0B57A4"], ["Ester Industries Limited", "#12805C"], ["Jiva Ayurveda Pharmacy Limited", "#2E7D32"], ["Metropolis Healthcare Limited", "#0097A7"], ["Manav Rachna University", "#B4292E"], ["Veegee Industrial Enterprises", "#1565C0"], ["Vamani Overseas Private Limited", "#E07B00"], ["Uflex Limited", "#0B4DA1"], ["Ajit Industries Private Limited", "#C62828"], ["Marathon Electric India", "#005A9C"], ["Uttam Strips Limited", "#37474F"], ["Danisco India Private Limited", "#0072CE"], ["Vishal Nirmiti Limited", "#F26B21"], ["Hamdard Institute of Medical Sciences", "#00713C"], ["Fortis Healthcare Limited", "#0067B1"], ["Thermax Limited", "#EE7623"], ["Flowmore Limited", "#1B4F9C"], ["NKG Infrastructure Limited", "#D32F2F"], ["Metro Hospital & Heart Institute", "#C8102E"], ["Fashion Age Corporation", "#B5197C"], ["Cantabil Retail India Limited", "#17233E"], ["KCL Ltd.", "#1E5AA8"], ["Gemco Energy Limited", "#2E7D32"]];
+  function chip(c){return '<div class="hpc-chip"><span class="hpc-dot" style="background:'+c[1]+'"></span><span style="color:'+c[1]+'">'+esc(c[0])+'</span></div>';}
+  var half=Math.ceil(C.length/2);
+  var a=C.slice(0,half).map(chip).join(''), b=C.slice(half).map(chip).join('');
+  return '<section class="hp-clients"><div class="hpc-h"><span>\u2b50 Trusted Since 2017</span></div>'
+   +'<h2>Our Valued Clients</h2>'
+   +'<div class="hpc-sub">India ki leading industries, hospitals aur institutions humpe bharosa karte hain \u2014 kuch naam yahan</div>'
+   +'<div class="hpc-row"><div class="hpc-track l">'+a+a+'</div></div>'
+   +'<div class="hpc-row"><div class="hpc-track r">'+b+b+'</div></div>'
+   +'<div class="hpc-foot">\u2705 200+ corporate clients \u00b7 RO/DM plants, softeners, spares & AMC across India</div></section>';
+}
 function hpBrands(){
   if(!WTP_BRANDS||!WTP_BRANDS.length)return '';
   var one=WTP_BRANDS.map(function(b){return '<div class="mq-item">'+(b.l?'<img src="'+b.l+'" alt="'+(b.n||'')+'" onerror="this.style.display=\'none\'">':'')+(b.n?'<span>'+b.n+'</span>':'')+'</div>';}).join('');
@@ -1284,6 +1315,7 @@ function buildHomepage(){
   /* CTA BAND */
   H+='<section class="hp hp-ctaband"><div class="hp-inner"><h2>Not sure what you need?</h2><p>Tell us your water source, TDS and required capacity — get a free expert recommendation and quote.</p><div class="hp-cta-row" style="justify-content:center"><button class="hp-btn light" onclick="openZara()">Ask Zara — Free</button><a class="hp-btn ghost" href="tel:9910646957">Call 9910646957</a></div></div></section>';
 
+  H+=hpClients();
   H+=hpMarquee();hero.innerHTML=H;
   /* scroll reveal */
   try{
