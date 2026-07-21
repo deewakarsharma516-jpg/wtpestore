@@ -77,6 +77,11 @@ body{font-family:'Inter',Arial,sans-serif;background:#eef1f3;color:#0f1111;min-h
       <h2>💳 Pay Now</h2>
       <div class="sub">Apne invoice/quotation ka amount daalein (optional), phir UPI se scan karke ya bank transfer se pay karein.</div>
       <div class="amtbox"><span>₹</span><input id="amt" type="number" inputmode="decimal" placeholder="Enter amount (optional)" oninput="updPay()"></div>
+      <input id="payref" placeholder="Invoice / Quotation no. (optional)" style="width:100%;margin-top:10px;padding:11px 13px;border:1.5px solid #d5d9d9;border-radius:10px;font-size:14px;font-family:inherit">
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:12px">
+        <button onclick="sendPayLink()" style="flex:1;min-width:190px;background:#25d366;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">📤 Customer ko payment link bhejein</button>
+        <button onclick="copyPayMsg()" style="background:#0b2545;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit">📋 Copy</button>
+      </div>
 
       <div class="qrwrap">
         <div id="qrcode"></div>
@@ -199,5 +204,65 @@ window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtp
   setTimeout(function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();},20000);
 });
 window.addEventListener('appinstalled',function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();});
+
+/* ===== Payment link customer ko bhejein ===== */
+function wtpSendTo(title,url){
+  var old=document.getElementById('wtpSendOv'); if(old)old.remove();
+  var d=document.createElement('div'); d.id='wtpSendOv';
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px';
+  d.innerHTML='<div style="background:#fff;border-radius:14px;max-width:390px;width:100%;padding:20px;font-family:Inter,system-ui,Arial,sans-serif">'
+   +'<div style="font-size:16px;font-weight:800;color:#0b2545;margin-bottom:4px">📤 Payment link bhejein</div>'
+   +'<div style="font-size:12.5px;color:#666;margin-bottom:12px;line-height:1.4">'+String(title||'').replace(/[<>]/g,'').slice(0,90)+'</div>'
+   +'<label style="font-size:12.5px;font-weight:600;color:#333">Customer ka WhatsApp number</label>'
+   +'<div style="display:flex;gap:8px;margin:6px 0 14px"><span style="padding:11px 10px;background:#f1f5f9;border-radius:9px;font-size:14px;font-weight:700">+91</span>'
+   +'<input id="wtpSendNo" type="tel" maxlength="10" inputmode="numeric" placeholder="10-digit number" style="flex:1;padding:11px;border:1.5px solid #d5d9d9;border-radius:9px;font-size:15px;font-family:inherit"></div>'
+   +'<div style="display:flex;gap:8px"><button onclick="wtpSendGo()" style="flex:1;background:#25d366;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">💬 WhatsApp par bhejein</button>'
+   +'<button onclick="document.getElementById(\'wtpSendOv\').remove()" style="background:#f1f5f9;border:none;border-radius:10px;padding:12px 14px;cursor:pointer;font-family:inherit">✖</button></div></div>';
+  d.onclick=function(e){if(e.target===d)d.remove();};
+  document.body.appendChild(d);
+  window._wtpSendMsg=String(title||'')+'\n'+url;
+  var inp=document.getElementById('wtpSendNo'); inp.focus();
+  inp.onkeydown=function(e){if(e.key==='Enter')wtpSendGo();};
+}
+function wtpSendGo(){
+  var v=(document.getElementById('wtpSendNo')||{}).value||'';
+  var n=v.replace(/[^0-9]/g,''); if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);
+  if(!/^[6-9][0-9]{9}$/.test(n)){alert('Sahi 10-digit number daalein');return;}
+  window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(window._wtpSendMsg),'_blank');
+  var o=document.getElementById('wtpSendOv'); if(o)o.remove();
+}
+/* Payment ka poora message banao (amount ho to uske saath) */
+function payMsg(){
+  var a=parseFloat((document.getElementById('amt')||{}).value||0)||0;
+  var ref=((document.getElementById('payref')||{}).value||'').trim();
+  var m='Namaste! 🙏\nWTPESTORE — powered by Aqua Filtration System\n\n';
+  if(ref)m+='Ref: '+ref+'\n';
+  if(a>0)m+='Payable Amount: ₹'+a.toLocaleString('en-IN')+'\n';
+  m+='\n💳 Online payment link (UPI / Card / NetBanking):\n'
+   +'https://www.wtpestore.co.in/payment.html'+(a>0?('?amt='+a):'')+(ref?('&ref='+encodeURIComponent(ref)):'')
+   +'\n\n📲 UPI ID: 8287077847-2@ybl'
+   +'\n🏦 Bank: Axis Bank · IFSC UTIB0002693'
+   +'\n\nPayment ke baad screenshot bhej dein — hum turant confirm kar denge.'
+   +'\nQuery: 9899193589';
+  return m;
+}
+function copyPayMsg(){
+  var t=payMsg();
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){alert('Payment message copy ho gaya — kahin bhi paste karein');});}
+  else{var i=document.createElement('textarea');i.value=t;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i);alert('Copy ho gaya');}
+}
+function sendPayLink(){
+  window._wtpSendMsg=payMsg();
+  wtpSendTo('Payment link + UPI details','');
+  window._wtpSendMsg=payMsg();
+}
+/* URL se amount/ref auto-fill (customer ko bheja hua link) */
+(function(){try{
+  var q=new URLSearchParams(location.search);
+  var a=q.get('amt'), r=q.get('ref');
+  if(a&&document.getElementById('amt')){document.getElementById('amt').value=a; if(typeof updPay==='function')updPay();}
+  if(r&&document.getElementById('payref'))document.getElementById('payref').value=r;
+}catch(e){}})();
+
 </script>
 </body></html>

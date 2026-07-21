@@ -647,5 +647,24 @@ function qpCompress(file,cb){
 })();
 
 (function(){var _p=window.print;window.print=function(){autoGrow();buildMirrors();setTimeout(function(){_p.call(window);},80);};})();
+
+/* Payment link customer ko (is document ke amount ke saath) */
+function sendPayFromDoc(){
+  var g=(document.getElementById("grand")||{}).textContent||'';
+  var amt=(g.replace(/[^0-9.]/g,'')||'');
+  var ref=((document.getElementById("pno")||{}).value)||'';
+  var url='https://www.wtpestore.co.in/payment.html'+(amt?('?amt='+amt):'')+(ref?((amt?'&':'?')+'ref='+encodeURIComponent(ref)):'');
+  var nm=((document.getElementById('cname')||{}).value)||'';
+  var msg='Namaste'+(nm?' '+nm:'')+'! \u{1F64F}\nWTPESTORE — powered by Aqua Filtration System\n\n'
+    +(ref?('Ref: '+ref+'\n'):'')+(amt?('Payable Amount: \u20b9'+Number(amt).toLocaleString('en-IN')+'\n'):'')
+    +'\n\u{1F4B3} Payment link:\n'+url
+    +'\n\n\u{1F4F2} UPI: 8287077847-2@ybl\n\u{1F3E6} Axis Bank · IFSC UTIB0002693'
+    +'\n\nPayment ke baad screenshot bhej dein.\nQuery: 9899193589';
+  var no=prompt('Customer ka 10-digit WhatsApp number:','');
+  if(no===null)return;
+  var n=String(no).replace(/[^0-9]/g,''); if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);
+  if(!/^[6-9][0-9]{9}$/.test(n)){alert('Sahi 10-digit number daalein');return;}
+  window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(msg),'_blank');
+}
 </script>
 </body></html>
