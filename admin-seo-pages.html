@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SEO Page Generator — WTPESTORE Admin</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111}
+header{background:var(--navy);padding:12px 0}
+.wrap{max-width:900px;margin:0 auto;padding:0 14px}
+header .wrap{display:flex;align-items:center;gap:12px}
+header img{height:38px;width:auto;display:block}
+header b{color:#fff;font-size:14px}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;margin:18px 0}
+h1{font-size:21px;color:var(--navy);margin-bottom:6px}
+p.sub{color:#565959;font-size:13.5px;margin-bottom:14px}
+.btn{background:var(--orange);color:#fff;border:none;border-radius:10px;padding:13px 24px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.dl{background:var(--green);margin:6px 8px 0 0}
+.log{background:#0f1720;color:#9ef0c0;border-radius:10px;padding:14px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.7;margin-top:14px;max-height:320px;overflow:auto;white-space:pre-wrap;display:none}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px;display:none}
+.stat div{background:#f6f8fa;border:1px solid #e3e9ee;border-radius:10px;padding:12px;text-align:center}
+.stat b{display:block;font-size:22px;color:var(--navy)}
+.stat span{font-size:11.5px;color:#666;text-transform:uppercase;letter-spacing:.05em}
+.note{background:#fff8ee;border:1px solid #ffd9a8;border-radius:10px;padding:12px 14px;font-size:12.5px;color:#7a4a00;margin-top:14px;line-height:1.6}
+ol{margin:10px 0 0 20px;font-size:13.5px;line-height:1.9}
+code{background:#f2f4f6;border:1px solid #e3e7ea;border-radius:5px;padding:1px 6px;font-size:12.5px}
+a{color:var(--navy)}
+</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE"></a>
+<b>SEO Page Generator</b>
+</div></header>
+
+<div class="wrap">
+<div class="card">
+<h1>🔍 Google ke liye product pages banayein</h1>
+<p class="sub">Yeh tool aapki Google Sheet padh kar <b>products.html</b> aur <b>sitemap.xml</b> banata hai — jisme har product ka naam, model, brand, spec aur price <b>asli text</b> me hota hai, taaki Google use padh sake.</p>
+
+<button class="btn" id="go" onclick="build()">⚙️ Sheet padho aur pages banao</button>
+<div id="dl"></div>
+<div class="stat" id="stat"></div>
+<div class="log" id="log"></div>
+
+<div class="note">
+<b>Files banne ke baad:</b>
+<ol>
+<li>Dono file download karein (buttons upar aayenge)</li>
+<li>GitHub repo → <b>Add file → Upload files</b> → dono drop karein → <b>Commit</b></li>
+<li>Search Console → Sitemaps → <code>sitemap.xml</code> submit</li>
+</ol>
+<b style="display:block;margin-top:10px">Roz apne aap update chahiye?</b>
+Zip me di gayi <code>build-seo.js</code> + <code>.github/workflows/seo-update.yml</code> upload kar dein —
+phir yeh kaam GitHub roz khud kar lega, aapko yahan aana bhi nahi padega.
+</div>
+</div>
+</div>
+
+<script>
+var SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
+var SITE="https://www.wtpestore.co.in";
+function L(m){var e=document.getElementById('log');e.style.display='block';e.textContent+=m+"\n";e.scrollTop=e.scrollHeight;}
+function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];
+ if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}
+ else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch!='\r')c+=ch;}}
+ if(c!==''||r.length){r.push(c);R.push(r);}return R;}
+function cl(x){return String(x||'').replace(/^\uFEFF/,'').replace(/\s+/g,' ').trim();}
+function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function slug(n){return String(n||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);}
+function rupee(n){return '\u20b9'+Number(n||0).toLocaleString('en-IN');}
+
+function card(p){
+ var off=(p.mrp&&p.mrp>p.p)?Math.round((p.mrp-p.p)*100/p.mrp):0;
+ var price=p.p>0?('<div class="pr">'+(off?'<span class="old">'+rupee(p.mrp)+'</span>':'')+rupee(p.p)+'<small> +GST</small>'+(off?'<span class="off">'+off+'% OFF</span>':'')+'</div>')
+  :'<div class="pr" style="color:#565959;font-size:15px">Price on request</div>';
+ var wa='https://wa.me/919899193589?text='+encodeURIComponent('Hi WTPESTORE, I want a quotation for: '+p.n+(p.model?(' (Model '+p.model+')'):'')+'. Please share best price.');
+ return '<article class="pc" id="'+p.slug+'">'
+  +(p.model?'<span class="md">Model: '+esc(p.model)+'</span>':'')
+  +'<h3>'+esc(p.n)+'</h3>'
+  +(p.make?'<div style="font-size:12px;color:#666">Brand: <b>'+esc(p.make)+'</b></div>':'')
+  +(p.spec?'<div class="sp">'+esc(p.spec.slice(0,300))+'</div>':'')
+  +price
+  +'<div class="acts"><a class="b wa" href="'+wa+'" rel="nofollow">\ud83d\udcac Get Quote</a><a class="b vw" href="/?p='+p.slug+'">View \u2192</a></div>'
+  +'</article>';
+}
+function shell(title,desc,canon,body,ld){
+return '<!DOCTYPE html><html lang="en"><head>\n'
++'<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"><\/script>\n'
++'<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-3XGD177T0C");<\/script>\n'
++'<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">\n'
++'<title>'+esc(title)+'</title>\n<meta name="description" content="'+esc(desc)+'">\n'
++'<link rel="canonical" href="'+canon+'">\n'
++'<meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(desc)+'">\n'
++'<meta property="og:url" content="'+canon+'"><meta property="og:image" content="'+SITE+'/og-banner.png">\n'
++'<meta name="twitter:card" content="summary_large_image">\n'
++'<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">\n'
++'<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n'
++'<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">\n'+(ld||'')+'\n'
++'<style>\n:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}\n'
++'*{margin:0;padding:0;box-sizing:border-box}\nbody{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.6}\n'
++'header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}\n.wrap{max-width:1180px;margin:0 auto;padding:0 14px}\n'
++'header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}\nheader img{height:40px;width:auto;display:block}\n'
++'header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}\n'
++'.bc{font-size:13px;color:#565959;padding:12px 0}.bc a{color:var(--navy)}\nh1{font-size:26px;color:var(--navy);margin:8px 0}\n'
++'.lede{color:#444;font-size:14.5px;margin-bottom:14px;max-width:900px}\n'
++'h2{font-size:19px;color:var(--navy);margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}\n'
++'.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}\n'
++'.pc{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}\n'
++'.pc h3{font-size:14.5px;color:var(--navy);margin-bottom:6px;font-weight:700;line-height:1.35}\n'
++'.pc .md{display:inline-block;font-size:11px;font-weight:800;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:6px;padding:2px 8px;margin-bottom:6px}\n'
++'.pc .sp{font-size:12.5px;color:#555;margin:6px 0;line-height:1.55}\n'
++'.pc .pr{font-size:18px;font-weight:800;color:var(--green);margin-top:8px}\n'
++'.pc .pr small{font-size:11.5px;color:#565959;font-weight:500}\n'
++'.pc .old{color:#8a94a6;text-decoration:line-through;font-size:13px;font-weight:600;margin-right:4px}\n'
++'.pc .off{background:#e7f7ee;color:#0e7a3d;border:1px solid #bfe6cf;border-radius:6px;padding:1px 7px;font-size:11px;font-weight:800;margin-left:4px}\n'
++'.pc .acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}\n'
++'.pc a.b{flex:1;text-align:center;text-decoration:none;font-size:12.5px;font-weight:700;padding:8px 10px;border-radius:8px;min-width:96px}\n'
++'.pc a.wa{background:#25d366;color:#fff}.pc a.vw{background:var(--navy);color:#fff}\n'
++'.toc{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;margin:14px 0}\n'
++'.toc a{display:inline-block;margin:4px 8px 4px 0;font-size:13px;color:var(--navy);text-decoration:none;background:#f2f6f9;border:1px solid #e2e9ef;border-radius:20px;padding:5px 12px}\n'
++'footer{background:var(--navy);color:#cfe0ee;margin-top:34px;padding:22px 0;font-size:13px}footer a{color:#7ff0ff}\n'
++'@media(max-width:600px){h1{font-size:21px}}\n<\/style></head><body>\n'
++'<header><div class="wrap">\n<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE\u2122 \u2014 powered by Aqua Filtration System"></a>\n'
++'<a class="call" href="tel:+919910646957">\ud83d\udcde 9910646957</a>\n</div></header>\n<div class="wrap">\n'+body+'\n</div>\n'
++'<footer><div class="wrap">\n<b>WTPESTORE \u2014 powered by Aqua Filtration System</b><br>\n'
++'Mathura Road, Faridabad, Haryana 121003 \u00b7 GSTIN 06DMUPS2289L1ZZ<br>\n'
++'\ud83d\udcde 9910646950 \u00b7 9910646957 \u00b7 0129-4340856 \u00b7 <a href="mailto:info@aquafiltrationsystem.in">info@aquafiltrationsystem.in</a><br>\n'
++'<a href="/">Home</a> \u00b7 <a href="/products.html">All Products</a> \u00b7 <a href="/catalogues.html">Catalogues</a> \u00b7 <a href="/plant-calculators.html">Calculators</a><br>\n'
++'<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change \u2014 confirm on WhatsApp before order.</span>\n'
++'</div></footer>\n'
++'<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){});});}<\/script>\n'
++'</body></html>';
+}
+
+function dlBtn(name,content,type){
+ var blob=new Blob([content],{type:type||'text/html;charset=utf-8'});
+ var url=URL.createObjectURL(blob);
+ var a=document.createElement('a');a.href=url;a.download=name;a.className='btn dl';a.textContent='\u2b07\ufe0f '+name+' download';
+ a.style.display='inline-block';a.style.textDecoration='none';
+ document.getElementById('dl').appendChild(a);
+}
+
+function build(){
+ var b=document.getElementById('go');b.disabled=true;b.textContent='\u23f3 Sheet padh raha hoon...';
+ document.getElementById('log').textContent='';document.getElementById('dl').innerHTML='';
+ L('Sheet se data la raha hoon...');
+ fetch(SHEET).then(function(r){return r.text();}).then(function(t){
+  var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim();});
+  if(rows.length<2)throw new Error('Sheet khaali lagti hai');
+  var h=rows[0].map(function(x){return cl(x).toLowerCase();});
+  function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
+  var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mi=ix('make','brand'),
+      mo=ix('model'),sp=ix('specification','spec'),mrp=ix('mrp','list price','old price'),dsc=ix('discount','disc','off');
+  L('Columns mile: '+h.filter(Boolean).join(', '));
+  var P=[];
+  for(var i=1;i<rows.length;i++){
+   var r=rows[i],n=cl(r[ni]);if(n.length<2)continue;
+   var o={c:cl(r[ci])||'General',n:n,p:parseInt(String(r[pi]||'').replace(/[^0-9]/g,''))||0,
+     make:mi>-1?cl(r[mi]):'',model:mo>-1?cl(r[mo]):'',spec:sp>-1?cl(r[sp]):'',mrp:0};
+   if(mrp>-1){var m=parseInt(String(r[mrp]||'').replace(/[^0-9]/g,''))||0;if(m>o.p)o.mrp=m;}
+   if(!o.mrp&&dsc>-1){var d=parseFloat(String(r[dsc]||'').replace(/[^0-9.]/g,''))||0;
+     if(d>0&&d<95&&o.p>0){o.mrp=o.p;o.p=Math.round(o.p*(100-d)/100);}}
+   o.slug=slug(o.n);P.push(o);
+  }
+  L('Products mile: '+P.length);
+  var cats={};P.forEach(function(p){(cats[p.c]=cats[p.c]||[]).push(p);});
+  var names=Object.keys(cats).sort(function(a,b){return cats[b].length-cats[a].length;});
+  L('Categories: '+names.length);
+  names.slice(0,8).forEach(function(c){L('   \u2022 '+c+' \u2014 '+cats[c].length);});
+  if(names.length>8)L('   ... aur '+(names.length-8)+' categories');
+
+  var toc='<div class="toc"><b style="font-size:13px;color:#565959">Jump to category:</b><br>'
+   +names.map(function(c){return '<a href="#'+slug(c)+'">'+esc(c)+' ('+cats[c].length+')</a>';}).join('')+'</div>';
+  var body='<nav class="bc"><a href="/">Home</a> \u203a All Products</nav>\n'
+   +'<h1>All Water Treatment Products &amp; Spares \u2014 Price List</h1>\n'
+   +'<p class="lede">Complete list of <b>'+P.length+'+ water treatment products</b> across <b>'+names.length+' categories</b> \u2014 RO plants, water softeners, RO membranes, dosing pumps, FRP vessels, flow meters, instruments, cartridge filters and spares. Genuine branded products with GST invoice, supplied by <b>Aqua Filtration System, Faridabad</b> across Delhi NCR and India. Prices are exclusive of GST and updated regularly.</p>\n'
+   +toc+'\n'
+   +names.map(function(c){return '<section><h2 id="'+slug(c)+'">'+esc(c)+' <span style="font-size:13px;color:#777;font-weight:500">('+cats[c].length+' products)</span></h2>\n<div class="pgrid">'+cats[c].map(card).join('\n')+'</div></section>';}).join('\n');
+
+  var ldObj={"@context":"https://schema.org","@type":"ItemList","name":"WTPESTORE Water Treatment Products","numberOfItems":P.length,
+   "itemListElement":P.slice(0,200).map(function(p,i){
+    var it={"@type":"Product","name":p.n,"url":SITE+"/?p="+p.slug};
+    if(p.make)it.brand={"@type":"Brand","name":p.make};
+    if(p.model)it.model=p.model;
+    if(p.spec)it.description=p.spec.slice(0,200);
+    if(p.p>0)it.offers={"@type":"Offer","price":p.p,"priceCurrency":"INR","availability":"https://schema.org/InStock","seller":{"@type":"Organization","name":"Aqua Filtration System"}};
+    return {"@type":"ListItem","position":i+1,"item":it};})};
+  var ld='<script type="application/ld+json">'+JSON.stringify(ldObj)+'<\/script>';
+
+  var html=shell('All Products & Price List ('+P.length+'+ items) | WTPESTORE',
+   'Complete price list of '+P.length+'+ water treatment products \u2014 RO plants, softeners, membranes, dosing pumps, FRP vessels, flow meters & spares. Genuine brands, GST invoice, Faridabad. Call 9910646957.',
+   SITE+'/products.html',body,ld);
+
+  var today=new Date().toISOString().slice(0,10);
+  var staticU=['/','/products.html','/catalogues.html','/plant-calculators.html','/ro-plant.html','/dm-plant.html','/water-softener.html','/etp-plant.html','/stp-plant.html','/uf-plant.html','/gopani-filters.html','/eureka-forbes-water-softener.html','/zero-scale-water-softener.html','/aster-flow-meters-rotameter.html','/aster-ph-conductivity-tds-meter.html','/aster-pump-controllers.html','/edose-dosing-metering-pumps.html','/embark-chlorine-turbidity-do-meter.html','/pentair-frp-vessels.html','/qflo-frp-vessels.html','/uv-systems.html','/initiative-multiport-valves-mpv.html','/uf-membrane.html','/ro-membrane.html','/ro-membrane-housing.html','/cartridge-filters-housings.html','/ro-antiscalant-chemicals.html','/solenoid-valves.html','/pressure-level-switches.html','/pressure-gauges-ro-accessories.html','/disc-screen-filters.html','/distribution-systems.html','/water-test-kits.html','/water-atm-dispensers.html','/swimming-pool-lights.html','/more-products.html','/blog.html','/about.html','/contact.html','/faq.html'];
+  var sm='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+   +staticU.map(function(u){return '<url><loc>'+SITE+u+'</loc><lastmod>'+today+'</lastmod><priority>'+(u==='/'?'1.0':'0.8')+'</priority></url>';}).join('\n')+'\n'
+   +P.map(function(p){return '<url><loc>'+SITE+'/?p='+p.slug+'</loc><lastmod>'+today+'</lastmod><priority>0.6</priority></url>';}).join('\n')
+   +'\n</urlset>\n';
+
+  L('');L('\u2705 products.html ban gaya \u2014 '+Math.round(html.length/1024)+' KB');
+  L('\u2705 sitemap.xml ban gaya \u2014 '+(staticU.length+P.length)+' URLs');
+  L('');L('Ab neeche ke buttons se download karke GitHub par upload karein.');
+
+  var st=document.getElementById('stat');st.style.display='grid';
+  st.innerHTML='<div><b>'+P.length+'</b><span>Products</span></div>'
+   +'<div><b>'+names.length+'</b><span>Categories</span></div>'
+   +'<div><b>'+(staticU.length+P.length)+'</b><span>Sitemap URLs</span></div>'
+   +'<div><b>'+Math.round(html.length/1024)+' KB</b><span>Page size</span></div>';
+
+  dlBtn('products.html',html);
+  dlBtn('sitemap.xml',sm,'application/xml');
+  b.textContent='\u2705 Ho gaya \u2014 dobara chalane ke liye dabayein';b.disabled=false;
+ }).catch(function(e){
+  L('\u274c Problem: '+e.message);
+  L('Agar "Failed to fetch" aaye to Sheet publish check karein: File \u2192 Share \u2192 Publish to web \u2192 CSV');
+  b.textContent='\u26a0\ufe0f Dobara koshish karein';b.disabled=false;
+ });
+}
+</script>
+</body></html>
