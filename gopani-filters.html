@@ -180,7 +180,7 @@ var CATS=["GOPANI FILTERS", "GOPANI CLARYWOUND", "GOPANI RO PROTECT", "GOPANI ME
 var SECT={"CARTRIDGE FILTERS": "Cartridge Filters (PP Spun & Micron)", "CARTRIDGE HOUSINGS": "Filter Housings (Slim, Jumbo, SS)"};
 var DATA=SEED.map(function(x,i){return {id:i,c:x.c,n:x.n,p:x.p,img:x.img||"",spec:x.spec||"",model:x.model||"",pdf:x.pdf||""};});
 
-var CAT_PDF={"ZERO SCALE WATER SOFTENER": "zero-scale-water-softener.pdf", "EUREKA FORBES WATER SOFTENER": "eureka-forbes.pdf", "INDUSTRIAL RO PLANT": "zero-scale-ro-plant.pdf", "DM PLANT": "zero-scale-dm-plant.pdf", "WATER SOFTENER PLANT": "zero-scale-water-softener.pdf", "ETP PLANT": "zero-scale-etp-plant.pdf", "STP PLANT": "zero-scale-stp-plant.pdf", "UF PLANT": "zero-scale-uf-plant.pdf", "EDOSE METERING PUMPS": "edose-pumps.pdf", "ASTER ROTAMETERS & DIGITAL FLOW METERS": "aster-flow-meters.pdf", "ASTER ELECTROMAGNETIC FLOWMETERS": "aster-flow-meters.pdf", "ASTER ROTAMETERS": "aster-flow-meters.pdf", "ASTER INSTRUMENTS": "aster-instruments.pdf", "EMBARK INSTRUMENTS": "embark-instruments.pdf", "ASTERO CONTROLLERS": "astero-controllers.pdf", "PENTAIR FRP VESSELS & DIFFUSERS": "pentair-frp-vessels.pdf", "QFLO FRP VESSELS": "qflo-frp-vessels.pdf", "QFLO U.V. PURIFICATION SYSTEMS": "qflo-uv-systems.pdf", "INITIATIVE ENGINEERING MULTIPORT VALVES": "initiative-multiport-valves.pdf", "EVERFLOW U.F. MEMBRANES": "everflow-uf-membranes.pdf", "CHINESE U.F. MEMBRANES": "everflow-uf-membranes.pdf", "R.O. MEMBRANE HOUSINGS & PIPE JOINT COUPLINGS": "ro-membranes.pdf", "CARTRIDGE FILTERS": "cartridge-filters.pdf", "CARTRIDGE HOUSINGS": "cartridge-filters.pdf"};
+var CAT_PDF={"ASTER FLOW METERS":"aster-flow-meters.pdf","ASTER DIGITAL FLOW METERS":"aster-flow-meters.pdf","ASTER ULTRASONIC FLOW METERS":"aster-flow-meters.pdf","ASTER FLOW SWITCHES":"aster-flow-meters.pdf","ASTER WATER METERS":"aster-flow-meters.pdf","ASTER PH METERS":"aster-instruments.pdf","ASTER CONDUCTIVITY METERS":"aster-instruments.pdf","ASTER TDS METERS":"aster-instruments.pdf","ASTER ORP METERS":"aster-instruments.pdf","ASTER ANALYSERS":"aster-instruments.pdf","ASTER CONTROLLERS":"astero-controllers.pdf","ASTERO PUMP CONTROLLERS":"astero-controllers.pdf","EDOSE PUMPS":"edose-pumps.pdf","EDOSE DOSING PUMPS":"edose-pumps.pdf","EDOSE SPARES":"edose-pumps.pdf","PENTAIR FRP VESSELS":"pentair-frp-vessels.pdf","QFLO VESSELS":"qflo-frp-vessels.pdf","UV SYSTEMS":"qflo-uv-systems.pdf","QFLO UV SYSTEMS":"qflo-uv-systems.pdf","INITIATIVE MPV":"initiative-multiport-valves.pdf","MULTIPORT VALVES":"initiative-multiport-valves.pdf","UF MEMBRANES":"everflow-uf-membranes.pdf","EUREKA FORBES SOFTENER":"eureka-forbes.pdf","ZERO SCALE SOFTENER":"zero-scale-water-softener.pdf","ZERO SCALE WATER SOFTENERS":"zero-scale-water-softener.pdf","INDUSTRIAL RO PLANTS":"zero-scale-ro-plant.pdf","DM PLANTS":"zero-scale-dm-plant.pdf","WATER SOFTENER PLANTS":"zero-scale-water-softener.pdf","ETP PLANTS":"zero-scale-etp-plant.pdf","STP PLANTS":"zero-scale-stp-plant.pdf","UF PLANTS":"zero-scale-uf-plant.pdf","CARTRIDGE FILTERS PP SPUN":"cartridge-filters.pdf","CARTRIDGE FILTERS STRING WOUND":"cartridge-filters.pdf","FILTER HOUSINGS":"cartridge-filters.pdf","ZERO SCALE WATER SOFTENER": "zero-scale-water-softener.pdf", "EUREKA FORBES WATER SOFTENER": "eureka-forbes.pdf", "INDUSTRIAL RO PLANT": "zero-scale-ro-plant.pdf", "DM PLANT": "zero-scale-dm-plant.pdf", "WATER SOFTENER PLANT": "zero-scale-water-softener.pdf", "ETP PLANT": "zero-scale-etp-plant.pdf", "STP PLANT": "zero-scale-stp-plant.pdf", "UF PLANT": "zero-scale-uf-plant.pdf", "EDOSE METERING PUMPS": "edose-pumps.pdf", "ASTER ROTAMETERS & DIGITAL FLOW METERS": "aster-flow-meters.pdf", "ASTER ELECTROMAGNETIC FLOWMETERS": "aster-flow-meters.pdf", "ASTER ROTAMETERS": "aster-flow-meters.pdf", "ASTER INSTRUMENTS": "aster-instruments.pdf", "EMBARK INSTRUMENTS": "embark-instruments.pdf", "ASTERO CONTROLLERS": "astero-controllers.pdf", "PENTAIR FRP VESSELS & DIFFUSERS": "pentair-frp-vessels.pdf", "QFLO FRP VESSELS": "qflo-frp-vessels.pdf", "QFLO U.V. PURIFICATION SYSTEMS": "qflo-uv-systems.pdf", "INITIATIVE ENGINEERING MULTIPORT VALVES": "initiative-multiport-valves.pdf", "EVERFLOW U.F. MEMBRANES": "everflow-uf-membranes.pdf", "CHINESE U.F. MEMBRANES": "everflow-uf-membranes.pdf", "R.O. MEMBRANE HOUSINGS & PIPE JOINT COUPLINGS": "ro-membranes.pdf", "CARTRIDGE FILTERS": "cartridge-filters.pdf", "CARTRIDGE HOUSINGS": "cartridge-filters.pdf"};
 function zsPdf(p){var u=String((p&&p.pdf)||'').trim();
   var ck=String((p&&p.c)||'').toUpperCase().replace(/\s+/g,' ').trim();
   var localCat=(typeof CAT_PDF!=='undefined'&&CAT_PDF[ck])?('/catalogues/'+CAT_PDF[ck]):'';
@@ -261,6 +261,20 @@ function offPct(p){return (p&&p.mrp&&p.mrp>p.p)?Math.round((p.mrp-p.p)*100/p.mrp
 function priceHTML(p){var o=offPct(p);
   if(!o)return rupee(p.p)+'<small> +GST</small>';
   return '<span class="mrp-old">'+rupee(p.mrp)+'</span> '+rupee(p.p)+'<small> +GST</small> <span class="off-badge">'+o+'% OFF</span>';}
+function sKey(x){return String(x||'').toLowerCase().replace(/[^a-z0-9]+/g,'');}
+function sMatch(p,q){q=String(q||'').trim(); if(!q)return true;
+  var hay=((p.n||'')+' '+(p.c||'')+' '+(p.model||'')+' '+(p.make||'')+' '+(p.spec||'')).toLowerCase();
+  var hayK=sKey(hay);
+  if(hay.indexOf(q.toLowerCase())>=0)return true;
+  var toks=q.toLowerCase().split(/[\s,]+/).filter(function(t){return t;});
+  if(!toks.length)return true;
+  for(var i=0;i<toks.length;i++){
+    var t=toks[i], tk=sKey(t);
+    if(hay.indexOf(t)>=0)continue;
+    if(tk&&hayK.indexOf(tk)>=0)continue;
+    return false;
+  }
+  return true;}
 function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function slug(n){return (''+(n||'')).toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);}
@@ -295,7 +309,7 @@ function render(){
   DATA.forEach(function(p){if(!seen[p.c]){order.push(p.c);seen[p.c]=1;}});
   order.forEach(function(cat){
     var items=DATA.filter(function(p){return p.c===cat;});
-    if(q)items=items.filter(function(p){return (p.n+' '+(p.model||model(p.n))).toLowerCase().indexOf(q)>=0;});
+    if(q)items=items.filter(function(p){return sMatch({n:p.n,c:p.c,model:(p.model||model(p.n)),make:p.make,spec:p.spec},q);});
     if(!items.length)return;
     html+='<div class="sec-h">'+esc(SECT[cat]||cat)+'<span class="ct">'+items.length+' items</span></div>';
     html+='<div class="grid">'+items.map(card).join('')+'</div>';
