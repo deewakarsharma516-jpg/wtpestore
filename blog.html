@@ -224,7 +224,7 @@ function showPost(p){
 
 function render(){
   var q=(document.getElementById('q').value||'').toLowerCase();
-  var list=BLOG_POSTS.filter(function(p){var okCat=(activeCat==="All"||p.cat===activeCat);var okQ=!q||(p.t+' '+p.d+' '+p.cat).toLowerCase().indexOf(q)>=0;return okCat&&okQ;});
+  var list=BLOG_POSTS.filter(function(p){var okCat=(activeCat==="All"||p.cat===activeCat);var _h=(p.t+' '+p.d+' '+p.cat).toLowerCase();var okQ=!q||_h.indexOf(q)>=0||q.split(/[\s,]+/).filter(Boolean).every(function(w){return _h.indexOf(w)>=0;});return okCat&&okQ;});
   var g=document.getElementById('grid'), e=document.getElementById('empty');
   if(!list.length){g.innerHTML='';e.style.display='block';return;}
   e.style.display='none';

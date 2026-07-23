@@ -10,7 +10,7 @@ gtag('config', 'G-3XGD177T0C');
 
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>WTPESTORE — Water Treatment Products &amp; Spares Online | Aqua Filtration System, Faridabad</title>
-<meta name="description" content="WTPESTORE — official online store of Aqua Filtration System, Faridabad. Buy RO plants, water softeners, DM plants, RO membranes, dosing pumps, FRP vessels, flow meters &amp; spares with live prices and GST bill. 447+ products, since 2017. Call 9910646957.">
+<meta name="description" content="WTPESTORE — online store of Aqua Filtration System, Faridabad. RO plants, softeners, membranes, dosing pumps, FRP vessels &amp; spares. Live price, GST bill.">
 <meta name="robots" content="index, follow">
 <meta name="keywords" content="water treatment products, RO plant, DM plant, water softener, FRP vessels, UV system, dosing pump, flow meter, RO membrane, water treatment spares, Faridabad">
 <meta name="publisher" content="Aqua Filtration System">
@@ -869,8 +869,7 @@ function renderList(list){
   v.innerHTML='<div class="plist">'+list.map(prow).join('')+'</div>';
 }
 function doSearch(){var q=document.getElementById('search').value.trim();if(!q){goHome();return;}lastSearch=q;curCat=null;var _ly=document.querySelector('.layout');if(_ly)_ly.classList.remove('home');document.getElementById('hero').style.display='none';document.getElementById('ticker').style.display='none';document.getElementById('crumb').innerHTML='<a onclick="goHome()">Home</a> › Search: '+esc(q);document.getElementById('mtitle').textContent='Search: '+q;buildSide();
-  var sq=squish(q), words=q.toLowerCase().split(/\s+/).filter(Boolean);
-  renderList(STORE_DATA.filter(function(p){var t=(p.n+' '+p.c+' '+(p.make||'')+' '+(p.model||'')+' '+extractModel(p.n)).toLowerCase();var ts=squish(t);if(sq.length>=2&&ts.indexOf(sq)>-1)return true;return words.every(function(w){return t.indexOf(w)>-1;});}));}
+  renderList(STORE_DATA.filter(function(p){return sMatch({n:p.n,c:p.c,make:p.make,model:(p.model||extractModel(p.n)),spec:p.spec},q);}));}
 var _lt;function liveSearch(){clearTimeout(_lt);_lt=setTimeout(function(){var q=document.getElementById('search').value.trim();if(q.length>=2){doSearch();}else if(!q){goHome();}},400);}
 function waProduct(name,price){lastProduct=name;var msg='Namaste WTPESTORE!%0A%0AMujhe chahiye:%0A*'+encodeURIComponent(name)+'*'+(price?'%0APrice: '+encodeURIComponent(rupee(price))+' +GST':'')+'%0A%0AQty: %0ADelivery: ';window.open('https://wa.me/'+WA_NUM+'?text='+msg,'_blank');}
 

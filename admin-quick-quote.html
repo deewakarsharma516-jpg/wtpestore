@@ -311,7 +311,7 @@ function loadCat(){
 function searchProd(){
   var q=val('psearch').toLowerCase(),box=document.getElementById('sres');
   if(!q){box.classList.remove('show');box.innerHTML='';return;}
-  var res=CAT.filter(function(p){return (p.n+' '+p.make).toLowerCase().indexOf(q)>=0;}).slice(0,25);
+  var res=CAT.filter(function(p){return sMatch(p,q);}).slice(0,25);
   box.classList.add('show');
   box.innerHTML=res.length?res.map(function(p,i){return '<div class="item" onclick="pick('+CAT.indexOf(p)+')"><span class="pr">'+rupee(p.p)+'</span><span class="mk">'+esc(p.make)+'</span> '+esc(p.n)+'</div>';}).join(''):'<div class="item" style="color:#888">Kuch nahi mila.</div>';
 }
@@ -531,5 +531,20 @@ function sendPayFromDoc(){
   if(!/^[6-9][0-9]{9}$/.test(n)){alert('Sahi 10-digit number daalein');return;}
   window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(msg),'_blank');
 }
+function sKey(x){return String(x||'').toLowerCase().replace(/[^a-z0-9]+/g,'');}
+function sMatch(p,q){q=String(q||'').trim(); if(!q)return true;
+  var hay=((p.n||'')+' '+(p.c||'')+' '+(p.model||'')+' '+(p.make||'')+' '+(p.spec||'')).toLowerCase();
+  var hayK=sKey(hay);
+  if(hay.indexOf(q.toLowerCase())>=0)return true;
+  var toks=q.toLowerCase().split(/[\s,]+/).filter(function(t){return t;});
+  if(!toks.length)return true;
+  for(var i=0;i<toks.length;i++){
+    var t=toks[i], tk=sKey(t);
+    if(hay.indexOf(t)>=0)continue;
+    if(tk&&hayK.indexOf(tk)>=0)continue;
+    return false;
+  }
+  return true;}
+
 </script>
 </body></html>
