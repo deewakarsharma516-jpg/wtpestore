@@ -215,7 +215,7 @@ function showPost(p){
   var cov=p.img?'<img class="cov" src="'+esc(p.img)+'" alt="'+esc(p.t)+'" onerror="this.style.display=\'none\'">':'';
   var el=document.getElementById('post');el.style.display='block';
   el.innerHTML='<a class="back" href="blog.html">← Back to all blogs</a>'+
-    '<span class="tag">'+esc(p.cat)+'</span><h1>'+esc(p.t)+'</h1>'+
+    '<span class="tag">'+esc(p.cat)+'</span><h2 class="bp-title" style="font-size:26px;color:var(--navy);margin:8px 0">'+esc(p.t)+'</h2>'+
     '<div class="pmeta">📅 '+esc(p.date)+' · ✍️ Aqua Filtration System</div>'+
     cov+(p.d?('<p class="lead">'+esc(p.d)+'</p>'):'')+contentToHtml(p.content);
   try{document.title=p.t+' | WTPESTORE';}catch(e){}
