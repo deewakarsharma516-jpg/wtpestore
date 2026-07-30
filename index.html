@@ -500,7 +500,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
   <div id="aLock" style="padding:34px;text-align:center">
     <div style="font-size:15px;font-weight:700;margin-bottom:12px">Owner Login</div>
     <input id="aPass" type="password" placeholder="Password" style="padding:11px 14px;border:1px solid var(--border);border-radius:8px;max-width:240px;width:100%" onkeydown="if(event.key==='Enter')aUnlock()">
-    <div style="margin-top:12px"><button class="qsv" style="padding:11px 24px;border:none;border-radius:8px;font-weight:700" onclick="aUnlock()">Unlock</button></div>
+    <div style="margin-top:12px"><button class="qsv" style="padding:11px 24px;border:none;border-radius:8px;font-weight:700" onclick="aUnlock()" id="aUnlockBtn">Unlock</button></div>
     <div style="margin-top:12px"><a href="#" onclick="aForgot();return false" style="font-size:12.5px;color:#0e4d6b;font-weight:600">Forgot password?</a></div>
     <div id="aForgotBox" style="display:none;margin-top:12px;max-width:240px;margin-left:auto;margin-right:auto">
       <input id="aOtp" inputmode="numeric" placeholder="Enter OTP" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;width:100%;text-align:center;letter-spacing:3px">
@@ -547,7 +547,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
         <div class="fg"><label>WhatsApp Number</label><input id="setWA" value="919899193589"></div>
         <div class="fg"><label>GSTIN</label><input id="setGST" value="06DMUPS2289L1ZZ"></div>
         <div class="fg"><label>Payment Gateway</label><select id="setPay"><option>CCAvenue</option><option>Razorpay</option><option>PayU</option><option>Cashfree</option></select></div>
-        <div class="fg"><label>Admin Password (change)</label><input id="setPass" placeholder="New password"></div>
+        <div class="fg"><label>🔐 Admin Login URL (Apps Script /exec)</label><input id="setPass" placeholder="https://script.google.com/macros/s/.../exec"><div style="font-size:11.5px;color:var(--muted);margin-top:4px">Password ab Sheet ki <b>AdminAuth</b> tab (cell B1) me rehta hai — code me nahi. Badalna ho to bas Sheet me B1 badal dein.</div></div>
         <div class="fg full"><label>Price Google Sheet (published CSV link) — live prices</label><input id="setSheet" placeholder="https://docs.google.com/.../pub?output=csv"></div>
         <div class="fg full"><label>Lead Save — Apps Script Web-App URL</label><input id="setLead" placeholder="https://script.google.com/macros/s/.../exec"></div>
         <div class="fg full"><label>Lead Sheet — View CSV link (leads dekhne ke liye, published)</label><input id="setLeadCsv" placeholder="https://docs.google.com/.../pub?output=csv"></div>
@@ -1057,8 +1057,29 @@ setTimeout(showLead,60000);
 /* ===== Admin ===== */
 function openAdmin(){document.getElementById('aov').classList.add('open');if(aAuthed){aShow();}else{document.getElementById('aLock').style.display='block';document.getElementById('aMain').style.display='none';}}
 function closeAdmin(){document.getElementById('aov').classList.remove('open');}
-function _k(){return [64,62,69,126,115,81].reverse().map(function(c){return String.fromCharCode(c-13);}).join('');}
-function aUnlock(){var v=document.getElementById('aPass').value;if(v===cfg('apass',_k())){aAuthed=true;aShow();}else toast('Galat password');}
+function aLoginUrl(){return cfg('login_url','')||cfg('addproduct_url','')||cfg('lead','');}
+function aUnlock(){
+  var v=document.getElementById('aPass').value;
+  var url=aLoginUrl();
+  if(!url){toast('Login URL Settings me daalein (Add Product wala /exec URL)');return;}
+  var btn=document.getElementById('aUnlockBtn'); if(btn){btn.disabled=true;btn.textContent='Checking...';}
+  aJsonp(url+'?action=login&pass='+encodeURIComponent(v),function(r){
+    if(btn){btn.disabled=false;btn.textContent='Unlock';}
+    if(r&&r.ok&&r.token){
+      try{localStorage.setItem('wtpe_tok',r.token);}catch(e){}
+      aAuthed=true;aShow();toast('Login ho gaya');
+    }else if(r&&r.error==='no-password-set'){toast('Sheet ki AdminAuth tab me B1 me password daalein');}
+    else if(r&&r.error==='network'){toast('Login server se connect nahi hua — URL check karein');}
+    else{toast('Galat password');}
+  });
+}
+function aCheckToken(){
+  var url=aLoginUrl(); var t='';
+  try{t=localStorage.getItem('wtpe_tok')||'';}catch(e){}
+  if(!url||!t)return;
+  aJsonp(url+'?action=verify&token='+encodeURIComponent(t),function(r){if(r&&r.ok){aAuthed=true;}});
+}
+function aLogout(){try{localStorage.removeItem('wtpe_tok');}catch(e){}aAuthed=false;location.reload();}
 function aJsonp(url,cb){var done=false;var fn='acb_'+Math.floor(Math.random()*1e9);var s=document.createElement('script');function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn];s.remove();}catch(e){}}}window[fn]=function(r){fin(r);};s.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;s.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(s);setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
 function aOtpUrl(){return cfg('otp_url','https://script.google.com/macros/s/AKfycbynPDNbRvUJHr-owF9Do6ugdTpstHtHS3TFoYm9KtBjO_1UraUu2UfJ41-SjkSRdiV73w/exec');}
 function aForgot(){
@@ -1096,7 +1117,7 @@ function saveEdit(){var o={c:document.getElementById('eCat').value.trim()||'Gene
   saveStore();closeEdit();aRender();buildSide();if(curCat)openFolder(curCat);else goHome();toast('Product saved');}
 function aDel(id){if(!confirm('Delete this product?'))return;STORE_DATA=STORE_DATA.filter(function(x){return x.id!==id;});saveStore();aRender();buildSide();toast('Deleted');}
 function aExport(){var rows=[['Category','Product','Make','Model','Specification','Price','Image','Catalogue','Video']].concat(STORE_DATA.map(function(x){return[x.c,x.n,x.make||'',x.model||'',x.spec||'',x.p,x.img||'',x.pdf||'',x.vid||''];}));var csv=rows.map(function(r){return r.map(function(f){return '"'+String(f).replace(/"/g,'""')+'"';}).join(',');}).join('\n');var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='WTPESTORE_products.csv';a.click();}
-function aSaveSettings(btn){WA_NUM=document.getElementById('setWA').value.trim()||WA_NUM;COMPANY.gstin=document.getElementById('setGST').value.trim();setCfg('sheet',document.getElementById('setSheet').value.trim());setCfg('lead',document.getElementById('setLead').value.trim());var np=document.getElementById('setPass').value.trim();if(np){setCfg('apass',np);document.getElementById('setPass').value='';}setCfg('leadcsv',((document.getElementById('setLeadCsv')||{}).value||'').trim());setCfg('orderscsv',((document.getElementById('setOrdersCsv')||{}).value||'').trim());setCfg('addproduct_url',((document.getElementById('setAddProd')||{}).value||'').trim());setCfg('quote_url',((document.getElementById('setQuote')||{}).value||'').trim());setCfg('otp_url',((document.getElementById('setOtp')||{}).value||'').trim());setCfg('csv_url',document.getElementById('setSheet').value.trim());if(btn){var _o=btn.textContent;btn.textContent='Saved \u2713';btn.disabled=true;btn.style.opacity='.7';setTimeout(function(){btn.textContent=_o;btn.disabled=false;btn.style.opacity='';},1300);}toast(np?'Settings saved  password badal gaya':'Settings saved');loadSheet();if(typeof aShow==='function')aShow();}
+function aSaveSettings(btn){WA_NUM=document.getElementById('setWA').value.trim()||WA_NUM;COMPANY.gstin=document.getElementById('setGST').value.trim();setCfg('sheet',document.getElementById('setSheet').value.trim());setCfg('lead',document.getElementById('setLead').value.trim());var lu=((document.getElementById('setPass')||{}).value||'').trim();if(lu){setCfg('login_url',lu);document.getElementById('setPass').value=cfg('login_url','');}setCfg('leadcsv',((document.getElementById('setLeadCsv')||{}).value||'').trim());setCfg('orderscsv',((document.getElementById('setOrdersCsv')||{}).value||'').trim());setCfg('addproduct_url',((document.getElementById('setAddProd')||{}).value||'').trim());setCfg('quote_url',((document.getElementById('setQuote')||{}).value||'').trim());setCfg('otp_url',((document.getElementById('setOtp')||{}).value||'').trim());setCfg('csv_url',document.getElementById('setSheet').value.trim());if(btn){var _o=btn.textContent;btn.textContent='Saved \u2713';btn.disabled=true;btn.style.opacity='.7';setTimeout(function(){btn.textContent=_o;btn.disabled=false;btn.style.opacity='';},1300);}toast(lu?'Settings saved \u2014 Login URL set':'Settings saved');loadSheet();if(typeof aShow==='function')aShow();}
 
 /* ===== Sheet sync (prices + make/model/spec/media) ===== */
 function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
@@ -1107,7 +1128,7 @@ var DEFAULT_SHEET='https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyM
 function loadSheet(){var url=cfg('sheet','')||DEFAULT_SHEET;if(url.indexOf('2PACX-1vTriqSh')>-1)url=DEFAULT_SHEET;if(!url)return;fetch(url).then(function(r){return r.text();}).then(function(t){var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim()!=='';});if(!rows.length)return;var h=rows[0].map(function(x){return(x||'').toLowerCase();}),s=0;function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mrpi=ix('mrp','list price','old price','strike price'),disci=ix('discount','disc','discount%','discount %','off'),mi=ix('make','brand'),mo=ix('model'),sp=ix('specification','spec'),ii=ix('image','photo'),di=ix('catalogue','catalog','pdf'),vi=ix('video'),cgi=ix('catimage','category image','cat image','category photo','cat photo');if(ci>-1||ni>-1||pi>-1)s=1;else{ci=0;ni=1;pi=2;}if(ci<0)ci=0;if(ni<0)ni=1;if(pi<0)pi=2;var o=[];CAT_IMG={};for(var i=s;i<rows.length;i++){var r=rows[i];var nm=(r[ni]||'').trim();if(nm.length<2)continue;var x={id:i,c:(r[ci]||'General').trim()||'General',n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0};if(mrpi>-1&&r[mrpi]){var _m=parseInt(String(r[mrpi]).replace(/[^0-9]/g,''))||0;if(_m>x.p)x.mrp=_m;}if(!x.mrp&&disci>-1&&r[disci]){var _d=parseFloat(String(r[disci]).replace(/[^0-9.]/g,''))||0;if(_d>0&&_d<95&&x.p>0){x.mrp=x.p;x.p=Math.round(x.p*(100-_d)/100);}}if(mi>-1&&r[mi])x.make=r[mi].trim();if(mo>-1&&r[mo])x.model=r[mo].trim();if(sp>-1&&r[sp])x.spec=r[sp].trim();if(ii>-1&&r[ii]){var _ims=r[ii].split(/[,|\n\r]+/);var _i2=ix('image2','photo2','image 2');if(_i2>-1&&r[_i2])_ims.push(r[_i2]);var _i3=ix('image3','photo3','image 3');if(_i3>-1&&r[_i3])_ims.push(r[_i3]);_ims=_ims.map(function(u){return(u||'').trim();}).filter(Boolean);if(_ims.length){x.imgs=_ims;x.img=_ims[0];}}if(di>-1&&r[di])x.pdf=r[di].trim();if(vi>-1&&r[vi])x.vid=r[vi].trim();if(cgi>-1&&r[cgi]&&!CAT_IMG[x.c])CAT_IMG[x.c]=r[cgi].trim();o.push(x);}if(o.length){STORE_DATA=o;saveStore();buildSide();if(typeof routeFromURL==='function'&&routeFromURL()){}else if(curCat)openFolder(curCat);else goHome();}}).catch(function(){});}
 
 document.getElementById('yr').textContent=new Date().getFullYear();
-buildSide();goHome();loadSheet();
+buildSide();goHome();loadSheet();try{aCheckToken();}catch(e){}
 </script>
 <script>
 /* ===== ADMIN LEADS VIEWER (privacy: admin-only) ===== */
@@ -1530,7 +1551,7 @@ var WT_PAGES={
 <script>
 /* ===== SETTINGS BACKUP / RESTORE (cross-device, private) ===== */
 function aBackup(){
-  var keys=['sheet','lead','leadcsv','orderscsv','apass'];
+  var keys=['sheet','lead','leadcsv','orderscsv','login_url'];
   var o={}; keys.forEach(function(k){o[k]=cfg(k,'');});
   var code='WTPE1:'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
   var box=document.getElementById('aRestoreBox'); if(box)box.value=code;
@@ -1543,7 +1564,7 @@ function aRestore(){
   if(!v){toast('Pehle backup code paste karein');return;}
   try{
     var o=JSON.parse(decodeURIComponent(escape(atob(v))));
-    ['sheet','lead','leadcsv','orderscsv','apass'].forEach(function(k){ if(o[k]!=null && o[k]!=='') setCfg(k,o[k]); });
+    ['sheet','lead','leadcsv','orderscsv','login_url'].forEach(function(k){ if(o[k]!=null && o[k]!=='') setCfg(k,o[k]); });
     toast('Settings restore ho gayi ✅');
     if(typeof aShow==='function') aShow();
     if(typeof loadSheet==='function') loadSheet();
