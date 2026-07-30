@@ -1,12 +1,22 @@
 User-agent: *
 Allow: /
-Disallow: /admin.html
+
+# Admin aur billing pages — Google me nahi aani chahiye
 Disallow: /admin-add-product.html
 Disallow: /admin-add-blog.html
-Disallow: /admin-quick-quote.html
 Disallow: /admin-change-pin.html
 Disallow: /admin-settings.html
+Disallow: /admin-quick-quote.html
+Disallow: /admin-seo-pages.html
+Disallow: /admin.html
 Disallow: /quotation.html
 Disallow: /proforma-invoice.html
-Disallow: /blog-post-template.html
+Disallow: /payment.html
+
+# Google Sheet / data ke galat URLs
+Disallow: /pub
+Disallow: /pubhtml
+Disallow: /groq
+Disallow: /*?output=csv
+
 Sitemap: https://www.wtpestore.co.in/sitemap.xml
