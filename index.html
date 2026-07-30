@@ -854,7 +854,7 @@ function prow(p){
   var catJS=JSON.stringify(p.c).replace(/"/g,'&quot;');
   var slug=pSlug(p.n);
   return '<div class="hpc" onclick="gotoProduct(\''+slug+'\')">'+
-    '<div class="hpc-img"><img loading="lazy" src="'+esc(imgSrc)+'" alt="'+nm+'" onerror="pImgErr(this,'+catJS+')"></div>'+
+    '<div class="hpc-img"><img loading="lazy" decoding="async" src="'+esc(imgSrc)+'" alt="'+nm+'" onerror="pImgErr(this,'+catJS+')"></div>'+
     '<div class="hpc-b">'+(md?'<span class="hpc-md">'+esc(md)+'</span>':'')+
     '<div class="hpc-n">'+nm+'</div>'+
     '<div class="hpc-f"><div class="hpc-p">'+(p.p>0?priceHTML(p):'On request')+'</div>'+

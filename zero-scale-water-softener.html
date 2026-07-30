@@ -122,6 +122,12 @@ footer b{color:#fff}
 <meta name="apple-mobile-web-app-title" content="WTPeSTORE">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Water softener ki capacity kaise chunein?","acceptedAnswer":{"@type":"Answer","text":"Capacity aapke daily paani ke use (litres per day) aur feed water ki hardness (ppm) par tay hoti hai. Dono bata dein, hum sahi model suggest kar denge."}},
+{"@type":"Question","name":"Kya installation aur AMC available hai?","acceptedAnswer":{"@type":"Answer","text":"Haan. Installation, commissioning aur AMC service available hai. AMC charges alag se lagte hain aur plant ke size par depend karte hain."}},
+{"@type":"Question","name":"Warranty kitni milti hai?","acceptedAnswer":{"@type":"Answer","text":"Standard warranty 1 saal ki hoti hai. Manufacturer ke hisaab se terms alag ho sakti hain."}},
+{"@type":"Question","name":"Delivery kahan tak hoti hai?","acceptedAnswer":{"@type":"Answer","text":"Faridabad aur Delhi NCR me hum khud deliver karte hain, aur baaki India me courier/transport se pan-India dispatch karte hain."}},
+{"@type":"Question","name":"GST bill milta hai?","acceptedAnswer":{"@type":"Answer","text":"Haan, har order par proper GST invoice diya jata hai. GSTIN 06DMUPS2289L1ZZ."}}]}</script>
 </head>
 <body>
 <header>
@@ -251,7 +257,7 @@ function ph(c){var lbl=(BRAND||'WTPESTORE').toUpperCase().slice(0,16);
 function pImg(p){return p.img?esc(p.img):ph(p.c);}
 
 function card(p){var md=p.model||model(p.n);
-  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+priceHTML(p)+'</div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button><button class="pc-q" style="background:#0b2545" onclick="event.stopPropagation();wtpSendTo('+JSON.stringify(p.n).replace(/"/g,'&quot;')+',location.origin+location.pathname+\'?p=\'+slug(p.n))" title="Customer ko bhejein">📤</button>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Catalogue PDF" style="margin-left:6px;font-size:17px;text-decoration:none">📄</a>':'')+'</div></div></div>';}
+  return '<div class="pc" onclick="openP('+p.id+')"><div class="pc-img"><img loading="lazy" decoding="async" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="pc-b">'+(md?'<span class="pc-md">'+esc(md)+'</span>':'')+'<div class="pc-n">'+esc(p.n)+'</div><div class="pc-f"><div class="pc-p">'+priceHTML(p)+'</div><button class="pc-q" onclick="event.stopPropagation();quote('+p.id+')">Get Quote</button><button class="pc-q" style="background:#0b2545" onclick="event.stopPropagation();wtpSendTo('+JSON.stringify(p.n).replace(/"/g,'&quot;')+',location.origin+location.pathname+\'?p=\'+slug(p.n))" title="Customer ko bhejein">📤</button>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Catalogue PDF" style="margin-left:6px;font-size:17px;text-decoration:none">📄</a>':'')+'</div></div></div>';}
 
 function render(){
   var host=document.getElementById('products'); if(!host)return;
@@ -272,7 +278,7 @@ function render(){
 function openP(id){var p=DATA[id];if(!p)return;var md=p.model||model(p.n);
   var waMsg='Hi WTPESTORE, I want a quotation for: '+p.n+(BRAND&&BRAND!=='WTPESTORE'?(' ('+BRAND+')'):'')+'.\nLink: '+location.origin+location.pathname+'?p='+slug(p.n)+'\nPlease share best price.';
   var m=document.getElementById('modal');
-  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+specTable(p.spec,md)+'<div class="m-price">'+priceHTML(p)+(offPct(p)?('<div class="save-line">\u2713 Aap bachate hain '+rupee(p.mrp-p.p)+'</div>'):'')+'</div>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;margin:10px 0 2px;padding:9px 16px;background:#0b2545;color:#fff;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none">📄 Download Catalogue (PDF)</a>':'')+'<div class="m-avail" style="font-size:12px;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:8px;padding:7px 10px;margin:8px 0;line-height:1.5">⚠️ Order se pehle <b>availability</b> ke liye hamare executive se baat karein — 📞 <a href="tel:+919899193589" style="color:#8a5a00;font-weight:700">9899193589</a></div><div class="m-btns"><button class="m-cl" style="background:#0e4d6b;flex:1;min-width:120px" onclick="openEnquiry((document.querySelector(\'#modal h2\')||{}).textContent)">📝 Enquiry</button><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
+  m.innerHTML='<button class="m-close" onclick="closeM()">×</button><div class="m-top"><div class="m-img"><img loading="lazy" decoding="async" src="'+pImg(p)+'" alt="'+esc(p.n)+'"></div><div class="m-info"><div class="m-cat">'+esc(p.c)+'</div><h2>'+esc(p.n)+'</h2>'+specTable(p.spec,md)+'<div class="m-price">'+priceHTML(p)+(offPct(p)?('<div class="save-line">\u2713 Aap bachate hain '+rupee(p.mrp-p.p)+'</div>'):'')+'</div>'+(zsPdf(p)?'<a href="'+esc(zsPdf(p))+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;margin:10px 0 2px;padding:9px 16px;background:#0b2545;color:#fff;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none">📄 Download Catalogue (PDF)</a>':'')+'<div class="m-avail" style="font-size:12px;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:8px;padding:7px 10px;margin:8px 0;line-height:1.5">⚠️ Order se pehle <b>availability</b> ke liye hamare executive se baat karein — 📞 <a href="tel:+919899193589" style="color:#8a5a00;font-weight:700">9899193589</a></div><div class="m-btns"><button class="m-cl" style="background:#0e4d6b;flex:1;min-width:120px" onclick="openEnquiry((document.querySelector(\'#modal h2\')||{}).textContent)">📝 Enquiry</button><a class="m-wa" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waMsg)+'" target="_blank" rel="noopener">💬 Get Quotation</a><a class="m-cl" href="tel:+'+CALL+'">📞 Call</a><button class="m-share" onclick="shareP('+id+')">🔗 Share</button></div></div></div>';
   document.getElementById('ov').classList.add('open');document.body.style.overflow='hidden';
   try{history.replaceState(null,'','?p='+slug(p.n));}catch(e){}pSEO(p,md);}
 function closeM(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';try{history.replaceState(null,'',location.pathname);}catch(e){}}
@@ -296,7 +302,16 @@ function loadSheet(){if(!CATS.length)return;
       var nm=(r[ni]||'').trim();if(nm.length<2)continue;
       fresh.push({id:fresh.length,c:cat,n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,img:(ii>-1?(r[ii]||'').trim():''),spec:(sp>-1?(r[sp]||'').trim():''),model:(mo>-1?(r[mo]||'').trim():''),pdf:(pf>-1?(r[pf]||'').trim():''),mrp:(mrpi>-1?(parseInt(String(r[mrpi]||'').replace(/[^0-9]/g,''))||0):0)});var _L=fresh[fresh.length-1];if(_L){if(_L.mrp&&_L.mrp<=_L.p)_L.mrp=0;if(!_L.mrp&&disci>-1&&r[disci]){var _d=parseFloat(String(r[disci]||'').replace(/[^0-9.]/g,''))||0;if(_d>0&&_d<95&&_L.p>0){_L.mrp=_L.p;_L.p=Math.round(_L.p*(100-_d)/100);}}}}
     if(fresh.length){DATA=fresh;render();routeFromURL();}
-  }).catch(function(){});}
+  }).catch(function(){
+    var _h=document.getElementById('products');
+    if(_h&&!document.getElementById('wtpSheetErr')&&!_h.innerHTML.trim()){
+      _h.innerHTML='<div id="wtpSheetErr" style="background:#fff6e6;border:1px solid #ffd9a3;border-radius:12px;padding:16px;text-align:center;font-size:14px;color:#8a5a00;line-height:1.7">'
+      +'\u26a0\ufe0f Live price list abhi load nahi ho payi.<br>'
+      +'<span style="font-size:13px">Internet check karke page refresh karein, ya seedha humse rate poochhein \u2014 turant bata denge.</span><br>'
+      +'<a href="https://wa.me/919899193589" style="display:inline-block;margin-top:10px;background:#25d366;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-weight:700;font-size:13.5px">\ud83d\udcac WhatsApp par rate poochhein</a> '
+      +'<a href="tel:+919910646957" style="display:inline-block;margin-top:10px;margin-left:6px;background:#0b2545;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-weight:700;font-size:13.5px">\ud83d\udcde Call karein</a></div>';
+    }
+  });}
 
 render();routeFromURL();loadSheet();
 </script>
