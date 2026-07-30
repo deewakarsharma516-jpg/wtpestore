@@ -34,88 +34,11 @@ input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
 </head><body>
-<header><span class="l"><img src="/icons/logo-white.png" alt="WTPeSTORE™" style="height:34px;width:auto;display:inline-block;vertical-align:middle"> Admin</span><a href="/admin.html">← Admin Hub</a></header>
-<div class="wrap"><div class="card">
-<h1>🔑 Change Admin PIN (OTP)</h1>
-<div class="sub">Naya PIN set karne ke liye pehle OTP mangao. OTP aapke registered mobile/email par aayega.</div>
-
-<div id="step1">
-<button class="btn" id="sendbtn" onclick="sendOTP()">📩 Send OTP</button>
+<div style="max-width:520px;margin:60px auto;padding:24px;font-family:Inter,system-ui,Arial,sans-serif;text-align:center">
+<img src="/icons/logo-dark.png" alt="WTPeSTORE" style="height:40px;margin-bottom:16px">
+<h2 style="color:#0B2A4A">Password ab Sheet me hai</h2>
+<p style="color:#555;line-height:1.7;font-size:14.5px">Admin ka password ab surakshit tareeke se aapki Google Sheet ki <b>"AdminAuth"</b> tab (cell B1) me rehta hai — code me kahin nahi.</p>
+<p style="color:#555;line-height:1.7;font-size:14.5px"><b>Password badalna ho?</b><br>Bas Sheet ki AdminAuth tab me B1 ka password badal dein. Turant naya chalu ho jayega, purana bekaar.</p>
+<a href="/admin-settings.html" style="display:inline-block;margin-top:14px;background:#0B2A4A;color:#fff;text-decoration:none;padding:11px 22px;border-radius:9px;font-weight:700">← Admin Settings</a>
 </div>
-
-<div class="step2" id="step2">
-<label>Enter OTP</label>
-<input id="otp" inputmode="numeric" placeholder="6-digit OTP">
-<label>New PIN (4-6 digits)</label>
-<input id="newpin" type="password" inputmode="numeric" placeholder="New PIN">
-<label>Confirm New PIN</label>
-<input id="newpin2" type="password" inputmode="numeric" placeholder="Repeat New PIN">
-<button class="btn" onclick="verifyAndChange()">✅ Verify OTP &amp; Change PIN</button>
-<button class="btn sec" style="margin-top:8px" onclick="sendOTP()">↺ Resend OTP</button>
-</div>
-
-<div class="msg" id="msg"></div>
-<div class="note">OTP 10 minute tak valid rehta hai. PIN sirf isi browser me change hota hai — jis device par admin use karte ho, wahi PIN badlein.</div>
-</div></div>
-
-<script>
-/* ===== CONFIG ===== */
-function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
-var APPS_SCRIPT_URL = cfg('wtpe_otp_url','https://script.google.com/macros/s/AKfycbynPDNbRvUJHr-owF9Do6ugdTpstHtHS3TFoYm9KtBjO_1UraUu2UfJ41-SjkSRdiV73w/exec');       // OTP Apps Script /exec URL
-var SECRET = cfg('wtpe_otp_secret','wtp-otp-2026'); // Apps Script wala same ADMIN_SECRET
-/* ================== */
-
-function showMsg(t,c){var m=document.getElementById('msg');m.className='msg '+c;m.textContent=t;}
-function jsonp(url,cb){
-  var fn='cb_'+Math.floor(Math.random()*1e9);
-  window[fn]=function(r){try{cb(r);}finally{delete window[fn];s.remove();}};
-  var s=document.createElement('script');
-  s.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;
-  s.onerror=function(){cb({ok:false,error:'network'});try{delete window[fn];s.remove();}catch(e){}};
-  document.body.appendChild(s);
-}
-function sendOTP(){
-  if(!APPS_SCRIPT_URL){showMsg('OTP Apps Script URL set nahi hai (CONFIG me daalein).','err');return;}
-  showMsg('OTP bheja ja raha hai…','info');
-  document.getElementById('sendbtn').disabled=true;
-  jsonp(APPS_SCRIPT_URL+'?action=send&token='+encodeURIComponent(SECRET),function(r){
-    document.getElementById('sendbtn').disabled=false;
-    if(r&&r.ok){document.getElementById('step2').style.display='block';showMsg('✅ OTP bhej diya gaya. Apna mobile/email check karein.','ok');}
-    else{showMsg('OTP nahi bhej paye: '+((r&&r.error)||'error'),'err');}
-  });
-}
-function verifyAndChange(){
-  var otp=(document.getElementById('otp').value||'').trim();
-  var p1=(document.getElementById('newpin').value||'').trim();
-  var p2=(document.getElementById('newpin2').value||'').trim();
-  if(!otp){showMsg('OTP daalein.','err');return;}
-  if(p1.length<4){showMsg('PIN kam se kam 4 digit ka ho.','err');return;}
-  if(p1!==p2){showMsg('Dono PIN alag hain.','err');return;}
-  showMsg('Verify ho raha hai…','info');
-  jsonp(APPS_SCRIPT_URL+'?action=verify&token='+encodeURIComponent(SECRET)+'&otp='+encodeURIComponent(otp),function(r){
-    if(r&&r.ok){
-      try{localStorage.setItem('wtpe_admin_pin',p1);}catch(e){}
-      showMsg('🎉 PIN change ho gaya! Ab admin pages me naya PIN use karein.','ok');
-      document.getElementById('step2').style.display='none';
-    }else{
-      showMsg('Galat/expired OTP: '+((r&&r.error)||'error'),'err');
-    }
-  });
-}
-</script>
-<script>
-/* PWA: service worker + install button */
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
-var wtpInstall=null;
-window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtpInstall=e;
-  if(document.getElementById('wtpInstallBtn'))return;
-  var b=document.createElement('button');b.id='wtpInstallBtn';
-  b.innerHTML='\u2b07\ufe0f App Install karein';
-  b.style.cssText='position:fixed;left:16px;bottom:16px;z-index:940;background:#0B2A4A;color:#fff;border:none;border-radius:30px;padding:12px 18px;font-size:13.5px;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.28);cursor:pointer;font-family:inherit';
-  b.onclick=function(){if(!wtpInstall)return;wtpInstall.prompt();wtpInstall.userChoice.then(function(){b.remove();wtpInstall=null;});};
-  document.body.appendChild(b);
-  setTimeout(function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();},20000);
-});
-window.addEventListener('appinstalled',function(){var x=document.getElementById('wtpInstallBtn');if(x)x.remove();});
-</script>
 </body></html>

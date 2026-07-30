@@ -86,11 +86,55 @@ Baaki lines paragraph banengi. Khali line = naya paragraph."></textarea>
 
 <script>
 function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
-var ADMIN_PIN   = cfg('wtpe_admin_pin','2289');
 var APPS_URL    = cfg('wtpe_addproduct_url','https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec');     // wahi Add Product wala URL (blog bhi isi se)
 var SECRET      = cfg('wtpe_addproduct_secret','wtp-add-2026');
 
-function unlock(){if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';}else{document.getElementById('pinerr').style.display='block';}}
+
+/* ===== Server-side Admin Login (password server par, browser me nahi) ===== */
+function cfgLogin(){try{var v=localStorage.getItem('wtpe_login_url');return v||'';}catch(e){return '';}}
+function unlock(){
+  var pass=document.getElementById('pin').value;
+  var url=cfgLogin();
+  var errEl=document.getElementById('pinerr');
+  if(!url){
+    // Login URL set nahi — Settings me daalne ko bolo
+    errEl.textContent='Login URL set nahi hai. Pehle Settings me daalein.';
+    errEl.style.display='block';return;
+  }
+  errEl.style.display='none';
+  var btn=document.querySelector('#gate button'); if(btn){btn.disabled=true;btn.textContent='Checking...';}
+  fetch(url+'?action=login&pass='+encodeURIComponent(pass))
+   .then(function(r){return r.json();})
+   .then(function(d){
+     if(btn){btn.disabled=false;btn.textContent='Unlock';}
+     if(d&&d.ok&&d.token){
+       try{localStorage.setItem('wtpe_admin_token',d.token);}catch(e){}
+       document.getElementById('gate').style.display='none';
+       if(typeof afterUnlock==='function')afterUnlock();
+     }else{
+       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet me password set nahi hai':'Wrong password';
+       errEl.style.display='block';
+     }
+   })
+   .catch(function(){
+     if(btn){btn.disabled=false;btn.textContent='Unlock';}
+     errEl.textContent='Login server se connect nahi hua. URL check karein.';
+     errEl.style.display='block';
+   });
+}
+/* Page khulte hi: agar valid token hai to seedha andar */
+function checkSavedToken(){
+  var url=cfgLogin(); var tok='';
+  try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
+  if(!url||!tok)return;
+  fetch(url+'?action=verify&token='+encodeURIComponent(tok))
+   .then(function(r){return r.json();})
+   .then(function(d){
+     if(d&&d.ok){document.getElementById('gate').style.display='none';if(typeof afterUnlock==='function')afterUnlock();}
+   }).catch(function(){});
+}
+window.addEventListener('load',checkSavedToken);
+
 function val(id){return (document.getElementById(id).value||'').trim();}
 function slugify(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'post';}
 function todayStr(){var d=new Date();var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return ('0'+d.getDate()).slice(-2)+' '+m[d.getMonth()]+' '+d.getFullYear();}

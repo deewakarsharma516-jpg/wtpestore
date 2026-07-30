@@ -123,21 +123,63 @@ textarea{min-height:70px;resize:vertical}
 
 <script>
 /* ===================== CONFIG — yahan apni settings daalo =====================
-   1) ADMIN_PIN        : apna secret PIN. Ise zaroor badlo.
    2) APPS_SCRIPT_URL  : Google Apps Script deploy karke uska /exec URL paste karo.
    3) SECRET           : wahi secret jo Apps Script me daala hai.
    4) PRODUCTS_CSV_URL : (already set) categories isi se load hoti hain.
    ============================================================================ */
 function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
-var ADMIN_PIN = cfg('wtpe_admin_pin','2289');
 var APPS_SCRIPT_URL = cfg('wtpe_addproduct_url','https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec');
 var SECRET = cfg('wtpe_addproduct_secret','wtp-add-2026');
 var PRODUCTS_CSV_URL = cfg('wtpe_csv_url','https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv');
 
+
+/* ===== Server-side Admin Login (password server par, browser me nahi) ===== */
+function cfgLogin(){try{var v=localStorage.getItem('wtpe_login_url');return v||'';}catch(e){return '';}}
 function unlock(){
-  if(document.getElementById('pin').value===ADMIN_PIN){document.getElementById('gate').style.display='none';loadCategories();}
-  else{document.getElementById('pinerr').style.display='block';}
+  var pass=document.getElementById('pin').value;
+  var url=cfgLogin();
+  var errEl=document.getElementById('pinerr');
+  if(!url){
+    // Login URL set nahi — Settings me daalne ko bolo
+    errEl.textContent='Login URL set nahi hai. Pehle Settings me daalein.';
+    errEl.style.display='block';return;
+  }
+  errEl.style.display='none';
+  var btn=document.querySelector('#gate button'); if(btn){btn.disabled=true;btn.textContent='Checking...';}
+  fetch(url+'?action=login&pass='+encodeURIComponent(pass))
+   .then(function(r){return r.json();})
+   .then(function(d){
+     if(btn){btn.disabled=false;btn.textContent='Unlock';}
+     if(d&&d.ok&&d.token){
+       try{localStorage.setItem('wtpe_admin_token',d.token);}catch(e){}
+       document.getElementById('gate').style.display='none';
+       if(typeof afterUnlock==='function')afterUnlock();
+     }else{
+       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet me password set nahi hai':'Wrong password';
+       errEl.style.display='block';
+     }
+   })
+   .catch(function(){
+     if(btn){btn.disabled=false;btn.textContent='Unlock';}
+     errEl.textContent='Login server se connect nahi hua. URL check karein.';
+     errEl.style.display='block';
+   });
 }
+/* Page khulte hi: agar valid token hai to seedha andar */
+function checkSavedToken(){
+  var url=cfgLogin(); var tok='';
+  try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
+  if(!url||!tok)return;
+  fetch(url+'?action=verify&token='+encodeURIComponent(tok))
+   .then(function(r){return r.json();})
+   .then(function(d){
+     if(d&&d.ok){document.getElementById('gate').style.display='none';if(typeof afterUnlock==='function')afterUnlock();}
+   }).catch(function(){});
+}
+window.addEventListener('load',checkSavedToken);
+
+function afterUnlock(){try{loadCategories();}catch(e){}}
+
 function val(id){return (document.getElementById(id).value||'').trim();}
 
 /* ---- CSV parse + load unique categories ---- */
