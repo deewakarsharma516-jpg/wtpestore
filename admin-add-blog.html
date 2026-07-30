@@ -43,7 +43,7 @@ textarea{min-height:200px;resize:vertical;line-height:1.6}
 
 <div id="gate"><div class="g">
 <div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Enter your PIN to create a blog</p>
-<input id="pin" type="password" inputmode="numeric" placeholder="••••" onkeydown="if(event.key==='Enter')unlock()">
+<input id="pin" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')unlock()">
 <button onclick="unlock()">Unlock</button>
 <div id="pinerr" style="color:#b3261e;font-size:12.5px;margin-top:8px;display:none">Wrong PIN</div>
 </div></div>
@@ -91,7 +91,12 @@ var SECRET      = cfg('wtpe_addproduct_secret','wtp-add-2026');
 
 
 /* ===== Server-side Admin Login (password server par, browser me nahi) ===== */
-function cfgLogin(){try{var v=localStorage.getItem('wtpe_login_url');return v||'';}catch(e){return '';}}
+function aJsonp2(url,cb){var done=false;var fn='wcb_'+Math.floor(Math.random()*1e9);var sc=document.createElement('script');
+function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn];sc.remove();}catch(e){}}}
+window[fn]=function(r){fin(r);};sc.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;
+sc.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(sc);
+setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
+function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||'';}catch(e){return '';}}
 function unlock(){
   var pass=document.getElementById('pin').value;
   var url=cfgLogin();
@@ -103,23 +108,16 @@ function unlock(){
   }
   errEl.style.display='none';
   var btn=document.querySelector('#gate button'); if(btn){btn.disabled=true;btn.textContent='Checking...';}
-  fetch(url+'?action=login&pass='+encodeURIComponent(pass))
-   .then(function(r){return r.json();})
-   .then(function(d){
+  aJsonp2(url+'?action=login&pass='+encodeURIComponent(pass),function(d){
      if(btn){btn.disabled=false;btn.textContent='Unlock';}
      if(d&&d.ok&&d.token){
        try{localStorage.setItem('wtpe_admin_token',d.token);}catch(e){}
        document.getElementById('gate').style.display='none';
        if(typeof afterUnlock==='function')afterUnlock();
      }else{
-       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet me password set nahi hai':'Wrong password';
+       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me B1 me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua — URL check karein':'Wrong password');
        errEl.style.display='block';
      }
-   })
-   .catch(function(){
-     if(btn){btn.disabled=false;btn.textContent='Unlock';}
-     errEl.textContent='Login server se connect nahi hua. URL check karein.';
-     errEl.style.display='block';
    });
 }
 /* Page khulte hi: agar valid token hai to seedha andar */
@@ -127,11 +125,9 @@ function checkSavedToken(){
   var url=cfgLogin(); var tok='';
   try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
   if(!url||!tok)return;
-  fetch(url+'?action=verify&token='+encodeURIComponent(tok))
-   .then(function(r){return r.json();})
-   .then(function(d){
+  aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){
      if(d&&d.ok){document.getElementById('gate').style.display='none';if(typeof afterUnlock==='function')afterUnlock();}
-   }).catch(function(){});
+   });
 }
 window.addEventListener('load',checkSavedToken);
 
