@@ -202,6 +202,9 @@ footer b{color:#fff}
 </div>
 </div>
 
+<!--WTPE_STATIC_START-->
+<!--WTPE_STATIC_END-->
+
 <div class="ctaband">
 <div class="ctab-h">Not sure which pump you need?</div>
 <div class="ctab-s">Tell us your application, flow (LPM/LPH) and head/pressure — we will suggest the correct pump and share the best price.</div>
@@ -269,5 +272,9 @@ document.getElementById('wtpShareMenu').style.display='none';}
 document.addEventListener('click',function(e){var m=document.getElementById('wtpShareMenu');if(m&&m.style.display==='flex'&&!e.target.closest('.wtp-share-menu')&&!e.target.closest('.wtp-share-fab')){m.style.display='none';}});
 </script>
 
+<script>
+/* Pump categories — Sheet ke Category column se match hone par live list bharegi (auto-inject by GitHub Action) */
+var CATS=["PUMPS","PUMP","HIGH PRESSURE PUMP","HIGH PRESSURE PUMPS","MONOBLOCK PUMP","MONOBLOCK PUMPS","CENTRIFUGAL PUMP","CENTRIFUGAL PUMPS","CHEMICAL PUMP","CHEMICAL PUMPS","CHEMICAL PROCESS PUMP","ROTARY PUMP","ROTARY PUMPS","GEAR PUMP","SUMP PUMP","SUMP PUMPS","DEWATERING PUMP","SUBMERSIBLE PUMP","DOSING PUMP","DOSING PUMPS","METERING PUMPS","EDOSE PUMPS","EDOSE DOSING PUMPS","EDOSE METERING PUMPS"];
+</script>
 </body>
 </html>
