@@ -241,8 +241,7 @@ function payMsg(){
   if(a>0)m+='Payable Amount: ₹'+a.toLocaleString('en-IN')+'\n';
   m+='\n💳 Online payment link (UPI / Card / NetBanking):\n'
    +'https://www.wtpestore.co.in/payment.html'+(a>0?('?amt='+a):'')+(ref?('&ref='+encodeURIComponent(ref)):'')
-   +'\n\n📲 UPI ID: 8287077847-2@ybl'
-   +'\n🏦 Bank: Axis Bank · IFSC UTIB0002693'
+   +'\n\n🏦 Bank: Axis Bank · IFSC UTIB0002693'
    +'\n\nPayment ke baad screenshot bhej dein — hum turant confirm kar denge.'
    +'\nQuery: 9899193589';
   return m;
