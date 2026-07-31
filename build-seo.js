@@ -159,6 +159,64 @@ ${price}
 }
 
 /* ---------- build ---------- */
+
+/* ---- Category pages me static product list bharo (Google ke liye) ---- */
+function injectStatic(P) {
+  const files = fs.readdirSync('.').filter(f => f.endsWith('.html'));
+  let count = 0;
+  for (const f of files) {
+    let html;
+    try { html = fs.readFileSync(f, 'utf8'); } catch (e) { continue; }
+    if (html.indexOf('<!--WTPE_STATIC_START-->') < 0) continue;
+    const cm = html.match(/var CATS\s*=\s*\[([^\]]*)\]/);
+    if (!cm) continue;
+    const cats = (cm[1].match(/"([^"]+)"/g) || []).map(x => x.slice(1, -1).trim().toUpperCase());
+    if (!cats.length) continue;
+
+    const items = P.filter(p => cats.indexOf(String(p.c).trim().toUpperCase()) > -1);
+    if (!items.length) continue;
+    const top = items.slice(0, 12);
+
+    const rows = top.map(p => {
+      const price = p.p > 0 ? (rupee(p.p) + ' + GST') : 'Price on request';
+      const bits = [];
+      if (p.model) bits.push('Model: ' + esc(p.model));
+      if (p.make) bits.push('Brand: ' + esc(p.make));
+      if (p.spec) bits.push(esc(p.spec.slice(0, 140)));
+      return '<li><b>' + esc(p.n) + '</b>' +
+        (bits.length ? ' &mdash; <span>' + bits.join(' &middot; ') + '</span>' : '') +
+        ' &mdash; <b>' + price + '</b></li>';
+    }).join('\n');
+
+    const block = '<!--WTPE_STATIC_START-->\n' +
+      '<section class="statlist"><h2>Available Models &amp; Price List</h2>\n' +
+      '<p class="ssub">Live prices from our current price list. Click any product above for full specification, or ask us on WhatsApp.</p>\n' +
+      '<ul>\n' + rows + '\n</ul>\n' +
+      '<p class="snote">Showing ' + top.length + ' of ' + items.length +
+      ' products in this category. Prices exclusive of GST and subject to change &mdash; confirm before order.</p>' +
+      '</section>\n<!--WTPE_STATIC_END-->';
+
+    let out = html.replace(/<!--WTPE_STATIC_START-->[\s\S]*?<!--WTPE_STATIC_END-->/, block);
+    if (out !== html) {
+      if (out.indexOf('.statlist{') < 0) {
+        const css = '.statlist{background:#fff;border:1px solid #e3ecf4;border-radius:14px;padding:18px;margin:20px 0}' +
+          '.statlist h2{font-size:18px;color:var(--navy);margin:0 0 4px;border:none;padding:0}' +
+          '.statlist .ssub{font-size:13px;color:#6b7a88;margin:0 0 12px}' +
+          '.statlist ul{margin:0;padding-left:18px}' +
+          '.statlist li{font-size:13.5px;line-height:1.7;margin-bottom:7px;color:#333}' +
+          '.statlist li b{color:var(--navy)}' +
+          '.statlist li span{color:#666;font-size:12.5px}' +
+          '.statlist .snote{font-size:12px;color:#8a94a6;margin:12px 0 0}\n';
+        const k = out.lastIndexOf('</style>');
+        if (k > 0) out = out.slice(0, k) + css + out.slice(k);
+      }
+      fs.writeFileSync(f, out);
+      count++;
+    }
+  }
+  console.log('Static blocks injected into', count, 'category pages');
+}
+
 (async () => {
   const P = await load();
   console.log('Products loaded:', P.length);
@@ -221,6 +279,8 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(c)} <span style="font-si
   fs.writeFileSync('sitemap.xml',
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`);
   console.log('sitemap.xml ✓ (' + urls.length + ' URLs)');
+
+  injectStatic(P);
 
   /* ---- summary for the action log ---- */
   fs.writeFileSync('seo-build-log.txt',
