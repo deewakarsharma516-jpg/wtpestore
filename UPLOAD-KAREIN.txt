@@ -1,14 +1,45 @@
-WTPESTORE — Poora Update (Logo + Table + Share fix)
-====================================================
+WTPESTORE — Phase 3 + Phase 4 (Content + Auto Static Products)
+===============================================================
 
-1) SAARI 47 HTML files  →  repo ki ROOT me upload (replace) → Commit
-2) icons/logo-white.png aur icons/logo-dark.png  →  repo ke "icons" FOLDER me upload → Commit
-3) 5 minute ruko → site par Ctrl+Shift+R
+KYA MILA
+--------
+1. SAARI 32 category pages ka content 300-400 words ka ho gaya
+   (pehle sirf 50-90 words tha) — h2/h3 headings ke saath
+2. Har page par "Related Products" section (Phase 2)
+3. Har page me static product list ka MARKER laga — jise GitHub Action
+   roz khud bharega (Phase 4)
 
-KYA THEEK HUA:
-- Logo: ab SAB 47 pages par bilkul EK JAISA (™ ke saath, same colors)
-     dark header wale pages → logo-white.png
-     white background wale (payment, quotation, proforma, admin) → logo-dark.png
-- Spec TABLE: 30 pages par function wapas laga (galti se delete ho gaya tha) — ETP/STP samet sab theek
-- ETP/STP/RO/DM/UF/Softener/RO-Membrane: products ka section add (ab Sheet ke products page par dikhenge)
-- Zero Scale Water Softener page: share button + catalogue + table + PWA — sab laga
+UPLOAD KAISE KAREIN
+-------------------
+STEP 1 — HTML files
+  Root folder ki SAARI .html files + sitemap.xml + robots.txt
+  GitHub repo ki root me upload -> Replace -> Commit
+
+STEP 2 — build-seo.js (updated)
+  seo-update/build-seo.js  ->  repo ki ROOT me upload (purani replace) -> Commit
+
+STEP 3 — workflow (updated)
+  GitHub -> Add file -> Create new file
+  Naam:  .github/workflows/seo-update.yml
+  seo-update/.github/workflows/seo-update.yml ka content paste -> Commit
+  (agar file pehle se hai to usko edit karke naya content paste kar dein)
+
+STEP 4 — ek baar khud chalayein
+  GitHub -> Actions tab -> "Update SEO pages from Google Sheet"
+  -> Run workflow -> Run
+  1-2 minute me green tick aayega
+
+AB KYA HOGA
+-----------
+- Roz subah 7 baje GitHub aapki Sheet padhega
+- products.html + sitemap.xml update karega (pehle se tha)
+- AUR ab har category page me "Available Models & Price List"
+  bhi bhar dega — asli text me, Google ke liye
+- Sheet me naya product / naya price -> agli subah site par apne aap
+
+CHECK KAISE KAREIN
+------------------
+Action chalne ke baad koi bhi category page kholein (jaise /ro-plant.html)
+-> neeche "Available Models & Price List" wala box dikhega
+Agar khaali dikhe to matlab us category ka naam Sheet me match nahi kar raha
+-> Sheet me category ka naam bilkul wahi rakhein jo page me hai.
