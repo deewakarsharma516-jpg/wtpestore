@@ -1,4 +1,4 @@
-Last build: 2026-07-31T05:48:49.479Z
-Products: 450
-Categories: 47
-Sitemap URLs: 490
+Last build: 2026-08-01T04:48:52.747Z
+Products: 456
+Categories: 48
+Sitemap URLs: 496
