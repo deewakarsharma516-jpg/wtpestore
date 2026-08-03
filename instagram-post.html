@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Instagram Post Maker — WTPESTORE (Owner Tool)</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#eef2f6;color:#0f1111}
+img{display:block;max-width:100%}
+.top{background:#0b2545;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.top img{height:38px;width:auto}
+.top .t{font-size:15px;font-weight:800}
+.top .t span{display:block;font-size:11px;font-weight:500;color:#9fc2d8}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.note{background:#fff;border:1px solid #dbe4ec;border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;color:#333;margin-bottom:14px}
+.note b{color:#0b2545}
+.search{width:100%;padding:14px 16px;border:1px solid #cdd8e2;border-radius:12px;font-size:15px;margin-bottom:14px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.pc{background:#fff;border:1px solid #e2e9f0;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.pc:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(11,37,69,.12)}
+.pc-img{width:100%;aspect-ratio:1/1;background:#f4f8fb;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:34px}
+.pc-img img{width:100%;height:100%;object-fit:cover}
+.pc-b{padding:9px 10px}
+.pc-n{font-size:12.5px;font-weight:700;line-height:1.35;color:#0b2545;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:34px}
+.pc-p{font-size:12.5px;color:#067d3d;font-weight:700;margin-top:4px}
+.count{font-size:12.5px;color:#5b6b78;margin-bottom:10px}
+/* overlay */
+.ov{position:fixed;inset:0;background:rgba(6,18,33,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+.ov.on{display:flex}
+.panel{background:#fff;border-radius:16px;max-width:840px;width:100%;max-height:92vh;overflow:auto}
+.p-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #eef2f6;position:sticky;top:0;background:#fff;z-index:2}
+.p-head b{font-size:15px;color:#0b2545}
+.x{border:none;background:#f1f5f9;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer}
+.p-body{padding:18px;display:flex;flex-wrap:wrap;gap:18px}
+.p-img{flex:1 1 260px;min-width:240px}
+.p-img .box{width:100%;aspect-ratio:1/1;background:#f4f8fb;border:1px solid #e6edf3;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:60px}
+.p-img .box img{width:100%;height:100%;object-fit:contain}
+.p-right{flex:1 1 300px;min-width:280px;display:flex;flex-direction:column}
+.lbl{font-size:12px;font-weight:700;color:#5b6b78;text-transform:uppercase;letter-spacing:.4px;margin:2px 0 6px}
+textarea{width:100%;min-height:230px;border:1px solid #cdd8e2;border-radius:10px;padding:12px;font-size:13px;line-height:1.6;font-family:inherit;resize:vertical}
+.btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.btn{border:none;border-radius:10px;padding:12px 15px;font-size:13.5px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.b-dl{background:#0b2545;color:#fff}
+.b-cap{background:#25d366;color:#fff}
+.b-ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
+.b-op{background:#eef2f6;color:#0b2545}
+.hintline{font-size:12px;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:8px;padding:8px 11px;margin-top:12px;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0b2545;color:#fff;padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:99}
+.toast.on{opacity:1}
+.loading{text-align:center;color:#5b6b78;padding:40px 0;font-size:14px}
+
+/* Admin PIN gate */
+#gate{position:fixed;inset:0;background:#0b2545;display:flex;align-items:center;justify-content:center;z-index:200}
+#gate .g{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
+#gate h2{color:#0b2545;font-size:18px;margin:6px 0}
+#gate p{font-size:12.5px;color:#5b6b78;margin-bottom:14px}
+#gate input{text-align:center;font-size:20px;letter-spacing:6px;width:100%;padding:11px;border:1px solid #cdd8e2;border-radius:9px}
+#gate button{margin-top:12px;width:100%;background:#25d366;color:#fff;border:none;padding:12px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer}
+#pinerr{color:#b3261e;font-size:12.5px;margin-top:8px;display:none}
+</style></head>
+<body>
+<div id="gate"><div class="g">
+<div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Instagram Post Maker ke liye PIN daalein</p>
+<input id="pin" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')unlock()">
+<button onclick="unlock()">Unlock</button>
+<div id="pinerr">Wrong password</div>
+</div></div>
+<div class="top">
+  <img src="/icons/logo-white.png" alt="WTPeSTORE">
+  <div class="t">Instagram Post Maker<span>Owner tool · products → ready caption + image</span></div>
+</div>
+
+<div class="wrap">
+  <div class="note">
+    <b>Kaise use karein:</b> Neeche se product chuno → <b>⬇️ Image download</b> karo → <b>📋 Caption copy</b> karo → <b>📷 Instagram kholo</b> → naya post banao → image select karo → caption <b>paste</b> karo → share. Caption edit bhi kar sakte ho.
+  </div>
+  <input class="search" id="q" placeholder="🔍 Product dhoondo… (naam ya category)" oninput="render()">
+  <div class="count" id="count"></div>
+  <div class="grid" id="grid"><div class="loading">Products load ho rahe hain…</div></div>
+</div>
+
+<div class="ov" id="ov" onclick="if(event.target===this)closeP()">
+  <div class="panel">
+    <div class="p-head"><b id="pTitle">Product</b><button class="x" onclick="closeP()">×</button></div>
+    <div class="p-body">
+      <div class="p-img"><div class="box" id="pBox">💧</div>
+        <div class="btns"><button class="btn b-dl" onclick="dlImg()">⬇️ Image Download</button><button class="btn b-op" onclick="openImg()">🔗 Image kholo</button></div>
+        <div class="hintline" id="imgHint" style="display:none">Is product ki image Sheet me nahi hai. Instagram post ke liye pehle Sheet ke <b>Image</b> column me photo ka link daalein.</div>
+      </div>
+      <div class="p-right">
+        <div class="lbl">Instagram Caption (edit kar sakte ho)</div>
+        <textarea id="cap"></textarea>
+        <div class="btns">
+          <button class="btn b-cap" onclick="copyCap()">📋 Caption Copy</button>
+          <a class="btn b-ig" href="https://www.instagram.com/" target="_blank" rel="noopener">📷 Instagram Kholo</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SHEET="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
+var DATA=[], CUR=null;
+
+function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
+function esc(s){return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},1800);}
+
+/* category -> extra hashtags */
+function tagsFor(cat,name){
+  var s=((cat||'')+' '+(name||'')).toLowerCase(), t=[];
+  function add(x){if(t.indexOf(x)<0)t.push(x);}
+  if(/ro |ro plant|reverse osmosis|membrane/.test(s)){add('#ROplant');add('#reverseosmosis');}
+  if(/softener/.test(s))add('#watersoftener');
+  if(/uv/.test(s)){add('#UVsystem');add('#UVsterilizer');}
+  if(/dm |demineral/.test(s))add('#DMplant');
+  if(/etp|effluent/.test(s))add('#ETP');
+  if(/stp|sewage/.test(s))add('#STP');
+  if(/uf |ultrafiltration/.test(s))add('#UFplant');
+  if(/dosing|metering/.test(s))add('#dosingpump');
+  if(/pump/.test(s))add('#waterpump');
+  if(/filter|cartridge/.test(s))add('#waterfilter');
+  if(/flow meter|rotameter|flowmeter/.test(s))add('#flowmeter');
+  if(/valve/.test(s))add('#valves');
+  if(/vessel|frp/.test(s))add('#FRPvessel');
+  if(/chemical|antiscalant/.test(s))add('#ROchemicals');
+  if(/pool/.test(s))add('#swimmingpool');
+  return t.slice(0,5).join(' ');
+}
+
+function caption(p){
+  var L=[];
+  L.push(p.n+' 💧');
+  L.push('');
+  var feat=(p.spec||'').split(/[.\n;|]/)[0].trim();
+  if(feat && feat.length>3) L.push('✅ '+feat);
+  if(p.model) L.push('🔖 Model: '+p.model);
+  if(p.p>0){
+    L.push('💰 Price: '+rupee(p.p)+' + GST');
+    if(p.mrp&&p.mrp>p.p) L.push('🏷️ MRP '+rupee(p.mrp)+' — Aap bachao '+rupee(p.mrp-p.p));
+  } else {
+    L.push('💰 Best Price — WhatsApp 9899193589');
+  }
+  L.push('');
+  L.push('📞 Order / Enquiry: 9899193589');
+  L.push('🌐 www.wtpestore.co.in');
+  L.push('');
+  L.push('WTPESTORE — powered by Aqua Filtration System, Faridabad');
+  L.push('✔ Genuine products  ✔ GST invoice  ✔ Pan-India delivery');
+  L.push('');
+  L.push(('#wtpestore #aquafiltrationsystem #watertreatment #waterpurification #Faridabad '+tagsFor(p.c,p.n)+' #India').replace(/\s+/g,' ').trim());
+  return L.join('\n');
+}
+
+function ph(){return '💧';}
+
+function render(){
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var list=DATA.filter(function(p){return !q || (p.n+' '+p.c).toLowerCase().indexOf(q)>-1;});
+  document.getElementById('count').textContent=list.length+' products';
+  var g=document.getElementById('grid');
+  if(!list.length){g.innerHTML='<div class="loading">Koi product nahi mila.</div>';return;}
+  g.innerHTML=list.map(function(p){
+    return '<div class="pc" onclick="openP('+p.id+')">'
+      +'<div class="pc-img">'+(p.img?'<img loading="lazy" src="'+esc(p.img)+'" alt="'+esc(p.n)+'">':ph())+'</div>'
+      +'<div class="pc-b"><div class="pc-n">'+esc(p.n)+'</div><div class="pc-p">'+(p.p>0?rupee(p.p):'Best Price')+'</div></div></div>';
+  }).join('');
+}
+
+function openP(id){
+  var p=DATA[id];if(!p)return;CUR=p;
+  document.getElementById('pTitle').textContent=p.n;
+  document.getElementById('pBox').innerHTML=p.img?'<img src="'+esc(p.img)+'" alt="'+esc(p.n)+'">':ph();
+  document.getElementById('imgHint').style.display=p.img?'none':'block';
+  document.getElementById('cap').value=caption(p);
+  document.getElementById('ov').classList.add('on');
+}
+function closeP(){document.getElementById('ov').classList.remove('on');}
+
+function copyCap(){
+  var t=document.getElementById('cap').value;
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){toast('📋 Caption copy ho gaya! Ab Instagram me paste karein.');}).catch(fallbackCopy);}
+  else fallbackCopy();
+  function fallbackCopy(){var a=document.getElementById('cap');a.focus();a.select();try{document.execCommand('copy');toast('📋 Caption copy ho gaya!');}catch(e){toast('Copy nahi hua — manually select karke copy karein.');}}
+}
+
+function dlImg(){
+  if(!CUR||!CUR.img){toast('Is product ki image nahi hai.');return;}
+  var url=CUR.img, nm=(CUR.n||'product').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,50);
+  toast('Image download ho rahi hai…');
+  fetch(url).then(function(r){if(!r.ok)throw 0;return r.blob();}).then(function(b){
+    var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nm+'.jpg';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1000);
+  }).catch(function(){
+    // cross-origin (e.g. Drive) — open in new tab so owner can long-press / right-click save
+    window.open(url,'_blank');toast('Image nayi tab me khuli — long-press/right-click se Save karein.');
+  });
+}
+function openImg(){if(CUR&&CUR.img)window.open(CUR.img,'_blank');else toast('Is product ki image nahi hai.');}
+
+/* ---- load ALL products from Sheet (no category filter) ---- */
+function loadProducts(){
+fetch(SHEET).then(function(r){return r.text();}).then(function(t){
+  var rows=csvP(t).filter(function(r){return r.length>=2&&r.join('').trim();});
+  if(rows.length<2){document.getElementById('grid').innerHTML='<div class="loading">Sheet me products nahi mile.</div>';return;}
+  var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim().toLowerCase();});
+  function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
+  var ci=ix('category'),ni=ix('product','name'),pi=ix('price'),mrpi=ix('mrp','list price','old price','strike price'),disci=ix('discount','disc','discount%','discount %','off'),mo=ix('model'),sp=ix('specification','spec'),ii=ix('image','photo');
+  if(ni<0){document.getElementById('grid').innerHTML='<div class="loading">Sheet me Product/Name column nahi mila.</div>';return;}
+  var out=[];
+  for(var i=1;i<rows.length;i++){var r=rows[i];
+    var nm=(r[ni]||'').trim();if(nm.length<2)continue;
+    var cat=(ci>-1?String(r[ci]||'').replace(/^\uFEFF/,'').replace(/\s+/g,' ').trim():'');
+    var o={id:out.length,c:cat,n:nm,p:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,img:(ii>-1?(r[ii]||'').trim():''),spec:(sp>-1?(r[sp]||'').trim():''),model:(mo>-1?(r[mo]||'').trim():''),mrp:(mrpi>-1?(parseInt(String(r[mrpi]||'').replace(/[^0-9]/g,''))||0):0)};
+    if(o.mrp&&o.mrp<=o.p)o.mrp=0;
+    if(!o.mrp&&disci>-1&&r[disci]){var d=parseFloat(String(r[disci]||'').replace(/[^0-9.]/g,''))||0;if(d>0&&d<95&&o.p>0){o.mrp=o.p;o.p=Math.round(o.p*(100-d)/100);}}
+    out.push(o);
+  }
+  DATA=out;render();
+}).catch(function(){document.getElementById('grid').innerHTML='<div class="loading">Products load nahi ho paye. Internet check karein.</div>';});
+}
+
+/* ===== Admin login (same token as other admin tools; server-side password) ===== */
+function aJsonp2(url,cb){var done=false;var fn='wcb_'+Math.floor(Math.random()*1e9);var sc=document.createElement('script');
+function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn];sc.remove();}catch(e){}}}
+window[fn]=function(r){fin(r);};sc.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;
+sc.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(sc);
+setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
+function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||'';}catch(e){return '';}}
+function unlock(){
+  var pass=document.getElementById('pin').value;var url=cfgLogin();var errEl=document.getElementById('pinerr');
+  if(!url){errEl.textContent='Login URL set nahi hai. Pehle admin Settings me daalein.';errEl.style.display='block';return;}
+  errEl.style.display='none';var btn=document.querySelector('#gate button');if(btn){btn.disabled=true;btn.textContent='Checking...';}
+  aJsonp2(url+'?action=login&pass='+encodeURIComponent(pass),function(d){
+    if(btn){btn.disabled=false;btn.textContent='Unlock';}
+    if(d&&d.ok&&d.token){try{localStorage.setItem('wtpe_admin_token',d.token);}catch(e){}document.getElementById('gate').style.display='none';afterUnlock();}
+    else{errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me B1 me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua':'Wrong password');errEl.style.display='block';}
+  });
+}
+function checkSavedToken(){var url=cfgLogin();var tok='';try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
+  if(!url||!tok)return;aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){if(d&&d.ok){document.getElementById('gate').style.display='none';afterUnlock();}});}
+var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadProducts();}
+window.addEventListener('load',checkSavedToken);
+</script>
+</body></html>
