@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Leads — WTPESTORE (Owner Tool)</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#eef2f6;color:#0f1111}
+.top{background:#0b2545;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.top img{height:38px;width:auto}.top .t{font-size:15px;font-weight:800}.top .t span{display:block;font-size:11px;font-weight:500;color:#9fc2d8}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+.bar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.bar input{flex:1;min-width:180px;padding:12px 14px;border:1px solid #cdd8e2;border-radius:10px;font-size:14px;background:#fff}
+.btn{border:none;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.b-nav{background:#0b2545;color:#fff}.b-cfg{background:#eef2f6;color:#0b2545;border:1px solid #cdd8e2}
+.count{font-size:12.5px;color:#5b6b78;margin-bottom:10px}
+.lead{background:#fff;border:1px solid #e2e9f0;border-radius:12px;padding:14px 15px;margin-bottom:11px}
+.lead.done{opacity:.55}
+.l-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.l-name{font-size:15px;font-weight:800;color:#0b2545}
+.l-date{font-size:11.5px;color:#8a97a3;white-space:nowrap}
+.l-prod{font-size:13.5px;color:#0b2545;margin:5px 0}
+.l-meta{font-size:12.5px;color:#5b6b78;line-height:1.6}
+.l-msg{font-size:12.5px;color:#444;background:#f6f9fb;border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.5;white-space:pre-wrap}
+.l-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.b-wa{background:#25d366;color:#fff}.b-cl{background:#0b2545;color:#fff}.b-ok{background:#eef2f6;color:#146a45;border:1px solid #b9e6cd}
+.pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
+.pill.y{background:#e6f7ee;color:#146a45}.pill.n{background:#fdeceb;color:#b3261e}
+.loading{text-align:center;color:#5b6b78;padding:40px 0;font-size:14px}
+.cfg{background:#fff6e6;border:1px solid #ffe0a3;border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;color:#5a4300;margin-bottom:14px;display:none}
+.cfg.on{display:block}.cfg input{width:100%;padding:10px;border:1px solid #e2c98a;border-radius:8px;margin:8px 0;font-size:13px}
+.cfg button{background:#0b2545;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0b2545;color:#fff;padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:99}
+.toast.on{opacity:1}
+/* gate */
+#gate{position:fixed;inset:0;background:#0b2545;display:flex;align-items:center;justify-content:center;z-index:200}
+#gate .g{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
+#gate h2{color:#0b2545;font-size:18px;margin:6px 0}#gate p{font-size:12.5px;color:#5b6b78;margin-bottom:14px}
+#gate input{text-align:center;font-size:20px;letter-spacing:6px;width:100%;padding:11px;border:1px solid #cdd8e2;border-radius:9px}
+#gate button{margin-top:12px;width:100%;background:#25d366;color:#fff;border:none;padding:12px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer}
+#pinerr{color:#b3261e;font-size:12.5px;margin-top:8px;display:none}
+</style></head>
+<body>
+<div id="gate"><div class="g">
+<div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Leads dekhne ke liye PIN daalein</p>
+<input id="pin" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')unlock()">
+<button onclick="unlock()">Unlock</button><div id="pinerr">Wrong password</div>
+</div></div>
+
+<div class="top">
+  <img src="/icons/logo-white.png" alt="WTPeSTORE">
+  <div class="t">Leads (IndiaMART)<span>Owner tool · one-tap WhatsApp reply</span></div>
+</div>
+
+<div class="wrap">
+  <div class="bar">
+    <input id="q" placeholder="🔍 Naam / product / city dhoondo…" oninput="render()">
+    <button class="btn b-cfg" onclick="toggleCfg()">⚙️ Setup</button>
+    <a class="btn b-nav" href="/">🏠 Home</a>
+  </div>
+
+  <div class="cfg" id="cfg">
+    <b>Ek baar setup:</b> Apni Google Sheet ki <b>"Leads" tab</b> ko publish karo — File → Share → <b>Publish to web</b> → tab "Leads", format <b>CSV</b> → link copy → yahan paste karo:
+    <input id="csvUrl" placeholder="https://docs.google.com/…/pub?gid=…&single=true&output=csv">
+    <button onclick="saveCfg()">Save</button>
+  </div>
+
+  <div class="count" id="count"></div>
+  <div id="list"><div class="loading">Leads load ho rahi hain…</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var DATA=[], DONE={};
+try{ DONE=JSON.parse(localStorage.getItem('wtpe_leads_done')||'{}'); }catch(e){ DONE={}; }
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},1900);}
+function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
+
+function toggleCfg(){document.getElementById('cfg').classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||'';}
+function saveCfg(){var u=document.getElementById('csvUrl').value.trim();if(!u){toast('Link daalein');return;}localStorage.setItem('wtpe_leads_csv',u);document.getElementById('cfg').classList.remove('on');toast('Saved! Leads load ho rahi hain…');loadLeads();}
+
+/* WhatsApp / Call */
+function waMsg(p){
+  var m='Namaste '+(p.Name||'')+' 🙏\nWTPESTORE — powered by Aqua Filtration System se dhanyavaad!\n\n';
+  m+='Aapne *'+(p.Product||'')+'* ke bare me enquiry ki thi. Hum genuine water treatment products supply karte hain — GST invoice + pan-India delivery.\n\n';
+  m+='📘 Catalogue: https://www.wtpestore.co.in/catalogues.html\n🌐 www.wtpestore.co.in\n\n';
+  m+='Quotation chahiye to bata dein — main turant bhej deta hoon.\n📞 9899193589';
+  return m;
+}
+function wa(i){var p=DATA[i];var num=String(p.Mobile||'').replace(/[^0-9]/g,'');if(num.length===10)num='91'+num;if(!num){toast('Number nahi hai');return;}window.open('https://wa.me/'+num+'?text='+encodeURIComponent(waMsg(p)),'_blank');markDone(p.QueryID);}
+function call(i){var p=DATA[i];var num=String(p.Mobile||'').replace(/[^0-9+]/g,'');if(!num){toast('Number nahi hai');return;}location.href='tel:'+num;}
+function markDone(id){DONE[id]=1;try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
+function undo(id){delete DONE[id];try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
+
+function render(){
+  var q=(document.getElementById('q').value||'').toLowerCase().trim();
+  var list=DATA.filter(function(p){return !q||((p.Name+' '+p.Product+' '+p.City+' '+p.Company).toLowerCase().indexOf(q)>-1);});
+  document.getElementById('count').textContent=list.length+' leads'+(Object.keys(DONE).length?(' · '+Object.keys(DONE).length+' contacted'):'');
+  var el=document.getElementById('list');
+  if(!list.length){el.innerHTML='<div class="loading">Koi lead nahi mili.</div>';return;}
+  el.innerHTML=list.map(function(p){
+    var idx=DATA.indexOf(p), done=!!DONE[p.QueryID];
+    var em=p.Email?('<span class="pill '+(/yes/i.test(p.EmailSent)?'y':'n')+'">'+(/yes/i.test(p.EmailSent)?'✉ Email sent':'✉ '+(p.EmailSent||'no email'))+'</span>'):'';
+    return '<div class="lead'+(done?' done':'')+'">'
+      +'<div class="l-top"><div class="l-name">'+esc(p.Name||'Customer')+'</div><div class="l-date">'+esc(p.Date||'')+'</div></div>'
+      +'<div class="l-prod">🛒 <b>'+esc(p.Product||'')+'</b></div>'
+      +'<div class="l-meta">📞 '+esc(p.Mobile||'—')+(p.Email?' · ✉ '+esc(p.Email):'')+(p.City?' · 📍 '+esc(p.City)+(p.State?', '+esc(p.State):''):'')+(p.Company?' · 🏢 '+esc(p.Company):'')+'</div>'
+      +(p.Message?'<div class="l-msg">'+esc(p.Message)+'</div>':'')
+      +(em?'<div style="margin-top:6px">'+em+'</div>':'')
+      +'<div class="l-btns">'
+      +'<button class="btn b-wa" onclick="wa('+idx+')">💬 WhatsApp</button>'
+      +'<button class="btn b-cl" onclick="call('+idx+')">📞 Call</button>'
+      +(done?'<button class="btn b-ok" onclick="undo(\''+p.QueryID+'\')">↩ Undo</button>':'<button class="btn b-ok" onclick="markDone(\''+p.QueryID+'\')">✅ Contacted</button>')
+      +'</div></div>';
+  }).join('');
+}
+
+function loadLeads(){
+  var url=localStorage.getItem('wtpe_leads_csv');
+  var el=document.getElementById('list');
+  if(!url){el.innerHTML='<div class="loading">Pehle ⚙️ Setup me "Leads" tab ka CSV link daalein.</div>';document.getElementById('cfg').classList.add('on');return;}
+  el.innerHTML='<div class="loading">Leads load ho rahi hain…</div>';
+  fetch(url).then(function(r){return r.text();}).then(function(t){
+    var rows=csvP(t).filter(function(r){return r.join('').trim();});
+    if(rows.length<2){el.innerHTML='<div class="loading">Abhi koi lead nahi. IndiaMART se aate hi yahan dikhengi.</div>';DATA=[];render();return;}
+    var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim();});
+    var out=[];
+    for(var i=1;i<rows.length;i++){var o={};for(var j=0;j<h.length;j++){o[h[j]]=(rows[i][j]||'').trim();}if((o.Name||o.Mobile))out.push(o);}
+    out.reverse(); // newest first
+    DATA=out;render();
+  }).catch(function(){el.innerHTML='<div class="loading">Leads load nahi hui. CSV link/publish check karein.</div>';});
+}
+
+/* ===== Admin login (same token as other admin tools) ===== */
+function aJsonp2(url,cb){var done=false;var fn='wcb_'+Math.floor(Math.random()*1e9);var sc=document.createElement('script');
+function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn];sc.remove();}catch(e){}}}
+window[fn]=function(r){fin(r);};sc.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;
+sc.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(sc);
+setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
+function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||'';}catch(e){return '';}}
+function unlock(){
+  var pass=document.getElementById('pin').value;var url=cfgLogin();var errEl=document.getElementById('pinerr');
+  if(!url){errEl.textContent='Login URL set nahi hai. Pehle admin Settings me daalein.';errEl.style.display='block';return;}
+  errEl.style.display='none';var btn=document.querySelector('#gate button');if(btn){btn.disabled=true;btn.textContent='Checking...';}
+  aJsonp2(url+'?action=login&pass='+encodeURIComponent(pass),function(d){
+    if(btn){btn.disabled=false;btn.textContent='Unlock';}
+    if(d&&d.ok&&d.token){try{localStorage.setItem('wtpe_admin_token',d.token);}catch(e){}document.getElementById('gate').style.display='none';afterUnlock();}
+    else{errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua':'Wrong password');errEl.style.display='block';}
+  });
+}
+function checkSavedToken(){var url=cfgLogin();var tok='';try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
+  if(!url||!tok)return;aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){if(d&&d.ok){document.getElementById('gate').style.display='none';afterUnlock();}});}
+var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadLeads();}
+window.addEventListener('load',checkSavedToken);
+</script>
+</body></html>
