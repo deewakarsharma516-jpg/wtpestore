@@ -8,30 +8,40 @@
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#eef2f6;color:#0f1111}
 .top{background:#0b2545;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px}
 .top img{height:38px;width:auto}.top .t{font-size:15px;font-weight:800}.top .t span{display:block;font-size:11px;font-weight:500;color:#9fc2d8}
-.wrap{max-width:900px;margin:0 auto;padding:16px}
-.bar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.wrap{max-width:820px;margin:0 auto;padding:14px}
+.bar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px}
 .bar input{flex:1;min-width:180px;padding:12px 14px;border:1px solid #cdd8e2;border-radius:10px;font-size:14px;background:#fff}
-.btn{border:none;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn{border:none;border-radius:9px;padding:9px 12px;font-size:12.5px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;justify-content:center}
 .b-nav{background:#0b2545;color:#fff}.b-cfg{background:#eef2f6;color:#0b2545;border:1px solid #cdd8e2}
-.count{font-size:12.5px;color:#5b6b78;margin-bottom:10px}
-.lead{background:#fff;border:1px solid #e2e9f0;border-radius:12px;padding:14px 15px;margin-bottom:11px}
-.lead.done{opacity:.55}
-.l-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.count{font-size:12.5px;color:#5b6b78;margin:2px 0 10px}
+.lead{background:#fff;border:1px solid #e2e9f0;border-radius:12px;padding:13px 15px;margin-bottom:10px}
+.lead.done{opacity:.5}
+.l-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .l-name{font-size:15px;font-weight:800;color:#0b2545}
 .l-date{font-size:11.5px;color:#8a97a3;white-space:nowrap}
-.l-prod{font-size:13.5px;color:#0b2545;margin:5px 0}
-.l-meta{font-size:12.5px;color:#5b6b78;line-height:1.6}
-.l-msg{font-size:12.5px;color:#444;background:#f6f9fb;border-radius:8px;padding:8px 10px;margin:8px 0;line-height:1.5;white-space:pre-wrap}
-.l-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.b-wa{background:#25d366;color:#fff}.b-cl{background:#0b2545;color:#fff}.b-ok{background:#eef2f6;color:#146a45;border:1px solid #b9e6cd}
-.pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px}
-.pill.y{background:#e6f7ee;color:#146a45}.pill.n{background:#fdeceb;color:#b3261e}
+.l-prod{font-size:13.5px;color:#0b2545;margin:4px 0;font-weight:600}
+.l-meta{font-size:12.5px;color:#5b6b78;line-height:1.55}
+.l-msg{font-size:12px;color:#5b6b78;background:#f6f9fb;border-radius:7px;padding:6px 9px;margin:7px 0 0;line-height:1.45}
+.l-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.b-q{background:#f59e0b;color:#fff}.b-d{background:#0e7490;color:#fff}.b-c{background:#6d28d9;color:#fff}
+.b-cl{background:#0b2545;color:#fff}.b-em{background:#1a73e8;color:#fff}.b-ok{background:#eef2f6;color:#146a45;border:1px solid #b9e6cd}
+.pill{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:5px;display:inline-block}
+.pill.n{background:#f1f3f5;color:#8a97a3}
 .loading{text-align:center;color:#5b6b78;padding:40px 0;font-size:14px}
-.cfg{background:#fff6e6;border:1px solid #ffe0a3;border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;color:#5a4300;margin-bottom:14px;display:none}
-.cfg.on{display:block}.cfg input{width:100%;padding:10px;border:1px solid #e2c98a;border-radius:8px;margin:8px 0;font-size:13px}
+.cfg{background:#fff6e6;border:1px solid #ffe0a3;border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;color:#5a4300;margin-bottom:12px;display:none}
+.cfg.on{display:block}.cfg label{font-weight:700;font-size:12px}.cfg input{width:100%;padding:10px;border:1px solid #e2c98a;border-radius:8px;margin:6px 0 10px;font-size:12.5px}
 .cfg button{background:#0b2545;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer}
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0b2545;color:#fff;padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:99}
 .toast.on{opacity:1}
+/* reply modal */
+.ov{position:fixed;inset:0;background:rgba(6,18,33,.6);display:none;align-items:flex-end;justify-content:center;z-index:120}
+.ov.on{display:flex}
+.rp{background:#fff;border-radius:16px 16px 0 0;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:16px}
+@media(min-width:560px){.ov{align-items:center}.rp{border-radius:16px}}
+.rp h3{margin:0 0 3px;font-size:16px;color:#0b2545}.rp .sub{font-size:12px;color:#5b6b78;margin-bottom:10px}
+.rp textarea{width:100%;min-height:200px;border:1px solid #cdd8e2;border-radius:10px;padding:12px;font-size:13.5px;line-height:1.6;font-family:inherit;resize:vertical}
+.rp .row{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.rp .b-wa{background:#25d366;color:#fff}.rp .b-em{background:#1a73e8;color:#fff}.rp .b-x{background:#eef2f6;color:#0b2545}
 /* gate */
 #gate{position:fixed;inset:0;background:#0b2545;display:flex;align-items:center;justify-content:center;z-index:200}
 #gate .g{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
@@ -49,7 +59,7 @@
 
 <div class="top">
   <img src="/icons/logo-white.png" alt="WTPeSTORE">
-  <div class="t">Leads (IndiaMART)<span>Owner tool · one-tap WhatsApp reply</span></div>
+  <div class="t">Leads (IndiaMART)<span>Owner tool · quick reply (auto-price) · WhatsApp / Email</span></div>
 </div>
 
 <div class="wrap">
@@ -58,42 +68,117 @@
     <button class="btn b-cfg" onclick="toggleCfg()">⚙️ Setup</button>
     <a class="btn b-nav" href="/">🏠 Home</a>
   </div>
-
   <div class="cfg" id="cfg">
-    <b>Ek baar setup:</b> Apni Google Sheet ki <b>"Leads" tab</b> ko publish karo — File → Share → <b>Publish to web</b> → tab "Leads", format <b>CSV</b> → link copy → yahan paste karo:
+    <label>Leads CSV link (Sheet ki "Leads" tab → Publish to web → CSV):</label>
     <input id="csvUrl" placeholder="https://docs.google.com/…/pub?gid=…&single=true&output=csv">
+    <label>Products CSV link (price auto-fill ke liye — default already set):</label>
+    <input id="prodUrl" placeholder="products CSV link">
     <button onclick="saveCfg()">Save</button>
   </div>
-
   <div class="count" id="count"></div>
   <div id="list"><div class="loading">Leads load ho rahi hain…</div></div>
+</div>
+
+<!-- reply modal -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeRp()">
+  <div class="rp">
+    <h3 id="rpTitle">Quick reply</h3>
+    <div class="sub" id="rpSub"></div>
+    <textarea id="rpText"></textarea>
+    <div class="row">
+      <button class="btn b-wa" onclick="sendWa()">💬 WhatsApp bhejo</button>
+      <button class="btn b-em" id="rpEmail" onclick="sendEm()">✉ Email bhejo</button>
+      <button class="btn b-x" onclick="closeRp()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-var DATA=[], DONE={};
+var PRODUCTS_CSV_DEFAULT="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
+var DATA=[], PRODUCTS=[], DONE={}, CUR=null;
 try{ DONE=JSON.parse(localStorage.getItem('wtpe_leads_done')||'{}'); }catch(e){ DONE={}; }
+var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on');},1900);}
 function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function rupee(n){return '₹'+(n||0).toLocaleString('en-IN');}
 function csvP(t){var R=[],r=[],c='',q=false;for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++;}else q=false;}else c+=ch;}else{if(ch=='"')q=true;else if(ch==','){r.push(c);c='';}else if(ch=='\n'){r.push(c);R.push(r);r=[];c='';}else if(ch=='\r'){}else c+=ch;}}if(c!==''||r.length){r.push(c);R.push(r);}return R;}
+function parseDt(s){var m=String(s||'').match(/(\d{1,2})-([A-Za-z]{3})\s+(\d{1,2}):(\d{2})/);if(!m)return 0;var mon=MON[m[2].toLowerCase()];if(mon===undefined)return 0;var now=new Date(),lim=now.getTime()+2*864e5;for(var y=now.getFullYear();y>=now.getFullYear()-1;y--){var ts=new Date(y,mon,+m[1],+m[3],+m[4]).getTime();if(ts<=lim)return ts;}return new Date(now.getFullYear()-1,mon,+m[1],+m[3],+m[4]).getTime();}
 
-function toggleCfg(){document.getElementById('cfg').classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||'';}
-function saveCfg(){var u=document.getElementById('csvUrl').value.trim();if(!u){toast('Link daalein');return;}localStorage.setItem('wtpe_leads_csv',u);document.getElementById('cfg').classList.remove('on');toast('Saved! Leads load ho rahi hain…');loadLeads();}
-
-/* WhatsApp / Call */
-function waMsg(p){
-  var m='Namaste '+(p.Name||'')+' 🙏\nWTPESTORE — powered by Aqua Filtration System se dhanyavaad!\n\n';
-  m+='Aapne *'+(p.Product||'')+'* ke bare me enquiry ki thi. Hum genuine water treatment products supply karte hain — GST invoice + pan-India delivery.\n\n';
-  m+='📘 Catalogue: https://www.wtpestore.co.in/catalogues.html\n🌐 www.wtpestore.co.in\n\n';
-  m+='Quotation chahiye to bata dein — main turant bhej deta hoon.\n📞 9899193589';
-  return m;
+/* ---- product price match ---- */
+function priceFor(q){
+  q=String(q||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+  if(!q||!PRODUCTS.length)return null;
+  var qw=q.split(' ').filter(function(w){return w.length>2;});
+  var best=null,bs=0;
+  for(var i=0;i<PRODUCTS.length;i++){
+    var n=String(PRODUCTS[i].name||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+    if(!n)continue; var sc=0;
+    if(n===q)sc+=8; else if(n.indexOf(q)>-1||q.indexOf(n)>-1)sc+=4;
+    var nw=n.split(' ');
+    for(var j=0;j<qw.length;j++){ if(nw.indexOf(qw[j])>-1)sc+=1; }
+    if(sc>bs){bs=sc;best=PRODUCTS[i];}
+  }
+  return bs>=2?best:null;
 }
-function wa(i){var p=DATA[i];var num=String(p.Mobile||'').replace(/[^0-9]/g,'');if(num.length===10)num='91'+num;if(!num){toast('Number nahi hai');return;}window.open('https://wa.me/'+num+'?text='+encodeURIComponent(waMsg(p)),'_blank');markDone(p.QueryID);}
+function priceLine(product){
+  var p=priceFor(product);
+  if(p&&p.price>0){ var s='💰 Price: '+rupee(p.price)+' + GST'; if(p.mrp&&p.mrp>p.price)s+=' (MRP '+rupee(p.mrp)+')'; return s; }
+  return '💰 Best price ke liye reply karein (GST extra)';
+}
+
+/* ---- message templates ---- */
+function tmpl(type,p){
+  var nm=p.Name||'', pr=p.Product||'';
+  if(type==='quote'){
+    return 'Namaste '+nm+' 🙏\nWTPESTORE — powered by Aqua Filtration System\n\n'
+      +'Aapne *'+pr+'* ke bare me enquiry ki thi.\n'+priceLine(pr)+'\n\n'
+      +'Genuine product · GST invoice · pan-India delivery. Quantity aur delivery city bata dein to final quotation bhej deta hoon.\n\n'
+      +'🌐 www.wtpestore.co.in\n📞 9899193589';
+  }
+  if(type==='details'){
+    return 'Namaste '+nm+' 🙏\nWTPESTORE se dhanyavaad! *'+pr+'* ke liye sahi quotation ke liye ye batayein:\n\n'
+      +'1️⃣ Quantity kitni chahiye?\n2️⃣ Capacity / Size (LPH / inch)?\n3️⃣ Delivery city / pincode?\n\n'
+      +'Bata dein — turant best price bhej deta hoon.\n📞 9899193589';
+  }
+  return 'Namaste '+nm+' 🙏\nWTPESTORE — Aqua Filtration System\n\n'
+    +'*'+pr+'* aur baaki products ka catalogue yahan:\n📘 https://www.wtpestore.co.in/catalogues.html\n🌐 www.wtpestore.co.in\n\n'
+    +'Quotation chahiye to bata dein.\n📞 9899193589';
+}
+
+/* ---- reply modal ---- */
+function openRp(i,type){
+  var p=DATA[i];CUR=p;
+  var title=type==='quote'?'📋 Quotation':(type==='details'?'❓ Details maango':'📘 Catalogue bhejo');
+  document.getElementById('rpTitle').textContent=title;
+  document.getElementById('rpSub').textContent=(p.Name||'')+(p.Mobile?' · 📞 '+p.Mobile:'')+(p.Email?' · ✉ '+p.Email:'');
+  document.getElementById('rpText').value=tmpl(type,p);
+  document.getElementById('rpEmail').style.display=p.Email?'inline-flex':'none';
+  document.getElementById('ov').classList.add('on');
+}
+function closeRp(){document.getElementById('ov').classList.remove('on');}
+function sendWa(){
+  if(!CUR)return; var num=String(CUR.Mobile||'').replace(/[^0-9]/g,''); if(num.length===10)num='91'+num;
+  var t=document.getElementById('rpText').value;
+  if(!num){toast('Is lead ka number nahi hai — Email use karein');return;}
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(t),'_blank');markDone(CUR.QueryID);closeRp();
+}
+function sendEm(){
+  if(!CUR||!CUR.Email){toast('Email nahi hai');return;}
+  var t=document.getElementById('rpText').value;
+  var sub='WTPESTORE — Aapki enquiry ('+(CUR.Product||'')+')';
+  location.href='mailto:'+CUR.Email+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(t);
+  markDone(CUR.QueryID);closeRp();
+}
+
 function call(i){var p=DATA[i];var num=String(p.Mobile||'').replace(/[^0-9+]/g,'');if(!num){toast('Number nahi hai');return;}location.href='tel:'+num;}
 function markDone(id){DONE[id]=1;try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
 function undo(id){delete DONE[id];try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
+
+function toggleCfg(){var c=document.getElementById('cfg');c.classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||'';document.getElementById('prodUrl').value=localStorage.getItem('wtpe_products_csv')||PRODUCTS_CSV_DEFAULT;}
+function saveCfg(){var u=document.getElementById('csvUrl').value.trim();var pu=document.getElementById('prodUrl').value.trim();if(u)localStorage.setItem('wtpe_leads_csv',u);if(pu)localStorage.setItem('wtpe_products_csv',pu);document.getElementById('cfg').classList.remove('on');toast('Saved!');loadProducts();loadLeads();}
 
 function render(){
   var q=(document.getElementById('q').value||'').toLowerCase().trim();
@@ -103,35 +188,56 @@ function render(){
   if(!list.length){el.innerHTML='<div class="loading">Koi lead nahi mili.</div>';return;}
   el.innerHTML=list.map(function(p){
     var idx=DATA.indexOf(p), done=!!DONE[p.QueryID];
-    var em=p.Email?('<span class="pill '+(/yes/i.test(p.EmailSent)?'y':'n')+'">'+(/yes/i.test(p.EmailSent)?'✉ Email sent':'✉ '+(p.EmailSent||'no email'))+'</span>'):'';
+    var meta=[]; if(p.Mobile)meta.push('📞 '+esc(p.Mobile)); if(p.Email)meta.push('✉ '+esc(p.Email)); if(p.City)meta.push('📍 '+esc(p.City)+(p.State?', '+esc(p.State):'')); if(p.Company)meta.push('🏢 '+esc(p.Company));
+    var msg=(p.Message||'').replace(/\s+/g,' ').trim(); if(msg.length>140)msg=msg.slice(0,140)+'…';
+    var noC=(!p.Mobile&&!p.Email);
     return '<div class="lead'+(done?' done':'')+'">'
       +'<div class="l-top"><div class="l-name">'+esc(p.Name||'Customer')+'</div><div class="l-date">'+esc(p.Date||'')+'</div></div>'
-      +'<div class="l-prod">🛒 <b>'+esc(p.Product||'')+'</b></div>'
-      +'<div class="l-meta">📞 '+esc(p.Mobile||'—')+(p.Email?' · ✉ '+esc(p.Email):'')+(p.City?' · 📍 '+esc(p.City)+(p.State?', '+esc(p.State):''):'')+(p.Company?' · 🏢 '+esc(p.Company):'')+'</div>'
-      +(p.Message?'<div class="l-msg">'+esc(p.Message)+'</div>':'')
-      +(em?'<div style="margin-top:6px">'+em+'</div>':'')
+      +'<div class="l-prod">🛒 '+esc(p.Product||'')+'</div>'
+      +(meta.length?'<div class="l-meta">'+meta.join(' · ')+'</div>':'')
+      +(noC?'<span class="pill n">IndiaMART ne contact nahi diya — lead kholo</span>':'')
+      +(msg?'<div class="l-msg">'+esc(msg)+'</div>':'')
       +'<div class="l-btns">'
-      +'<button class="btn b-wa" onclick="wa('+idx+')">💬 WhatsApp</button>'
+      +'<button class="btn b-q" onclick="openRp('+idx+',\'quote\')">📋 Quotation</button>'
+      +'<button class="btn b-d" onclick="openRp('+idx+',\'details\')">❓ Details</button>'
+      +'<button class="btn b-c" onclick="openRp('+idx+',\'cat\')">📘 Catalogue</button>'
       +'<button class="btn b-cl" onclick="call('+idx+')">📞 Call</button>'
       +(done?'<button class="btn b-ok" onclick="undo(\''+p.QueryID+'\')">↩ Undo</button>':'<button class="btn b-ok" onclick="markDone(\''+p.QueryID+'\')">✅ Contacted</button>')
       +'</div></div>';
   }).join('');
 }
 
+/* ---- load products (for auto-price) ---- */
+function loadProducts(){
+  var url=localStorage.getItem('wtpe_products_csv')||PRODUCTS_CSV_DEFAULT;
+  fetch(url).then(function(r){return r.text();}).then(function(t){
+    var rows=csvP(t).filter(function(r){return r.join('').trim();}); if(rows.length<2)return;
+    var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim().toLowerCase();});
+    function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
+    var ni=ix('product','name'),pi=ix('price'),mi=ix('mrp','list price','old price'),di=ix('discount','disc','off');
+    if(ni<0)return; var out=[];
+    for(var i=1;i<rows.length;i++){var r=rows[i];var nm=(r[ni]||'').trim();if(nm.length<2)continue;
+      var o={name:nm,price:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,mrp:(mi>-1?parseInt(String(r[mi]||'').replace(/[^0-9]/g,''))||0:0)};
+      if(o.mrp&&o.mrp<=o.price)o.mrp=0;
+      if(!o.mrp&&di>-1&&r[di]){var d=parseFloat(String(r[di]||'').replace(/[^0-9.]/g,''))||0;if(d>0&&d<95&&o.price>0){o.mrp=o.price;o.price=Math.round(o.price*(100-d)/100);}}
+      out.push(o);}
+    PRODUCTS=out;
+  }).catch(function(){});
+}
+
 function loadLeads(){
-  var url=localStorage.getItem('wtpe_leads_csv');
-  var el=document.getElementById('list');
+  var url=localStorage.getItem('wtpe_leads_csv');var el=document.getElementById('list');
   if(!url){el.innerHTML='<div class="loading">Pehle ⚙️ Setup me "Leads" tab ka CSV link daalein.</div>';document.getElementById('cfg').classList.add('on');return;}
   el.innerHTML='<div class="loading">Leads load ho rahi hain…</div>';
   fetch(url).then(function(r){return r.text();}).then(function(t){
     var rows=csvP(t).filter(function(r){return r.join('').trim();});
-    if(rows.length<2){el.innerHTML='<div class="loading">Abhi koi lead nahi. IndiaMART se aate hi yahan dikhengi.</div>';DATA=[];render();return;}
+    if(rows.length<2){el.innerHTML='<div class="loading">Abhi koi lead nahi.</div>';DATA=[];render();return;}
     var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim();});
     var out=[];
-    for(var i=1;i<rows.length;i++){var o={};for(var j=0;j<h.length;j++){o[h[j]]=(rows[i][j]||'').trim();}if((o.Name||o.Mobile))out.push(o);}
-    out.reverse(); // newest first
+    for(var i=1;i<rows.length;i++){var o={};for(var j=0;j<h.length;j++){o[h[j]]=(rows[i][j]||'').trim();}if(o.Name||o.Mobile||o.Email)out.push(o);}
+    out.sort(function(a,b){return parseDt(b.Date)-parseDt(a.Date);});
     DATA=out;render();
-  }).catch(function(){el.innerHTML='<div class="loading">Leads load nahi hui. CSV link/publish check karein.</div>';});
+  }).catch(function(){el.innerHTML='<div class="loading">Leads load nahi hui. CSV link check karein.</div>';});
 }
 
 /* ===== Admin login (same token as other admin tools) ===== */
@@ -153,7 +259,7 @@ function unlock(){
 }
 function checkSavedToken(){var url=cfgLogin();var tok='';try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
   if(!url||!tok)return;aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){if(d&&d.ok){document.getElementById('gate').style.display='none';afterUnlock();}});}
-var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadLeads();}
+var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadProducts();loadLeads();}
 window.addEventListener('load',checkSavedToken);
 </script>
 </body></html>
