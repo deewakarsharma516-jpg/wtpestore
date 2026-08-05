@@ -42,6 +42,29 @@
 .rp textarea{width:100%;min-height:200px;border:1px solid #cdd8e2;border-radius:10px;padding:12px;font-size:13.5px;line-height:1.6;font-family:inherit;resize:vertical}
 .rp .row{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
 .rp .b-wa{background:#25d366;color:#fff}.rp .b-em{background:#1a73e8;color:#fff}.rp .b-x{background:#eef2f6;color:#0b2545}
+.b-pdf{background:#b3261e;color:#fff}
+/* quote overlay */
+.qov{position:fixed;inset:0;background:rgba(6,18,33,.6);display:none;align-items:flex-start;justify-content:center;z-index:130;overflow:auto;padding:14px}
+.qov.on{display:flex}
+.qwrap{background:#eef2f6;border-radius:14px;max-width:820px;width:100%;padding:12px}
+.qctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.qctrl label{font-size:11px;font-weight:700;color:#5b6b78;display:block;margin-bottom:3px}
+.qctrl input{width:110px;padding:8px;border:1px solid #cdd8e2;border-radius:8px;font-size:14px}
+.qctrl input.wide{width:200px}
+.qbtns{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.qbtns .b-dl{background:#b3261e;color:#fff}.qbtns .b-pr{background:#0b2545;color:#fff}.qbtns .b-x{background:#eef2f6;color:#0b2545;border:1px solid #cdd8e2}
+#quoteDoc{background:#fff;color:#0f1111;padding:28px 30px;font-size:13px;line-height:1.55;border-radius:6px}
+#quoteDoc .hd{display:flex;justify-content:space-between;border-bottom:2px solid #0b2545;padding-bottom:10px;margin-bottom:12px}
+#quoteDoc .hd .co{font-size:18px;font-weight:800;color:#0b2545}
+#quoteDoc .hd .co small{display:block;font-size:11px;font-weight:600;color:#e67e22}
+#quoteDoc .muted{color:#555;font-size:11.5px}
+#quoteDoc h2{font-size:15px;color:#0b2545;margin:10px 0 8px;letter-spacing:.5px}
+#quoteDoc table{width:100%;border-collapse:collapse;margin:8px 0}
+#quoteDoc th,#quoteDoc td{border:1px solid #cdd8e2;padding:7px 9px;font-size:12px;text-align:left}
+#quoteDoc th{background:#0b2545;color:#fff}
+#quoteDoc td.r,#quoteDoc th.r{text-align:right}
+#quoteDoc .tot td{font-weight:700}
+#quoteDoc .terms{font-size:11px;color:#444;margin-top:10px;line-height:1.6}
 /* gate */
 #gate{position:fixed;inset:0;background:#0b2545;display:flex;align-items:center;justify-content:center;z-index:200}
 #gate .g{background:#fff;border-radius:16px;padding:30px;width:300px;text-align:center}
@@ -49,7 +72,8 @@
 #gate input{text-align:center;font-size:20px;letter-spacing:6px;width:100%;padding:11px;border:1px solid #cdd8e2;border-radius:9px}
 #gate button{margin-top:12px;width:100%;background:#25d366;color:#fff;border:none;padding:12px;border-radius:9px;font-weight:700;font-size:15px;cursor:pointer}
 #pinerr{color:#b3261e;font-size:12.5px;margin-top:8px;display:none}
-</style></head>
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
 <body>
 <div id="gate"><div class="g">
 <div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Leads dekhne ke liye PIN daalein</p>
@@ -73,7 +97,9 @@
     <input id="csvUrl" placeholder="https://docs.google.com/…/pub?gid=…&single=true&output=csv">
     <label>Products CSV link (price auto-fill ke liye — default already set):</label>
     <input id="prodUrl" placeholder="products CSV link">
-    <button onclick="saveCfg()">Save</button>
+    <label>Gmail account no. (jismein aquazone350 khulta ho — aksar 0):</label>
+    <input id="gU" type="number" min="0" value="0" style="width:90px">
+    <br><button onclick="saveCfg()">Save</button>
   </div>
   <div class="count" id="count"></div>
   <div id="list"><div class="loading">Leads load ho rahi hain…</div></div>
@@ -90,6 +116,23 @@
       <button class="btn b-em" id="rpEmail" onclick="sendEm()">✉ Email bhejo</button>
       <button class="btn b-x" onclick="closeRp()">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- quote overlay -->
+<div class="qov" id="qov" onclick="if(event.target===this)closeQuote()">
+  <div class="qwrap">
+    <div class="qctrl">
+      <div><label>Product</label><input id="qProd" class="wide" oninput="recalcQ()"></div>
+      <div><label>Qty</label><input id="qQty" type="number" value="1" min="1" oninput="recalcQ()"></div>
+      <div><label>Rate (₹, GST extra)</label><input id="qRate" type="number" min="0" oninput="recalcQ()"></div>
+      <div class="qbtns">
+        <button class="btn b-pr" onclick="printQuote()">🖨 Print</button>
+        <button class="btn b-dl" onclick="downloadQuote()">📄 Download PDF</button>
+        <button class="btn b-x" onclick="closeQuote()">Close</button>
+      </div>
+    </div>
+    <div id="quoteDoc"></div>
   </div>
 </div>
 
@@ -165,11 +208,14 @@ function sendWa(){
   if(!num){toast('Is lead ka number nahi hai — Email use karein');return;}
   window.open('https://wa.me/'+num+'?text='+encodeURIComponent(t),'_blank');markDone(CUR.QueryID);closeRp();
 }
+function gmailU(){try{return localStorage.getItem('wtpe_gmail_u')||'0';}catch(e){return '0';}}
 function sendEm(){
   if(!CUR||!CUR.Email){toast('Email nahi hai');return;}
   var t=document.getElementById('rpText').value;
   var sub='WTPESTORE — Aapki enquiry ('+(CUR.Product||'')+')';
-  location.href='mailto:'+CUR.Email+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(t);
+  var url='https://mail.google.com/mail/u/'+gmailU()+'/?view=cm&fs=1&tf=1&to='+encodeURIComponent(CUR.Email)+'&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(t);
+  window.open(url,'_blank');
+  toast('Gmail compose khul gaya — Send dabayein, Sent me record aa jayega');
   markDone(CUR.QueryID);closeRp();
 }
 
@@ -177,8 +223,8 @@ function call(i){var p=DATA[i];var num=String(p.Mobile||'').replace(/[^0-9+]/g,'
 function markDone(id){DONE[id]=1;try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
 function undo(id){delete DONE[id];try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
 
-function toggleCfg(){var c=document.getElementById('cfg');c.classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||'';document.getElementById('prodUrl').value=localStorage.getItem('wtpe_products_csv')||PRODUCTS_CSV_DEFAULT;}
-function saveCfg(){var u=document.getElementById('csvUrl').value.trim();var pu=document.getElementById('prodUrl').value.trim();if(u)localStorage.setItem('wtpe_leads_csv',u);if(pu)localStorage.setItem('wtpe_products_csv',pu);document.getElementById('cfg').classList.remove('on');toast('Saved!');loadProducts();loadLeads();}
+function toggleCfg(){var c=document.getElementById('cfg');c.classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||'';document.getElementById('prodUrl').value=localStorage.getItem('wtpe_products_csv')||PRODUCTS_CSV_DEFAULT;document.getElementById('gU').value=localStorage.getItem('wtpe_gmail_u')||'0';}
+function saveCfg(){var u=document.getElementById('csvUrl').value.trim();var pu=document.getElementById('prodUrl').value.trim();var gu=document.getElementById('gU').value.trim();if(u)localStorage.setItem('wtpe_leads_csv',u);if(pu)localStorage.setItem('wtpe_products_csv',pu);localStorage.setItem('wtpe_gmail_u',gu||'0');document.getElementById('cfg').classList.remove('on');toast('Saved!');loadProducts();loadLeads();}
 
 function render(){
   var q=(document.getElementById('q').value||'').toLowerCase().trim();
@@ -201,7 +247,9 @@ function render(){
       +'<button class="btn b-q" onclick="openRp('+idx+',\'quote\')">📋 Quotation</button>'
       +'<button class="btn b-d" onclick="openRp('+idx+',\'details\')">❓ Details</button>'
       +'<button class="btn b-c" onclick="openRp('+idx+',\'cat\')">📘 Catalogue</button>'
+      +'<button class="btn b-pdf" onclick="openQuote('+idx+')">📄 Quote PDF</button>'
       +'<button class="btn b-cl" onclick="call('+idx+')">📞 Call</button>'
+      +(p.Email?'<button class="btn b-em" onclick="openRp('+idx+',\'quote\')">✉ Email</button>':'')
       +(done?'<button class="btn b-ok" onclick="undo(\''+p.QueryID+'\')">↩ Undo</button>':'<button class="btn b-ok" onclick="markDone(\''+p.QueryID+'\')">✅ Contacted</button>')
       +'</div></div>';
   }).join('');
@@ -238,6 +286,58 @@ function loadLeads(){
     out.sort(function(a,b){return parseDt(b.Date)-parseDt(a.Date);});
     DATA=out;render();
   }).catch(function(){el.innerHTML='<div class="loading">Leads load nahi hui. CSV link check karein.</div>';});
+}
+
+
+/* ================= Quote PDF / Preview ================= */
+var QCUR=null;
+function openQuote(i){
+  var p=DATA[i]; QCUR=p;
+  document.getElementById('qProd').value = p.Product || '';
+  document.getElementById('qQty').value = 1;
+  var pr = priceFor(p.Product); document.getElementById('qRate').value = (pr && pr.price>0) ? pr.price : '';
+  recalcQ();
+  document.getElementById('qov').classList.add('on');
+}
+function closeQuote(){ document.getElementById('qov').classList.remove('on'); }
+function recalcQ(){
+  var p=QCUR||{}; 
+  var prod=document.getElementById('qProd').value||'Product';
+  var qty=parseFloat(document.getElementById('qQty').value)||0;
+  var rate=parseFloat(document.getElementById('qRate').value)||0;
+  var amt=Math.round(qty*rate), gst=Math.round(amt*0.18), tot=amt+gst;
+  var d=new Date();
+  var qno='WTPE-Q-'+d.getFullYear().toString().slice(2)+pad(d.getMonth()+1)+pad(d.getDate())+'-'+(String(p.Mobile||'').replace(/[^0-9]/g,'').slice(-4)||'000');
+  var dt=pad(d.getDate())+'-'+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+'-'+d.getFullYear();
+  var to=[esc(p.Name||'Customer')]; if(p.Company)to.push(esc(p.Company)); if(p.City)to.push(esc(p.City)+(p.State?', '+esc(p.State):'')); if(p.Mobile)to.push('📞 '+esc(p.Mobile)); if(p.Email)to.push('✉ '+esc(p.Email));
+  document.getElementById('quoteDoc').innerHTML =
+    '<div class="hd"><div class="co">WTPESTORE<small>powered by Aqua Filtration System</small></div>'
+    +'<div class="muted" style="text-align:right">B-198, Royal Plaza, Green Field,<br>Faridabad – 121001, Haryana<br>GSTIN: 06DMUPS2289L1ZZ<br>📞 9899193589 · 🌐 www.wtpestore.co.in</div></div>'
+    +'<div style="display:flex;justify-content:space-between"><div><b>To:</b><br>'+to.join('<br>')+'</div>'
+    +'<div style="text-align:right" class="muted"><b>Quotation No:</b> '+qno+'<br><b>Date:</b> '+dt+'</div></div>'
+    +'<h2>QUOTATION</h2>'
+    +'<table><tr><th>#</th><th>Product / Description</th><th class="r">Qty</th><th class="r">Rate (₹)</th><th class="r">Amount (₹)</th></tr>'
+    +'<tr><td>1</td><td>'+esc(prod)+'</td><td class="r">'+qty+'</td><td class="r">'+rate.toLocaleString("en-IN")+'</td><td class="r">'+amt.toLocaleString("en-IN")+'</td></tr>'
+    +'<tr><td colspan="4" class="r">Sub Total</td><td class="r">'+amt.toLocaleString("en-IN")+'</td></tr>'
+    +'<tr><td colspan="4" class="r">GST @ 18%</td><td class="r">'+gst.toLocaleString("en-IN")+'</td></tr>'
+    +'<tr class="tot"><td colspan="4" class="r">Grand Total</td><td class="r">₹'+tot.toLocaleString("en-IN")+'</td></tr></table>'
+    +'<div class="terms"><b>Terms &amp; Conditions:</b><br>'
+    +'• Prices inclusive of GST as shown. • Delivery: 3–7 working days after order confirmation. • Payment: NEFT / RTGS / Bank Transfer.<br>'
+    +'• Bank: Axis Bank · IFSC UTIB0002693 (A/C details on request). • Quotation valid for 15 days.<br><br>'
+    +'For <b>Aqua Filtration System</b><br><br>Authorised Signatory</div>';
+}
+function pad(n){return (n<10?'0':'')+n;}
+function fnameQ(){ return 'Quotation-'+String((QCUR&&QCUR.Name)||'customer').replace(/[^A-Za-z0-9]+/g,'-')+'.pdf'; }
+function downloadQuote(){
+  var el=document.getElementById('quoteDoc');
+  if(typeof html2pdf==='undefined'){ toast('PDF library load nahi hui — Print se Save-as-PDF karein'); printQuote(); return; }
+  toast('PDF ban rahi hai…');
+  html2pdf().set({margin:8,filename:fnameQ(),image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+}
+function printQuote(){
+  var w=window.open('','_blank');
+  w.document.write('<html><head><title>Quotation</title></head><body>'+document.getElementById('quoteDoc').outerHTML+'</body></html>');
+  w.document.close(); setTimeout(function(){w.print();},400);
 }
 
 /* ===== Admin login (same token as other admin tools) ===== */
