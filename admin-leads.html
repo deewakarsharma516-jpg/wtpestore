@@ -27,6 +27,11 @@
 .b-cl{background:#0b2545;color:#fff}.b-em{background:#1a73e8;color:#fff}.b-ok{background:#eef2f6;color:#146a45;border:1px solid #b9e6cd}
 .pill{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:20px;margin-top:5px;display:inline-block}
 .pill.n{background:#f1f3f5;color:#8a97a3}
+.src{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:20px;margin-left:7px;vertical-align:middle}
+.src.im{background:#fdeaea;color:#b3261e}.src.web{background:#e6f0fb;color:#12518f}
+.fbar{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.fbtn{border:1px solid #cdd8e2;background:#fff;color:#0b2545;border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer}
+.fbtn.on{background:#0b2545;color:#fff;border-color:#0b2545}
 .loading{text-align:center;color:#5b6b78;padding:40px 0;font-size:14px}
 .cfg{background:#fff6e6;border:1px solid #ffe0a3;border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.7;color:#5a4300;margin-bottom:12px;display:none}
 .cfg.on{display:block}.cfg label{font-weight:700;font-size:12px}.cfg input{width:100%;padding:10px;border:1px solid #e2c98a;border-radius:8px;margin:6px 0 10px;font-size:12.5px}
@@ -119,9 +124,16 @@
     <input id="csvUrl" placeholder="https://docs.google.com/…/pub?gid=…&single=true&output=csv">
     <label>Products CSV link (price auto-fill ke liye — default already set):</label>
     <input id="prodUrl" placeholder="products CSV link">
+    <label>Website Leads CSV link (site ki Enquiry form leads — default set hai):</label>
+    <input id="webUrl" placeholder="website leads CSV link">
     <label>Gmail account no. (jismein aquazone350 khulta ho — aksar 0):</label>
     <input id="gU" type="number" min="0" value="0" style="width:90px">
     <br><button onclick="saveCfg()">Save</button>
+  </div>
+  <div class="fbar">
+    <button class="fbtn on" id="fAll"  onclick="setSrc('all')">Sab</button>
+    <button class="fbtn"    id="fIM"   onclick="setSrc('im')">🅘 IndiaMART</button>
+    <button class="fbtn"    id="fWeb"  onclick="setSrc('web')">🌐 Website</button>
   </div>
   <div class="count" id="count"></div>
   <div id="list"><div class="loading">Leads load ho rahi hain…</div></div>
@@ -170,8 +182,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
+var WEB_CSV_DEFAULT="https://docs.google.com/spreadsheets/d/e/2PACX-1vRW32-Uf1m2Ju9Im9MAwAIKnT_NHTL-6TEIcsZjTN3Uoz9qQqOFHUggKxqnWVeJ5r9IAbbciAMMgYNH/pub?output=csv";
 var PRODUCTS_CSV_DEFAULT="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
-var DATA=[], PRODUCTS=[], DONE={}, CUR=null;
+var DATA=[], PRODUCTS=[], DONE={}, CUR=null, SRC='all', IM_ROWS=[], WEB_ROWS=[];
 try{ DONE=JSON.parse(localStorage.getItem('wtpe_leads_done')||'{}'); }catch(e){ DONE={}; }
 var MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
 
@@ -254,12 +267,16 @@ function call(i){var p=DATA[i];var num=String(p.Mobile||'').replace(/[^0-9+]/g,'
 function markDone(id){DONE[id]=1;try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
 function undo(id){delete DONE[id];try{localStorage.setItem('wtpe_leads_done',JSON.stringify(DONE));}catch(e){}render();}
 
-function toggleCfg(){var c=document.getElementById('cfg');c.classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||'';document.getElementById('prodUrl').value=localStorage.getItem('wtpe_products_csv')||PRODUCTS_CSV_DEFAULT;document.getElementById('gU').value=localStorage.getItem('wtpe_gmail_u')||'0';}
-function saveCfg(){var u=document.getElementById('csvUrl').value.trim();var pu=document.getElementById('prodUrl').value.trim();var gu=document.getElementById('gU').value.trim();if(u)localStorage.setItem('wtpe_leads_csv',u);if(pu)localStorage.setItem('wtpe_products_csv',pu);localStorage.setItem('wtpe_gmail_u',gu||'0');document.getElementById('cfg').classList.remove('on');toast('Saved!');loadProducts();loadLeads();}
+function toggleCfg(){var c=document.getElementById('cfg');c.classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||'';document.getElementById('prodUrl').value=localStorage.getItem('wtpe_products_csv')||PRODUCTS_CSV_DEFAULT;document.getElementById('gU').value=localStorage.getItem('wtpe_gmail_u')||'0';document.getElementById('webUrl').value=localStorage.getItem('wtpe_web_csv')||WEB_CSV_DEFAULT;}
+function saveCfg(){var u=document.getElementById('csvUrl').value.trim();var pu=document.getElementById('prodUrl').value.trim();var gu=document.getElementById('gU').value.trim();var wu=document.getElementById('webUrl').value.trim();if(wu)localStorage.setItem('wtpe_web_csv',wu);if(u)localStorage.setItem('wtpe_leads_csv',u);if(pu)localStorage.setItem('wtpe_products_csv',pu);localStorage.setItem('wtpe_gmail_u',gu||'0');document.getElementById('cfg').classList.remove('on');toast('Saved!');loadProducts();loadLeads();loadWebLeads();}
 
 function render(){
   var q=(document.getElementById('q').value||'').toLowerCase().trim();
-  var list=DATA.filter(function(p){return !q||((p.Name+' '+p.Product+' '+p.City+' '+p.Company).toLowerCase().indexOf(q)>-1);});
+  var list=DATA.filter(function(p){ if(SRC!=='all' && p._src!==SRC) return false; return !q||((p.Name+' '+p.Product+' '+p.City+' '+p.Company).toLowerCase().indexOf(q)>-1);});
+  var nIM=DATA.filter(function(x){return x._src==='im';}).length, nWeb=DATA.filter(function(x){return x._src==='web';}).length;
+  document.getElementById('fIM').textContent='🅘 IndiaMART ('+nIM+')';
+  document.getElementById('fWeb').textContent='🌐 Website ('+nWeb+')';
+  document.getElementById('fAll').textContent='Sab ('+DATA.length+')';
   document.getElementById('count').textContent=list.length+' leads'+(Object.keys(DONE).length?(' · '+Object.keys(DONE).length+' contacted'):'');
   var el=document.getElementById('list');
   if(!list.length){el.innerHTML='<div class="loading">Koi lead nahi mili.</div>';return;}
@@ -269,7 +286,7 @@ function render(){
     var msg=(p.Message||'').replace(/\s+/g,' ').trim(); if(msg.length>140)msg=msg.slice(0,140)+'…';
     var noC=(!p.Mobile&&!p.Email);
     return '<div class="lead'+(done?' done':'')+'">'
-      +'<div class="l-top"><div class="l-name">'+esc(p.Name||'Customer')+'</div><div class="l-date">'+esc(p.Date||'')+'</div></div>'
+      +'<div class="l-top"><div class="l-name">'+esc(p.Name||'Customer')+'<span class="src '+(p._src==='web'?'web':'im')+'">'+(p._src==='web'?'🌐 Website':'🅘 IndiaMART')+'</span></div><div class="l-date">'+esc(p.Date||'')+'</div></div>'
       +'<div class="l-prod">🛒 '+esc(p.Product||'')+'</div>'
       +(meta.length?'<div class="l-meta">'+meta.join(' · ')+'</div>':'')
       +(noC?'<span class="pill n">IndiaMART ne contact nahi diya — lead kholo</span>':'')
@@ -304,19 +321,54 @@ function loadProducts(){
   }).catch(function(){});
 }
 
+function setSrc(v){ SRC=v;
+  ['fAll','fIM','fWeb'].forEach(function(id){ document.getElementById(id).classList.remove('on'); });
+  document.getElementById(v==='all'?'fAll':(v==='im'?'fIM':'fWeb')).classList.add('on');
+  render();
+}
+function rowsFromCsv(t, src){
+  var rows=csvP(t).filter(function(r){return r.join('').trim();});
+  if(rows.length<2) return [];
+  var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim();});
+  function pick(o,names){ for(var i=0;i<names.length;i++){ for(var k in o){ if(k.toLowerCase()===names[i]) return o[k]; } } return ''; }
+  var out=[];
+  for(var i=1;i<rows.length;i++){
+    var o={}; for(var j=0;j<h.length;j++){ o[h[j]]=(rows[i][j]||'').trim(); }
+    var n={ _src:src,
+      QueryID: pick(o,['queryid','id'])||(src+'_'+i),
+      Date:    pick(o,['date','timestamp','time']),
+      Name:    pick(o,['name','customer','customer name','sender']),
+      Mobile:  pick(o,['mobile','phone','contact','mobile no','phone no']),
+      Email:   pick(o,['email','e-mail','email id']),
+      Company: pick(o,['company','firm']),
+      Product: pick(o,['product','requirement','item','subject']),
+      Message: pick(o,['message','requirement details','details','query','remarks']),
+      City:    pick(o,['city','location']),
+      State:   pick(o,['state']),
+      EmailSent: pick(o,['emailsent'])
+    };
+    if(n.Name||n.Mobile||n.Email) out.push(n);
+  }
+  return out;
+}
+function mergeAndRender(){
+  DATA = IM_ROWS.concat(WEB_ROWS);
+  DATA.sort(function(a,b){return parseDt(b.Date)-parseDt(a.Date);});
+  var el=document.getElementById('list');
+  if(!DATA.length){ el.innerHTML='<div class="loading">Abhi koi lead nahi.</div>'; }
+  render();
+}
+function loadWebLeads(){
+  var url=localStorage.getItem('wtpe_web_csv')||WEB_CSV_DEFAULT;
+  fetch(url).then(function(r){return r.text();}).then(function(t){ WEB_ROWS=rowsFromCsv(t,'web'); mergeAndRender(); }).catch(function(){});
+}
 function loadLeads(){
   var url=localStorage.getItem('wtpe_leads_csv');var el=document.getElementById('list');
   if(!url){el.innerHTML='<div class="loading">Pehle ⚙️ Setup me "Leads" tab ka CSV link daalein.</div>';document.getElementById('cfg').classList.add('on');return;}
   el.innerHTML='<div class="loading">Leads load ho rahi hain…</div>';
   fetch(url).then(function(r){return r.text();}).then(function(t){
-    var rows=csvP(t).filter(function(r){return r.join('').trim();});
-    if(rows.length<2){el.innerHTML='<div class="loading">Abhi koi lead nahi.</div>';DATA=[];render();return;}
-    var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim();});
-    var out=[];
-    for(var i=1;i<rows.length;i++){var o={};for(var j=0;j<h.length;j++){o[h[j]]=(rows[i][j]||'').trim();}if(o.Name||o.Mobile||o.Email)out.push(o);}
-    out.sort(function(a,b){return parseDt(b.Date)-parseDt(a.Date);});
-    DATA=out;render();
-  }).catch(function(){el.innerHTML='<div class="loading">Leads load nahi hui. CSV link check karein.</div>';});
+    IM_ROWS=rowsFromCsv(t,'im'); mergeAndRender();
+  }).catch(function(){ IM_ROWS=[]; mergeAndRender(); });
 }
 
 
@@ -453,7 +505,7 @@ function unlock(){
 }
 function checkSavedToken(){var url=cfgLogin();var tok='';try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
   if(!url||!tok)return;aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){if(d&&d.ok){document.getElementById('gate').style.display='none';var nm=d.name||(function(){try{return localStorage.getItem('wtpe_admin_name')||'';}catch(e){return '';}})();setWhoAmI(nm);afterUnlock();}});}
-var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadProducts();loadLeads();}
+var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadProducts();loadLeads();loadWebLeads();}
 window.addEventListener('load',checkSavedToken);
 </script>
 </body></html>
