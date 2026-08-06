@@ -76,14 +76,16 @@
 </head>
 <body>
 <div id="gate"><div class="g">
-<div style="font-size:34px">🔒</div><h2>Admin Login</h2><p>Leads dekhne ke liye PIN daalein</p>
+<div style="font-size:34px">🔒</div><h2>Staff Login</h2><p>Apna naam aur password daalein</p>
+<input id="uName" type="text" placeholder="Aapka naam" style="text-align:left;letter-spacing:normal;font-size:15px;margin-bottom:9px" onkeydown="if(event.key==='Enter')document.getElementById('pin').focus()">
 <input id="pin" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')unlock()">
 <button onclick="unlock()">Unlock</button><div id="pinerr">Wrong password</div>
 </div></div>
 
 <div class="top">
   <img src="/icons/logo-white.png" alt="WTPeSTORE">
-  <div class="t">Leads (IndiaMART)<span>Owner tool · quick reply (auto-price) · WhatsApp / Email</span></div>
+  <div class="t">Leads (IndiaMART)<span id="whoami">Owner tool · quick reply (auto-price) · WhatsApp / Email</span></div>
+  <button onclick="logout()" style="margin-left:auto;background:transparent;border:1px solid #35507a;color:#cfe1f0;font-size:11.5px;padding:6px 10px;border-radius:8px;cursor:pointer">Logout</button>
 </div>
 
 <div class="wrap">
@@ -348,18 +350,25 @@ sc.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChil
 setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
 var LOGIN_URL_DEFAULT="https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec";
 function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||LOGIN_URL_DEFAULT;}catch(e){return LOGIN_URL_DEFAULT;}}
+function setWhoAmI(name){
+  var el=document.getElementById('whoami');
+  el.textContent = name ? ('Logged in as: '+name+' · quick reply (auto-price) · WhatsApp / Email') : 'Owner tool · quick reply (auto-price) · WhatsApp / Email';
+}
+function logout(){ try{localStorage.removeItem('wtpe_admin_token');localStorage.removeItem('wtpe_admin_name');}catch(e){} location.reload(); }
 function unlock(){
+  var nm=(document.getElementById('uName').value||'').trim();
   var pass=document.getElementById('pin').value;var url=cfgLogin();var errEl=document.getElementById('pinerr');
   if(!url){errEl.textContent='Login URL set nahi hai. Pehle admin Settings me daalein.';errEl.style.display='block';return;}
+  if(!nm){errEl.textContent='Apna naam daalein';errEl.style.display='block';return;}
   errEl.style.display='none';var btn=document.querySelector('#gate button');if(btn){btn.disabled=true;btn.textContent='Checking...';}
-  aJsonp2(url+'?action=login&pass='+encodeURIComponent(pass),function(d){
+  aJsonp2(url+'?action=login&user='+encodeURIComponent(nm)+'&pass='+encodeURIComponent(pass),function(d){
     if(btn){btn.disabled=false;btn.textContent='Unlock';}
-    if(d&&d.ok&&d.token){try{localStorage.setItem('wtpe_admin_token',d.token);}catch(e){}document.getElementById('gate').style.display='none';afterUnlock();}
-    else{errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua':'Wrong password');errEl.style.display='block';}
+    if(d&&d.ok&&d.token){try{localStorage.setItem('wtpe_admin_token',d.token);localStorage.setItem('wtpe_admin_name',d.name||nm);}catch(e){}document.getElementById('gate').style.display='none';setWhoAmI(d.name||nm);afterUnlock();}
+    else{errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me naam/password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua':'Naam ya password galat hai');errEl.style.display='block';}
   });
 }
 function checkSavedToken(){var url=cfgLogin();var tok='';try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
-  if(!url||!tok)return;aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){if(d&&d.ok){document.getElementById('gate').style.display='none';afterUnlock();}});}
+  if(!url||!tok)return;aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){if(d&&d.ok){document.getElementById('gate').style.display='none';var nm=d.name||(function(){try{return localStorage.getItem('wtpe_admin_name')||'';}catch(e){return '';}})();setWhoAmI(nm);afterUnlock();}});}
 var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadProducts();loadLeads();}
 window.addEventListener('load',checkSavedToken);
 </script>
