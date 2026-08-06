@@ -51,6 +51,26 @@
 .qctrl label{font-size:11px;font-weight:700;color:#5b6b78;display:block;margin-bottom:3px}
 .qctrl input{width:110px;padding:8px;border:1px solid #cdd8e2;border-radius:8px;font-size:14px}
 .qctrl input.wide{width:200px}
+/* multi-item quote editor */
+.qed{background:#fff;border-radius:10px;padding:12px;margin-bottom:10px}
+.qed h4{margin:0 0 8px;font-size:13px;color:#0b2545}
+.qrow{display:flex;gap:7px;align-items:center;margin-bottom:7px;flex-wrap:wrap}
+.qrow input.p{flex:1;min-width:150px}
+.qrow input{padding:8px;border:1px solid #cdd8e2;border-radius:8px;font-size:13.5px}
+.qrow input.q{width:70px}.qrow input.r{width:110px}
+.qrow .amt{font-size:12.5px;color:#5b6b78;min-width:80px;text-align:right;font-weight:700}
+.qrow input.im{width:150px}
+.qrow .thumb{width:34px;height:34px;object-fit:cover;border-radius:6px;border:1px solid #e2e9f0;background:#f4f8fb}
+#quoteDoc td.imgc{width:74px;text-align:center;padding:4px}
+#quoteDoc td.imgc img{width:64px;height:64px;object-fit:contain;display:block;margin:0 auto}
+.qrow .del{background:#fdeceb;color:#b3261e;border:none;border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer}
+.qadd{background:#0e7490;color:#fff;border:none;border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:700;cursor:pointer}
+.qmeta{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;margin-top:10px;padding-top:10px;border-top:1px dashed #dbe4ec}
+.qmeta label{font-size:11px;font-weight:700;color:#5b6b78;display:block;margin-bottom:3px}
+.qmeta input,.qmeta textarea{padding:8px;border:1px solid #cdd8e2;border-radius:8px;font-size:13px;font-family:inherit}
+.qmeta input.nm{width:190px}.qmeta input.gst{width:70px}
+.qmeta textarea{width:100%;min-height:56px}
+.hint{font-size:11px;color:#8a97a3;margin-top:4px}
 .qbtns{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
 .qbtns .b-dl{background:#b3261e;color:#fff}.qbtns .b-pr{background:#0b2545;color:#fff}.qbtns .b-x{background:#eef2f6;color:#0b2545;border:1px solid #cdd8e2}
 #quoteDoc{background:#fff;color:#0f1111;padding:28px 30px;font-size:13px;line-height:1.55;border-radius:6px}
@@ -124,11 +144,20 @@
 <!-- quote overlay -->
 <div class="qov" id="qov" onclick="if(event.target===this)closeQuote()">
   <div class="qwrap">
-    <div class="qctrl">
-      <div><label>Product</label><input id="qProd" class="wide" oninput="recalcQ()"></div>
-      <div><label>Qty</label><input id="qQty" type="number" value="1" min="1" oninput="recalcQ()"></div>
-      <div><label>Rate (₹, GST extra)</label><input id="qRate" type="number" min="0" oninput="recalcQ()"></div>
-      <div class="qbtns">
+    <div class="qed">
+      <h4>📝 Quotation banayein — products add/edit karein</h4>
+      <div id="qItems"></div>
+      <button class="qadd" onclick="addItem()">➕ Aur product add karein</button>
+      <div class="hint">Product ka naam likhte hi Sheet se rate apne aap aa jayega. Na mile to rate khud daal dein.</div>
+      <div class="qmeta">
+        <div><label>Customer</label><input id="qName" class="nm" oninput="recalcQ()"></div>
+        <div><label>Company</label><input id="qCo" class="nm" oninput="recalcQ()"></div>
+        <div><label>City / State</label><input id="qCity" class="nm" oninput="recalcQ()"></div>
+        <div><label>GST %</label><input id="qGst" class="gst" type="number" value="18" min="0" oninput="recalcQ()"></div>
+      </div>
+      <div style="margin-top:9px"><label style="font-size:11px;font-weight:700;color:#5b6b78">Terms / Notes (edit kar sakte hain)</label>
+        <textarea id="qTerms" oninput="recalcQ()"></textarea></div>
+      <div class="qbtns" style="margin-top:10px">
         <button class="btn b-pr" onclick="printQuote()">🖨 Print</button>
         <button class="btn b-dl" onclick="downloadQuote()">📄 Download PDF</button>
         <button class="btn b-x" onclick="closeQuote()">Close</button>
@@ -264,10 +293,10 @@ function loadProducts(){
     var rows=csvP(t).filter(function(r){return r.join('').trim();}); if(rows.length<2)return;
     var h=rows[0].map(function(x){return String(x||'').replace(/^\uFEFF/,'').trim().toLowerCase();});
     function ix(){for(var k=0;k<arguments.length;k++){var i=h.indexOf(arguments[k]);if(i>-1)return i;}return -1;}
-    var ni=ix('product','name'),pi=ix('price'),mi=ix('mrp','list price','old price'),di=ix('discount','disc','off');
+    var ni=ix('product','name'),pi=ix('price'),mi=ix('mrp','list price','old price'),di=ix('discount','disc','off'),imi=ix('image','photo','img','image url');
     if(ni<0)return; var out=[];
     for(var i=1;i<rows.length;i++){var r=rows[i];var nm=(r[ni]||'').trim();if(nm.length<2)continue;
-      var o={name:nm,price:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,mrp:(mi>-1?parseInt(String(r[mi]||'').replace(/[^0-9]/g,''))||0:0)};
+      var o={name:nm,price:parseInt((r[pi]||'').replace(/[^0-9]/g,''))||0,mrp:(mi>-1?parseInt(String(r[mi]||'').replace(/[^0-9]/g,''))||0:0),img:(imi>-1?String(r[imi]||'').trim():'')};
       if(o.mrp&&o.mrp<=o.price)o.mrp=0;
       if(!o.mrp&&di>-1&&r[di]){var d=parseFloat(String(r[di]||'').replace(/[^0-9.]/g,''))||0;if(d>0&&d<95&&o.price>0){o.mrp=o.price;o.price=Math.round(o.price*(100-d)/100);}}
       out.push(o);}
@@ -295,38 +324,93 @@ function loadLeads(){
 var QCUR=null;
 function openQuote(i){
   var p=DATA[i]; QCUR=p;
-  document.getElementById('qProd').value = p.Product || '';
-  document.getElementById('qQty').value = 1;
-  var pr = priceFor(p.Product); document.getElementById('qRate').value = (pr && pr.price>0) ? pr.price : '';
-  recalcQ();
+  document.getElementById('qName').value = p.Name || '';
+  document.getElementById('qCo').value   = p.Company || '';
+  document.getElementById('qCity').value = (p.City||'') + (p.State? (', '+p.State) : '');
+  document.getElementById('qGst').value  = 18;
+  document.getElementById('qTerms').value =
+    '• Delivery: 3-7 working days after order confirmation.\n'+
+    '• Payment: NEFT / RTGS / Bank Transfer. Bank: Axis Bank · IFSC UTIB0002693 (A/C details on request).\n'+
+    '• Quotation valid for 15 days. Genuine products with GST invoice.';
+  // pehla item = lead ka product (auto), rate Sheet se
+  var pr = priceFor(p.Product);
+  ITEMS = [{ name: p.Product || '', qty: 1, rate: (pr && pr.price>0) ? pr.price : 0, img: (pr && pr.img) ? pr.img : '' }];
+  drawItems(); recalcQ();
   document.getElementById('qov').classList.add('on');
 }
 function closeQuote(){ document.getElementById('qov').classList.remove('on'); }
+
+/* ---- multi-item editor ---- */
+var ITEMS = [];
+function drawItems(){
+  var el=document.getElementById('qItems');
+  el.innerHTML = ITEMS.map(function(it,ix){
+    var amt = Math.round((parseFloat(it.qty)||0)*(parseFloat(it.rate)||0));
+    return '<div class="qrow">'
+      +'<input class="p" placeholder="Product ka naam" value="'+esc(it.name)+'" oninput="setItem('+ix+',\'name\',this.value)" onblur="autoRate('+ix+')">'
+      +'<input class="q" type="number" min="0" step="1" value="'+esc(String(it.qty))+'" oninput="setItem('+ix+',\'qty\',this.value)">'
+      +'<input class="r" type="number" min="0" placeholder="Rate ₹" value="'+(it.rate?esc(String(it.rate)):'')+'" oninput="setItem('+ix+',\'rate\',this.value)">'
+      +'<input class="im" placeholder="Image link (optional)" value="'+esc(it.img||'')+'" oninput="setItem('+ix+',\'img\',this.value)">'
+      +(it.img?'<img class="thumb" src="'+esc(it.img)+'" alt="">':'')
+      +'<span class="amt">₹'+amt.toLocaleString("en-IN")+'</span>'
+      +(ITEMS.length>1?'<button class="del" onclick="delItem('+ix+')" title="Hatayein">×</button>':'')
+      +'</div>';
+  }).join('');
+}
+function setItem(ix,key,val){ if(!ITEMS[ix])return; ITEMS[ix][key]=val; if(key!=='name'){ drawItems(); } recalcQ(); }
+function autoRate(ix){
+  var it=ITEMS[ix]; if(!it) return;
+  var pr=priceFor(it.name), got=[];
+  if(pr){
+    if((!it.rate || parseFloat(it.rate)===0) && pr.price>0){ it.rate=pr.price; got.push('rate ₹'+pr.price.toLocaleString("en-IN")); }
+    if(!it.img && pr.img){ it.img=pr.img; got.push('image'); }
+  }
+  if(got.length){ drawItems(); recalcQ(); toast('Sheet se mil gaya: '+got.join(' + ')); }
+}
+function addItem(){ ITEMS.push({name:'',qty:1,rate:0,img:''}); drawItems(); recalcQ(); }
+function delItem(ix){ ITEMS.splice(ix,1); if(!ITEMS.length)ITEMS.push({name:'',qty:1,rate:0,img:''}); drawItems(); recalcQ(); }
+
 function recalcQ(){
-  var p=QCUR||{}; 
-  var prod=document.getElementById('qProd').value||'Product';
-  var qty=parseFloat(document.getElementById('qQty').value)||0;
-  var rate=parseFloat(document.getElementById('qRate').value)||0;
-  var amt=Math.round(qty*rate), gst=Math.round(amt*0.18), tot=amt+gst;
+  var p=QCUR||{};
+  var gstPct = parseFloat(document.getElementById('qGst').value); if(isNaN(gstPct)) gstPct=0;
+  var anyImg = ITEMS.some(function(x){ return (x.name||'').trim() && x.img; });
+  var rows='', sub=0, n=0;
+  for(var i=0;i<ITEMS.length;i++){
+    var it=ITEMS[i]; var nm=(it.name||'').trim(); if(!nm) continue;
+    var qty=parseFloat(it.qty)||0, rate=parseFloat(it.rate)||0, amt=Math.round(qty*rate);
+    sub+=amt; n++;
+    rows += '<tr><td>'+n+'</td>'
+      +(anyImg?('<td class="imgc">'+(it.img?'<img src="'+esc(it.img)+'" alt="">':'')+'</td>'):'')
+      +'<td>'+esc(nm)+'</td><td class="r">'+qty+'</td><td class="r">'+rate.toLocaleString("en-IN")+'</td><td class="r">'+amt.toLocaleString("en-IN")+'</td></tr>';
+  }
+  if(!n) rows = '<tr><td colspan="'+(anyImg?6:5)+'" style="color:#8a97a3">Product ka naam daalein…</td></tr>';
+  var gst=Math.round(sub*gstPct/100), tot=sub+gst;
+
   var d=new Date();
   var qno='WTPE-Q-'+d.getFullYear().toString().slice(2)+pad(d.getMonth()+1)+pad(d.getDate())+'-'+(String(p.Mobile||'').replace(/[^0-9]/g,'').slice(-4)||'000');
   var dt=pad(d.getDate())+'-'+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+'-'+d.getFullYear();
-  var to=[esc(p.Name||'Customer')]; if(p.Company)to.push(esc(p.Company)); if(p.City)to.push(esc(p.City)+(p.State?', '+esc(p.State):'')); if(p.Mobile)to.push('📞 '+esc(p.Mobile)); if(p.Email)to.push('✉ '+esc(p.Email));
+
+  var nm2=document.getElementById('qName').value||'Customer';
+  var co =document.getElementById('qCo').value||'';
+  var ct =document.getElementById('qCity').value||'';
+  var to=[esc(nm2)]; if(co)to.push(esc(co)); if(ct)to.push(esc(ct));
+  if(p.Mobile)to.push('📞 '+esc(p.Mobile)); if(p.Email)to.push('✉ '+esc(p.Email));
+
+  var terms=(document.getElementById('qTerms').value||'').split('\n').map(function(l){return esc(l);}).join('<br>');
+
   document.getElementById('quoteDoc').innerHTML =
     '<div class="hd"><div class="co">WTPESTORE<small>powered by Aqua Filtration System</small></div>'
     +'<div class="muted" style="text-align:right">B-198, Royal Plaza, Green Field,<br>Faridabad – 121001, Haryana<br>GSTIN: 06DMUPS2289L1ZZ<br>📞 9899193589 · 🌐 www.wtpestore.co.in</div></div>'
     +'<div style="display:flex;justify-content:space-between"><div><b>To:</b><br>'+to.join('<br>')+'</div>'
     +'<div style="text-align:right" class="muted"><b>Quotation No:</b> '+qno+'<br><b>Date:</b> '+dt+'</div></div>'
     +'<h2>QUOTATION</h2>'
-    +'<table><tr><th>#</th><th>Product / Description</th><th class="r">Qty</th><th class="r">Rate (₹)</th><th class="r">Amount (₹)</th></tr>'
-    +'<tr><td>1</td><td>'+esc(prod)+'</td><td class="r">'+qty+'</td><td class="r">'+rate.toLocaleString("en-IN")+'</td><td class="r">'+amt.toLocaleString("en-IN")+'</td></tr>'
-    +'<tr><td colspan="4" class="r">Sub Total</td><td class="r">'+amt.toLocaleString("en-IN")+'</td></tr>'
-    +'<tr><td colspan="4" class="r">GST @ 18%</td><td class="r">'+gst.toLocaleString("en-IN")+'</td></tr>'
-    +'<tr class="tot"><td colspan="4" class="r">Grand Total</td><td class="r">₹'+tot.toLocaleString("en-IN")+'</td></tr></table>'
-    +'<div class="terms"><b>Terms &amp; Conditions:</b><br>'
-    +'• Prices inclusive of GST as shown. • Delivery: 3–7 working days after order confirmation. • Payment: NEFT / RTGS / Bank Transfer.<br>'
-    +'• Bank: Axis Bank · IFSC UTIB0002693 (A/C details on request). • Quotation valid for 15 days.<br><br>'
-    +'For <b>Aqua Filtration System</b><br><br>Authorised Signatory</div>';
+    +'<table><tr><th>#</th>'+(anyImg?'<th>Image</th>':'')+'<th>Product / Description</th><th class="r">Qty</th><th class="r">Rate (₹)</th><th class="r">Amount (₹)</th></tr>'
+    +rows
+    +'<tr><td colspan="'+(anyImg?5:4)+'" class="r">Sub Total</td><td class="r">'+sub.toLocaleString("en-IN")+'</td></tr>'
+    +'<tr><td colspan="'+(anyImg?5:4)+'" class="r">GST @ '+gstPct+'%</td><td class="r">'+gst.toLocaleString("en-IN")+'</td></tr>'
+    +'<tr class="tot"><td colspan="'+(anyImg?5:4)+'" class="r">Grand Total</td><td class="r">₹'+tot.toLocaleString("en-IN")+'</td></tr></table>'
+    +'<div class="terms"><b>Terms &amp; Conditions:</b><br>'+terms
+    +'<br><br>For <b>Aqua Filtration System</b><br><br>Authorised Signatory</div>';
 }
 function pad(n){return (n<10?'0':'')+n;}
 function fnameQ(){ return 'Quotation-'+String((QCUR&&QCUR.Name)||'customer').replace(/[^A-Za-z0-9]+/g,'-')+'.pdf'; }
