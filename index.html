@@ -1059,7 +1059,8 @@ setTimeout(showLead,60000);
 /* ===== Admin ===== */
 function openAdmin(){document.getElementById('aov').classList.add('open');if(aAuthed){aShow();}else{document.getElementById('aLock').style.display='block';document.getElementById('aMain').style.display='none';}}
 function closeAdmin(){document.getElementById('aov').classList.remove('open');}
-function aLoginUrl(){return cfg('login_url','')||cfg('addproduct_url','')||cfg('lead','');}
+var LOGIN_URL_DEFAULT="https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec";
+function aLoginUrl(){return cfg('login_url','')||cfg('addproduct_url','')||cfg('lead','')||LOGIN_URL_DEFAULT;}
 function aUnlock(){
   var v=document.getElementById('aPass').value;
   var url=aLoginUrl();
