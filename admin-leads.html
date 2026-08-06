@@ -348,7 +348,7 @@ function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn
 window[fn]=function(r){fin(r);};sc.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;
 sc.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(sc);
 setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
-var LOGIN_URL_DEFAULT="https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec";
+var LOGIN_URL_DEFAULT="https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec";
 function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||LOGIN_URL_DEFAULT;}catch(e){return LOGIN_URL_DEFAULT;}}
 function setWhoAmI(name){
   var el=document.getElementById('whoami');
