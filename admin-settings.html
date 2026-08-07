@@ -97,7 +97,7 @@ function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn
 window[fn]=function(r){fin(r);};sc.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;
 sc.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(sc);
 setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
-function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||'';}catch(e){return '';}}
+function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||"https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec";}catch(e){return '';}}
 function unlock(){
   var pass=document.getElementById('pin').value;
   var url=cfgLogin();
