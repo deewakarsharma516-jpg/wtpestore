@@ -1905,7 +1905,30 @@ function wtpSendGo(){
 </script>
 <script>
 /* PWA: service worker + install button */
-if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){
+  navigator.serviceWorker.register('/sw.js').then(function(reg){
+    /* naya version aaya to turant chalu karo */
+    if(reg.waiting) reg.waiting.postMessage({type:'SKIP_WAITING'});
+    reg.addEventListener('updatefound',function(){
+      var nw=reg.installing; if(!nw)return;
+      nw.addEventListener('statechange',function(){
+        if(nw.state==='installed' && navigator.serviceWorker.controller){ nw.postMessage({type:'SKIP_WAITING'}); }
+      });
+    });
+    setInterval(function(){ reg.update(); }, 30*60*1000); /* har 30 min update check */
+  }).catch(function(){});
+  /* naya version activate hone par ek baar page refresh */
+  var _reloaded=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(_reloaded)return; _reloaded=true; location.reload(); });
+  navigator.serviceWorker.addEventListener('message',function(ev){
+    if(ev.data&&ev.data.type==='WTPE_UPDATED'){
+      var t=document.createElement('div');
+      t.textContent='✅ App naya version par update ho gaya';
+      t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0b2545;color:#fff;padding:11px 18px;border-radius:10px;font-size:13.5px;font-weight:600;z-index:99999';
+      document.body.appendChild(t); setTimeout(function(){t.remove();},3500);
+    }
+  });
+});}
 var wtpInstall=null;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();wtpInstall=e;
   if(document.getElementById('wtpInstallBtn'))return;
