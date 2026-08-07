@@ -352,24 +352,30 @@ function rowsFromCsv(t, src){
   }
   return out;
 }
+var LOAD_ERR='';
 function mergeAndRender(){
   DATA = IM_ROWS.concat(WEB_ROWS);
   DATA.sort(function(a,b){return parseDt(b.Date)-parseDt(a.Date);});
   var el=document.getElementById('list');
-  if(!DATA.length){ el.innerHTML='<div class="loading">Abhi koi lead nahi.</div>'; }
+  if(!DATA.length){
+    el.innerHTML='<div class="loading">'+(LOAD_ERR
+      ? ('⚠️ Leads load nahi ho payin.<br><br><b>'+esc(LOAD_ERR)+'</b><br><br>⚙️ Setup me CSV link check karein — ya Sheet ki "Leads" tab <b>Publish to web → CSV</b> hai ya nahi dekhein.')
+      : 'Abhi koi lead nahi.')+'</div>';
+    return;
+  }
   render();
 }
 function loadWebLeads(){
   var url=localStorage.getItem('wtpe_web_csv')||WEB_CSV_DEFAULT;
-  fetch(url).then(function(r){return r.text();}).then(function(t){ WEB_ROWS=rowsFromCsv(t,'web'); mergeAndRender(); }).catch(function(){});
+  fetch(url).then(function(r){return r.text();}).then(function(t){ WEB_ROWS=rowsFromCsv(t,'web'); mergeAndRender(); }).catch(function(){ WEB_ROWS=[]; mergeAndRender(); });
 }
 function loadLeads(){
   var url=localStorage.getItem('wtpe_leads_csv')||LEADS_CSV_DEFAULT;var el=document.getElementById('list');
   if(!url){el.innerHTML='<div class="loading">Pehle ⚙️ Setup me "Leads" tab ka CSV link daalein.</div>';document.getElementById('cfg').classList.add('on');return;}
   el.innerHTML='<div class="loading">Leads load ho rahi hain…</div>';
   fetch(url).then(function(r){return r.text();}).then(function(t){
-    IM_ROWS=rowsFromCsv(t,'im'); mergeAndRender();
-  }).catch(function(){ IM_ROWS=[]; mergeAndRender(); });
+    IM_ROWS=rowsFromCsv(t,'im'); if(!IM_ROWS.length) LOAD_ERR='IndiaMART CSV khaali aayi (ya publish nahi hai)'; mergeAndRender();
+  }).catch(function(){ IM_ROWS=[]; LOAD_ERR='IndiaMART CSV link khul nahi paya (link galat ya publish nahi)'; mergeAndRender(); });
 }
 
 
