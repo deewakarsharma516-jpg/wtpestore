@@ -109,13 +109,14 @@
 
 <div class="top">
   <img src="/icons/logo-white.png" alt="WTPeSTORE">
-  <div class="t">Leads (IndiaMART)<span id="whoami">Owner tool · quick reply (auto-price) · WhatsApp / Email</span></div>
+  <div class="t">Leads (IndiaMART)<span id="whoami">Owner tool · auto-refresh har 1 min · WhatsApp / Email</span></div>
   <button onclick="logout()" style="margin-left:auto;background:transparent;border:1px solid #35507a;color:#cfe1f0;font-size:11.5px;padding:6px 10px;border-radius:8px;cursor:pointer">Logout</button>
 </div>
 
 <div class="wrap">
   <div class="bar">
     <input id="q" placeholder="🔍 Naam / product / city dhoondo…" oninput="render()">
+    <button class="btn b-cfg" onclick="refreshLeads(false)">🔄 Refresh</button>
     <button class="btn b-cfg" onclick="toggleCfg()">⚙️ Setup</button>
     <a class="btn b-nav" href="/">🏠 Home</a>
   </div>
@@ -352,11 +353,17 @@ function rowsFromCsv(t, src){
   }
   return out;
 }
-var LOAD_ERR='';
+var LOAD_ERR='', LAST_N=0, AUTO_ON=false, AUTO_T=null;
 function mergeAndRender(){
   DATA = IM_ROWS.concat(WEB_ROWS);
   DATA.sort(function(a,b){return parseDt(b.Date)-parseDt(a.Date);});
   var el=document.getElementById('list');
+  if(AUTO_ON && LAST_N>0 && DATA.length>LAST_N){
+    var добавил=DATA.length-LAST_N;
+    toast('🔔 '+добавил+' nayi lead aayi!');
+    try{ new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=').play(); }catch(e){}
+  }
+  LAST_N = DATA.length;
   if(!DATA.length){
     el.innerHTML='<div class="loading">'+(LOAD_ERR
       ? ('⚠️ Leads load nahi ho payin.<br><br><b>'+esc(LOAD_ERR)+'</b><br><br>⚙️ Setup me CSV link check karein — ya Sheet ki "Leads" tab <b>Publish to web → CSV</b> hai ya nahi dekhein.')
@@ -365,16 +372,16 @@ function mergeAndRender(){
   }
   render();
 }
-function loadWebLeads(){
+function loadWebLeads(quiet){
   var url=localStorage.getItem('wtpe_web_csv')||WEB_CSV_DEFAULT;
-  fetch(url).then(function(r){return r.text();}).then(function(t){ WEB_ROWS=rowsFromCsv(t,'web'); mergeAndRender(); }).catch(function(){ WEB_ROWS=[]; mergeAndRender(); });
+  fetch(url+(url.indexOf('?')>-1?'&':'?')+'_t='+Date.now()).then(function(r){return r.text();}).then(function(t){ WEB_ROWS=rowsFromCsv(t,'web'); mergeAndRender(); }).catch(function(){ WEB_ROWS=[]; mergeAndRender(); });
 }
-function loadLeads(){
+function loadLeads(quiet){
   var url=localStorage.getItem('wtpe_leads_csv')||LEADS_CSV_DEFAULT;var el=document.getElementById('list');
   if(!url){el.innerHTML='<div class="loading">Pehle ⚙️ Setup me "Leads" tab ka CSV link daalein.</div>';document.getElementById('cfg').classList.add('on');return;}
-  el.innerHTML='<div class="loading">Leads load ho rahi hain…</div>';
-  fetch(url).then(function(r){return r.text();}).then(function(t){
-    IM_ROWS=rowsFromCsv(t,'im'); if(!IM_ROWS.length) LOAD_ERR='IndiaMART CSV khaali aayi (ya publish nahi hai)'; mergeAndRender();
+  if(!quiet) el.innerHTML='<div class="loading">Leads load ho rahi hain…</div>';
+  fetch(url+(url.indexOf('?')>-1?'&':'?')+'_t='+Date.now()).then(function(r){return r.text();}).then(function(t){
+    LOAD_ERR=''; IM_ROWS=rowsFromCsv(t,'im'); if(!IM_ROWS.length) LOAD_ERR='IndiaMART CSV khaali aayi (ya publish nahi hai)'; mergeAndRender();
   }).catch(function(){ IM_ROWS=[]; LOAD_ERR='IndiaMART CSV link khul nahi paya (link galat ya publish nahi)'; mergeAndRender(); });
 }
 
@@ -495,7 +502,7 @@ var LOGIN_URL_DEFAULT="https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt
 function cfgLogin(){try{return localStorage.getItem('wtpe_login_url')||localStorage.getItem('wtpe_addproduct_url')||localStorage.getItem('wtpe_lead')||localStorage.getItem('wtpe_quote_url')||LOGIN_URL_DEFAULT;}catch(e){return LOGIN_URL_DEFAULT;}}
 function setWhoAmI(name){
   var el=document.getElementById('whoami');
-  el.textContent = name ? ('Logged in as: '+name+' · quick reply (auto-price) · WhatsApp / Email') : 'Owner tool · quick reply (auto-price) · WhatsApp / Email';
+  el.textContent = name ? ('Logged in as: '+name+' · auto-refresh har 1 min · WhatsApp / Email') : 'Owner tool · auto-refresh har 1 min · WhatsApp / Email';
 }
 function logout(){ try{localStorage.removeItem('wtpe_admin_token');localStorage.removeItem('wtpe_admin_name');}catch(e){} location.reload(); }
 function unlock(){
@@ -512,7 +519,15 @@ function unlock(){
 }
 function checkSavedToken(){var url=cfgLogin();var tok='';try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
   if(!url||!tok)return;aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){if(d&&d.ok){document.getElementById('gate').style.display='none';var nm=d.name||(function(){try{return localStorage.getItem('wtpe_admin_name')||'';}catch(e){return '';}})();setWhoAmI(nm);afterUnlock();}});}
-var _loaded=false;function afterUnlock(){if(_loaded)return;_loaded=true;loadProducts();loadLeads();loadWebLeads();}
+var _loaded=false;
+function refreshLeads(quiet){ loadLeads(quiet); loadWebLeads(quiet); }
+function startAuto(){
+  if(AUTO_T) clearInterval(AUTO_T);
+  AUTO_T=setInterval(function(){ if(!document.hidden) refreshLeads(true); }, 60000);  /* har 1 min */
+  document.addEventListener('visibilitychange',function(){ if(!document.hidden) refreshLeads(true); });
+  AUTO_ON=true;
+}
+function afterUnlock(){if(_loaded)return;_loaded=true;loadProducts();refreshLeads(false);startAuto();}
 window.addEventListener('load',checkSavedToken);
 </script>
 </body></html>
