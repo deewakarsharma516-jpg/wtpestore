@@ -130,6 +130,7 @@
     <label>Gmail account no. (jismein aquazone350 khulta ho — aksar 0):</label>
     <input id="gU" type="number" min="0" value="0" style="width:90px">
     <br><button onclick="saveCfg()">Save</button>
+    <br><button onclick="resetCfg()" style="background:#eef2f6;color:#0b2545;border:1px solid #cdd8e2;margin-top:8px">Reset (default link use karein)</button>
   </div>
   <div class="fbar">
     <button class="fbtn on" id="fAll"  onclick="setSrc('all')">Sab</button>
@@ -183,7 +184,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-var LEADS_CSV_DEFAULT="https://docs.google.com/spreadsheets/d/e/2PACX-1vQiBMhaTdRrTANGyy95JGryduzb8qZ9bvgPJ3azqgzsgjHvq6o0DkoZ9yfL_DNX4mL5idolUQKMa_hW/pub?gid=1780377226&single=true&output=csv";
+var LEADS_CSV_DEFAULT="https://docs.google.com/spreadsheets/d/e/2PACX-1vQiBMhaTdRrTANGyy95JGryduzb8qZ9bvgPJ3azqgzsgjHvq6o0DkoZ9yfL_DNX4mL5idoIUQKMa_hW/pub?gid=1780377226&single=true&output=csv";
 var WEB_CSV_DEFAULT="https://docs.google.com/spreadsheets/d/e/2PACX-1vRW32-Uf1m2Ju9Im9MAwAIKnT_NHTL-6TEIcsZjTN3Uoz9qQqOFHUggKxqnWVeJ5r9IAbbciAMMgYNH/pub?output=csv";
 var PRODUCTS_CSV_DEFAULT="https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv";
 var DATA=[], PRODUCTS=[], DONE={}, CUR=null, SRC='all', IM_ROWS=[], WEB_ROWS=[];
@@ -271,6 +272,10 @@ function undo(id){delete DONE[id];try{localStorage.setItem('wtpe_leads_done',JSO
 
 function toggleCfg(){var c=document.getElementById('cfg');c.classList.toggle('on');document.getElementById('csvUrl').value=localStorage.getItem('wtpe_leads_csv')||LEADS_CSV_DEFAULT;document.getElementById('prodUrl').value=localStorage.getItem('wtpe_products_csv')||PRODUCTS_CSV_DEFAULT;document.getElementById('gU').value=localStorage.getItem('wtpe_gmail_u')||'0';document.getElementById('webUrl').value=localStorage.getItem('wtpe_web_csv')||WEB_CSV_DEFAULT;}
 function saveCfg(){var u=document.getElementById('csvUrl').value.trim();var pu=document.getElementById('prodUrl').value.trim();var gu=document.getElementById('gU').value.trim();var wu=document.getElementById('webUrl').value.trim();if(wu)localStorage.setItem('wtpe_web_csv',wu);if(u)localStorage.setItem('wtpe_leads_csv',u);if(pu)localStorage.setItem('wtpe_products_csv',pu);localStorage.setItem('wtpe_gmail_u',gu||'0');document.getElementById('cfg').classList.remove('on');toast('Saved!');loadProducts();loadLeads();loadWebLeads();}
+/* purane/galat save kiye hue link hata ke default par wapas — har system par kaam karega */
+function resetCfg(){try{localStorage.removeItem('wtpe_leads_csv');localStorage.removeItem('wtpe_products_csv');localStorage.removeItem('wtpe_web_csv');}catch(e){}
+  document.getElementById('csvUrl').value=LEADS_CSV_DEFAULT;document.getElementById('prodUrl').value=PRODUCTS_CSV_DEFAULT;document.getElementById('webUrl').value=WEB_CSV_DEFAULT;
+  document.getElementById('cfg').classList.remove('on');toast('Default link laga diya');loadProducts();loadLeads();loadWebLeads();}
 
 function render(){
   var q=(document.getElementById('q').value||'').toLowerCase().trim();
@@ -359,8 +364,8 @@ function mergeAndRender(){
   DATA.sort(function(a,b){return parseDt(b.Date)-parseDt(a.Date);});
   var el=document.getElementById('list');
   if(AUTO_ON && LAST_N>0 && DATA.length>LAST_N){
-    var добавил=DATA.length-LAST_N;
-    toast('🔔 '+добавил+' nayi lead aayi!');
+    var nayi=DATA.length-LAST_N;
+    toast('🔔 '+nayi+' nayi lead aayi!');
     try{ new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=').play(); }catch(e){}
   }
   LAST_N = DATA.length;
