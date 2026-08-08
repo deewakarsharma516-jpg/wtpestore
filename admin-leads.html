@@ -77,7 +77,7 @@
 .qmeta textarea{width:100%;min-height:56px}
 .hint{font-size:11px;color:#8a97a3;margin-top:4px}
 .qbtns{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
-.qbtns .b-dl{background:#b3261e;color:#fff}.qbtns .b-pr{background:#0b2545;color:#fff}.qbtns .b-x{background:#eef2f6;color:#0b2545;border:1px solid #cdd8e2}
+.qbtns .b-dl{background:#b3261e;color:#fff}.qbtns .b-pv{background:#0e7490;color:#fff}.qbtns .b-wa2{background:#25d366;color:#fff}.qbtns .b-em2{background:#1a73e8;color:#fff}.qbtns .b-pr{background:#0b2545;color:#fff}.qbtns .b-x{background:#eef2f6;color:#0b2545;border:1px solid #cdd8e2}
 #quoteDoc{background:#fff;color:#0f1111;padding:28px 30px;font-size:13px;line-height:1.55;border-radius:6px}
 #quoteDoc .hd{display:flex;justify-content:space-between;border-bottom:2px solid #0b2545;padding-bottom:10px;margin-bottom:12px}
 #quoteDoc .hd .co{font-size:18px;font-weight:800;color:#0b2545}
@@ -172,10 +172,14 @@
       <div style="margin-top:9px"><label style="font-size:11px;font-weight:700;color:#5b6b78">Terms / Notes (edit kar sakte hain)</label>
         <textarea id="qTerms" oninput="recalcQ()"></textarea></div>
       <div class="qbtns" style="margin-top:10px">
+        <button class="btn b-pv" onclick="previewQuote()">👁 Preview</button>
+        <button class="btn b-wa2" onclick="sendQuoteWa()">💬 WhatsApp</button>
+        <button class="btn b-em2" onclick="sendQuoteEmail()">✉ Email</button>
         <button class="btn b-pr" onclick="printQuote()">🖨 Print</button>
         <button class="btn b-dl" onclick="downloadQuote()">📄 Download PDF</button>
         <button class="btn b-x" onclick="closeQuote()">Close</button>
       </div>
+      <div class="hint" id="sendHint" style="display:none">PDF download ho gayi — bhejne wali window me use <b>attach</b> karke Send dabayein.</div>
     </div>
     <div id="quoteDoc"></div>
   </div>
@@ -451,7 +455,7 @@ function recalcQ(){
     var qty=parseFloat(it.qty)||0, rate=parseFloat(it.rate)||0, amt=Math.round(qty*rate);
     sub+=amt; n++;
     rows += '<tr><td>'+n+'</td>'
-      +(anyImg?('<td class="imgc">'+(it.img?'<img src="'+esc(it.img)+'" alt="">':'')+'</td>'):'')
+      +(anyImg?('<td class="imgc">'+(it.img?'<img src="'+esc(pimg(it.img))+'" crossorigin="anonymous" alt="">':'')+'</td>'):'')
       +'<td>'+esc(nm)+'</td><td class="r">'+qty+'</td><td class="r">'+rate.toLocaleString("en-IN")+'</td><td class="r">'+amt.toLocaleString("en-IN")+'</td></tr>';
   }
   if(!n) rows = '<tr><td colspan="'+(anyImg?6:5)+'" style="color:#8a97a3">Product ka naam daalein…</td></tr>';
@@ -484,12 +488,81 @@ function recalcQ(){
     +'<br><br>For <b>Aqua Filtration System</b><br><br>Authorised Signatory</div>';
 }
 function pad(n){return (n<10?'0':'')+n;}
+/* PDF/preview me image dikhe iske liye CORS-friendly proxy (ImgBB seedha PDF me nahi aata) */
+function pimg(u){
+  u=String(u||'').trim(); if(!u) return '';
+  if(u.indexOf('data:')===0) return u;
+  return 'https://images.weserv.nl/?url='+encodeURIComponent(u.replace(/^https?:\/\//,''))+'&n=-1';
+}
 function fnameQ(){ return 'Quotation-'+String((QCUR&&QCUR.Name)||'customer').replace(/[^A-Za-z0-9]+/g,'-')+'.pdf'; }
-function downloadQuote(){
+function downloadQuote(){ return makePdf(); }
+/* PDF banata hai; promise return karta hai taaki baad me WhatsApp/Email khol sakein */
+function makePdf(){
   var el=document.getElementById('quoteDoc');
-  if(typeof html2pdf==='undefined'){ toast('PDF library load nahi hui — Print se Save-as-PDF karein'); printQuote(); return; }
+  if(typeof html2pdf==='undefined'){ toast('PDF library load nahi hui — Print se Save-as-PDF karein'); printQuote(); return Promise.resolve(false); }
   toast('PDF ban rahi hai…');
-  html2pdf().set({margin:8,filename:fnameQ(),image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+  return html2pdf().set({margin:8,filename:fnameQ(),image:{type:'jpeg',quality:.98},
+    html2canvas:{scale:2,useCORS:true,allowTaint:false,imageTimeout:15000},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save()
+    .then(function(){ return true; }).catch(function(){ toast('PDF banane me dikkat — Print se Save-as-PDF karein'); return false; });
+}
+
+/* ---- Preview: naye tab me poora quotation ---- */
+function previewQuote(){
+  var w=window.open('','_blank');
+  if(!w){ toast('Popup block ho gaya — browser me popup allow karein'); return; }
+  var css=document.querySelector('style').innerHTML;
+  w.document.write('<html><head><meta charset="utf-8"><title>Quotation Preview</title>'
+    +'<style>'+css+' body{background:#eef2f6;padding:16px}#quoteDoc{max-width:820px;margin:0 auto}</style></head>'
+    +'<body>'+document.getElementById('quoteDoc').outerHTML+'</body></html>');
+  w.document.close();
+}
+
+/* ---- quote ka chhota message (WhatsApp/Email ke liye) ---- */
+function quoteMsg(){
+  var p=QCUR||{};
+  var gstPct=parseFloat(document.getElementById('qGst').value)||0, sub=0, lines=[];
+  for(var i=0;i<ITEMS.length;i++){
+    var it=ITEMS[i], nm=(it.name||'').trim(); if(!nm) continue;
+    var qty=parseFloat(it.qty)||0, rate=parseFloat(it.rate)||0, amt=Math.round(qty*rate); sub+=amt;
+    lines.push('• '+nm+' — '+qty+' x '+rupee(rate)+' = '+rupee(amt));
+  }
+  var tot=sub+Math.round(sub*gstPct/100);
+  return 'Namaste '+(document.getElementById('qName').value||p.Name||'')+' 🙏\n'
+    +'WTPESTORE — powered by Aqua Filtration System\n\n'
+    +'Aapki enquiry ka quotation:\n'+lines.join('\n')
+    +'\n\nSub Total: '+rupee(sub)+'\nGST @ '+gstPct+'%: '+rupee(Math.round(sub*gstPct/100))
+    +'\n*Grand Total: '+rupee(tot)+'*\n\n'
+    +'Detail quotation PDF saath me attach hai.\n'
+    +'Genuine products · GST invoice · pan-India delivery.\n\n'
+    +'🌐 www.wtpestore.co.in\n📞 9899193589';
+}
+
+/* ---- WhatsApp: pehle PDF download, phir WhatsApp khulega ---- */
+function sendQuoteWa(){
+  var p=QCUR||{}; var num=String(p.Mobile||'').replace(/[^0-9]/g,''); if(num.length===10)num='91'+num;
+  if(!num){ toast('Is lead ka number nahi hai — Email use karein'); return; }
+  document.getElementById('sendHint').style.display='block';
+  makePdf().then(function(){
+    window.open('https://wa.me/'+num+'?text='+encodeURIComponent(quoteMsg()),'_blank');
+    toast('WhatsApp khul gaya — downloaded PDF attach karke bhejein');
+    if(p.QueryID) markDone(p.QueryID);
+  });
+}
+
+/* ---- Email: Gmail compose (Sent me record aayega) ---- */
+function sendQuoteEmail(){
+  var p=QCUR||{};
+  if(!p.Email){ toast('Is lead ka email nahi hai — WhatsApp use karein'); return; }
+  document.getElementById('sendHint').style.display='block';
+  makePdf().then(function(){
+    var sub='Quotation — WTPESTORE ('+((ITEMS[0]&&ITEMS[0].name)||p.Product||'')+')';
+    var url='https://mail.google.com/mail/u/'+gmailU()+'/?view=cm&fs=1&tf=1&to='+encodeURIComponent(p.Email)
+      +'&su='+encodeURIComponent(sub)+'&body='+encodeURIComponent(quoteMsg());
+    window.open(url,'_blank');
+    toast('Gmail khul gaya — PDF attach karke Send dabayein (Sent me aa jayega)');
+    if(p.QueryID) markDone(p.QueryID);
+  });
 }
 function printQuote(){
   var w=window.open('','_blank');
