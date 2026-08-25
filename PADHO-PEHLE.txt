@@ -1,0 +1,70 @@
+ZEROSCALE CHEMICALS — UPLOAD GUIDE
+==================================
+
+Is zip me 2 cheezein hain:
+
+1) 15 HTML file + chem.css   -> repo ki JADH (root) me daalein
+                                (jahan index.html pada hai)
+
+2) chemicals/ folder (14 jpg) -> repo me `chemicals` naam ka
+                                 folder banakar usme daalein
+
+
+GITHUB PAR KAISE
+----------------
+STEP 1 — HTML + CSS
+  Add file -> Upload files
+  16 file drag karein (15 html + chem.css)
+  Commit changes
+
+STEP 2 — Photos
+  Add file -> Upload files
+  Upar path wale khaane me type karein:  chemicals/
+  (slash lagate hi folder ban jayega)
+  14 jpg drag karein
+  Commit changes
+
+
+UPLOAD KE BAAD 4 KAAM
+---------------------
+1. sw.js me version badhayein:  wtpe-v3  ->  wtpe-v4
+
+2. sitemap.xml me ye 15 URL jodein:
+   https://www.wtpestore.co.in/zeroscale-chemicals.html
+   https://www.wtpestore.co.in/ro-antiscalant.html
+   https://www.wtpestore.co.in/ro-membrane-cleaner-acidic.html
+   https://www.wtpestore.co.in/ro-membrane-cleaner-alkaline.html
+   https://www.wtpestore.co.in/ro-biocide.html
+   https://www.wtpestore.co.in/smbs-dechlorination-chemical.html
+   https://www.wtpestore.co.in/ro-ph-booster.html
+   https://www.wtpestore.co.in/boiler-oxygen-scavenger.html
+   https://www.wtpestore.co.in/boiler-antiscalant.html
+   https://www.wtpestore.co.in/boiler-alkalinity-ph-builder.html
+   https://www.wtpestore.co.in/condensate-corrosion-inhibitor.html
+   https://www.wtpestore.co.in/cooling-tower-scale-corrosion-inhibitor.html
+   https://www.wtpestore.co.in/cooling-tower-oxidizing-biocide.html
+   https://www.wtpestore.co.in/cooling-tower-non-oxidizing-biocide.html
+   https://www.wtpestore.co.in/cooling-tower-algaecide.html
+
+3. Homepage footer ke SEO link section me hub ka link jodein:
+   /zeroscale-chemicals.html  ->  "ZeroScale Water Treatment Chemicals"
+
+4. Search Console -> URL Inspection -> Request Indexing
+   Roz 10-12 se zyada nahi (quota hai). 2 din me sab ho jayega.
+
+   Pehle ye 5 karein (inki search sabse zyada hai):
+     ro-antiscalant.html
+     smbs-dechlorination-chemical.html
+     boiler-oxygen-scavenger.html
+     cooling-tower-scale-corrosion-inhibitor.html
+     ro-membrane-cleaner-acidic.html
+
+
+DHYAN DENE WALI BAAT
+--------------------
+Kisi page par PRICE nahi likhi — jaan-boojh kar.
+Chemical ka rate badalta rehta hai, aur purani price
+page par padi rehna nuksaan karti hai. Har page
+WhatsApp par bhejta hai jahan aap live rate de sakte hain.
+
+Price dikhani ho to bata dena, jod dunga.
