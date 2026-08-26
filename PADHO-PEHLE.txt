@@ -1,13 +1,19 @@
-ZEROSCALE CHEMICALS — UPLOAD GUIDE
-==================================
+ZEROSCALE CHEMICALS — UPLOAD GUIDE (v2 — share buttons ke saath)
+================================================================
 
-Is zip me 2 cheezein hain:
+NAYA KYA HAI
+------------
+- Har page par SHARE button (WhatsApp / Facebook / Email / Copy link)
+- Har page par floating WHATSAPP button
+- Mobile par "Share" dabate hi phone ka apna share menu khulega
 
-1) 15 HTML file + chem.css   -> repo ki JADH (root) me daalein
-                                (jahan index.html pada hai)
+Purani file par ye zip OVERWRITE kar dein — sab kuch isme hai.
 
-2) chemicals/ folder (14 jpg) -> repo me `chemicals` naam ka
-                                 folder banakar usme daalein
+
+ZIP ME KYA HAI
+--------------
+15 HTML + chem.css   -> repo ki JADH (root) me, jahan index.html hai
+chemicals/ (14 jpg)  -> repo me `chemicals` folder banakar usme
 
 
 GITHUB PAR KAISE
@@ -16,20 +22,23 @@ STEP 1 — HTML + CSS
   Add file -> Upload files
   16 file drag karein (15 html + chem.css)
   Commit changes
+  (purani file par pooch kar overwrite kar dega — haan karein)
 
-STEP 2 — Photos
+STEP 2 — Photos (agar pehle nahi daali)
   Add file -> Upload files
-  Upar path wale khaane me type karein:  chemicals/
-  (slash lagate hi folder ban jayega)
-  14 jpg drag karein
-  Commit changes
+  path wale khaane me type karein:  chemicals/
+  14 jpg drag karein -> Commit
 
 
-UPLOAD KE BAAD 4 KAAM
----------------------
-1. sw.js me version badhayein:  wtpe-v3  ->  wtpe-v4
+UPLOAD KE BAAD
+--------------
+1. sw.js me version badhayein (jaise wtpe-v4 -> wtpe-v5)
 
-2. sitemap.xml me ye 15 URL jodein:
+2. index.html me footer ka column fix (agar abhi tak nahi kiya):
+   .seolinks .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+   isme 3 ko 4 kar dein
+
+3. sitemap.xml me 15 URL:
    https://www.wtpestore.co.in/zeroscale-chemicals.html
    https://www.wtpestore.co.in/ro-antiscalant.html
    https://www.wtpestore.co.in/ro-membrane-cleaner-acidic.html
@@ -46,13 +55,8 @@ UPLOAD KE BAAD 4 KAAM
    https://www.wtpestore.co.in/cooling-tower-non-oxidizing-biocide.html
    https://www.wtpestore.co.in/cooling-tower-algaecide.html
 
-3. Homepage footer ke SEO link section me hub ka link jodein:
-   /zeroscale-chemicals.html  ->  "ZeroScale Water Treatment Chemicals"
-
 4. Search Console -> URL Inspection -> Request Indexing
-   Roz 10-12 se zyada nahi (quota hai). 2 din me sab ho jayega.
-
-   Pehle ye 5 karein (inki search sabse zyada hai):
+   Roz 10-12 se zyada nahi. Pehle ye 5:
      ro-antiscalant.html
      smbs-dechlorination-chemical.html
      boiler-oxygen-scavenger.html
@@ -60,11 +64,12 @@ UPLOAD KE BAAD 4 KAAM
      ro-membrane-cleaner-acidic.html
 
 
-DHYAN DENE WALI BAAT
---------------------
-Kisi page par PRICE nahi likhi — jaan-boojh kar.
-Chemical ka rate badalta rehta hai, aur purani price
-page par padi rehna nuksaan karti hai. Har page
-WhatsApp par bhejta hai jahan aap live rate de sakte hain.
+BUTTON KAHAN DIKHENGE
+---------------------
+Neeche BAAYIN taraf, ek ke upar ek:
+  - Neela gol button  = Share
+  - Hara gol button   = WhatsApp (seedha aapke number par)
 
-Price dikhani ho to bata dena, jod dunga.
+Mobile par Share dabate hi phone ka apna share menu khulta hai
+(WhatsApp, Telegram, Gmail — jo bhi phone me hai).
+Laptop par chhota menu khulta hai.
