@@ -9,6 +9,24 @@ const SHEET = process.env.SHEET_CSV ||
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv';
 const SITE = 'https://www.wtpestore.co.in';
 
+/* Chemical pages — sitemap me hamesha rahenge */
+const CHEM_PAGES = [
+  '/zeroscale-chemicals.html',
+  '/ro-antiscalant.html',
+  '/ro-membrane-cleaner-acidic.html',
+  '/ro-membrane-cleaner-alkaline.html',
+  '/ro-biocide.html',
+  '/smbs-dechlorination-chemical.html',
+  '/ro-ph-booster.html',
+  '/boiler-oxygen-scavenger.html',
+  '/boiler-antiscalant.html',
+  '/boiler-alkalinity-ph-builder.html',
+  '/condensate-corrosion-inhibitor.html',
+  '/cooling-tower-scale-corrosion-inhibitor.html',
+  '/cooling-tower-oxidizing-biocide.html',
+  '/cooling-tower-non-oxidizing-biocide.html',
+  '/cooling-tower-algaecide.html'
+];
 /* ---------- helpers ---------- */
 function get(url, redirects) {
   redirects = redirects || 0;
@@ -273,6 +291,7 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(c)} <span style="font-si
     .filter(u => !/\?p=/.test(u));
   const all = new Set(staticUrls);
   all.add(SITE + '/products.html');
+  CHEM_PAGES.forEach(u => all.add(SITE + u));
   const today = new Date().toISOString().slice(0, 10);
   const urls = [...all].map(u => `<url><loc>${u}</loc><lastmod>${today}</lastmod><priority>${u.endsWith('.co.in/') ? '1.0' : '0.8'}</priority></url>`)
     .concat(P.map(p => `<url><loc>${SITE}/?p=${p.slug}</loc><lastmod>${today}</lastmod><priority>0.6</priority></url>`));
