@@ -1,75 +1,53 @@
-ZEROSCALE CHEMICALS — UPLOAD GUIDE (v2 — share buttons ke saath)
-================================================================
+ZEROSCALE CHEMICALS — v3 (schema warning fix)
+=============================================
 
-NAYA KYA HAI
-------------
-- Har page par SHARE button (WhatsApp / Facebook / Email / Copy link)
-- Har page par floating WHATSAPP button
-- Mobile par "Share" dabate hi phone ka apna share menu khulega
+IS BAAR KYA BADLA
+-----------------
+Search Console me do warning aa rahi thi:
+  Product snippets  -> 1 invalid item
+  Merchant listings -> 1 invalid item
 
-Purani file par ye zip OVERWRITE kar dein — sab kuch isme hai.
+Dono ek hi wajah se thi — page par PRICE nahi hai.
+(Price jaan-boojh kar nahi daali, kyunki chemical ka rate
+ badalta rehta hai aur purani price page par padi rehna
+ nuksaan karti hai.)
+
+FIX: page ka schema "Product" se badal kar "WebPage" kar diya.
+Ab Google isse product listing nahi maanta, to price maangta hi
+nahi. Saari jaankari wahi hai — naam, code, description, photo,
+company detail. FAQ aur Breadcrumb schema jaise the waise hain.
+
+Rank par koi asar nahi. Bas dono warning gayab ho jayengi.
 
 
-ZIP ME KYA HAI
---------------
-15 HTML + chem.css   -> repo ki JADH (root) me, jahan index.html hai
-chemicals/ (14 jpg)  -> repo me `chemicals` folder banakar usme
+UPLOAD
+------
+Purani file ke UPAR ye daal dein (overwrite):
+  15 HTML + chem.css  ->  repo ki JADH (root) me
 
-
-GITHUB PAR KAISE
-----------------
-STEP 1 — HTML + CSS
-  Add file -> Upload files
-  16 file drag karein (15 html + chem.css)
-  Commit changes
-  (purani file par pooch kar overwrite kar dega — haan karein)
-
-STEP 2 — Photos (agar pehle nahi daali)
-  Add file -> Upload files
-  path wale khaane me type karein:  chemicals/
-  14 jpg drag karein -> Commit
+Photos pehle daal chuke hain to dobara nahi chahiye.
+(chemicals/ folder zip me hai, zaroorat ho to use karein)
 
 
 UPLOAD KE BAAD
 --------------
-1. sw.js me version badhayein (jaise wtpe-v4 -> wtpe-v5)
+1. sw.js me version badha dein (jaise wtpe-v5 -> wtpe-v6)
 
-2. index.html me footer ka column fix (agar abhi tak nahi kiya):
-   .seolinks .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-   isme 3 ko 4 kar dein
+2. Search Console -> URL Inspection -> ro-antiscalant.html
+   -> Request Indexing dobara dabayein
+   (Google ko naya schema padhne me kuch din lagenge,
+    warning apne aap hat jayegi)
 
-3. sitemap.xml me 15 URL:
-   https://www.wtpestore.co.in/zeroscale-chemicals.html
-   https://www.wtpestore.co.in/ro-antiscalant.html
-   https://www.wtpestore.co.in/ro-membrane-cleaner-acidic.html
-   https://www.wtpestore.co.in/ro-membrane-cleaner-alkaline.html
-   https://www.wtpestore.co.in/ro-biocide.html
-   https://www.wtpestore.co.in/smbs-dechlorination-chemical.html
-   https://www.wtpestore.co.in/ro-ph-booster.html
-   https://www.wtpestore.co.in/boiler-oxygen-scavenger.html
-   https://www.wtpestore.co.in/boiler-antiscalant.html
-   https://www.wtpestore.co.in/boiler-alkalinity-ph-builder.html
-   https://www.wtpestore.co.in/condensate-corrosion-inhibitor.html
-   https://www.wtpestore.co.in/cooling-tower-scale-corrosion-inhibitor.html
-   https://www.wtpestore.co.in/cooling-tower-oxidizing-biocide.html
-   https://www.wtpestore.co.in/cooling-tower-non-oxidizing-biocide.html
-   https://www.wtpestore.co.in/cooling-tower-algaecide.html
-
-4. Search Console -> URL Inspection -> Request Indexing
-   Roz 10-12 se zyada nahi. Pehle ye 5:
-     ro-antiscalant.html
-     smbs-dechlorination-chemical.html
-     boiler-oxygen-scavenger.html
-     cooling-tower-scale-corrosion-inhibitor.html
-     ro-membrane-cleaner-acidic.html
+3. Baaki 14 page ka Request Indexing baaki hai —
+   roz 10-12 se zyada nahi. Do din me sab ho jayega.
 
 
-BUTTON KAHAN DIKHENGE
+ABHI TAK KYA HO CHUKA
 ---------------------
-Neeche BAAYIN taraf, ek ke upar ek:
-  - Neela gol button  = Share
-  - Hara gol button   = WhatsApp (seedha aapke number par)
-
-Mobile par Share dabate hi phone ka apna share menu khulta hai
-(WhatsApp, Telegram, Gmail — jo bhi phone me hai).
-Laptop par chhota menu khulta hai.
+[x] 15 page live
+[x] 14 photo lagi
+[x] Share + WhatsApp button
+[x] Homepage se link (menu + footer)
+[x] Sitemap automatic (build-seo.js me jud gaya)
+[x] ro-antiscalant.html INDEXED ho gaya
+[ ] baaki 14 ka Request Indexing
