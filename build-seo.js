@@ -11,6 +11,9 @@ const SITE = 'https://www.wtpestore.co.in';
 
 /* Chemical pages — sitemap me hamesha rahenge */
 const CHEM_PAGES = [
+   '/ro-chemicals.html',
+  '/boiler-chemicals.html',
+  '/cooling-tower-chemicals.html',
   '/zeroscale-chemicals.html',
   '/ro-antiscalant.html',
   '/ro-membrane-cleaner-acidic.html',
