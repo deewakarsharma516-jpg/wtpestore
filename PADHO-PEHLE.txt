@@ -1,53 +1,68 @@
-ZEROSCALE CHEMICALS — v3 (schema warning fix)
-=============================================
+WTPESTORE — 3 NAYE CATEGORY PAGE KE LINK
+=========================================
 
-IS BAAR KYA BADLA
------------------
-Search Console me do warning aa rahi thi:
-  Product snippets  -> 1 invalid item
-  Merchant listings -> 1 invalid item
-
-Dono ek hi wajah se thi — page par PRICE nahi hai.
-(Price jaan-boojh kar nahi daali, kyunki chemical ka rate
- badalta rehta hai aur purani price page par padi rehna
- nuksaan karti hai.)
-
-FIX: page ka schema "Product" se badal kar "WebPage" kar diya.
-Ab Google isse product listing nahi maanta, to price maangta hi
-nahi. Saari jaankari wahi hai — naam, code, description, photo,
-company detail. FAQ aur Breadcrumb schema jaise the waise hain.
-
-Rank par koi asar nahi. Bas dono warning gayab ho jayengi.
+Ye 3 naye page bane hain:
+  /ro-chemicals.html
+  /boiler-chemicals.html
+  /cooling-tower-chemicals.html
 
 
-UPLOAD
-------
-Purani file ke UPAR ye daal dein (overwrite):
-  15 HTML + chem.css  ->  repo ki JADH (root) me
+=========================================================
+1) build-seo.js — sitemap me jodein
+=========================================================
+
+CHEM_PAGES ki list me sabse upar ye 3 line jodein:
+
+  '/ro-chemicals.html',
+  '/boiler-chemicals.html',
+  '/cooling-tower-chemicals.html',
+
+To poori list aisi dikhegi:
+
+const CHEM_PAGES = [
+  '/ro-chemicals.html',
+  '/boiler-chemicals.html',
+  '/cooling-tower-chemicals.html',
+  '/zeroscale-chemicals.html',
+  '/ro-antiscalant.html',
+  ... (baaki jaise the waise)
+];
+
+
+=========================================================
+2) index.html — footer ka Chemicals column
+=========================================================
+
+Ctrl+F se dhoondein:
+
+  <div><h4>ZeroScale Chemicals</h4><ul><li><a href="/zeroscale-chemicals.html">
+
+Us <ul> ke TURANT BAAD ye 3 line jodein
+(yaani "All ZeroScale Chemicals" wali line se PEHLE):
+
+<li><a href="/ro-chemicals.html"><b style="color:#7ff0ff">RO Plant Chemicals</b></a></li><li><a href="/boiler-chemicals.html"><b style="color:#7ff0ff">Boiler Chemicals</b></a></li><li><a href="/cooling-tower-chemicals.html"><b style="color:#7ff0ff">Cooling Tower Chemicals</b></a></li>
+
+
+=========================================================
+3) Upload
+=========================================================
+
+18 HTML + chem.css  ->  repo ki JADH (root) me
+(purani file overwrite kar dein)
 
 Photos pehle daal chuke hain to dobara nahi chahiye.
-(chemicals/ folder zip me hai, zaroorat ho to use karein)
+
+Phir sw.js me version badha dein.
 
 
-UPLOAD KE BAAD
---------------
-1. sw.js me version badha dein (jaise wtpe-v5 -> wtpe-v6)
+=========================================================
+4) Search Console — pehle ye 3
+=========================================================
 
-2. Search Console -> URL Inspection -> ro-antiscalant.html
-   -> Request Indexing dobara dabayein
-   (Google ko naya schema padhne me kuch din lagenge,
-    warning apne aap hat jayegi)
+https://www.wtpestore.co.in/ro-chemicals.html
+https://www.wtpestore.co.in/boiler-chemicals.html
+https://www.wtpestore.co.in/cooling-tower-chemicals.html
 
-3. Baaki 14 page ka Request Indexing baaki hai —
-   roz 10-12 se zyada nahi. Do din me sab ho jayega.
-
-
-ABHI TAK KYA HO CHUKA
----------------------
-[x] 15 page live
-[x] 14 photo lagi
-[x] Share + WhatsApp button
-[x] Homepage se link (menu + footer)
-[x] Sitemap automatic (build-seo.js me jud gaya)
-[x] ro-antiscalant.html INDEXED ho gaya
-[ ] baaki 14 ka Request Indexing
+Ye 3 sabse pehle karein — inki search product page se
+zyada hai. Log pehle "boiler chemical supplier" dhoondhte
+hain, phir product chunte hain.
