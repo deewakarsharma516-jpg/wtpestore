@@ -1044,7 +1044,97 @@ function openQuote(name,price){_qi={name:name,price:price};lastProduct=name;docu
 function closeQuote(){document.getElementById('qov').classList.remove('open');}
 function genQuote(){var qty=parseInt(document.getElementById('qQty').value)||1,rate=parseFloat(document.getElementById('qRate').value)||0,gst=parseFloat(document.getElementById('qGst').value)||0;var sub=qty*rate,ga=Math.round(sub*gst/100),tot=sub+ga;var qno='WTP/Q/'+Date.now().toString().slice(-6),dt=new Date().toLocaleDateString('en-IN');var nm=document.getElementById('qName').value||'Valued Customer',comp=document.getElementById('qComp').value,city=document.getElementById('qCity').value;
 document.getElementById('quoteOut').innerHTML='<div class="qpaper" id="qpaper"><div class="qp-top"><div><h2>WTPE<span>STORE</span></h2><div class="sub">'+COMPANY.sub+'<br>'+COMPANY.addr+'<br>'+COMPANY.ph+'<br>'+COMPANY.email+'<br>GSTIN: '+COMPANY.gstin+'</div></div><div class="qp-meta"><b>QUOTATION</b><br>No: '+qno+'<br>Date: '+dt+'<br>Valid: 15 days</div></div><div style="font-size:12.5px;margin-bottom:8px"><b>To:</b> '+esc(nm)+(comp?', '+esc(comp):'')+(city?'<br>'+esc(city):'')+'</div><table class="qp-table"><thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead><tbody><tr><td>1</td><td>'+esc(_qi.name)+'</td><td>'+qty+'</td><td>'+rupee(rate)+'</td><td>'+rupee(sub)+'</td></tr></tbody></table><div class="qp-tot">Subtotal: '+rupee(sub)+'<br>GST @'+gst+'%: '+rupee(ga)+'<br><b>Grand Total: '+rupee(tot)+'</b></div><div class="qp-words"><b>In words:</b> Rupees '+numWords(tot)+' Only</div><div class="qp-terms"><b>Terms:</b> Prices Ex-Faridabad. GST as above. Freight extra at actual. Delivery subject to stock. Payment as agreed. Computer-generated quotation by '+COMPANY.name+'.</div></div>';}
-function quotePrint(){var w=window.open('','_blank');w.document.write('<html><head><title>Quotation</title><style>body{font-family:Inter,Arial,sans-serif;padding:24px}h2{margin:0}.qp-table{width:100%;border-collapse:collapse;margin:12px 0}.qp-table th{background:#f0f2f2;text-align:left;padding:8px}.qp-table td{padding:8px;border-bottom:1px solid #eee}.qp-tot{text-align:right;line-height:1.9}.qp-words{background:#f0f7f4;padding:9px 12px;border-radius:6px;margin-top:8px}.qp-terms{font-size:11px;color:#666;margin-top:14px;border-top:1px dashed #ccc;padding-top:10px}.qp-top{display:flex;justify-content:space-between;border-bottom:2px solid #232f3e;padding-bottom:12px}.qp-meta{text-align:right;font-size:12px}</style></head><body>'+document.getElementById('qpaper').innerHTML+'</body></html>');w.document.close();setTimeout(function(){w.print();},300);}
+function quotePrint(){var w=window.open('','_blank');w.document.write('<html><head><title>Quotation</title><style>body{font-family:Inter,Arial,sans-serif;padding:24px}h2{margin:0}.qp-table{width:100%;border-collapse:collapse;margin:12px 0}.qp-table th{background:#f0f2f2;text-align:left;padding:8px}.qp-table td{padding:8px;border-bottom:1px solid #eee}.qp-tot{text-align:right;line-height:1.9}.qp-words{background:#f0f7f4;padding:9px 12px;border-radius:6px;margin-top:8px}.qp-terms{font-size:11px;color:#666;margin-top:14px;border-top:1px dashed #ccc;padding-top:10px}.qp-top{display:flex;justify-content:space-between;border-bottom:2px solid #232f3e;padding-bottom:12px}.qp-meta{text-align:right;font-size:12px}</style></head><body>'+document.getElementById('qpaper').innerHTML+'->
+<script>
+/* 1) Chemicals ka data load karo (har baar taaza) */
+var CHEM_DATA=[];
+function loadChem(){
+  try{
+    fetch('/chemicals/chemicals.json',{cache:'no-store'})
+      .then(function(r){return r.json();})
+      .then(function(a){ if(Array.isArray(a)&&a.length){CHEM_DATA=a;} })
+      .catch(function(){});
+  }catch(e){}
+}
+loadChem();
+ 
+/* 2) Customer ke sawaal se chemical dhoondho */
+function lookupChem(msg){
+  if(!CHEM_DATA||!CHEM_DATA.length)return [];
+  var q=(typeof zHi2En==='function'?zHi2En(msg||''):(msg||'')).toLowerCase();
+  var CHEM_STOP=['water','paani','pani','plant','system','pump','dose','dosing','best','need','want','ppm','lph','kld','online','type'];
+  var toks=q.split(/[^a-z0-9]+/).filter(function(x){
+    return x.length>=3 && (typeof ZSTOP==='undefined'||ZSTOP.indexOf(x)<0) && CHEM_STOP.indexOf(x)<0;
+  });
+  if(!toks.length)return [];
+  var scored=CHEM_DATA.map(function(it){
+    /* Sirf name/code/division/keywords se match karo — desc (free text) se nahi, warna 'flow' jaise shabd galat match karte hain */
+    var T=((it.name||'')+' '+(it.code||'')+' '+(it.division||'')+' '+((it.keywords||[]).join(' '))).toLowerCase();
+    var s=0; toks.forEach(function(t){ try{ if(new RegExp('\\b'+t).test(T))s+=3; }catch(e){ if(T.indexOf(t)>-1)s+=3; } });
+    return {it:it,s:s};
+  }).filter(function(x){return x.s>0;});
+  return scored.sort(function(a,b){return b.s-a.s;}).slice(0,6).map(function(x){return x.it;});
+}
+ 
+/* 3) Chemical ke cards chat me dikhao (price ki jagah 'View' + 'Rate poochho') */
+function zChemCards(items){
+  var d=document.createElement('div'); d.className='zcard';
+  d.innerHTML=items.map(function(x){
+    var nm=(typeof esc==='function'?esc(x.name):x.name);
+    var pg=(typeof esc==='function'?esc(x.page||'#'):(x.page||'#'));
+    var askJS=JSON.stringify((x.name||'')+' ('+(x.code||'')+')').replace(/"/g,'&quot;');
+    return '<div class="zci"><div class="n">'+nm+' <span style="color:#0e7a3d;font-size:11px;font-weight:700">'+(x.code||'')+'</span></div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +'<a class="q" style="text-decoration:none" href="'+pg+'" target="_blank" rel="noopener">View</a>'
+      +'<button class="q" style="background:#0e7a3d" onclick="waProduct('+askJS+',0)" title="Rate poochho">\uD83D\uDCAC Rate</button>'
+      +'</div></div>';
+  }).join('');
+  document.getElementById('zmsgs').appendChild(d);
+  if(typeof scrollZ==='function')scrollZ();
+}
+ 
+/* 4) Zara ke dimaag (system prompt) me chemicals ki jaankari jodo */
+(function(){
+  if(typeof window.zSys!=='function') return;
+  var _origZSys=window.zSys;
+  window.zSys=function(m,cm){
+    var out=_origZSys(m);
+    try{
+      var n=(CHEM_DATA||[]).length;
+      if(n){
+        if(!cm||!cm.length){ try{cm=lookupChem(window.__lastZMsg||'');}catch(e){cm=[];} }
+        out+="\n\nZEROSCALE CHEMICALS ("+n+" products, 3 divisions: RO Plant, Boiler, Cooling Tower \u2014 in ka alag SEO page hai, price list Sheet me nahi):"
+          +"\n- In chemicals ka FIXED price website par NAHI hai (rate market ke hisaab se badalta rehta hai). Customer rate poochhe to bolo: 'Ye ZeroScale chemical hai \u2014 iska best rate WhatsApp 9899193589 par turant mil jayega' aur us chemical ke page ka link do. Price khud MAT banao."
+          +"\n- Dosing/selection guidance de sakti ho (jaise RO antiscalant 2-5 ppm). Customer ki problem suno, sahi chemical + uska page suggest karo, phir WhatsApp par rate lene ko bolo."
+          +"\n- Category hub pages (poori range ke liye): RO Plant chemicals /ro-chemicals.html, Boiler chemicals /boiler-chemicals.html, Cooling Tower chemicals /cooling-tower-chemicals.html.";
+        if(cm&&cm.length){
+          out+="\n- Is sawaal se ye chemical match hue (INHI ko recommend karo, page link do):\n"
+            +cm.map(function(x){return "   \u2022 "+x.name+" ("+x.code+", "+x.division+") \u2014 "+(x.desc||'')+" \u2192 "+(x.page||'');}).join("\n");
+        }
+      }
+    }catch(e){}
+    return out;
+  };
+})();
+ 
+/* 5) zSend ko wrap karo \u2014 chemical cards dikhane + last message yaad rakhne ke liye */
+(function(){
+  if(typeof window.zSend!=='function') return;
+  var _origZSend=window.zSend;
+  window.zSend=function(){
+    var inp=document.getElementById('zin');
+    var msg=(inp&&inp.value||'').trim();
+    window.__lastZMsg=msg;
+    _origZSend();
+    try{
+      var cm=lookupChem(msg);
+      if(cm&&cm.length){ if(typeof zAdd==='function')zAdd('bot','Ye ZeroScale chemicals mil gaye (rate WhatsApp par milega):'); zChemCards(cm); }
+    }catch(e){}
+  };
+})();
+</script>
+<!-- ================= ZARA CHEMICALS KNOWLEDGE END ================= -->
+ </body></html>');w.document.close();setTimeout(function(){w.print();},300);}
 function quoteWA(){var qty=parseInt(document.getElementById('qQty').value)||1,rate=parseFloat(document.getElementById('qRate').value)||0,gst=parseFloat(document.getElementById('qGst').value)||0;var sub=qty*rate,tot=sub+Math.round(sub*gst/100);var msg='*WTPESTORE Quotation*%0A%0AProduct: '+encodeURIComponent(_qi.name)+'%0AQty: '+qty+'%0ARate: '+rupee(rate)+'%0ASubtotal: '+rupee(sub)+'%0AGST @'+gst+'%25%0A*Total: '+rupee(tot)+'*%0A%0AName: '+encodeURIComponent(document.getElementById('qName').value||'')+'%0ACity: '+encodeURIComponent(document.getElementById('qCity').value||'')+'%0A%0APlease confirm.';window.open('https://wa.me/'+WA_NUM+'?text='+msg,'_blank');}
 
 /* ===== Lead (1 min) ===== */
