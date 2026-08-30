@@ -1,9 +1,9 @@
-/* WTPESTORE Service Worker v3
+/* WTPESTORE Service Worker v4
  * ------------------------------------------------------------------
- * JAB BHI WEBSITE UPDATE KAREIN: neeche 'wtpe-v3' ko 'wtpe-v4' kar dein
+ * JAB BHI WEBSITE UPDATE KAREIN: neeche 'wtpe-v4' ko 'wtpe-v5' kar dein
  * (phir v5, v6...). Isse sabke phone/app me naya version apne aap aa jayega.
  * ------------------------------------------------------------------ */
-var CACHE = 'wtpe-v5';
+var CACHE = 'wtpe-v4';
 var CORE = ['/', '/index.html', '/catalogues.html', '/plant-calculators.html',
   '/icons/icon-192.png', '/icons/icon-512.png', '/apple-touch-icon.png', '/manifest.json'];
 /* Ye pages kabhi cache nahi hote — hamesha fresh (admin tools + live data)
