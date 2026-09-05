@@ -1,34 +1,28 @@
 name: Update SEO pages from Google Sheet
-
 on:
   schedule:
     - cron: '30 1 * * *'      # roz subah 7:00 IST (01:30 UTC)
   workflow_dispatch:           # button dabake bhi chala sakte hain
-
 permissions:
   contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Build products.html + sitemap.xml from Sheet
+      - name: Build products.html + sitemap.xml + /products/ pages from Sheet
         run: node build-seo.js
-
       - name: Commit if changed
         run: |
           git config user.name "wtpestore-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add -A products.html sitemap.xml seo-build-log.txt *.html
+          git add -A products.html sitemap.xml seo-build-log.txt *.html products/
           if git diff --staged --quiet; then
             echo "Koi badlav nahi — Sheet same hai"
           else
-            git commit -m "SEO: products.html + sitemap.xml auto-update from Sheet"
+            git commit -m "SEO: products.html + sitemap.xml + product pages auto-update from Sheet"
             git push
           fi
