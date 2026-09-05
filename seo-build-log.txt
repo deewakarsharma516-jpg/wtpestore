@@ -1,4 +1,6 @@
-Last build: 2026-09-04T06:13:37.241Z
+Last build: 2026-09-05T03:03:26.996Z
 Products: 458
 Categories: 49
-Sitemap URLs: 516
+Product pages built: 448
+Skipped (thin/junk): 10
+Sitemap URLs: 506
