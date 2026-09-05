@@ -1,13 +1,25 @@
 /* WTPESTORE — SEO page builder
    Sheet se products padh kar Google-friendly HTML banata hai.
    GitHub Action roz chalata hai — Sheet badli to pages khud update.
+
+   NAYA (SEO — individual product pages):
+   - Har achhi-quality product ka apna static page /products/<slug>.html banta hai
+   - Har page: unique title/meta/H1, breadcrumb, Product schema, spec table,
+     category ka "about" blurb, related products, WhatsApp CTA
+   - Photo seedha Sheet ke Image column (ImgBB URL) se — kuch alag se upload nahi hota
+   - Adhoore/junk rows (na spec, na model, na price, na make) ke liye page NAHI banta,
+     taaki Google ise "thin content" na maane
+   - sitemap.xml me sirf in static pages ka URL jata hai (?p= wale URL se duplicate na ho)
+   - products.html ke "View" links bhi in static pages par point karte hain
 */
 const fs = require('fs');
+const path = require('path');
 const https = require('https');
 
 const SHEET = process.env.SHEET_CSV ||
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv';
 const SITE = 'https://www.wtpestore.co.in';
+const PRODUCTS_DIR = 'products';
 
 /* Chemical pages — sitemap me hamesha rahenge */
 const CHEM_PAGES = [
@@ -163,20 +175,202 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 </body></html>`;
 }
 
+/* Slugs jinke apne static /products/<slug>.html page ban chuke hain (card() isse View link decide karta hai) */
+const STATIC_SLUGS = new Set();
+
 function card(p) {
   const off = p.mrp && p.mrp > p.p ? Math.round((p.mrp - p.p) * 100 / p.mrp) : 0;
   const price = p.p > 0
     ? `<div class="pr">${off ? `<span class="old">${rupee(p.mrp)}</span>` : ''}${rupee(p.p)}<small> +GST</small>${off ? `<span class="off">${off}% OFF</span>` : ''}</div>`
     : `<div class="pr" style="color:#565959;font-size:15px">Price on request</div>`;
   const wa = `https://wa.me/919899193589?text=${encodeURIComponent('Hi WTPESTORE, I want a quotation for: ' + p.n + (p.model ? ' (Model ' + p.model + ')' : '') + '. Please share best price.')}`;
+  const viewHref = STATIC_SLUGS.has(p.slug) ? `/products/${p.slug}.html` : `/?p=${p.slug}`;
   return `<article class="pc" id="${p.slug}">
 ${p.model ? `<span class="md">Model: ${esc(p.model)}</span>` : ''}
 <h3>${esc(p.n)}</h3>
 ${p.make ? `<div style="font-size:12px;color:#666">Brand: <b>${esc(p.make)}</b></div>` : ''}
 ${p.spec ? `<div class="sp">${esc(p.spec.slice(0, 300))}</div>` : ''}
 ${price}
-<div class="acts"><a class="b wa" href="${wa}" rel="nofollow">💬 Get Quote</a><a class="b vw" href="/?p=${p.slug}">View →</a></div>
+<div class="acts"><a class="b wa" href="${wa}" rel="nofollow">💬 Get Quote</a><a class="b vw" href="${viewHref}">View →</a></div>
 </article>`;
+}
+
+/* ---------- category "about" blurbs (thin/duplicate-content se bachne ke liye) ----------
+   Har match ke liye ek chhota, keh-diya-jaa-chuka library jaisa paragraph — jaise Amazon/Flipkart
+   product-listing pages par category-level intro hota hai. Har product page par ye SAME text
+   aa sakta hai (normal ecommerce practice), lekin har page ka title/spec/price/model alag hota
+   hai — isliye Google ise duplicate-content nahi maanta.
+*/
+function normCat(c) {
+  return String(c || '').toUpperCase()
+    .replace(/^(ASTER|ASTERO|EDOSE|EMBARK|PENTAIR|QFLO|CHINESE|EVERFLOW|INITIATIVE ENGINEERING)\s+/, '')
+    .replace(/\s*[&,].*/, '').trim();
+}
+const CAT_BLURB_RULES = [
+  [/rotameter|flow ?meter/, 'Flow Meters', 'Flow meters and rotameters measure the exact litres-per-hour passing through your RO, softener or dosing line, so you can verify system performance and catch fouling or leaks early.'],
+  [/electromagnetic/, 'Electromagnetic Flow Meters', 'Electromagnetic flow meters give accurate, maintenance-free flow readings on larger industrial lines where a mechanical rotameter would wear out or restrict flow.'],
+  [/dosing|edose|metering pump/, 'Dosing / Metering Pumps', 'Dosing pumps inject precise, adjustable amounts of antiscalant, chlorine or pH-correction chemical into the water stream, protecting membranes and downstream equipment from scale and fouling.'],
+  [/frp|vessel/, 'FRP Vessels', 'FRP (fibre-reinforced plastic) vessels house the sand, carbon or resin media in a filtration or softening system, built to safely hold working pressure for years of continuous use.'],
+  [/u\.?v\.?|purif/, 'UV Purification Systems', 'UV purification systems use ultraviolet light to disable bacteria and viruses without adding any chemical to the water, commonly used as a final polishing stage after RO or UF.'],
+  [/membrane/, 'Membranes', 'Membranes are the core filtration element of an RO or UF plant, rejecting dissolved salts, bacteria and suspended solids to deliver clean permeate water.'],
+  [/cartridge/, 'Cartridge Filters', 'Cartridge filters remove sediment, rust and suspended particles ahead of your RO membrane or softener, protecting it from premature fouling and extending its working life.'],
+  [/housing|coupling/, 'Housings & Couplings', 'Housings and couplings hold cartridges or membranes securely in place and connect plant piping without leaks, rated for the working pressure of your system.'],
+  [/multiport|mpv/, 'Multiport Valves', 'Multiport valves automate the backwash, rinse and service cycles of a sand filter or softener vessel through a single easy-to-operate handle or timer.'],
+  [/solenoid/, 'Solenoid Valves', 'Solenoid valves open and close automatically on electrical signal, used for backwash sequencing, dispenser control and automatic shut-off across water treatment skids.'],
+  [/valve/, 'Valves', 'Valves control and direct water flow across your plant piping, and are selected by size, pressure rating and application.'],
+  [/gauge/, 'Pressure Gauges', 'Pressure gauges let you monitor feed and reject pressure at a glance, helping you spot a choked cartridge or fouled membrane before it causes bigger damage.'],
+  [/switch/, 'Pressure & Level Switches', 'Pressure and level switches protect your pump from dry-running and automate tank filling, switching the system on or off at set thresholds.'],
+  [/controller|astero/, 'Controllers & Panels', 'Controllers and panels automate pump operation, protection and sequencing for RO, softener, UF and effluent-treatment plants.'],
+  [/instrument/, 'Water Quality Instruments', 'Water quality instruments measure parameters like pH, conductivity, TDS or turbidity so you can verify treated water meets the required standard.'],
+  [/antiscalant|chemical|resin/, 'Water Treatment Chemicals & Resin', 'Water treatment chemicals and resins keep RO membranes, boilers and softeners free of scale, fouling and microbial growth.'],
+  [/carbon/, 'Activated Carbon Media', 'Activated carbon media removes chlorine, colour and organic odour from feed water, protecting RO membranes and improving taste.'],
+  [/disc|screen/, 'Disc & Screen Filters', 'Disc and screen filters remove coarse sediment and organic matter from raw or irrigation water ahead of finer filtration stages.'],
+  [/distribution/, 'Distribution Systems', 'Distribution systems (top/lateral assemblies) spread water evenly through the media bed inside a softener or sand-filter vessel for efficient filtration and regeneration.'],
+  [/atm|dispenser/, 'Water ATM & Dispensers', 'Water ATM and dispenser components let you sell or dispense treated water automatically via card, coin or QR payment.'],
+  [/pool|light/, 'Swimming Pool Lights', 'Swimming pool lights are built for continuous underwater use, giving safe, energy-efficient illumination for residential and commercial pools.'],
+  [/test|sdi|hardness/, 'Water Test Kits', 'Water test kits let you check hardness, SDI or other key parameters on site, without waiting for a lab report.'],
+  [/soft[ei]n/, 'Water Softeners', 'Water softeners remove calcium and magnesium hardness from your supply, preventing scale build-up in pipes, geysers and appliances.']
+];
+function toTitleCase(s) {
+  return String(s || '').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
+function catBlurb(category) {
+  const c = String(category || '').toLowerCase();
+  for (const [re, label, text] of CAT_BLURB_RULES) { if (re.test(c)) return { label, text }; }
+  const label = toTitleCase(normCat(category)) || 'Water Treatment Product';
+  return { label, text: `${label} from WTPESTORE — powered by Aqua Filtration System — are supplied as genuine, tested products for RO, DM, softening and industrial water-treatment plants across India, backed by a GST invoice and our technical support team.` };
+}
+
+/* ---------- thin/junk-row filter ----------
+   Kai baar Sheet me koi row adhoora hota hai (jaise sirf ek fragment jaisa naam,
+   na spec na model na price). Aise rows ke liye alag static page NAHI banate —
+   warna Google poore site ko "thin content" wali site maan sakta hai.
+*/
+function isQualityProduct(p) {
+  const n = (p.n || '').trim();
+  if (n.length < 6) return false;
+  if (/^\[.*\]$/.test(n)) return false;              // sirf "[Volume (Litres)]" jaisa fragment
+  if (!(p.spec || p.model || p.p > 0 || p.make)) return false; // kam se kam ek meaningful detail chahiye
+  return true;
+}
+
+/* ---------- individual product page ---------- */
+function productPage(p, related, blurb) {
+  const catSlug = slug(p.c);
+  const off = p.mrp && p.mrp > p.p ? Math.round((p.mrp - p.p) * 100 / p.mrp) : 0;
+  const priceBlock = p.p > 0
+    ? `<div class="pp-price">${off ? `<span class="old">${rupee(p.mrp)}</span>` : ''}${rupee(p.p)}<small> + GST</small>${off ? `<span class="off">${off}% OFF</span>` : ''}</div>`
+    : `<div class="pp-price" style="color:#565959;font-size:16px">Price on request — ask on WhatsApp</div>`;
+  const wa = `https://wa.me/919899193589?text=${encodeURIComponent('Hi WTPESTORE, I want a quotation for: ' + p.n + (p.model ? ' (Model ' + p.model + ')' : '') + '. Please share best price.')}`;
+  const imgBlock = p.img
+    ? `<img class="pp-img" src="${esc(p.img)}" alt="${esc(p.n)}" loading="lazy">`
+    : `<div class="pp-imgph"><span>${esc(blurb.label)}</span></div>`;
+
+  const specRows = [];
+  if (p.make) specRows.push(['Brand', p.make]);
+  if (p.model) specRows.push(['Model', p.model]);
+  if (p.c) specRows.push(['Category', p.c]);
+  if (p.spec) specRows.push(['Specification', p.spec]);
+  const specTable = specRows.length
+    ? `<table class="pp-spec"><tbody>${specRows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</tbody></table>`
+    : '';
+
+  const relBlock = related.length
+    ? `<h2>Related ${esc(blurb.label)}</h2><div class="pgrid">${related.map(card).join('')}</div>`
+    : '';
+
+  const body = `<nav class="bc"><a href="/">Home</a> › <a href="/products.html#${catSlug}">${esc(p.c)}</a> › ${esc(p.n)}</nav>
+<div class="pp-top">
+  ${imgBlock}
+  <div class="pp-info">
+    <h1>${esc(p.n)}</h1>
+    ${p.model ? `<span class="pp-model">Model: ${esc(p.model)}</span>` : ''}
+    ${priceBlock}
+    <div class="pp-cta"><a class="b wa" href="${wa}" rel="nofollow">💬 Get Quotation on WhatsApp</a><a class="b vw" href="tel:+919910646957">📞 Call 9910646957</a></div>
+  </div>
+</div>
+${specTable}
+<section class="pp-about"><h2>About ${esc(blurb.label)}</h2><p>${esc(blurb.text)}</p>
+<p>This ${esc(p.n)} is supplied by <b>WTPESTORE — powered by Aqua Filtration System</b>, Faridabad, with genuine sourcing, a GST invoice and pan-India delivery. For dosage, sizing or compatibility questions, message our team on WhatsApp.</p></section>
+${relBlock}
+<p style="margin-top:18px"><a href="/products.html#${catSlug}">← View all ${esc(p.c)} products</a></p>`;
+
+  const ldProduct = {
+    "@context": "https://schema.org", "@type": "Product", "name": p.n,
+    ...(p.img ? { "image": [p.img] } : {}),
+    ...(p.make ? { "brand": { "@type": "Brand", "name": p.make } } : {}),
+    ...(p.model ? { "model": p.model } : {}),
+    "description": (p.spec || blurb.text).slice(0, 300),
+    "url": SITE + "/products/" + p.slug + ".html",
+    ...(p.p > 0 ? {
+      "offers": {
+        "@type": "Offer", "price": p.p, "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "url": SITE + "/products/" + p.slug + ".html",
+        "seller": { "@type": "Organization", "name": "Aqua Filtration System" }
+      }
+    } : {})
+  };
+  const ldBreadcrumb = {
+    "@context": "https://schema.org", "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/" },
+      { "@type": "ListItem", "position": 2, "name": p.c, "item": SITE + "/products.html#" + catSlug },
+      { "@type": "ListItem", "position": 3, "name": p.n, "item": SITE + "/products/" + p.slug + ".html" }
+    ]
+  };
+
+  const extraLd = `<script type="application/ld+json">${JSON.stringify(ldProduct)}</script>
+<script type="application/ld+json">${JSON.stringify(ldBreadcrumb)}</script>
+<style>
+.pp-top{display:flex;gap:20px;flex-wrap:wrap;margin:14px 0}
+.pp-img{width:260px;height:260px;object-fit:contain;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}
+.pp-imgph{width:260px;height:260px;background:linear-gradient(135deg,#eef4f6,#dce8ec);border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;color:#0B2A4A;font-weight:700;font-size:14px;padding:14px}
+.pp-info{flex:1;min-width:240px}
+.pp-model{display:inline-block;font-size:12px;font-weight:800;color:#8a5a00;background:#fff6e6;border:1px solid #ffe0a3;border-radius:6px;padding:3px 9px;margin-bottom:8px}
+.pp-price{font-size:26px;font-weight:800;color:var(--green);margin:8px 0}
+.pp-price small{font-size:13px;color:#565959;font-weight:500}
+.pp-price .old{color:#8a94a6;text-decoration:line-through;font-size:15px;font-weight:600;margin-right:6px}
+.pp-price .off{background:#e7f7ee;color:#0e7a3d;border:1px solid #bfe6cf;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;margin-left:6px}
+.pp-cta{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
+.pp-cta a.b{text-decoration:none;font-weight:700;font-size:13.5px;padding:11px 16px;border-radius:9px}
+.pp-cta a.wa{background:#25d366;color:#fff}
+.pp-cta a.vw{background:var(--navy);color:#fff}
+.pp-spec{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.pp-spec td{padding:9px 12px;border-bottom:1px solid #eef1f4;vertical-align:top}
+.pp-spec tr:nth-child(odd){background:#f8fafc}
+.pp-spec td:first-child{width:32%;font-weight:700;color:#0b2545}
+.pp-about p{font-size:13.5px;color:#444;margin-bottom:8px}
+@media(max-width:560px){.pp-img,.pp-imgph{width:100%;height:220px}}
+</style>`;
+
+  return shell(
+    `${p.n}${p.model ? ' - ' + p.model : ''} | WTPESTORE`,
+    `${p.n}${p.spec ? ' — ' + p.spec.slice(0, 120) : ''}. Genuine product, GST invoice, best price. WTPESTORE — powered by Aqua Filtration System, Faridabad.`,
+    SITE + '/products/' + p.slug + '.html',
+    body, extraLd
+  );
+}
+
+/* Sabhi quality products ke liye /products/<slug>.html banao.
+   Purani/hata di gayi product ki file bhi apne aap saaf ho jaati hai (dir clear karke dobara banate hain). */
+function buildProductPages(qualityList) {
+  fs.rmSync(PRODUCTS_DIR, { recursive: true, force: true });
+  fs.mkdirSync(PRODUCTS_DIR, { recursive: true });
+
+  const byCat = {};
+  qualityList.forEach(p => { (byCat[p.c] = byCat[p.c] || []).push(p); });
+
+  let n = 0;
+  for (const p of qualityList) {
+    const blurb = catBlurb(p.c);
+    const related = (byCat[p.c] || []).filter(x => x.slug !== p.slug).slice(0, 6);
+    const html = productPage(p, related, blurb);
+    fs.writeFileSync(path.join(PRODUCTS_DIR, p.slug + '.html'), html);
+    STATIC_SLUGS.add(p.slug);
+    n++;
+  }
+  return n;
 }
 
 /* ---------- build ---------- */
@@ -242,6 +436,12 @@ function injectStatic(P) {
   const P = await load();
   console.log('Products loaded:', P.length);
 
+  /* ---- individual SEO product pages (naye) ---- */
+  const QP = P.filter(isQualityProduct);
+  const skipped = P.length - QP.length;
+  const madeCount = buildProductPages(QP);
+  console.log('Product pages built:', madeCount, '(skipped as thin/junk:', skipped, ')');
+
   const cats = {};
   P.forEach(p => { (cats[p.c] = cats[p.c] || []).push(p); });
   const catNames = Object.keys(cats).sort((a, b) => cats[b].length - cats[a].length);
@@ -269,7 +469,7 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(c)} <span style="font-si
         ...(p.make ? { "brand": { "@type": "Brand", "name": p.make } } : {}),
         ...(p.model ? { "model": p.model } : {}),
         ...(p.spec ? { "description": p.spec.slice(0, 200) } : {}),
-        "url": SITE + "/?p=" + p.slug,
+        "url": STATIC_SLUGS.has(p.slug) ? (SITE + "/products/" + p.slug + ".html") : (SITE + "/?p=" + p.slug),
         ...(p.p > 0 ? {
           "offers": {
             "@type": "Offer", "price": p.p, "priceCurrency": "INR",
@@ -291,20 +491,23 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(c)} <span style="font-si
   let sm = '';
   try { sm = fs.readFileSync('sitemap.xml', 'utf8'); } catch (e) { }
   const staticUrls = (sm.match(/<loc>[^<]*<\/loc>/g) || []).map(x => x.replace(/<\/?loc>/g, ''))
-    .filter(u => !/\?p=/.test(u));
+    .filter(u => !/\?p=/.test(u) && !/\/products\//.test(u));
   const all = new Set(staticUrls);
   all.add(SITE + '/products.html');
   CHEM_PAGES.forEach(u => all.add(SITE + u));
   const today = new Date().toISOString().slice(0, 10);
   const urls = [...all].map(u => `<url><loc>${u}</loc><lastmod>${today}</lastmod><priority>${u.endsWith('.co.in/') ? '1.0' : '0.8'}</priority></url>`)
-    .concat(P.map(p => `<url><loc>${SITE}/?p=${p.slug}</loc><lastmod>${today}</lastmod><priority>0.6</priority></url>`));
+    .concat(QP.map(p => {
+      const img = p.img ? `<image:image><image:loc>${esc(p.img)}</image:loc></image:image>` : '';
+      return `<url><loc>${SITE}/products/${p.slug}.html</loc><lastmod>${today}</lastmod><priority>0.6</priority>${img}</url>`;
+    }));
   fs.writeFileSync('sitemap.xml',
-    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`);
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls.join('\n')}\n</urlset>\n`);
   console.log('sitemap.xml ✓ (' + urls.length + ' URLs)');
 
   injectStatic(P);
 
   /* ---- summary for the action log ---- */
   fs.writeFileSync('seo-build-log.txt',
-    `Last build: ${new Date().toISOString()}\nProducts: ${P.length}\nCategories: ${catNames.length}\nSitemap URLs: ${urls.length}\n`);
+    `Last build: ${new Date().toISOString()}\nProducts: ${P.length}\nCategories: ${catNames.length}\nProduct pages built: ${madeCount}\nSkipped (thin/junk): ${skipped}\nSitemap URLs: ${urls.length}\n`);
 })().catch(e => { console.error('BUILD FAIL:', e.message); process.exit(1); });
