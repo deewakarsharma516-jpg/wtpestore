@@ -73,7 +73,7 @@ function csvParse(t) {
 }
 const clean = x => String(x || '').replace(/^\uFEFF/, '').replace(/\s+/g, ' ').trim();
 const esc = s => String(s || '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
-const slug = n => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+const slug = n => String(n || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
 const rupee = n => '₹' + Number(n || 0).toLocaleString('en-IN');
 
 /* ---------- read sheet ---------- */
@@ -105,6 +105,30 @@ async function load() {
     out.push(o);
   }
   return out;
+}
+
+/* ---------- display helpers (SEO polish) ----------
+   - Category strings aate hain Sheet se aksar ALL CAPS mein ("ASTERO CONTROLLERS").
+     Display ke liye Title Case karte hain, lekin known short-forms (RO, UV, FRP, DM...)
+     capital hi rehne dete hain, taaki "R.O." "R.o." na ban jaye.
+   - <title> tag Google SERP mein ~60 characters ke baad kat jaata hai — isliye sirf
+     <title> ko chhota karte hain; H1, meta description aur breadcrumb poora naam rakhte hain.
+*/
+const CAT_KEEP_CAPS = new Set(['RO', 'R.O.', 'UV', 'U.V.', 'FRP', 'DM', 'ETP', 'STP', 'UF', 'MPV', 'SDI', 'PVDF', 'PTFE', 'ATM', 'PP', 'GST', 'NB', 'SS', 'SS304', 'LPH', 'KLD']);
+function titleCaseCat(raw) {
+  return String(raw || '').trim().split(/\s+/).map(tok => {
+    if (CAT_KEEP_CAPS.has(tok.toUpperCase())) return tok.toUpperCase();
+    if (/\d/.test(tok)) return tok;              // model/size codes: chhedte nahi
+    if (tok === '&' || tok === '/') return tok;
+    return tok.charAt(0).toUpperCase() + tok.slice(1).toLowerCase();
+  }).join(' ');
+}
+function shortTitle(name, maxLen) {
+  const n = String(name || '').trim();
+  if (n.length <= maxLen) return n;
+  const cut = n.slice(0, maxLen);
+  const sp = cut.lastIndexOf(' ');
+  return (sp > 20 ? cut.slice(0, sp) : cut).trim();
 }
 
 /* ---------- page shell ---------- */
@@ -269,7 +293,7 @@ function productPage(p, related, blurb) {
   const specRows = [];
   if (p.make) specRows.push(['Brand', p.make]);
   if (p.model) specRows.push(['Model', p.model]);
-  if (p.c) specRows.push(['Category', p.c]);
+  if (p.c) specRows.push(['Category', titleCaseCat(p.c)]);
   if (p.spec) specRows.push(['Specification', p.spec]);
   const specTable = specRows.length
     ? `<table class="pp-spec"><tbody>${specRows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</tbody></table>`
@@ -279,7 +303,7 @@ function productPage(p, related, blurb) {
     ? `<h2>Related ${esc(blurb.label)}</h2><div class="pgrid">${related.map(card).join('')}</div>`
     : '';
 
-  const body = `<nav class="bc"><a href="/">Home</a> › <a href="/products.html#${catSlug}">${esc(p.c)}</a> › ${esc(p.n)}</nav>
+  const body = `<nav class="bc"><a href="/">Home</a> › <a href="/products.html#${catSlug}">${esc(titleCaseCat(p.c))}</a> › ${esc(p.n)}</nav>
 <div class="pp-top">
   ${imgBlock}
   <div class="pp-info">
@@ -293,7 +317,7 @@ ${specTable}
 <section class="pp-about"><h2>About ${esc(blurb.label)}</h2><p>${esc(blurb.text)}</p>
 <p>This ${esc(p.n)} is supplied by <b>WTPESTORE — powered by Aqua Filtration System</b>, Faridabad, with genuine sourcing, a GST invoice and pan-India delivery. For dosage, sizing or compatibility questions, message our team on WhatsApp.</p></section>
 ${relBlock}
-<p style="margin-top:18px"><a href="/products.html#${catSlug}">← View all ${esc(p.c)} products</a></p>`;
+<p style="margin-top:18px"><a href="/products.html#${catSlug}">← View all ${esc(titleCaseCat(p.c))} products</a></p>`;
 
   const ldProduct = {
     "@context": "https://schema.org", "@type": "Product", "name": p.n,
@@ -345,7 +369,7 @@ ${relBlock}
 </style>`;
 
   return shell(
-    `${p.n}${p.model ? ' - ' + p.model : ''} | WTPESTORE`,
+    `${shortTitle(p.n, 52)}${p.model && p.n.toUpperCase().indexOf(p.model.toUpperCase()) === -1 ? ' - ' + p.model : ''} | WTPESTORE`,
     `${p.n}${p.spec ? ' — ' + p.spec.slice(0, 120) : ''}. Genuine product, GST invoice, best price. WTPESTORE — powered by Aqua Filtration System, Faridabad.`,
     SITE + '/products/' + p.slug + '.html',
     body, extraLd
@@ -449,13 +473,13 @@ function injectStatic(P) {
 
   /* ---- products.html (sab kuch ek jagah, Google ke liye) ---- */
   const toc = `<div class="toc"><b style="font-size:13px;color:#565959">Jump to category:</b><br>` +
-    catNames.map(c => `<a href="#${slug(c)}">${esc(c)} (${cats[c].length})</a>`).join('') + `</div>`;
+    catNames.map(c => `<a href="#${slug(c)}">${esc(titleCaseCat(c))} (${cats[c].length})</a>`).join('') + `</div>`;
 
   const body = `<nav class="bc"><a href="/">Home</a> › All Products</nav>
 <h1>All Water Treatment Products &amp; Spares — Price List</h1>
 <p class="lede">Complete list of <b>${P.length}+ water treatment products</b> across <b>${catNames.length} categories</b> — RO plants, water softeners, RO membranes, dosing pumps, FRP vessels, flow meters, instruments, cartridge filters and spares. Genuine branded products with GST invoice, supplied by <b>Aqua Filtration System, Faridabad</b> across Delhi NCR and India. Prices are exclusive of GST and updated regularly.</p>
 ${toc}
-${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(c)} <span style="font-size:13px;color:#777;font-weight:500">(${cats[c].length} products)</span></h2>
+${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span style="font-size:13px;color:#777;font-weight:500">(${cats[c].length} products)</span></h2>
 <div class="pgrid">${cats[c].map(card).join('\n')}</div></section>`).join('\n')}`;
 
   const ld = `<script type="application/ld+json">${JSON.stringify({
