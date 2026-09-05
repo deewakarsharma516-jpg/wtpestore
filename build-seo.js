@@ -85,7 +85,7 @@ async function load() {
   const ci = ix('category'), ni = ix('product', 'name'), pi = ix('price'),
     mi = ix('make', 'brand'), mo = ix('model'), sp = ix('specification', 'spec'),
     ii = ix('image', 'photo'), mrp = ix('mrp', 'list price', 'old price'),
-    dsc = ix('discount', 'disc', 'off');
+    dsc = ix('discount', 'disc', 'off'), pdfi = ix('catalogue', 'catalog', 'pdf');
   const out = [];
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i], n = clean(r[ni]);
@@ -94,7 +94,8 @@ async function load() {
       c: clean(r[ci]) || 'General', n,
       p: parseInt(String(r[pi] || '').replace(/[^0-9]/g, '')) || 0,
       make: mi > -1 ? clean(r[mi]) : '', model: mo > -1 ? clean(r[mo]) : '',
-      spec: sp > -1 ? clean(r[sp]) : '', img: ii > -1 ? clean(r[ii]) : '', mrp: 0
+      spec: sp > -1 ? clean(r[sp]) : '', img: ii > -1 ? clean(r[ii]) : '', mrp: 0,
+      pdf: pdfi > -1 ? clean(r[pdfi]) : ''
     };
     if (mrp > -1) { const m = parseInt(String(r[mrp] || '').replace(/[^0-9]/g, '')) || 0; if (m > o.p) o.mrp = m; }
     if (!o.mrp && dsc > -1) {
@@ -278,6 +279,100 @@ function isQualityProduct(p) {
   return true;
 }
 
+/* ---------- content enrichment helpers ----------
+   Sheet me aksar Model/Specification khaali hote hain. Page phir bhi patla na lage,
+   isliye jo jaankari naam me chhupi hai use nikaal lete hain (jaise index.html karta hai),
+   aur category ke hisaab se features/FAQ jodte hain — yehi Google ko "useful page" lagta hai.
+*/
+const MODEL_STOPWORDS = new Set(['TO', 'AT', 'FOR', 'WITH', 'AND', 'THE', 'FLOW', 'RANGE', 'MAX', 'MIN', 'SIZE', 'TYPE', 'UPTO', 'FROM']);
+function extractModel(name) {
+  if (!name) return '';
+  /* bracket ke andar spec hoti hai, model nahi — isliye pehla bracket se pehle wala hissa dekho */
+  const head = String(name).split('(')[0].toUpperCase();
+  /* \b zaroori hai — warna "ASTERO 33NXT" me se "STERO 33NXT" nikal aata hai */
+  const pats = [/\b([A-Z]{1,6}\s?\d{2,5}[A-Z]{0,4}\d{0,3})\b/, /\b(\d{1,4}[A-Z]{2,4})\b/];
+  for (const re of pats) {
+    const m = head.match(re);
+    if (m) {
+      const v = m[1].replace(/\s+/g, ' ').trim();
+      if (!MODEL_STOPWORDS.has(v.split(' ')[0])) return v;
+    }
+  }
+  return '';
+}
+/* naam ke bracket wale hisse aksar asli spec hote hain:
+   "ROTAMETER F500 (FLOW RANGE 50 TO 500 LPH, I/O 15NB M)" */
+function specFromName(name) {
+  const out = [];
+  const br = String(name || '').match(/\(([^)]{4,120})\)/g) || [];
+  br.forEach(b => {
+    b.replace(/^\(|\)$/g, '').split(',').forEach(part => {
+      const t = part.trim();
+      if (!t) return;
+      const kv = t.match(/^(.{2,40}?)\s*[:=]\s*(.+)$/);
+      if (kv) { out.push([kv[1].trim(), kv[2].trim()]); return; }
+      const rng = t.match(/^(FLOW RANGE|CAPACITY|RANGE|FLOW|SIZE|I\/O|PACKING|NET WEIGHT|CUT OUT SIZE)\s+(.+)$/i);
+      if (rng) { out.push([titleCaseCat(rng[1]), rng[2].trim()]); return; }
+      if (t.length <= 60) out.push(['Detail', t]);
+    });
+  });
+  return out.slice(0, 8);
+}
+/* Specification column ko rows me todo (line / | / ; / "Key: Value") */
+function specRowsFromSpec(spec) {
+  const s = String(spec || '').replace(/\r/g, '').trim();
+  if (!s) return [];
+  const out = [];
+  const lines = s.split(/\n|\||;/).map(x => x.trim()).filter(Boolean);
+  lines.forEach(L => {
+    const m = L.match(/^([^:=]{2,60})[:=]\s*(.+)$/);
+    if (m) out.push([m[1].trim(), m[2].trim()]);
+  });
+  if (out.length >= 2) return out.slice(0, 12);
+  if (/:/.test(s)) {
+    const cs = s.split(/,(?=[^,:]{2,60}\s*:)/), t2 = [];
+    cs.forEach(L => { const m = L.trim().match(/^([^:]{2,60}):\s*(.+)$/); if (m) t2.push([m[1].trim(), m[2].trim()]); });
+    if (t2.length >= 2) return t2.slice(0, 12);
+  }
+  return [];
+}
+/* Category ke hisaab se 3-4 selling points */
+const FEATURE_RULES = [
+  [/rotameter|flow ?meter|electromagnetic/, ['Direct in-line flow reading — no power needed on basic rotameters', 'Corrosion-resistant body suited to treated and raw water lines', 'Helps you spot fouling or leakage before it damages the plant', 'Standard NB end connections for easy retrofit']],
+  [/dosing|edose|metering pump/, ['Adjustable stroke for precise chemical dosing', 'Chemical-resistant wetted parts (PP / PVDF options)', 'Protects membranes from scale and biofouling', 'Suitable for antiscalant, chlorine and pH correction']],
+  [/frp|vessel/, ['Corrosion-free FRP construction — no rusting like MS tanks', 'Rated for continuous working pressure', 'Fits standard top or side-mount multiport valves', 'Long service life with minimal maintenance']],
+  [/u\.?v\.?|purif/, ['Chemical-free disinfection — no taste or odour change', 'Effective against bacteria and viruses', 'Low power consumption, continuous operation', 'Simple lamp replacement schedule']],
+  [/membrane/, ['High salt rejection for consistent permeate quality', 'Standard element size — fits existing housings', 'Long life when antiscalant dosing is maintained', 'Genuine sourcing with brand warranty']],
+  [/cartridge|filter/, ['Protects RO membranes and pumps from sediment', 'Available in multiple micron ratings', 'Standard length — fits common housings', 'Economical, easy scheduled replacement']],
+  [/multiport|mpv|valve/, ['Single-handle control of service, backwash and rinse', 'Available in filter and softener configurations', 'Top and side-mount options for different vessels', 'Durable body rated for plant working pressure']],
+  [/controller|astero|instrument|switch|gauge/, ['Automatic pump protection against dry run', 'Clear display for quick operator checks', 'Reduces manual supervision and downtime', 'Panel-mount design for standard enclosures']],
+  [/soft[ei]n/, ['Removes calcium and magnesium hardness', 'Stops scale in pipes, geysers and boilers', 'Automatic or manual regeneration options', 'Extends the life of downstream equipment']],
+  [/chemical|antiscalant|resin|carbon/, ['Formulated for Indian feed-water conditions', 'Protects membranes and equipment from scale and fouling', 'Economical dosing rates', 'Technical dosage support from our team']]
+];
+function featuresFor(category) {
+  const c = String(category || '').toLowerCase();
+  for (const [re, list] of FEATURE_RULES) if (re.test(c)) return list;
+  return ['Genuine, tested product — no local duplicates', 'Supplied with a valid GST invoice', 'Pan-India dispatch with tracking', 'Technical support on selection and installation'];
+}
+/* FAQ — SEO ke liye sabse zyada faydemand (Google me accordion dikhta hai) */
+function faqsFor(p, blurb) {
+  const nm = p.n;
+  const f = [
+    [`What is the price of ${nm}?`, p.p > 0
+      ? `The current price is ${rupee(p.p)} plus GST, ex-Faridabad. Freight is extra at actual. Prices can change with market rates, so please confirm on WhatsApp at 9899193589 before placing your order.`
+      : `The price for this item is quoted on request as rates vary with specification and quantity. Send us the required size and quantity on WhatsApp at 9899193589 and our team will share a GST quotation the same working day.`],
+    [`Is a GST invoice provided for ${nm}?`,
+      `Yes. Every order is billed with a valid GST invoice under GSTIN 06DMUPS2289L1ZZ from Aqua Filtration System, Faridabad, so you can claim input credit where applicable.`],
+    [`Do you deliver ${blurb.label} across India?`,
+      `Yes. We dispatch pan-India through reputed courier and transport partners with tracking. Delivery time depends on your location and current stock — confirm on WhatsApp before ordering.`],
+    [`How do I choose the right ${blurb.label.toLowerCase()} for my plant?`,
+      `Share your water source, required capacity in LPH and the line or vessel size with our team. We will recommend the correct model, or you can use the free plant calculators on our website for a quick estimate.`]
+  ];
+  if (p.make) f.splice(1, 0, [`Is this a genuine ${p.make} product?`,
+    `Yes. We supply only authentic ${p.make} products sourced through proper channels — no local duplicates or refurbished units.`]);
+  return f;
+}
+
 /* ---------- individual product page ---------- */
 function productPage(p, related, blurb) {
   const catSlug = slug(p.c);
@@ -291,31 +386,55 @@ function productPage(p, related, blurb) {
     : `<div class="pp-imgph"><span>${esc(blurb.label)}</span></div>`;
 
   const specRows = [];
+  const autoModel = p.model || extractModel(p.n);
   if (p.make) specRows.push(['Brand', p.make]);
-  if (p.model) specRows.push(['Model', p.model]);
+  if (autoModel) specRows.push(['Model', autoModel]);
   if (p.c) specRows.push(['Category', titleCaseCat(p.c)]);
-  if (p.spec) specRows.push(['Specification', p.spec]);
-  const specTable = specRows.length
-    ? `<table class="pp-spec"><tbody>${specRows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</tbody></table>`
-    : '';
+  /* Sheet ki Specification ko rows me todo; na ho to naam ke bracket se nikaalo */
+  const parsed = specRowsFromSpec(p.spec);
+  if (parsed.length) parsed.forEach(r => specRows.push(r));
+  else if (p.spec) specRows.push(['Specification', p.spec]);
+  else specFromName(p.n).forEach(r => specRows.push(r));
+  specRows.push(['Price basis', p.p > 0 ? `${rupee(p.p)} + GST, ex-Faridabad` : 'On request']);
+  specRows.push(['Supplied by', 'Aqua Filtration System, Faridabad · GSTIN 06DMUPS2289L1ZZ']);
+  const specTable = `<h2>Specifications</h2><table class="pp-spec"><tbody>${specRows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</tbody></table>`;
+
+  const feats = featuresFor(p.c);
+  const featBlock = `<h2>Key features</h2><ul class="pp-feat">${feats.map(f => `<li>${esc(f)}</li>`).join('')}</ul>`;
+
+  const faqs = faqsFor(p, blurb);
+  const faqBlock = `<h2>Frequently asked questions</h2><div class="pp-faq">${faqs.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</div>`;
+
+  const pageUrl = SITE + '/products/' + p.slug + '.html';
+  const shareBlock = `<div class="pp-share"><span class="lbl">Share this product:</span>
+<a class="sh wa" href="https://wa.me/?text=${encodeURIComponent(p.n + ' — ' + pageUrl)}" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh cp" onclick="ppCopy(this)" data-u="${esc(pageUrl)}">Copy link</button></div>`;
+
+  const pdfLink = p.pdf && /^https?:\/\//i.test(p.pdf)
+    ? `<p><a class="pp-pdf" href="${esc(p.pdf)}" target="_blank" rel="noopener">Download catalogue (PDF)</a></p>` : '';
 
   const relBlock = related.length
-    ? `<h2>Related ${esc(blurb.label)}</h2><div class="pgrid">${related.map(card).join('')}</div>`
-    : '';
+    ? `<h2>Related ${esc(blurb.label)}</h2><div class="pgrid">${related.map(card).join('')}</div>` : '';
 
   const body = `<nav class="bc"><a href="/">Home</a> › <a href="/products.html#${catSlug}">${esc(titleCaseCat(p.c))}</a> › ${esc(p.n)}</nav>
 <div class="pp-top">
   ${imgBlock}
   <div class="pp-info">
     <h1>${esc(p.n)}</h1>
-    ${p.model ? `<span class="pp-model">Model: ${esc(p.model)}</span>` : ''}
+    ${autoModel ? `<span class="pp-model">Model: ${esc(autoModel)}</span>` : ''}
     ${priceBlock}
+    <p class="pp-avail">In stock — dispatched pan-India · GST invoice · Reply within 2 working hours</p>
     <div class="pp-cta"><a class="b wa" href="${wa}" rel="nofollow">💬 Get Quotation on WhatsApp</a><a class="b vw" href="tel:+919910646957">📞 Call 9910646957</a></div>
+    ${shareBlock}
   </div>
 </div>
 ${specTable}
+${featBlock}
 <section class="pp-about"><h2>About ${esc(blurb.label)}</h2><p>${esc(blurb.text)}</p>
-<p>This ${esc(p.n)} is supplied by <b>WTPESTORE — powered by Aqua Filtration System</b>, Faridabad, with genuine sourcing, a GST invoice and pan-India delivery. For dosage, sizing or compatibility questions, message our team on WhatsApp.</p></section>
+<p>This ${esc(p.n)} is supplied by <b>WTPESTORE — powered by Aqua Filtration System</b>, a water-treatment manufacturer, trader and supplier operating from Faridabad, Haryana since 2017. Every unit is genuine, billed with a GST invoice and dispatched pan-India with tracking. For dosage, sizing or compatibility questions, message our team on WhatsApp and we will help you pick the right model for your plant.</p>
+${pdfLink}</section>
+${faqBlock}
 ${relBlock}
 <p style="margin-top:18px"><a href="/products.html#${catSlug}">← View all ${esc(titleCaseCat(p.c))} products</a></p>`;
 
@@ -323,14 +442,15 @@ ${relBlock}
     "@context": "https://schema.org", "@type": "Product", "name": p.n,
     ...(p.img ? { "image": [p.img] } : {}),
     ...(p.make ? { "brand": { "@type": "Brand", "name": p.make } } : {}),
-    ...(p.model ? { "model": p.model } : {}),
+    ...(autoModel ? { "model": autoModel, "sku": autoModel } : {}),
+    "category": p.c,
     "description": (p.spec || blurb.text).slice(0, 300),
-    "url": SITE + "/products/" + p.slug + ".html",
+    "url": pageUrl,
     ...(p.p > 0 ? {
       "offers": {
         "@type": "Offer", "price": p.p, "priceCurrency": "INR",
         "availability": "https://schema.org/InStock",
-        "url": SITE + "/products/" + p.slug + ".html",
+        "url": pageUrl,
         "seller": { "@type": "Organization", "name": "Aqua Filtration System" }
       }
     } : {})
@@ -339,13 +459,21 @@ ${relBlock}
     "@context": "https://schema.org", "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE + "/" },
-      { "@type": "ListItem", "position": 2, "name": p.c, "item": SITE + "/products.html#" + catSlug },
-      { "@type": "ListItem", "position": 3, "name": p.n, "item": SITE + "/products/" + p.slug + ".html" }
+      { "@type": "ListItem", "position": 2, "name": titleCaseCat(p.c), "item": SITE + "/products.html#" + catSlug },
+      { "@type": "ListItem", "position": 3, "name": p.n, "item": pageUrl }
     ]
+  };
+  const ldFaq = {
+    "@context": "https://schema.org", "@type": "FAQPage",
+    "mainEntity": faqs.map(([q, a]) => ({
+      "@type": "Question", "name": q,
+      "acceptedAnswer": { "@type": "Answer", "text": a }
+    }))
   };
 
   const extraLd = `<script type="application/ld+json">${JSON.stringify(ldProduct)}</script>
 <script type="application/ld+json">${JSON.stringify(ldBreadcrumb)}</script>
+<script type="application/ld+json">${JSON.stringify(ldFaq)}</script>
 <style>
 .pp-top{display:flex;gap:20px;flex-wrap:wrap;margin:14px 0}
 .pp-img{width:260px;height:260px;object-fit:contain;background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px}
@@ -356,17 +484,35 @@ ${relBlock}
 .pp-price small{font-size:13px;color:#565959;font-weight:500}
 .pp-price .old{color:#8a94a6;text-decoration:line-through;font-size:15px;font-weight:600;margin-right:6px}
 .pp-price .off{background:#e7f7ee;color:#0e7a3d;border:1px solid #bfe6cf;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;margin-left:6px}
+.pp-avail{font-size:12.5px;color:#0e7a3d;font-weight:600;margin:2px 0 4px}
 .pp-cta{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
 .pp-cta a.b{text-decoration:none;font-weight:700;font-size:13.5px;padding:11px 16px;border-radius:9px}
 .pp-cta a.wa{background:#25d366;color:#fff}
 .pp-cta a.vw{background:var(--navy);color:#fff}
-.pp-spec{width:100%;border-collapse:collapse;margin:18px 0;font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.pp-share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed #dfe6ec}
+.pp-share .lbl{font-size:12.5px;color:#64737f;font-weight:600}
+.pp-share .sh{font-size:12.5px;font-weight:700;padding:7px 13px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:#0B2A4A;cursor:pointer;font-family:inherit}
+.pp-share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.pp-share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.pp-share .sh:hover{opacity:.9}
+.pp-spec{width:100%;border-collapse:collapse;margin:8px 0 18px;font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .pp-spec td{padding:9px 12px;border-bottom:1px solid #eef1f4;vertical-align:top}
 .pp-spec tr:nth-child(odd){background:#f8fafc}
 .pp-spec td:first-child{width:32%;font-weight:700;color:#0b2545}
+.pp-feat{margin:8px 0 18px;padding-left:20px}
+.pp-feat li{font-size:13.5px;color:#3f4f5b;margin:6px 0;line-height:1.6}
 .pp-about p{font-size:13.5px;color:#444;margin-bottom:8px}
+.pp-pdf{display:inline-block;margin-top:6px;font-size:13px;font-weight:700;color:#0B2A4A;background:#eef4f8;border:1px solid #d9e5ee;padding:9px 14px;border-radius:9px;text-decoration:none}
+.pp-faq details{background:#fff;border:1px solid var(--border);border-radius:11px;padding:12px 16px;margin-bottom:9px}
+.pp-faq summary{font-weight:700;color:#0B2A4A;cursor:pointer;font-size:14px}
+.pp-faq p{margin-top:9px;color:#51606e;font-size:13.5px;line-height:1.7}
 @media(max-width:560px){.pp-img,.pp-imgph{width:100%;height:220px}}
-</style>`;
+</style>
+<script>
+function ppCopy(b){var u=b.getAttribute('data-u');var done=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(done).catch(function(){prompt('Copy this link:',u);});}
+else{var i=document.createElement('input');i.value=u;document.body.appendChild(i);i.select();try{document.execCommand('copy');done();}catch(e){prompt('Copy this link:',u);}document.body.removeChild(i);}}
+</script>`;
 
   return shell(
     `${shortTitle(p.n, 52)}${p.model && p.n.toUpperCase().indexOf(p.model.toUpperCase()) === -1 ? ' - ' + p.model : ''} | WTPESTORE`,
