@@ -1,0 +1,201 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RO Plant Sizing — Capacity and Recovery Guide | WTPESTORE</title>
+<meta name="description" content="How to work out RO plant capacity from daily demand, what recovery to use at different feed TDS, feed pump sizing and a full worked example.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/ro-plant-capacity-kaise-nikalein.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to size an RO plant — capacity, recovery and feed flow">
+<meta property="og:description" content="How to work out RO plant capacity from daily demand, what recovery to use at different feed TDS, feed pump sizing and a full worked example.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/ro-plant-capacity-kaise-nikalein.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to size an RO plant — capacity, recovery and feed flow","description":"How to work out RO plant capacity from daily demand, what recovery to use at different feed TDS, feed pump sizing and a full worked example.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/ro-plant-capacity-kaise-nikalein.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I calculate RO plant capacity?","acceptedAnswer":{"@type":"Answer","text":"Divide your daily requirement by the running hours. For five thousand litres a day over eight hours you need about six hundred and twenty five LPH, and you would specify seven hundred and fifty LPH to allow margin."}},{"@type":"Question","name":"What recovery should an RO plant run at?","acceptedAnswer":{"@type":"Answer","text":"It depends on feed TDS. Seventy to seventy five percent below five hundred TDS, sixty to sixty five percent between one and two thousand, and fifty percent or less above four thousand. Pushing higher scales the membranes."}},{"@type":"Question","name":"How much raw water does an RO plant need?","acceptedAnswer":{"@type":"Answer","text":"Divide plant output by recovery. At sixty five percent recovery, producing seven hundred and fifty litres per hour needs about eleven hundred and fifty litres of feed. Check your borewell can actually supply that."}},{"@type":"Question","name":"Should pre-treatment be sized on plant output or feed flow?","acceptedAnswer":{"@type":"Answer","text":"Always on feed flow, which is higher than plant output. Sizing the cartridge filter, softener and pumps on plant output is the most common design error and causes the pre-treatment to choke immediately."}},{"@type":"Question","name":"Can I size the plant for twenty four hour running?","acceptedAnswer":{"@type":"Answer","text":"No, because the plant needs time for CIP cleaning, cartridge changes and breakdowns. Size on sixteen to eighteen hours maximum so there is margin for maintenance and unexpected stops."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"RO plant sizing","item":"https://www.wtpestore.co.in/blog/ro-plant-capacity-kaise-nikalein.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › RO plant sizing</nav>
+<h1>How to size an RO plant — capacity, recovery and feed flow</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> Start from your <b>daily requirement</b>, decide how many hours a day the plant will run, and that gives the LPH rating. Then work backwards through <b>recovery</b> to find the feed flow, which sizes the pump, pre-treatment and pipework.</p>
+<div class="tip"><b>Plant LPH = daily requirement ÷ running hours</b><br><b>Feed LPH = plant LPH ÷ recovery</b></div>
+
+<h2>Step 1: Daily requirement</h2>
+<p>Be honest about this, and include peak days rather than the average:</p>
+<table>
+<thead><tr><th>Application</th><th>Typical demand</th></tr></thead>
+<tbody>
+<tr><td>Small office drinking water</td><td>200 – 500 L/day</td></tr>
+<tr><td>Restaurant</td><td>500 – 2,000 L/day</td></tr>
+<tr><td>Hotel, 30 rooms</td><td>3,000 – 6,000 L/day</td></tr>
+<tr><td>Packaged water unit</td><td>As per production plan</td></tr>
+<tr><td>Boiler feed</td><td>Steam output plus blowdown</td></tr>
+<tr><td>Process water</td><td>Per process requirement</td></tr>
+</tbody></table>
+
+<h2>Step 2: Running hours</h2>
+<p>Fewer hours means a bigger plant. There is a genuine trade-off:</p>
+<table>
+<thead><tr><th>Running hours</th><th>For 5,000 L/day</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><td>4 hours</td><td>1,250 LPH</td><td>Larger plant, higher cost</td></tr>
+<tr><td>8 hours</td><td>625 LPH</td><td>Usual choice</td></tr>
+<tr><td>16 hours</td><td>313 LPH</td><td>Smaller plant, needs storage</td></tr>
+<tr><td>24 hours</td><td>208 LPH</td><td>Smallest plant, no downtime allowance</td></tr>
+</tbody></table>
+<div class="warn"><b>Do not size on 24 hours.</b> The plant needs time for CIP, cartridge changes and breakdowns. Size on 16 to 18 hours maximum, so there is margin.</div>
+
+<h2>Step 3: Choose the recovery</h2>
+<p>Recovery is what proportion of feed water becomes permeate. It is limited by feed TDS, because the reject stream concentrates as recovery rises.</p>
+<table>
+<thead><tr><th>Feed TDS</th><th>Safe recovery</th><th>Reject per 1,000 L permeate</th></tr></thead>
+<tbody>
+<tr><td>Below 500</td><td>70 – 75%</td><td>~350 L</td></tr>
+<tr><td>500 – 1,000</td><td>65 – 70%</td><td>~470 L</td></tr>
+<tr><td>1,000 – 2,000</td><td>60 – 65%</td><td>~600 L</td></tr>
+<tr><td>2,000 – 4,000</td><td>50 – 60%</td><td>~800 L</td></tr>
+<tr><td>Above 4,000</td><td>40 – 50%</td><td>~1,200 L</td></tr>
+</tbody></table>
+<p>Pushing recovery higher scales membranes — see our <a href="/blog/membrane-life-kaise-badhayein.html">membrane life guide</a>.</p>
+
+<h2>Worked example</h2>
+<p><b>Requirement:</b> hotel needing 5,000 L/day, feed TDS 1,200 ppm, running 8 hours.</p>
+<ol>
+<li><b>Plant capacity:</b> 5,000 ÷ 8 = <b>625 LPH</b>, so specify 750 LPH with margin</li>
+<li><b>Recovery</b> at 1,200 TDS: <b>65 percent</b></li>
+<li><b>Feed flow:</b> 750 ÷ 0.65 = <b>1,154 LPH</b></li>
+<li><b>Reject flow:</b> 1,154 − 750 = <b>404 LPH</b></li>
+<li><b>Daily feed water needed:</b> 1,154 × 8 = <b>9,232 litres</b></li>
+</ol>
+<div class="tip"><b>That last figure matters.</b> To make 5,000 litres you need over 9,000 litres of raw water. If your borewell cannot supply that, the plant will not run regardless of how it is specified.</div>
+
+<h2>Step 4: Size the pre-treatment</h2>
+<p>Everything upstream is sized on <b>feed flow</b> (1,154 LPH), not plant output:</p>
+<ul>
+<li><b>Feed pump</b> — 1,154 LPH at the required pressure</li>
+<li><b>Multigrade or sand filter</b> — if turbidity is present</li>
+<li><b>Softener</b> — if hardness is high, sized on feed flow. See our <a href="/blog/softener-sizing-hardness-resin.html">softener sizing guide</a></li>
+<li><b>Carbon filter</b> — if chlorine is present</li>
+<li><b>Cartridge filter 5 micron</b> — sized for 1,154 LPH. See our <a href="/blog/cartridge-filter-kitne-micron-lagayein.html">micron guide</a></li>
+<li><b>Dosing systems</b> — antiscalant and SMBS, dosed on feed flow</li>
+</ul>
+<p>This is the most common sizing error we see — pre-treatment sized on plant output rather than feed flow, so it chokes as soon as the plant runs.</p>
+
+<h2>Step 5: Membranes</h2>
+<p>For 750 LPH at 1,200 TDS you would typically use <b>2 to 3 × 4040 elements</b>. See our <a href="/blog/ro-membrane-4040-vs-8040.html">membrane sizing guide</a>.</p>
+
+<h2>Step 6: Storage</h2>
+<p>Storage should cover the gap between production and consumption. As a guide:</p>
+<ul>
+<li><b>Raw water tank:</b> enough for the daily feed requirement, so the plant is not dependent on borewell timing</li>
+<li><b>Treated water tank:</b> at least half a day's requirement, so consumption can continue during CIP or maintenance</li>
+</ul>
+
+<h2>Instruments to include</h2>
+<p>These are not optional extras — without them you cannot tell what the plant is doing:</p>
+<ul>
+<li><a href="/products.html#aster-rotameters">Rotameters</a> on permeate and reject — see our <a href="/blog/ro-plant-mein-flow-meter-kahan-lagayein.html">placement guide</a></li>
+<li><a href="/products.html#pressure-gauges">Pressure gauges</a> before and after the cartridge and membrane</li>
+<li><a href="/products.html#aster-instruments">TDS meters</a> on feed and permeate</li>
+<li><a href="/products/romatic-controller-with-conductivity-sensor.html">ROMATIC controller</a> for automatic operation and TDS diversion</li>
+</ul>
+
+<h2>What to give us for a quotation</h2>
+<ol>
+<li>Daily requirement in litres</li>
+<li>Available running hours</li>
+<li>Feed water TDS and hardness</li>
+<li>Feed water source and turbidity</li>
+<li>Chlorine present or not</li>
+<li>Available raw water supply rate</li>
+<li>End use — drinking, boiler, process or packaged</li>
+</ol>
+<p>Our <a href="/plant-calculators.html">plant calculators</a> will work through the sizing for you.</p>
+<div class="cta">
+<h3>Get your RO plant sized</h3>
+<p>Send your daily requirement, feed water analysis and running hours, and we will size the complete plant.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20an%20RO%20plant.%20Daily%20requirement%3A%20___%20litres%2C%20Feed%20TDS%3A%20___%20ppm%2C%20Hardness%3A%20___%20ppm%2C%20Hours%3A%20___" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>How do I calculate RO plant capacity?</summary><p>Divide your daily requirement by the running hours. For five thousand litres a day over eight hours you need about six hundred and twenty five LPH, and you would specify seven hundred and fifty LPH to allow margin.</p></details>
+<details><summary>What recovery should an RO plant run at?</summary><p>It depends on feed TDS. Seventy to seventy five percent below five hundred TDS, sixty to sixty five percent between one and two thousand, and fifty percent or less above four thousand. Pushing higher scales the membranes.</p></details>
+<details><summary>How much raw water does an RO plant need?</summary><p>Divide plant output by recovery. At sixty five percent recovery, producing seven hundred and fifty litres per hour needs about eleven hundred and fifty litres of feed. Check your borewell can actually supply that.</p></details>
+<details><summary>Should pre-treatment be sized on plant output or feed flow?</summary><p>Always on feed flow, which is higher than plant output. Sizing the cartridge filter, softener and pumps on plant output is the most common design error and causes the pre-treatment to choke immediately.</p></details>
+<details><summary>Can I size the plant for twenty four hour running?</summary><p>No, because the plant needs time for CIP cleaning, cartridge changes and breakdowns. Size on sixteen to eighteen hours maximum so there is margin for maintenance and unexpected stops.</p></details>
+<div class="next"><b>Read next:</b> See our <a href="/blog/ro-plant-pretreatment-design.html">pre-treatment design guide</a> and the <a href="/blog/ro-recovery-reject-water.html">recovery and reject guide</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=How%20to%20size%20an%20RO%20plant%20%E2%80%94%20capacity%2C%20recovery%20and%20feed%20flow%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-capacity-kaise-nikalein.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-capacity-kaise-nikalein.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/ro-plant-capacity-kaise-nikalein.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

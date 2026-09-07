@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RO Plant Output Dropped — Troubleshooting Guide | WTPESTORE</title>
+<meta name="description" content="A systematic method for diagnosing reduced RO output: reading flow, pressure and TDS together, checking upstream first, and what each pattern means.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/ro-plant-output-kam-ho-gaya.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RO plant output has dropped — finding the cause">
+<meta property="og:description" content="A systematic method for diagnosing reduced RO output: reading flow, pressure and TDS together, checking upstream first, and what each pattern means.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/ro-plant-output-kam-ho-gaya.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RO plant output has dropped — finding the cause","description":"A systematic method for diagnosing reduced RO output: reading flow, pressure and TDS together, checking upstream first, and what each pattern means.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/ro-plant-output-kam-ho-gaya.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"My RO output has dropped — where should I start?","acceptedAnswer":{"@type":"Answer","text":"Not at the membrane. Check water temperature first, then the feed water supply, then the cartridge filter pressure drop. Most output problems originate upstream and are inexpensive to fix."}},{"@type":"Question","name":"How do I tell whether the problem is the membrane or upstream?","acceptedAnswer":{"@type":"Answer","text":"Read flow and pressure together. Flow down with feed pressure up means the membrane is blocked. Flow down with pressure also down means the problem is before the membrane, such as a choked filter or weak pump."}},{"@type":"Question","name":"Why does output drop in winter?","acceptedAnswer":{"@type":"Answer","text":"Membranes produce less water at lower temperature, and flow can fall twenty to thirty percent in cold weather with nothing actually wrong. Always compare against a reading taken at a similar temperature."}},{"@type":"Question","name":"Should I close the reject valve to restore output?","acceptedAnswer":{"@type":"Answer","text":"No. That raises recovery and appears to restore flow, but it concentrates the reject stream and accelerates the scaling that probably caused the problem. The plant then declines faster."}},{"@type":"Question","name":"What is the most common cause of reduced output?","acceptedAnswer":{"@type":"Answer","text":"A choked cartridge filter. Fitting pressure gauges before and after it costs very little and shows you immediately when it needs changing, which removes most guesswork."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"RO output dropped","item":"https://www.wtpestore.co.in/blog/ro-plant-output-kam-ho-gaya.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › RO output dropped</nav>
+<h1>RO plant output has dropped — finding the cause</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> Do not start at the membrane. Most output problems originate <b>upstream</b> — a choked cartridge filter, a weak pump, or low feed pressure. Check pressure and flow at each stage in order, and the cause usually becomes obvious within fifteen minutes.</p>
+<p>The three readings that matter are <b>flow, pressure and TDS</b>, and it is the combination that tells you the answer.</p>
+
+<h2>Read the pattern first</h2>
+<table>
+<thead><tr><th>Permeate flow</th><th>Feed pressure</th><th>Permeate TDS</th><th>Cause</th></tr></thead>
+<tbody>
+<tr><td>Down</td><td><b>Up</b></td><td>Normal</td><td>Membrane fouling or scaling</td></tr>
+<tr><td>Down</td><td><b>Down</b></td><td>Normal</td><td>Upstream — pre-filter or pump</td></tr>
+<tr><td>Down</td><td>Normal</td><td>Normal</td><td>Cold water, check temperature</td></tr>
+<tr><td>Normal</td><td>Normal</td><td>Up</td><td>Membrane degraded</td></tr>
+<tr><td><b>Up</b></td><td>Down</td><td><b>Up</b></td><td>Chlorine damage or seal failure</td></tr>
+</tbody></table>
+<div class="tip"><b>The single most useful distinction:</b> flow down with pressure <b>up</b> means the membrane is blocked. Flow down with pressure <b>down</b> means the problem is before the membrane. That one observation eliminates half the possibilities.</div>
+
+<h2>Check in this order</h2>
+<h3>1. Water temperature</h3>
+<p>Start here, because it is free and it explains a great many "problems". Membranes produce noticeably less water in cold weather — flow can fall 20 to 30 percent in winter with nothing wrong at all.</p>
+<p>Compare against a reading taken at a similar temperature before concluding anything is faulty.</p>
+
+<h3>2. Feed water supply</h3>
+<ul>
+<li>Is the raw water tank actually full?</li>
+<li>Has the borewell yield dropped?</li>
+<li>Is the feed pump delivering its rated flow?</li>
+</ul>
+<p>If the plant cannot get enough feed water, nothing downstream will help.</p>
+
+<h3>3. Cartridge filter</h3>
+<p>The most common single cause. Check the pressure gauges before and after:</p>
+<ul>
+<li>Difference above <b>1 kg/cm²</b> means it is choked — change it</li>
+<li>No gauges fitted? Fit them, they cost about ₹630 the pair</li>
+</ul>
+<p>See our <a href="/blog/cartridge-kitne-din-mein-badlein.html">cartridge change guide</a>.</p>
+
+<h3>4. Media filters</h3>
+<p>If there is a sand, carbon or softener vessel upstream, check pressure drop across each. A choked media bed needs backwashing — see our <a href="/blog/mpv-backwash-troubleshooting.html">backwash guide</a>.</p>
+
+<h3>5. High pressure pump</h3>
+<ul>
+<li>Is it reaching its rated pressure?</li>
+<li>Check the current draw against the nameplate</li>
+<li>Listen for cavitation — a rattling sound means it is starved of water</li>
+<li>Check for internal wear if the pump is old</li>
+</ul>
+
+<h3>6. The membrane itself</h3>
+<p>Only after all of the above. If pressure is up and flow is down with clean pre-treatment, the membrane is fouled or scaled. See our <a href="/blog/membrane-cip-cleaning.html">CIP cleaning guide</a>.</p>
+
+<h2>If it is the membrane — fouled or finished?</h2>
+<p>Carry out a proper CIP cleaning:</p>
+<ul>
+<li><b>Performance restored</b> → it was fouling. Now find out why it fouled</li>
+<li><b>Little improvement</b> → the membrane has reached end of life</li>
+</ul>
+<p>See our <a href="/blog/ro-membrane-kab-badlein.html">membrane replacement guide</a>.</p>
+
+<h2>Do not just close the reject valve</h2>
+<div class="warn"><b>This is the most damaging response to reduced output.</b> Closing the reject valve raises recovery, which appears to restore permeate flow — but it concentrates the reject stream further and accelerates the scaling that probably caused the problem. The plant then declines faster.</div>
+<p>See our <a href="/blog/ro-recovery-reject-water.html">recovery guide</a>.</p>
+
+<h2>Instruments that make this easy</h2>
+<p>Diagnosis takes minutes with instruments and hours without:</p>
+<table>
+<thead><tr><th>Instrument</th><th>Where</th><th>Approximate cost</th></tr></thead>
+<tbody>
+<tr><td><a href="/products.html#pressure-gauges">Pressure gauge</a></td><td>Before and after cartridge</td><td>₹630 pair</td></tr>
+<tr><td><a href="/products.html#pressure-gauges">Pressure gauge</a></td><td>Before and after membrane</td><td>₹630 pair</td></tr>
+<tr><td><a href="/products.html#aster-rotameters">Rotameter</a></td><td>Permeate and reject</td><td>₹1,100 pair</td></tr>
+<tr><td><a href="/products.html#aster-instruments">TDS meter</a></td><td>Feed and permeate</td><td>₹5,500</td></tr>
+</tbody></table>
+<p>Placement is covered in our <a href="/blog/ro-plant-mein-flow-meter-kahan-lagayein.html">flow meter guide</a>.</p>
+
+<h2>Prevention</h2>
+<ol>
+<li><b>Record six readings weekly</b> — flow (permeate and reject), pressure (feed and permeate), TDS (feed and permeate)</li>
+<li><b>Change cartridges on pressure drop</b>, not on a guess</li>
+<li><b>Check dosing tank levels weekly</b> — and fit level switches</li>
+<li><b>Clean before performance drops 15 percent</b>, not after it halves</li>
+<li><b>Keep the baseline record</b> from when the membranes were new</li>
+</ol>
+<p>A plant with a weekly record almost never has an unexplained failure — the decline is visible weeks in advance.</p>
+
+<h2>The most common causes, ranked</h2>
+<ol>
+<li>Choked cartridge filter</li>
+<li>Cold weather (not actually a fault)</li>
+<li>Antiscalant dosing stopped unnoticed</li>
+<li>Feed water supply inadequate</li>
+<li>Membrane fouling from poor pre-treatment</li>
+<li>Pump wear</li>
+<li>Membrane at end of life</li>
+</ol>
+<p>Note that the first four are all upstream of the membrane, and all are inexpensive to fix if caught early.</p>
+<div class="cta">
+<h3>RO plant not performing?</h3>
+<p>Send your flow, pressure and TDS readings and we will help you work through the diagnosis.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20my%20RO%20output%20has%20dropped.%20Plant%3A%20___%20LPH%2C%20Current%20output%3A%20___%20LPH%2C%20Feed%20pressure%3A%20___%2C%20Permeate%20TDS%3A%20___" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>My RO output has dropped — where should I start?</summary><p>Not at the membrane. Check water temperature first, then the feed water supply, then the cartridge filter pressure drop. Most output problems originate upstream and are inexpensive to fix.</p></details>
+<details><summary>How do I tell whether the problem is the membrane or upstream?</summary><p>Read flow and pressure together. Flow down with feed pressure up means the membrane is blocked. Flow down with pressure also down means the problem is before the membrane, such as a choked filter or weak pump.</p></details>
+<details><summary>Why does output drop in winter?</summary><p>Membranes produce less water at lower temperature, and flow can fall twenty to thirty percent in cold weather with nothing actually wrong. Always compare against a reading taken at a similar temperature.</p></details>
+<details><summary>Should I close the reject valve to restore output?</summary><p>No. That raises recovery and appears to restore flow, but it concentrates the reject stream and accelerates the scaling that probably caused the problem. The plant then declines faster.</p></details>
+<details><summary>What is the most common cause of reduced output?</summary><p>A choked cartridge filter. Fitting pressure gauges before and after it costs very little and shows you immediately when it needs changing, which removes most guesswork.</p></details>
+<div class="next"><b>Read next:</b> See our <a href="/blog/ro-membrane-kab-badlein.html">membrane replacement guide</a> and the <a href="/blog/membrane-cip-cleaning.html">CIP cleaning guide</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=RO%20plant%20output%20has%20dropped%20%E2%80%94%20finding%20the%20cause%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-output-kam-ho-gaya.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-output-kam-ho-gaya.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/ro-plant-output-kam-ho-gaya.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

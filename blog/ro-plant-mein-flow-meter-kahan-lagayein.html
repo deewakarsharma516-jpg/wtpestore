@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Where to Fit Flow Meters on an RO Plant | WTPESTORE</title>
+<meta name="description" content="Which lines need flow meters on an RO plant, how to calculate recovery, model selection by plant capacity, and reading flow with pressure and TDS together.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/ro-plant-mein-flow-meter-kahan-lagayein.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where to fit flow meters on an RO plant">
+<meta property="og:description" content="Which lines need flow meters on an RO plant, how to calculate recovery, model selection by plant capacity, and reading flow with pressure and TDS together.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/ro-plant-mein-flow-meter-kahan-lagayein.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Where to fit flow meters on an RO plant","description":"Which lines need flow meters on an RO plant, how to calculate recovery, model selection by plant capacity, and reading flow with pressure and TDS together.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/ro-plant-mein-flow-meter-kahan-lagayein.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many flow meters does an RO plant need?","acceptedAnswer":{"@type":"Answer","text":"At least two, one on the permeate line and one on the reject line. Together they give you recovery, which is the best single indicator of plant health. On plants above two thousand LPH a third meter on the feed line is also worthwhile."}},{"@type":"Question","name":"What recovery should an RO plant run at?","acceptedAnswer":{"@type":"Answer","text":"It depends on feed TDS. Below five hundred TDS, seventy to seventy five percent is achievable. Between one and two thousand TDS, sixty to sixty five percent, and above two thousand keep it between fifty and sixty percent. Pushing recovery higher shortens membrane life."}},{"@type":"Question","name":"Is a permeate meter alone enough?","acceptedAnswer":{"@type":"Answer","text":"No. With only the permeate reading you cannot tell whether a drop in flow is caused by the membrane, the pre-filter or the pump. With a reject meter as well you can calculate recovery and identify the problem immediately."}},{"@type":"Question","name":"Is it acceptable to throttle reject to save water?","acceptedAnswer":{"@type":"Answer","text":"No. Reject flow is what keeps the membrane clean. Reducing it too far allows scale to form and the membrane fails early. A replacement membrane costs many times more than the water saved."}},{"@type":"Question","name":"Where exactly should the permeate meter go?","acceptedAnswer":{"@type":"Answer","text":"After the membrane and before the storage tank, so it shows the true plant output. The reject meter goes before the reject valve. Fit both close together so the operator can read them at the same time."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"Flow meters on an RO plant","item":"https://www.wtpestore.co.in/blog/ro-plant-mein-flow-meter-kahan-lagayein.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › Flow meters on an RO plant</nav>
+<h1>Where to fit flow meters on an RO plant</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> Every RO plant needs <b>at least two</b> flow meters — one on <b>permeate</b> and one on <b>reject</b>. Together they give you recovery, which is the single best indicator of plant health. On larger plants a third meter on the <b>feed</b> line is worthwhile.</p>
+<p>Many plants have only one meter fitted, and that is the mistake — with one meter you cannot diagnose anything.</p>
+
+<h2>Three locations, three purposes</h2>
+<h3>1. Permeate line — the essential one</h3>
+<p>This tells you how much water the plant is producing. If it falls, the membrane is fouling, the pressure has dropped, or the pre-filter is choked.</p>
+<p><b>What to watch:</b> it should read close to the rated capacity of the plant. A drop of more than 20 percent needs investigation.</p>
+
+<h3>2. Reject line — equally essential</h3>
+<p>This one protects the membrane. If reject flow falls too low, scale begins to form on the membrane and it fails early.</p>
+<p><b>What to watch:</b> reject flow must never go below the manufacturer's stated minimum, however tempting it is to increase recovery.</p>
+
+<h3>3. Feed line — on larger plants</h3>
+<p>Feed equals permeate plus reject. If those three do not add up, there is a leak somewhere or one meter is wrong. Worth fitting on plants above 2,000 LPH.</p>
+
+<h2>Calculating recovery — and why it matters</h2>
+<div class="tip"><b>Recovery (%) = (Permeate ÷ Feed) × 100</b><br>where Feed = Permeate + Reject</div>
+<p><b>Example:</b> permeate 500 LPH, reject 270 LPH → feed = 770 LPH → recovery = (500 ÷ 770) × 100 = <b>65 percent</b></p>
+<table>
+<thead><tr><th>Feed TDS</th><th>Suitable recovery</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Below 500</td><td>70 – 75%</td><td>Good water, higher recovery is possible</td></tr>
+<tr><td>500 – 1,000</td><td>65 – 70%</td><td>Typical situation</td></tr>
+<tr><td>1,000 – 2,000</td><td>60 – 65%</td><td>Antiscalant essential</td></tr>
+<tr><td>Above 2,000</td><td>50 – 60%</td><td>Keep recovery low to protect the membrane</td></tr>
+</tbody></table>
+<div class="warn"><b>The most common mistake:</b> throttling the reject valve to raise recovery and save water. A few months later the membrane is scaled and has to be replaced — and a new membrane costs many times more than the water that was saved.</div>
+
+<h2>Model selection by plant capacity</h2>
+<table>
+<thead><tr><th>Plant capacity</th><th>Permeate meter</th><th>Reject meter</th></tr></thead>
+<tbody>
+<tr><td><b>250 LPH</b></td><td><a href="/products/rotameter-f500-flow-range-50-to-500-lph-i-o-15nb-m.html">F500</a></td><td><a href="/products/rotameter-f200-flow-range-20-to-200-lph-i-o-15nb-m.html">F200</a></td></tr>
+<tr><td><b>500 LPH</b></td><td><a href="/products/rotameter-f1200es-flow-range-200-to-1-200-lph-i-o-15nb-m.html">F1200ES</a></td><td><a href="/products/rotameter-f500-flow-range-50-to-500-lph-i-o-15nb-m.html">F500</a></td></tr>
+<tr><td><b>1,000 LPH</b></td><td><a href="/products/rotameter-f1600es-flow-range-300-to-1600-lph-i-o-15nb-m.html">F1600ES</a></td><td><a href="/products/rotameter-f1200es-flow-range-200-to-1-200-lph-i-o-15nb-m.html">F1200ES</a></td></tr>
+<tr><td><b>2,000 LPH</b></td><td><a href="/products/rotameter-f3000-flow-range-300-to-3-000-lph-i-o-20nb-m.html">F3000</a></td><td><a href="/products/rotameter-f2400-flow-range-200-to-2-400-lph-i-o-20nb-m.html">F2400</a></td></tr>
+<tr><td><b>5,000 LPH</b></td><td><a href="/products/rotameter-f7500-flow-range-500-to-7-500-lph-i-o-40nb-m.html">F7500</a></td><td><a href="/products/rotameter-f5000l-flow-range-500-to-5-000-lph-i-o-25nb-m.html">F5000L</a></td></tr>
+<tr><td><b>10,000 LPH</b></td><td><a href="/products/rotameter-f15000-flow-range-3-000-to-15-000-lph-i-o-40nb-m.html">F15000</a></td><td><a href="/products/rotameter-f10000-flow-range-2-000-to-10-000-lph-i-o-40nb-m.html">F10000</a></td></tr>
+</tbody></table>
+<p>These are indicative — your actual reject flow depends on the recovery you run. Send us your plant capacity and feed TDS and we will confirm.</p>
+
+<h2>Exact positions in the layout</h2>
+<ol>
+<li><b>Raw water inlet</b> — optional, fit one if you need a record of borewell or supply usage</li>
+<li><b>After the pre-filter, before the HP pump</b> — the feed meter position. Fitting here also shows when the pre-filter is choking</li>
+<li><b>After the membrane, on the permeate line</b> — the essential meter, placed before the storage tank</li>
+<li><b>On the reject line, before the reject valve</b> — the second essential meter</li>
+</ol>
+<div class="tip"><b>A practical tip:</b> fit the permeate and reject meters <b>next to each other</b> so the operator can see both at a glance and work out recovery immediately. Meters fitted in separate corners never get looked at.</div>
+
+<h2>What to fit alongside</h2>
+<p>Flow alone does not give the full picture. With these three together you can identify almost any plant problem:</p>
+<ul>
+<li><a href="/products.html#pressure-gauges">Pressure gauges</a> — before the pump and after the membrane. Flow down and pressure up means membrane fouling</li>
+<li><a href="/products.html#aster-instruments">TDS or conductivity meter</a> — permeate quality. Flow normal but TDS rising means the membrane is at end of life</li>
+<li><a href="/products/low-pressure-switch-0-5-to-5-0-kg-cm2.html">Low pressure switch</a> — protects the pump from dry running</li>
+</ul>
+
+<h2>Reading the three together</h2>
+<table>
+<thead><tr><th>Flow</th><th>Pressure</th><th>TDS</th><th>Diagnosis</th></tr></thead>
+<tbody>
+<tr><td>Down</td><td>Up</td><td>Normal</td><td>Scale on membrane — CIP cleaning needed</td></tr>
+<tr><td>Down</td><td>Down</td><td>Normal</td><td>Pre-filter choked or pump weakening</td></tr>
+<tr><td>Normal</td><td>Normal</td><td>Up</td><td>Membrane at end of life — replace</td></tr>
+<tr><td>Up</td><td>Down</td><td>Up</td><td>Membrane or O-ring damage — water bypassing</td></tr>
+</tbody></table>
+<p>This is exactly why two meters are needed. With only one, this table cannot be used at all.</p>
+
+<h2>What it costs</h2>
+<p>For a 500 LPH plant, two rotameters (F1200ES and F500) come to about <b>₹1,100</b> plus GST. Against the cost of the plant that is very little, and it saves far more by catching problems <b>in time</b> — before a membrane is lost.</p>
+<div class="cta">
+<h3>Get the right set for your RO plant</h3>
+<p>Send us your plant capacity and feed TDS — we will recommend models for both permeate and reject lines with a quotation.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20flow%20meters%20for%20an%20RO%20plant.%20Capacity%3A%20___%20LPH%2C%20Feed%20TDS%3A%20___%20ppm" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>How many flow meters does an RO plant need?</summary><p>At least two, one on the permeate line and one on the reject line. Together they give you recovery, which is the best single indicator of plant health. On plants above two thousand LPH a third meter on the feed line is also worthwhile.</p></details>
+<details><summary>What recovery should an RO plant run at?</summary><p>It depends on feed TDS. Below five hundred TDS, seventy to seventy five percent is achievable. Between one and two thousand TDS, sixty to sixty five percent, and above two thousand keep it between fifty and sixty percent. Pushing recovery higher shortens membrane life.</p></details>
+<details><summary>Is a permeate meter alone enough?</summary><p>No. With only the permeate reading you cannot tell whether a drop in flow is caused by the membrane, the pre-filter or the pump. With a reject meter as well you can calculate recovery and identify the problem immediately.</p></details>
+<details><summary>Is it acceptable to throttle reject to save water?</summary><p>No. Reject flow is what keeps the membrane clean. Reducing it too far allows scale to form and the membrane fails early. A replacement membrane costs many times more than the water saved.</p></details>
+<details><summary>Where exactly should the permeate meter go?</summary><p>After the membrane and before the storage tank, so it shows the true plant output. The reject meter goes before the reject valve. Fit both close together so the operator can read them at the same time.</p></details>
+<div class="next"><b>Read next:</b> See the <a href="/blog/rotameter-kaise-chunein-flow-range-guide.html">rotameter selection guide</a> for models, or <a href="/blog/flow-meter-reading-galat-kyun.html">six reasons a flow meter reads wrong</a> if readings look off.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=Where%20to%20fit%20flow%20meters%20on%20an%20RO%20plant%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-mein-flow-meter-kahan-lagayein.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-mein-flow-meter-kahan-lagayein.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/ro-plant-mein-flow-meter-kahan-lagayein.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

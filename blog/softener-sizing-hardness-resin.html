@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Water Softener Sizing — Resin Calculation Guide | WTPESTORE</title>
+<meta name="description" content="How to size a water softener: resin volume from hardness and consumption, vessel selection, service flow limits and a worked example.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/softener-sizing-hardness-resin.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Water softener sizing — calculating resin from hardness">
+<meta property="og:description" content="How to size a water softener: resin volume from hardness and consumption, vessel selection, service flow limits and a worked example.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/softener-sizing-hardness-resin.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Water softener sizing — calculating resin from hardness","description":"How to size a water softener: resin volume from hardness and consumption, vessel selection, service flow limits and a worked example.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/softener-sizing-hardness-resin.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I calculate the resin volume for a softener?","acceptedAnswer":{"@type":"Answer","text":"Multiply the hardness in ppm by the litres used per day and by the days between regenerations, then divide by fifty five thousand. For example three hundred and fifty ppm at five thousand litres a day over ten days needs three hundred and eighteen litres of resin."}},{"@type":"Question","name":"How do I find out my water hardness?","acceptedAnswer":{"@type":"Answer","text":"Use a hardness test kit, which costs from about six hundred and fifty rupees. Guessing is the most common sizing mistake, because the whole calculation depends on this figure."}},{"@type":"Question","name":"What regeneration interval should I choose?","acceptedAnswer":{"@type":"Answer","text":"Most installations settle on seven to fifteen days. A shorter interval means a smaller vessel but more effort and more salt over time, while a very long interval means a large expensive vessel with the resin sitting exhausted."}},{"@type":"Question","name":"Should I size the softener on flow or on resin volume?","acceptedAnswer":{"@type":"Answer","text":"Check both and take whichever gives the larger vessel. If peak flow is high but hardness low, flow decides it. If hardness is high but flow low, the resin volume decides it."}},{"@type":"Question","name":"How much salt will a softener use?","acceptedAnswer":{"@type":"Answer","text":"Roughly one hundred to one hundred and fifty grams per litre of resin per regeneration. It is worth calculating the monthly figure before ordering, because salt is a recurring cost."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"Softener sizing","item":"https://www.wtpestore.co.in/blog/softener-sizing-hardness-resin.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › Softener sizing</nav>
+<h1>Water softener sizing — calculating resin from hardness</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> Softener sizing comes down to one calculation. You need the <b>hardness of your water</b> in ppm, your <b>daily consumption</b> in litres, and how many <b>days between regenerations</b> you want. From those three the resin volume follows, and the resin volume decides the vessel.</p>
+<div class="tip"><b>Resin (litres) = (hardness ppm × litres per day × days between regeneration) ÷ 55,000</b></div>
+
+<h2>Step 1: Measure the hardness</h2>
+<p>This is the figure everything depends on, so do not guess it. Use a <a href="/products/hardness-test-kit-4-bottle-100-ml.html">hardness test kit (4 bottle, 100 ml)</a> at ₹1,050, or the <a href="/products/hardness-test-kit-4-bottle-30-ml.html">30 ml version</a> at ₹656.</p>
+<table>
+<thead><tr><th>Hardness (ppm as CaCO₃)</th><th>Classification</th></tr></thead>
+<tbody>
+<tr><td>Below 75</td><td>Soft</td></tr>
+<tr><td>75 – 150</td><td>Moderately hard</td></tr>
+<tr><td>150 – 300</td><td>Hard</td></tr>
+<tr><td>Above 300</td><td>Very hard</td></tr>
+</tbody></table>
+<p>Most Indian borewell water falls between 200 and 600 ppm.</p>
+
+<h2>Step 2: Establish daily consumption</h2>
+<p>Rough guides where you do not have a meter:</p>
+<table>
+<thead><tr><th>Application</th><th>Typical consumption</th></tr></thead>
+<tbody>
+<tr><td>Household, 4 people</td><td>600 – 1,000 L/day</td></tr>
+<tr><td>Small hotel, 20 rooms</td><td>4,000 – 8,000 L/day</td></tr>
+<tr><td>Laundry</td><td>Depends on machine load</td></tr>
+<tr><td>Boiler feed</td><td>Steam output plus blowdown</td></tr>
+<tr><td>Cooling tower make-up</td><td>Evaporation plus blowdown</td></tr>
+</tbody></table>
+<p>A <a href="/products.html#aster-rotameters">flow meter</a> on the line gives you the real figure, which is always better than an estimate.</p>
+
+<h2>Step 3: Decide the regeneration interval</h2>
+<p>How often are you willing to regenerate?</p>
+<ul>
+<li><b>Every 2 to 3 days:</b> smaller vessel, less initial cost, more effort and more salt over time</li>
+<li><b>Every 7 to 15 days:</b> the usual compromise</li>
+<li><b>Every 20 to 30 days:</b> large vessel, high initial cost, but the resin sits exhausted for long periods</li>
+</ul>
+<p>Most installations settle on <b>7 to 15 days</b>.</p>
+
+<h2>Worked example</h2>
+<p>A small hotel: hardness 350 ppm, consumption 5,000 litres a day, regenerating every 10 days.</p>
+<p>Resin = (350 × 5,000 × 10) ÷ 55,000 = <b>318 litres</b></p>
+<p>Looking at the vessel chart, 318 litres needs a <b>3072</b> vessel (500 L capacity) — a 2469 holds only 307 L, which is just short.</p>
+<div class="tip"><b>Alternatively</b>, regenerate every 8 days instead of 10: resin = 255 litres, which fits comfortably in a <b>2469</b> vessel and costs considerably less. This is the kind of trade-off worth working through before ordering.</div>
+
+<h2>Vessel selection chart</h2>
+<table>
+<thead><tr><th>Resin required</th><th>Vessel</th><th>Valve size</th></tr></thead>
+<tbody>
+<tr><td>Up to 22 L</td><td>0844</td><td>20NB</td></tr>
+<tr><td>Up to 42 L</td><td>1054</td><td>20 or 25NB</td></tr>
+<tr><td>Up to 70 L</td><td>1354</td><td>25NB</td></tr>
+<tr><td>Up to 98 L</td><td>1465</td><td>25NB</td></tr>
+<tr><td>Up to 128 L</td><td>1665</td><td>40NB</td></tr>
+<tr><td>Up to 163 L</td><td>1865</td><td>40NB</td></tr>
+<tr><td>Up to 204 L</td><td>2160</td><td>40NB</td></tr>
+<tr><td>Up to 307 L</td><td>2469</td><td>50NB</td></tr>
+<tr><td>Up to 500 L</td><td>3072</td><td>65NB</td></tr>
+</tbody></table>
+<p>Full details are in our <a href="/blog/frp-vessel-size-chart.html">vessel size chart</a>.</p>
+
+<h2>Also check the flow</h2>
+<p>Resin volume is one constraint; <b>service flow</b> is the other. Water passing too quickly through the bed is not fully softened.</p>
+<p>The usual limit is around <b>20 to 25 litres per minute per square foot</b> of bed area. So:</p>
+<ul>
+<li>If your <b>peak flow</b> is high but hardness is low, size on <b>flow</b></li>
+<li>If hardness is high but flow is low, size on <b>resin</b></li>
+<li><b>Take whichever gives the larger vessel</b></li>
+</ul>
+<table>
+<thead><tr><th>Vessel</th><th>Maximum service flow</th></tr></thead>
+<tbody>
+<tr><td>1054</td><td>~900 LPH</td></tr>
+<tr><td>1354</td><td>~1,500 LPH</td></tr>
+<tr><td>1465</td><td>~1,800 LPH</td></tr>
+<tr><td>1665</td><td>~2,400 LPH</td></tr>
+<tr><td>2160</td><td>~4,000 LPH</td></tr>
+<tr><td>2469</td><td>~5,500 LPH</td></tr>
+<tr><td>3072</td><td>~8,500 LPH</td></tr>
+</tbody></table>
+
+<h2>The complete system</h2>
+<p>A softener is not just a vessel. You will also need:</p>
+<ul>
+<li><b>FRP vessel</b> of the calculated size</li>
+<li><b>Softener multiport valve</b> — see our <a href="/blog/mpv-kaise-chunein.html">MPV selection guide</a>. Note that a filter valve will not work</li>
+<li><b>Distribution system</b> — top distributor and laterals</li>
+<li><b>Cation resin</b> of the calculated volume, plus graded gravel</li>
+<li><b>Brine tank</b> with a <a href="/products/brine-director-15nb.html">brine director</a></li>
+<li><a href="/products/vaccum-breaker-air-release-valve-25nb.html">Vacuum breaker</a> — ₹210</li>
+</ul>
+
+<h2>Salt consumption</h2>
+<p>Roughly <b>100 to 150 grams of salt per litre of resin</b> per regeneration. For the example above with 255 litres of resin, that is around 30 kg per regeneration, and regenerating every 8 days works out to roughly 115 kg of salt a month.</p>
+<p>This is worth calculating before ordering, because salt is a recurring cost.</p>
+
+<h2>Common sizing mistakes</h2>
+<ol>
+<li><b>Guessing the hardness</b> — a test kit costs ₹656 and removes all doubt</li>
+<li><b>Using average flow instead of peak flow</b> — the softener has to cope with peak demand</li>
+<li><b>Choosing too long an interval</b> — a very large vessel costs more and the resin sits exhausted</li>
+<li><b>Ignoring the flow limit</b> — a vessel correctly sized on resin may still be too small on flow</li>
+<li><b>Forgetting the salt cost</b> — a large softener regenerating frequently uses a lot of salt</li>
+</ol>
+<p>Our <a href="/plant-calculators.html">free plant calculators</a> will do this calculation for you.</p>
+<div class="cta">
+<h3>Have your softener sized</h3>
+<p>Send your hardness, daily consumption and peak flow, and we will size the complete system with a quotation.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20a%20water%20softener.%20Hardness%3A%20___%20ppm%2C%20Daily%20use%3A%20___%20litres%2C%20Peak%20flow%3A%20___%20LPH" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>How do I calculate the resin volume for a softener?</summary><p>Multiply the hardness in ppm by the litres used per day and by the days between regenerations, then divide by fifty five thousand. For example three hundred and fifty ppm at five thousand litres a day over ten days needs three hundred and eighteen litres of resin.</p></details>
+<details><summary>How do I find out my water hardness?</summary><p>Use a hardness test kit, which costs from about six hundred and fifty rupees. Guessing is the most common sizing mistake, because the whole calculation depends on this figure.</p></details>
+<details><summary>What regeneration interval should I choose?</summary><p>Most installations settle on seven to fifteen days. A shorter interval means a smaller vessel but more effort and more salt over time, while a very long interval means a large expensive vessel with the resin sitting exhausted.</p></details>
+<details><summary>Should I size the softener on flow or on resin volume?</summary><p>Check both and take whichever gives the larger vessel. If peak flow is high but hardness low, flow decides it. If hardness is high but flow low, the resin volume decides it.</p></details>
+<details><summary>How much salt will a softener use?</summary><p>Roughly one hundred to one hundred and fifty grams per litre of resin per regeneration. It is worth calculating the monthly figure before ordering, because salt is a recurring cost.</p></details>
+<div class="next"><b>Read next:</b> See our <a href="/blog/softener-regeneration-process.html">regeneration process guide</a> and the <a href="/blog/frp-vessel-size-chart.html">vessel size chart</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=Water%20softener%20sizing%20%E2%80%94%20calculating%20resin%20from%20hardness%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fsoftener-sizing-hardness-resin.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fsoftener-sizing-hardness-resin.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/softener-sizing-hardness-resin.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

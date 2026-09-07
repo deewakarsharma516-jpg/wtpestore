@@ -1,0 +1,197 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RO Plant Pre-Treatment Design Guide | WTPESTORE</title>
+<meta name="description" content="Which pre-treatment stages an RO plant needs based on feed water analysis, the correct order, sizing, and what each stage protects against.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/ro-plant-pretreatment-design.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RO plant pre-treatment — designing it correctly">
+<meta property="og:description" content="Which pre-treatment stages an RO plant needs based on feed water analysis, the correct order, sizing, and what each stage protects against.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/ro-plant-pretreatment-design.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RO plant pre-treatment — designing it correctly","description":"Which pre-treatment stages an RO plant needs based on feed water analysis, the correct order, sizing, and what each stage protects against.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/ro-plant-pretreatment-design.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What determines which pre-treatment stages an RO plant needs?","acceptedAnswer":{"@type":"Answer","text":"The feed water analysis. Turbidity calls for media filtration, hardness for softening or antiscalant, iron for an iron removal filter, and chlorine for carbon or SMBS dosing. There is no standard package that suits all water."}},{"@type":"Question","name":"Why must antiscalant be injected after the cartridge filter?","acceptedAnswer":{"@type":"Answer","text":"Because if it goes in before the cartridge, the filter removes the chemical. It also has to go in before the high pressure pump, or you would need an expensive high pressure dosing pump."}},{"@type":"Question","name":"Should carbon filtration come before or after the softener?","acceptedAnswer":{"@type":"Answer","text":"Before. Chlorine attacks softener resin, so removing it first protects the resin. Iron removal should also come before the softener, since iron fouls the resin."}},{"@type":"Question","name":"Should pre-treatment be sized on plant output or feed flow?","acceptedAnswer":{"@type":"Answer","text":"On feed flow, which is plant output divided by recovery. A plant making seven hundred and fifty LPH at sixty five percent recovery has a feed flow of about eleven hundred and fifty LPH, and every stage must handle that."}},{"@type":"Question","name":"Why is an SDI test worth doing before design?","acceptedAnswer":{"@type":"Answer","text":"It measures fine particles that a turbidity meter misses and is the best predictor of membrane fouling. SDI below three is good for RO, while above five means membranes will foul quickly regardless of other treatment."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"RO pre-treatment design","item":"https://www.wtpestore.co.in/blog/ro-plant-pretreatment-design.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › RO pre-treatment design</nav>
+<h1>RO plant pre-treatment — designing it correctly</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> Pre-treatment is decided by your <b>water analysis</b>, not by a standard package. The order is always the same though — coarse filtration first, then media filters, then chemical dosing, then fine filtration, then the membrane.</p>
+<p>Pre-treatment is where membranes are protected or lost. Nearly every premature membrane failure traces back to something missing or undersized here.</p>
+
+<h2>Start with the water analysis</h2>
+<p>You cannot design pre-treatment without knowing what is in the water:</p>
+<table>
+<thead><tr><th>Parameter</th><th>If high</th><th>Treatment needed</th></tr></thead>
+<tbody>
+<tr><td>Turbidity / SDI</td><td>Above 5 NTU / SDI above 3</td><td>Media filter, cartridge</td></tr>
+<tr><td>Hardness</td><td>Above 300 ppm</td><td>Softener or antiscalant</td></tr>
+<tr><td>Iron</td><td>Above 0.3 ppm</td><td>Iron removal filter</td></tr>
+<tr><td>Chlorine</td><td>Any</td><td>Carbon filter or SMBS</td></tr>
+<tr><td>Organic matter</td><td>Present</td><td>Carbon filter</td></tr>
+<tr><td>Bacteria</td><td>Present</td><td>Chlorination then dechlorination</td></tr>
+</tbody></table>
+
+<h2>The correct order</h2>
+<ol>
+<li><b>Raw water tank</b> — settling and buffer storage</li>
+<li><b>Feed pump</b></li>
+<li><b>Screen or disc filter</b> — coarse particles, cleaned and reused</li>
+<li><b>Multigrade / sand filter</b> — turbidity</li>
+<li><b>Iron removal filter</b> — if iron is present</li>
+<li><b>Softener</b> — if hardness is high</li>
+<li><b>Activated carbon filter</b> — chlorine and organics</li>
+<li><b>SMBS dosing</b> — remaining chlorine</li>
+<li><b>Cartridge filter 5 micron</b></li>
+<li><b>Antiscalant dosing</b></li>
+<li><b>High pressure pump</b></li>
+<li><b>RO membranes</b></li>
+</ol>
+<div class="warn"><b>The order matters.</b> Antiscalant must go in <b>after</b> the cartridge filter, or the filter removes it. SMBS goes <b>before</b> the cartridge so the reaction has time. Carbon must come before the softener, or chlorine damages the resin.</div>
+
+<h2>Stage by stage</h2>
+<h3>Screen or disc filter</h3>
+<p>Cheap, washable, and it reduces cartridge consumption substantially. See our <a href="/blog/disc-vs-screen-filter-kaunsa-lein.html">disc vs screen guide</a>.</p>
+
+<h3>Multigrade / sand filter</h3>
+<p>Needed where turbidity is above about 5 NTU. Uses an <a href="/products.html#pentair-frp-vessels-and-diffusers">FRP vessel</a> with a <a href="/products.html#initiative-engineering-multiport-valves">filter multiport valve</a>. See our <a href="/blog/frp-vessel-size-chart.html">vessel sizing guide</a>.</p>
+
+<h3>Iron removal</h3>
+<p>Iron above 0.3 ppm fouls both softener resin and membranes. It must be removed before the softener, not after.</p>
+
+<h3>Softener</h3>
+<p>Where hardness is high, softening ahead of the RO is more reliable than relying on antiscalant alone — particularly for boiler feed. Sizing is in our <a href="/blog/softener-sizing-hardness-resin.html">softener guide</a>.</p>
+
+<h3>Activated carbon</h3>
+<p>Removes chlorine and organics. Note that carbon beds can harbour bacteria, so they need regular backwashing.</p>
+
+<h3>SMBS dosing</h3>
+<p>Insurance against chlorine breakthrough. Details in our <a href="/blog/smbs-dechlorination-dose.html">SMBS guide</a>.</p>
+
+<h3>Cartridge filter</h3>
+<p>The final barrier. 5 micron is standard — see our <a href="/blog/cartridge-filter-kitne-micron-lagayein.html">micron guide</a>.</p>
+
+<h3>Antiscalant dosing</h3>
+<p>Prevents scaling inside the membrane. See our <a href="/blog/ro-antiscalant-kya-karta-hai.html">antiscalant guide</a>.</p>
+
+<h2>Everything is sized on feed flow</h2>
+<div class="tip"><b>This is the point people get wrong most often.</b> If the plant makes 750 LPH at 65 percent recovery, the feed flow is 1,154 LPH. Every pre-treatment stage must handle 1,154 LPH, not 750.</div>
+<p>Undersized pre-treatment chokes, pressure falls, and the plant never reaches its rated output.</p>
+
+<h2>The SDI test</h2>
+<p>Before finalising the design, have an <b>SDI test</b> done on the feed water. It measures fine particles that a turbidity meter misses and is the best predictor of membrane fouling.</p>
+<ul>
+<li><b>SDI below 3</b> — good for RO</li>
+<li><b>SDI 3 to 5</b> — improve pre-treatment</li>
+<li><b>SDI above 5</b> — membranes will foul quickly</li>
+</ul>
+<p>Use an <a href="/products/s-d-i-kit-with-50-filter-papers.html">SDI kit</a> (₹5,565). See our <a href="/blog/turbidity-meter-ntu-kitna-hona-chahiye.html">turbidity and SDI guide</a>.</p>
+
+<h2>Instruments in the pre-treatment</h2>
+<ul>
+<li><b>Pressure gauges</b> before and after every filter — so you can see what is choking</li>
+<li><b>Flow meter</b> on the feed line</li>
+<li><b>Hardness test kit</b> after the softener, tested daily</li>
+<li><b>Chlorine test kit</b> before the membrane</li>
+<li><b>Level switches</b> on both dosing tanks</li>
+</ul>
+
+<h2>Where designs commonly fail</h2>
+<ol>
+<li><b>Pre-treatment sized on plant output</b> instead of feed flow</li>
+<li><b>Antiscalant injected before the cartridge</b>, so the filter removes it</li>
+<li><b>No level switch</b> on dosing tanks, so dosing stops unnoticed</li>
+<li><b>Softener before carbon</b>, so chlorine damages the resin</li>
+<li><b>No SDI test</b> before design, so fouling is unanticipated</li>
+<li><b>No pressure gauges</b>, so nobody knows what is choking</li>
+</ol>
+<p>Each of these is inexpensive to get right at design stage and expensive to fix afterwards.</p>
+<div class="cta">
+<h3>Get your pre-treatment designed</h3>
+<p>Send your full water analysis and plant capacity, and we will design the pre-treatment train stage by stage.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20RO%20pre-treatment%20design.%20Plant%3A%20___%20LPH%2C%20TDS%3A%20___%2C%20Hardness%3A%20___%2C%20Iron%3A%20___%2C%20Turbidity%3A%20___" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>What determines which pre-treatment stages an RO plant needs?</summary><p>The feed water analysis. Turbidity calls for media filtration, hardness for softening or antiscalant, iron for an iron removal filter, and chlorine for carbon or SMBS dosing. There is no standard package that suits all water.</p></details>
+<details><summary>Why must antiscalant be injected after the cartridge filter?</summary><p>Because if it goes in before the cartridge, the filter removes the chemical. It also has to go in before the high pressure pump, or you would need an expensive high pressure dosing pump.</p></details>
+<details><summary>Should carbon filtration come before or after the softener?</summary><p>Before. Chlorine attacks softener resin, so removing it first protects the resin. Iron removal should also come before the softener, since iron fouls the resin.</p></details>
+<details><summary>Should pre-treatment be sized on plant output or feed flow?</summary><p>On feed flow, which is plant output divided by recovery. A plant making seven hundred and fifty LPH at sixty five percent recovery has a feed flow of about eleven hundred and fifty LPH, and every stage must handle that.</p></details>
+<details><summary>Why is an SDI test worth doing before design?</summary><p>It measures fine particles that a turbidity meter misses and is the best predictor of membrane fouling. SDI below three is good for RO, while above five means membranes will foul quickly regardless of other treatment.</p></details>
+<div class="next"><b>Read next:</b> See our <a href="/blog/ro-plant-capacity-kaise-nikalein.html">plant sizing guide</a> and the <a href="/blog/ro-recovery-reject-water.html">recovery guide</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=RO%20plant%20pre-treatment%20%E2%80%94%20designing%20it%20correctly%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-pretreatment-design.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fro-plant-pretreatment-design.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/ro-plant-pretreatment-design.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

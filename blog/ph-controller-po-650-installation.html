@@ -1,0 +1,197 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>pH Controller PO 650 Installation and Calibration | WTPESTORE</title>
+<meta name="description" content="Installing an Aster PO 650 pH controller: where to fit the sensor, two-point calibration, dead band settings, relay wiring and troubleshooting.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/ph-controller-po-650-installation.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pH controller PO 650 — installation and calibration">
+<meta property="og:description" content="Installing an Aster PO 650 pH controller: where to fit the sensor, two-point calibration, dead band settings, relay wiring and troubleshooting.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/ph-controller-po-650-installation.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"pH controller PO 650 — installation and calibration","description":"Installing an Aster PO 650 pH controller: where to fit the sensor, two-point calibration, dead band settings, relay wiring and troubleshooting.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/ph-controller-po-650-installation.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Where should a pH sensor be fitted?","acceptedAnswer":{"@type":"Answer","text":"At least ten to fifteen seconds of flow travel away from the chemical injection point, where the water is thoroughly mixed. Fitted too close, the sensor gives a false reading and the controller cannot work properly."}},{"@type":"Question","name":"What is a dead band and why does it matter?","acceptedAnswer":{"@type":"Answer","text":"A dead band is a range, such as starting at six point eight and stopping at seven point two. Without it the pump switches on and off hundreds of times around the target value, which quickly wears out both pump and relay."}},{"@type":"Question","name":"How often should a pH controller be calibrated?","acceptedAnswer":{"@type":"Answer","text":"At least once a month, using the two-point method with buffer seven followed by buffer four or nine point two. Calibration also tells you how the sensor is holding up."}},{"@type":"Question","name":"What is the difference between PO 350 and PO 650?","acceptedAnswer":{"@type":"Answer","text":"The PO 350 only displays pH, while the PO 650 has a relay so it can operate a dosing pump. If you only need to see the reading the PO 350 is cheaper, but for automatic control you need the PO 650."}},{"@type":"Question","name":"The reading is unstable — what should I check?","acceptedAnswer":{"@type":"Answer","text":"First check whether the sensor cable runs near a power cable, as that introduces noise. Then check the earthing, and confirm the sensor is not fitted too close to the injection point."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"pH controller PO 650","item":"https://www.wtpestore.co.in/blog/ph-controller-po-650-installation.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › pH controller PO 650</nav>
+<h1>pH controller PO 650 — installation and calibration</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> The PO 650 measures pH <b>and can run a dosing pump through its relay</b>. Three things matter for it to work properly — fitting the sensor <b>away from the injection point</b>, doing a proper <b>two-point calibration</b>, and setting a <b>dead band</b> so the pump does not switch on and off constantly.</p>
+
+<h2>PO 650 variants</h2>
+<table>
+<thead><tr><th>Model</th><th>Feature</th><th>Price</th></tr></thead>
+<tbody>
+<tr><td><a href="/products/ph-indicator-po-350-with-sensor.html">PO 350 Indicator</a></td><td>Display only, no relay</td><td>₹7,035</td></tr>
+<tr><td><a href="/products/ph-controller-po-650-with-sensor-and-relay-output.html">PO 650 basic</a></td><td>With relay</td><td>₹9,975</td></tr>
+<tr><td><a href="/products/ph-controller-po-650-with-high-temperature-sensor-and-relay-output.html">PO 650 high temp</a></td><td>0-100°C sensor</td><td>₹11,550</td></tr>
+<tr><td><a href="/products/ph-controller-po-650-with-tank-application-sensor-and-relay-output.html">PO 650 tank application</a></td><td>Immersed in a tank</td><td>₹12,075</td></tr>
+<tr><td><a href="/products/ph-controller-po-650-with-ss-tri-clover-sensor-and-relay-output.html">PO 650 SS Tri Clover</a></td><td>Food and pharma fitting</td><td>₹13,125</td></tr>
+<tr><td><a href="/products/ph-controller-po-650-with-auto-temperature-compensation-sensor-and-relay-output.html">PO 650 auto temp comp</a></td><td>Where temperature varies</td><td>₹15,225</td></tr>
+<tr><td><a href="/products/ph-controller-po-650-with-etp-sensor-and-relay-output.html">PO 650 ETP</a></td><td>For dirty water</td><td>₹28,350</td></tr>
+</tbody></table>
+<p>To send data to a panel or computer, a <a href="/products.html#aster-instruments">4-20mA/RS485 output</a> can be added for ₹3,360. Alternatively the <a href="/products/blind-ph-transmitter-smart-series-24v-dc-4-20-ma-o-p-with-sensor.html">blind pH transmitter</a> (₹9,975) has no display and only sends a signal.</p>
+
+<h2>Where to fit the sensor — the critical point</h2>
+<div class="warn"><b>The most common mistake:</b> fitting the sensor right next to the chemical injection point. There the water is not yet mixed, so the sensor alternately reads far too high and far too low, and the controller behaves erratically.</div>
+<p><b>The correct approach:</b></p>
+<ul>
+<li>At least <b>10 to 15 seconds of flow travel</b> from the injection point</li>
+<li>Where water is <b>continuously moving</b>, not stagnant</li>
+<li>Where the sensor stays <b>permanently immersed</b> and never sees air</li>
+<li>Easy to remove — calibration is a monthly job</li>
+</ul>
+<div class="tip"><b>A practical arrangement:</b> build a small bypass loop for the sensor with isolating valves. Then calibration does not require shutting the plant down — just close the loop and take the sensor out.</div>
+
+<h2>Installation step by step</h2>
+<ol>
+<li><b>Mount the controller</b> in a panel, away from sun and water, at eye level</li>
+<li><b>Fit the sensor tee</b> into the line, usually 15NB or 20NB</li>
+<li><b>Run the cable</b> — keep the sensor cable away from power cables, or noise will appear in the reading</li>
+<li><b>Apply power</b> — the display should come on</li>
+<li><b>Calibrate</b> (see below)</li>
+<li><b>Set the setpoint and dead band</b></li>
+<li><b>Wire the relay</b> to the dosing pump</li>
+<li><b>Test</b> — use buffer solution to confirm the pump starts and stops</li>
+</ol>
+
+<h2>Two-point calibration</h2>
+<ol>
+<li>Remove the sensor, rinse with clean water, blot dry gently</li>
+<li>Place in <b>buffer 7</b> and let it settle for a minute or two</li>
+<li>Enter calibration mode and set 7.00</li>
+<li>Rinse, then place in <b>buffer 4</b> (for acid side work) or <b>buffer 9.2</b> (for alkaline side)</li>
+<li>Set that value</li>
+<li>Refit the sensor</li>
+</ol>
+<p><b>Which second buffer:</b> use buffer 4 if you dose acid, and 9.2 if you dose alkali — the side you actually work on.</p>
+<p>The full method is in our <a href="/blog/sensor-calibration-kaise-karein.html">calibration guide</a>.</p>
+
+<h2>Dead band — do not skip this</h2>
+<p>If your target is pH 7.0 and you simply set 7.0, the pump will start at 6.99 and stop at 7.01 — hundreds of times over. Both pump and relay will fail early.</p>
+<p><b>So set a dead band:</b> for example start at 6.8 and stop at 7.2. Now the pump only runs when it is genuinely needed.</p>
+<table>
+<thead><tr><th>Application</th><th>Target</th><th>Dead band</th></tr></thead>
+<tbody>
+<tr><td>ETP discharge</td><td>7.0</td><td>6.7 – 7.3</td></tr>
+<tr><td>RO feed (acid dosing)</td><td>6.5</td><td>6.3 – 6.8</td></tr>
+<tr><td>Swimming pool</td><td>7.4</td><td>7.2 – 7.6</td></tr>
+<tr><td>Boiler feed</td><td>9.0</td><td>8.7 – 9.3</td></tr>
+</tbody></table>
+
+<h2>Wiring the relay to the pump</h2>
+<p>The PO 650 relay acts as a switch. Two approaches:</p>
+<ul>
+<li><b>Direct to the pump</b> — the relay carries the pump supply. Simple, and fine for small pumps</li>
+<li><b>Through a contactor</b> — for larger pumps, the relay drives a contactor which drives the pump. This is safer</li>
+</ul>
+<p>For dosing pumps see the <a href="/products.html#edose-metering-pumps">Edose range</a> — PVDF is essential for acid, as explained in our <a href="/blog/pvdf-vs-pp-dosing-pump.html">material guide</a>.</p>
+
+<h2>Troubleshooting</h2>
+<table>
+<thead><tr><th>Problem</th><th>Likely cause</th></tr></thead>
+<tbody>
+<tr><td>Reading unstable</td><td>Sensor cable near a power cable, or no earthing</td></tr>
+<tr><td>Always reads 7</td><td>Sensor has failed</td></tr>
+<tr><td>Calibration not accepted</td><td>Sensor weak, or buffer expired</td></tr>
+<tr><td>Pump switching on and off constantly</td><td>No dead band set</td></tr>
+<tr><td>pH not being controlled</td><td>Sensor too close to the injection point</td></tr>
+<tr><td>Slow response</td><td>Film on the sensor, or end of life</td></tr>
+</tbody></table>
+
+<h2>Maintenance schedule</h2>
+<ul>
+<li><b>Weekly:</b> glance at the reading for any sudden change</li>
+<li><b>Monthly:</b> two-point calibration</li>
+<li><b>Quarterly:</b> clean the sensor, check cable and connections</li>
+<li><b>Annually:</b> assess sensor condition and arrange a spare</li>
+</ul>
+<div class="cta">
+<h3>Need help with a PO 650 setup?</h3>
+<p>Tell us your application and pH range, and we will recommend the right variant, sensor and dosing pump as a complete set.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20a%20pH%20controller.%20Application%3A%20___%2C%20Target%20pH%3A%20___%2C%20Temperature%3A%20___" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>Where should a pH sensor be fitted?</summary><p>At least ten to fifteen seconds of flow travel away from the chemical injection point, where the water is thoroughly mixed. Fitted too close, the sensor gives a false reading and the controller cannot work properly.</p></details>
+<details><summary>What is a dead band and why does it matter?</summary><p>A dead band is a range, such as starting at six point eight and stopping at seven point two. Without it the pump switches on and off hundreds of times around the target value, which quickly wears out both pump and relay.</p></details>
+<details><summary>How often should a pH controller be calibrated?</summary><p>At least once a month, using the two-point method with buffer seven followed by buffer four or nine point two. Calibration also tells you how the sensor is holding up.</p></details>
+<details><summary>What is the difference between PO 350 and PO 650?</summary><p>The PO 350 only displays pH, while the PO 650 has a relay so it can operate a dosing pump. If you only need to see the reading the PO 350 is cheaper, but for automatic control you need the PO 650.</p></details>
+<details><summary>The reading is unstable — what should I check?</summary><p>First check whether the sensor cable runs near a power cable, as that introduces noise. Then check the earthing, and confirm the sensor is not fitted too close to the injection point.</p></details>
+<div class="next"><b>Read next:</b> See our <a href="/blog/ph-sensor-life-kab-badlein.html">sensor life guide</a> and the <a href="/blog/ph-correction-dosing-system.html">complete dosing system design</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=pH%20controller%20PO%20650%20%E2%80%94%20installation%20and%20calibration%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fph-controller-po-650-installation.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fph-controller-po-650-installation.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/ph-controller-po-650-installation.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

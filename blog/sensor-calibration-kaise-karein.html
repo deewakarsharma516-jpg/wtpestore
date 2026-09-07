@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>pH TDS ORP Sensor Calibration Guide | WTPESTORE</title>
+<meta name="description" content="Complete calibration method for pH, conductivity, ORP, DO and chlorine sensors, how often to do it, buffer handling and the common mistakes.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/sensor-calibration-kaise-karein.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to calibrate sensors on site — step by step">
+<meta property="og:description" content="Complete calibration method for pH, conductivity, ORP, DO and chlorine sensors, how often to do it, buffer handling and the common mistakes.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/sensor-calibration-kaise-karein.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How to calibrate sensors on site — step by step","description":"Complete calibration method for pH, conductivity, ORP, DO and chlorine sensors, how often to do it, buffer handling and the common mistakes.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/sensor-calibration-kaise-karein.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How often should sensors be calibrated?","acceptedAnswer":{"@type":"Answer","text":"pH and ORP sensors monthly, conductivity every three months, and turbidity every three to six months. In difficult water such as an ETP more frequent calibration may be needed."}},{"@type":"Question","name":"Which buffers are needed for pH calibration?","acceptedAnswer":{"@type":"Answer","text":"Buffer seven always, together with either buffer four or buffer nine point two. Which second buffer you use depends on whether you work on the acid side or the alkaline side."}},{"@type":"Question","name":"How does calibration reveal the condition of a sensor?","acceptedAnswer":{"@type":"Answer","text":"If the controller will not accept the calibration, or a larger adjustment is needed each time, the sensor has weakened. That is why the values should be recorded every time, so the drift can be tracked."}},{"@type":"Question","name":"Can buffer solution be reused?","acceptedAnswer":{"@type":"Answer","text":"No. Used buffer should be discarded because it has been diluted by water from the sensor. Dipping the sensor directly into the bottle is also wrong; pour a little into a separate cup instead."}},{"@type":"Question","name":"Is single-point calibration acceptable?","acceptedAnswer":{"@type":"Answer","text":"Single-point calibration is incomplete. It sets the zero point but does not check the slope, meaning the sensitivity of the sensor. Two-point calibration should always be done."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"Sensor calibration","item":"https://www.wtpestore.co.in/blog/sensor-calibration-kaise-karein.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › Sensor calibration</nav>
+<h1>How to calibrate sensors on site — step by step</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> Calibration means showing the sensor a <b>known solution</b> and telling it "this is 7" or "this is 1,413 µS/cm", so that it reads correctly afterwards. It should be done <b>monthly</b>, and it can be done on site with nothing more than buffer solution and ten minutes.</p>
+<p>Without calibration even the most expensive sensor reads incorrectly — and decisions based on wrong readings can be very costly.</p>
+
+<h2>Why calibration is necessary</h2>
+<p>Sensors <b>drift</b> over time. Something that read 7.0 yesterday may read 7.3 today, without anyone noticing.</p>
+<p>The real damage is that you then make <b>decisions</b> on a wrong reading — overdosing chemical, or replacing a membrane that was actually fine.</p>
+<div class="tip"><b>A second benefit:</b> calibration also tells you the <b>condition</b> of the sensor. If the controller will not accept the calibration, or a larger adjustment is needed each time, the sensor has weakened and should be replaced.</div>
+
+<h2>How often</h2>
+<table>
+<thead><tr><th>Sensor</th><th>Interval</th><th>Standard used</th></tr></thead>
+<tbody>
+<tr><td>pH</td><td>Monthly</td><td>Buffer 7 plus buffer 4 (or 9.2)</td></tr>
+<tr><td>Conductivity / TDS</td><td>Every 3 months</td><td>Standard solution (1,413 µS/cm)</td></tr>
+<tr><td>ORP</td><td>Monthly</td><td>ORP standard (~470 mV)</td></tr>
+<tr><td>Chlorine</td><td>Monthly</td><td>Compared against a DPD test kit</td></tr>
+<tr><td>DO</td><td>Monthly</td><td>In air (100% saturation)</td></tr>
+<tr><td>Turbidity</td><td>Every 3–6 months</td><td>Formazin standard</td></tr>
+</tbody></table>
+<p>In difficult water such as an ETP, more frequent calibration may be needed.</p>
+
+<h2>pH sensor — two-point calibration</h2>
+<ol>
+<li><b>Prepare:</b> buffer 7 and buffer 4 (or 9.2), clean water, tissue</li>
+<li><b>Remove the sensor</b>, rinse with clean water and <b>blot gently</b> — do not rub</li>
+<li><b>Place in buffer 7</b> and allow one to two minutes to settle</li>
+<li>Enter calibration mode and set 7.00</li>
+<li><b>Rinse</b>, then place in buffer 4 (or 9.2)</li>
+<li>Set that value once settled</li>
+<li>Refit the sensor in the line</li>
+</ol>
+<p><b>Which second buffer:</b> whichever side you work on. Buffer 4 if you dose acid, buffer 9.2 if you dose alkali.</p>
+
+<h2>Conductivity and TDS calibration</h2>
+<ol>
+<li>Take a standard solution, usually <b>1,413 µS/cm</b> (or 1,000 ppm TDS)</li>
+<li>Rinse and dry the sensor</li>
+<li>Immerse in the standard and let it settle</li>
+<li>Set that value on the controller</li>
+</ol>
+<div class="warn"><b>The most common mistake:</b> putting a wet sensor straight into the standard. Water on the sensor dilutes the standard and the calibration is wrong. Rinse the sensor once <b>in the same standard</b> first, then calibrate in fresh standard.</div>
+
+<h2>ORP calibration</h2>
+<p>ORP sensors need calibrating less often. Place in an ORP standard solution, typically 470 mV, and set that value.</p>
+<p>If the reading differs from the standard by more than 30 to 40 mV, clean the platinum tip — gently, never scrubbed.</p>
+
+<h2>DO calibration — in air</h2>
+<p>This is the simplest of all:</p>
+<ol>
+<li>Remove the sensor and blot it gently</li>
+<li>Leave it in air for 5 to 10 minutes (in humid air is better — near a damp cloth)</li>
+<li>Set "100% saturation" or "air calibration" on the controller</li>
+</ol>
+<p>Because the oxygen content of open air is constant, it serves as a reliable reference.</p>
+
+<h2>About buffer solutions</h2>
+<ul>
+<li><b>Check the expiry date</b> — old buffer gives a wrong calibration</li>
+<li><b>Do not use straight from the bottle</b> — pour a little into a separate cup. Dipping the sensor into the bottle spoils the whole bottle</li>
+<li><b>Discard used buffer</b> — never reuse it</li>
+<li><b>Keep it closed</b> — open buffer degrades in air, buffer 9.2 particularly</li>
+<li><b>Store cool</b>, away from sunlight</li>
+</ul>
+
+<h2>Five common mistakes</h2>
+<ol>
+<li><b>Rubbing the sensor</b> — the glass membrane is thin, and a scratch ruins the sensor</li>
+<li><b>Rushing the calibration</b> — allow one to two minutes for the reading to settle</li>
+<li><b>Expired buffer</b> — gives a wrong value</li>
+<li><b>One-point calibration only</b> — buffer 7 alone is incomplete; the second point is essential</li>
+<li><b>Not recording the calibration</b> — note the date and values each time, so you can see the trend</li>
+</ol>
+
+<h2>Keep a simple record</h2>
+<p>Note the following in a book:</p>
+<table>
+<thead><tr><th>Date</th><th>Sensor</th><th>Reading in buffer 7</th><th>In buffer 4</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>01/09</td><td>pH — RO feed</td><td>7.05</td><td>4.02</td><td>Fine</td></tr>
+<tr><td>01/10</td><td>pH — RO feed</td><td>7.18</td><td>4.15</td><td>Slight drift</td></tr>
+<tr><td>01/11</td><td>pH — RO feed</td><td>7.42</td><td>4.35</td><td>Weakening — order a spare</td></tr>
+</tbody></table>
+<p>This record tells you <b>in advance</b> when a sensor is about to fail, so you can order a spare and the plant is never held up.</p>
+
+<h2>When to replace instead</h2>
+<p>Calibration itself gives you the answer:</p>
+<ul>
+<li>The controller will not accept the calibration at all</li>
+<li>The adjustment required grows month on month</li>
+<li>It reads around 6 or 7 even in buffer 4</li>
+<li>Readings take two to three minutes to settle</li>
+</ul>
+<p>Prices and options are in our <a href="/blog/ph-sensor-life-kab-badlein.html">pH sensor guide</a>.</p>
+<div class="cta">
+<h3>Need buffer solution or a spare sensor?</h3>
+<p>Send your sensor model and application, and we will supply the correct buffers and a spare sensor.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20buffers%20or%20a%20spare%20sensor%20for%20calibration.%20Sensor%3A%20___%2C%20Model%3A%20___" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>How often should sensors be calibrated?</summary><p>pH and ORP sensors monthly, conductivity every three months, and turbidity every three to six months. In difficult water such as an ETP more frequent calibration may be needed.</p></details>
+<details><summary>Which buffers are needed for pH calibration?</summary><p>Buffer seven always, together with either buffer four or buffer nine point two. Which second buffer you use depends on whether you work on the acid side or the alkaline side.</p></details>
+<details><summary>How does calibration reveal the condition of a sensor?</summary><p>If the controller will not accept the calibration, or a larger adjustment is needed each time, the sensor has weakened. That is why the values should be recorded every time, so the drift can be tracked.</p></details>
+<details><summary>Can buffer solution be reused?</summary><p>No. Used buffer should be discarded because it has been diluted by water from the sensor. Dipping the sensor directly into the bottle is also wrong; pour a little into a separate cup instead.</p></details>
+<details><summary>Is single-point calibration acceptable?</summary><p>Single-point calibration is incomplete. It sets the zero point but does not check the slope, meaning the sensitivity of the sensor. Two-point calibration should always be done.</p></details>
+<div class="next"><b>Read next:</b> See our <a href="/blog/ph-sensor-life-kab-badlein.html">sensor life guide</a> and the <a href="/blog/ph-controller-po-650-installation.html">PO 650 setup guide</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=How%20to%20calibrate%20sensors%20on%20site%20%E2%80%94%20step%20by%20step%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fsensor-calibration-kaise-karein.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fsensor-calibration-kaise-karein.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/sensor-calibration-kaise-karein.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>pH Correction Dosing System Design Guide | WTPESTORE</title>
+<meta name="description" content="How to build a pH correction system: pump, sensor and controller options, target pH by application, ETP considerations, safety and budget.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/ph-correction-dosing-system.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pH correction dosing — designing an acid or alkali system">
+<meta property="og:description" content="How to build a pH correction system: pump, sensor and controller options, target pH by application, ETP considerations, safety and budget.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/ph-correction-dosing-system.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"pH correction dosing — designing an acid or alkali system","description":"How to build a pH correction system: pump, sensor and controller options, target pH by application, ETP considerations, safety and budget.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/ph-correction-dosing-system.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which chemicals are used for pH correction?","acceptedAnswer":{"@type":"Answer","text":"Sulphuric or hydrochloric acid to lower pH, and caustic soda, lime or a pH booster to raise it. On RO permeate a pH booster is normally used because only a small increase is needed."}},{"@type":"Question","name":"Can manual dosing control pH?","acceptedAnswer":{"@type":"Answer","text":"Only where the incoming water pH is fairly steady. In an ETP the pH changes constantly, so an automatic system with a sensor is the only thing that works; otherwise the dose is alternately too much and too little."}},{"@type":"Question","name":"How often should a pH sensor be calibrated?","acceptedAnswer":{"@type":"Answer","text":"At least once a month using buffer solutions. Without calibration the controller works from a wrong reading and doses incorrectly. In difficult water such as ETP, calibration may be needed more often."}},{"@type":"Question","name":"What safety precautions are needed for acid dosing?","acceptedAnswer":{"@type":"Answer","text":"Always wear gloves, eye protection and an apron. Add acid to water and never water to acid. Keep a water tap nearby, and store acid and alkali tanks well apart because they react violently if mixed."}},{"@type":"Question","name":"Why will a standard pH sensor not work in an ETP?","acceptedAnswer":{"@type":"Answer","text":"ETP water contains oil and solids that quickly foul and block a standard sensor junction. A purpose-built ETP sensor is made to withstand those conditions, which is why it costs considerably more."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"pH correction dosing","item":"https://www.wtpestore.co.in/blog/ph-correction-dosing-system.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › pH correction dosing</nav>
+<h1>pH correction dosing — designing an acid or alkali system</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> A pH correction system needs three things — a <b>dosing pump</b> (PVDF for acid), a <b>pH sensor</b>, and a <b>controller</b> that runs the pump from the sensor reading. Alternatively, everything in one unit such as the <a href="/products/edose-neutra-chloro-10lph-with-ph-orp-sensor.html">Edose NEUTRA with pH/ORP sensor</a> (₹25,725).</p>
+<p>Manual dosing does not work here, because the pH of the water changes constantly — particularly in an ETP.</p>
+
+<h2>Where pH correction is needed</h2>
+<table>
+<thead><tr><th>Application</th><th>Target pH</th><th>What is dosed</th></tr></thead>
+<tbody>
+<tr><td>ETP discharge</td><td>6.5 – 8.5</td><td>Acid or alkali (both directions)</td></tr>
+<tr><td>RO feed (to prevent scaling)</td><td>6.0 – 7.0</td><td>Acid (H₂SO₄ or HCl)</td></tr>
+<tr><td>RO permeate (to prevent corrosion)</td><td>7.0 – 8.0</td><td>Alkali / pH booster</td></tr>
+<tr><td>Boiler feed</td><td>8.5 – 9.5</td><td>Alkali</td></tr>
+<tr><td>Cooling tower</td><td>7.0 – 8.5</td><td>Acid (usually)</td></tr>
+<tr><td>Swimming pool</td><td>7.2 – 7.6</td><td>Acid or alkali</td></tr>
+</tbody></table>
+<div class="tip"><b>Why RO permeate pH is raised:</b> RO water is aggressive — with the minerals removed it dissolves metal from pipes, tanks and fittings. A <a href="/ro-ph-booster.html">pH booster</a> brings the pH above 7. More detail on the <a href="/ro-chemicals.html">RO chemicals page</a>.</div>
+
+<h2>Three ways to build it</h2>
+
+<h3>1. Simplest — manual dosing</h3>
+<p>A standard dosing pump at a fixed setting. This works only where the feed water pH is fairly steady.</p>
+<p><b>Cost:</b> <a href="/products/edose-neo-10lph-pvdf-10lph-at-4kg-cm2-for-98-h2so4.html">NEO 10 LPH PVDF</a> at ₹15,750 for acid duty</p>
+<p><b>Limitation:</b> if the incoming pH shifts, the dose is wrong. This approach does not work in an ETP.</p>
+
+<h3>2. Easiest — all-in-one unit</h3>
+<p>Pump and sensor in a single unit. The sensor measures pH and the pump adjusts its own dose.</p>
+<table>
+<thead><tr><th>Model</th><th>What you get</th><th>Price</th></tr></thead>
+<tbody>
+<tr><td><a href="/products/edose-neutra-chloro-10lph-with-ph-orp-sensor.html">NEUTRA/CHLORO with pH/ORP</a></td><td>Pump plus sensor</td><td>₹25,725</td></tr>
+<tr><td><a href="/products/edose-neutra-chloro-10lph-pvdf-with-ph-orp-sensor.html">NEUTRA/CHLORO PVDF</a></td><td>For acid duty</td><td>₹33,600</td></tr>
+<tr><td><a href="/products/edose-neutra-chloro-dual-10lph-with-senssit-sensor.html">DUAL 10 LPH</a></td><td>Two chemicals (acid and alkali)</td><td>₹51,450</td></tr>
+</tbody></table>
+<p>The <b>DUAL model</b> suits ETP work particularly well, where pH swings both above and below target and correction is needed in both directions.</p>
+
+<h3>3. Most control — separate controller</h3>
+<p>A separate pH controller with a separate dosing pump. This gives you setpoint, dead band and alarms, and the data can go to a panel.</p>
+<table>
+<thead><tr><th>Item</th><th>Model</th><th>Price</th></tr></thead>
+<tbody>
+<tr><td>pH controller</td><td><a href="/products.html#aster-instruments">PO 650 with sensor and relay</a></td><td>From ₹9,975</td></tr>
+<tr><td>ETP grade sensor</td><td><a href="/products.html#aster-instruments">pH sensor for ETP</a></td><td>₹23,100</td></tr>
+<tr><td>Dosing pump</td><td><a href="/products/edose-neo-10lph-pvdf-10lph-at-4kg-cm2-for-98-h2so4.html">NEO 10 LPH PVDF</a></td><td>₹15,750</td></tr>
+<tr><td>4-20mA/RS485 output</td><td><a href="/products.html#aster-instruments">Add-on</a></td><td>₹3,360</td></tr>
+</tbody></table>
+
+<h2>Special considerations for ETP</h2>
+<p>ETP water is the most difficult — it carries solids, oil and a constantly shifting pH. So:</p>
+<ul>
+<li><b>A standard pH sensor fails quickly</b> — an <a href="/products.html#aster-instruments">ETP grade sensor</a> is needed (₹23,100)</li>
+<li><b>Dosing in both directions</b> is required, acid and alkali, because pH swings either way</li>
+<li><b>Mixing is essential</b> — the water must be properly mixed after chemical injection, or the sensor reads incorrectly</li>
+</ul>
+
+<h2>Five points when installing</h2>
+<ol>
+<li><b>Keep the sensor away from the injection point</b> — at least 10 to 15 seconds of flow travel, so that what is measured is fully mixed water</li>
+<li><b>PVDF throughout for acid</b> — pump, tubing and level switch. See the <a href="/blog/pvdf-vs-pp-dosing-pump.html">material guide</a></li>
+<li><b>Calibrate the sensor</b> monthly with buffer solutions. Without calibration the controller doses on a wrong reading</li>
+<li><b>Set a dead band</b> such as 6.8 to 7.2, otherwise the pump switches on and off continuously</li>
+<li><b>Fit an alarm</b> for pH outside range. A <a href="/products/extra-price-relay-o-p-with-reg-level-switch.html">relay output</a> is useful here</li>
+</ol>
+
+<h2>Safety — please take this seriously</h2>
+<div class="warn"><b>Acid dosing is hazardous.</b> Always:
+<ul>
+<li>Wear gloves, eye protection and an apron — every time</li>
+<li>Add <b>acid to water</b>, never water to acid</li>
+<li>Keep a water tap nearby for eye washing</li>
+<li>Store acid and alkali tanks <b>well apart</b> — mixed together they react violently</li>
+<li>Label every tank clearly with its contents</li>
+</ul></div>
+
+<h2>Three budget levels</h2>
+<table>
+<thead><tr><th>Setup</th><th>What you get</th><th>Approximate</th></tr></thead>
+<tbody>
+<tr><td><b>Basic</b></td><td>PVDF pump, manual setting, tank</td><td>₹20,000</td></tr>
+<tr><td><b>Automatic (all-in-one)</b></td><td>NEUTRA PVDF plus sensor and tank</td><td>₹38,000</td></tr>
+<tr><td><b>Full control</b></td><td>Controller, ETP sensor, pump, output</td><td>₹55,000+</td></tr>
+</tbody></table>
+<p>Where a pollution board requirement applies to an ETP, the third option is effectively mandatory, because both records and alarms are needed.</p>
+<div class="cta">
+<h3>Have your pH correction system designed</h3>
+<p>Send your application (ETP, RO, boiler), flow and current pH — we will design the complete system and quote it.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20a%20pH%20correction%20system.%20Application%3A%20___%2C%20Flow%3A%20___%20LPH%2C%20Current%20pH%3A%20___%2C%20Target%20pH%3A%20___" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>Which chemicals are used for pH correction?</summary><p>Sulphuric or hydrochloric acid to lower pH, and caustic soda, lime or a pH booster to raise it. On RO permeate a pH booster is normally used because only a small increase is needed.</p></details>
+<details><summary>Can manual dosing control pH?</summary><p>Only where the incoming water pH is fairly steady. In an ETP the pH changes constantly, so an automatic system with a sensor is the only thing that works; otherwise the dose is alternately too much and too little.</p></details>
+<details><summary>How often should a pH sensor be calibrated?</summary><p>At least once a month using buffer solutions. Without calibration the controller works from a wrong reading and doses incorrectly. In difficult water such as ETP, calibration may be needed more often.</p></details>
+<details><summary>What safety precautions are needed for acid dosing?</summary><p>Always wear gloves, eye protection and an apron. Add acid to water and never water to acid. Keep a water tap nearby, and store acid and alkali tanks well apart because they react violently if mixed.</p></details>
+<details><summary>Why will a standard pH sensor not work in an ETP?</summary><p>ETP water contains oil and solids that quickly foul and block a standard sensor junction. A purpose-built ETP sensor is made to withstand those conditions, which is why it costs considerably more.</p></details>
+<div class="next"><b>Read next:</b> See the <a href="/blog/pvdf-vs-pp-dosing-pump.html">PVDF vs PP material guide</a> and the <a href="/blog/dosing-pump-kaise-select-karein.html">dosing pump selection guide</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=pH%20correction%20dosing%20%E2%80%94%20designing%20an%20acid%20or%20alkali%20system%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fph-correction-dosing-system.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fph-correction-dosing-system.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/ph-correction-dosing-system.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

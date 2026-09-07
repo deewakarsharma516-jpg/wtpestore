@@ -42,6 +42,105 @@ const CHEM_PAGES = [
   '/cooling-tower-non-oxidizing-biocide.html',
   '/cooling-tower-algaecide.html'
 ];
+/* Blog posts — sitemap me hamesha rahenge.
+   NAYA BLOG BANAO to bas yahan ek line jod dena. */
+const BLOG_PAGES = [
+  '/blog.html',
+  '/blog/absolute-vs-nominal-micron.html',
+  '/blog/antiscalant-dosing-calculation.html',
+  '/blog/astero-11nxt-vs-13nxt-vs-33nxt.html',
+  '/blog/bag-filter-kab-behtar-hai.html',
+  '/blog/boiler-oxygen-scavenger-kyun.html',
+  '/blog/boiler-scale-kaise-rokein.html',
+  '/blog/brine-director-brine-switch.html',
+  '/blog/cartridge-filter-kitne-micron-lagayein.html',
+  '/blog/cartridge-housing-size-guide.html',
+  '/blog/cartridge-kitne-din-mein-badlein.html',
+  '/blog/chlorine-meter-kab-lagayein.html',
+  '/blog/cip-acidic-vs-alkaline.html',
+  '/blog/condensate-line-corrosion.html',
+  '/blog/conductivity-controller-se-ro-reject-control.html',
+  '/blog/cooling-tower-algae-control.html',
+  '/blog/cooling-tower-biocide-oxidising-non-oxidising.html',
+  '/blog/disc-vs-screen-filter-kaunsa-lein.html',
+  '/blog/distribution-system-hub-lateral.html',
+  '/blog/dm-plant-vs-ro-plant.html',
+  '/blog/do-meter-etp-mein-kaise-use-karein.html',
+  '/blog/dosing-accessories-nozzle-foot-valve.html',
+  '/blog/dosing-pump-kaise-select-karein.html',
+  '/blog/dosing-pump-prime-nahi-ho-raha.html',
+  '/blog/dosing-tank-size-kaise-nikalein.html',
+  '/blog/dry-run-protection-kya-hai.html',
+  '/blog/edose-neo-vs-pro-vs-max.html',
+  '/blog/electromagnetic-flow-meter-kab-lein.html',
+  '/blog/etp-discharge-norms-monitoring.html',
+  '/blog/etp-ke-liye-special-sensor-kyun.html',
+  '/blog/etp-plant-stages-explained.html',
+  '/blog/etp-stp-automation-panel-kaise-chunein.html',
+  '/blog/evolve-mpv-series.html',
+  '/blog/flow-meter-4-20ma-rs485-output-guide.html',
+  '/blog/flow-meter-nb-size-kaise-chunein.html',
+  '/blog/flow-meter-reading-galat-kyun.html',
+  '/blog/frp-vessel-size-chart.html',
+  '/blog/frp-vs-ms-vessel.html',
+  '/blog/ft-650-insertion-vs-full-bore.html',
+  '/blog/hard-water-nuksan.html',
+  '/blog/housing-se-leakage-o-ring.html',
+  '/blog/icons',
+  '/blog/level-switch-dosing-pump-mein-kyun-zaroori.html',
+  '/blog/manual-vs-automatic-mpv.html',
+  '/blog/membrane-cip-cleaning.html',
+  '/blog/membrane-life-kaise-badhayein.html',
+  '/blog/motorised-vs-solenoid-dosing-pump.html',
+  '/blog/mpv-backwash-troubleshooting.html',
+  '/blog/mpv-code-samajhna.html',
+  '/blog/mpv-kaise-chunein.html',
+  '/blog/orp-kya-hai-cooling-tower-mein.html',
+  '/blog/ph-controller-po-650-installation.html',
+  '/blog/ph-correction-dosing-system.html',
+  '/blog/ph-sensor-life-kab-badlein.html',
+  '/blog/pp-spun-vs-string-wound-vs-pleated.html',
+  '/blog/pressure-gauge-kahan-lagayein.html',
+  '/blog/pump-baar-baar-trip-ho-raha-hai.html',
+  '/blog/pvdf-vs-pp-dosing-pump.html',
+  '/blog/remote-monitoring-panel-fayda-cost.html',
+  '/blog/ro-antiscalant-kya-karta-hai.html',
+  '/blog/ro-membrane-4040-vs-8040.html',
+  '/blog/ro-membrane-housing-pressure-rating.html',
+  '/blog/ro-membrane-kab-badlein.html',
+  '/blog/ro-plant-capacity-kaise-nikalein.html',
+  '/blog/ro-plant-control-panel-kaise-chunein.html',
+  '/blog/ro-plant-mein-flow-meter-kahan-lagayein.html',
+  '/blog/ro-plant-output-kam-ho-gaya.html',
+  '/blog/ro-plant-pretreatment-design.html',
+  '/blog/ro-recovery-reject-water.html',
+  '/blog/rotameter-float-atak-jaye-to-kya-karein.html',
+  '/blog/rotameter-kaise-chunein-flow-range-guide.html',
+  '/blog/rotameter-vs-digital-flow-meter.html',
+  '/blog/sensor-calibration-kaise-karein.html',
+  '/blog/smbs-dechlorination-dose.html',
+  '/blog/softener-not-working-troubleshooting.html',
+  '/blog/softener-regeneration-process.html',
+  '/blog/softener-salt-consumption.html',
+  '/blog/softener-sizing-hardness-resin.html',
+  '/blog/softener-water-slippery-feel.html',
+  '/blog/ss304-housing-kab-zaroori.html',
+  '/blog/star-delta-panel-kab-chahiye.html',
+  '/blog/stp-plant-mbbr-sbr-difference.html',
+  '/blog/tds-meter-vs-conductivity-meter.html',
+  '/blog/top-mount-vs-side-mount-vessel.html',
+  '/blog/turbidity-meter-ntu-kitna-hona-chahiye.html',
+  '/blog/uf-plant-backwash-cycle.html',
+  '/blog/uf-plant-controller-vs-ro-controller.html',
+  '/blog/uf-vs-ro-membrane.html',
+  '/blog/vessel-leakage-bulging.html',
+  '/blog/vessel-media-freeboard-rule.html',
+  '/blog/water-plant-amc-checklist.html',
+  '/blog/water-plant-kharidne-se-pehle.html',
+  '/blog/water-testing-kya-karayein.html',
+  '/blog/water-treatment-common-mistakes.html'
+];
+
 /* ---------- helpers ---------- */
 function get(url, redirects) {
   redirects = redirects || 0;
@@ -209,7 +308,11 @@ function card(p) {
     ? `<div class="pr">${off ? `<span class="old">${rupee(p.mrp)}</span>` : ''}${rupee(p.p)}<small> +GST</small>${off ? `<span class="off">${off}% OFF</span>` : ''}</div>`
     : `<div class="pr" style="color:#565959;font-size:15px">Price on request</div>`;
   const wa = `https://wa.me/919899193589?text=${encodeURIComponent('Hi WTPESTORE, I want a quotation for: ' + p.n + (p.model ? ' (Model ' + p.model + ')' : '') + '. Please share best price.')}`;
-  const viewHref = STATIC_SLUGS.has(p.slug) ? `/products/${p.slug}.html` : `/?p=${p.slug}`;
+  /* Static page hai to wahan; warna category page ke us section par
+     (?p= par nahi bhejte — duplicate naam wale slug galat product khol dete hain) */
+  const viewHref = STATIC_SLUGS.has(p.slug)
+    ? `/products/${p.slug}.html`
+    : `/products.html#${slug(p.c)}`;
   return `<article class="pc" id="${p.slug}">
 ${p.model ? `<span class="md">Model: ${esc(p.model)}</span>` : ''}
 <h3>${esc(p.n)}</h3>
@@ -275,6 +378,7 @@ function isQualityProduct(p) {
   const n = (p.n || '').trim();
   if (n.length < 6) return false;
   if (/^\[.*\]$/.test(n)) return false;              // sirf "[Volume (Litres)]" jaisa fragment
+  if (p.dupName) return false;                       // naam duplicate hai — upar wali wajah dekhein
   if (!(p.spec || p.model || p.p > 0 || p.make)) return false; // kam se kam ek meaningful detail chahiye
   return true;
 }
@@ -371,6 +475,33 @@ function faqsFor(p, blurb) {
   if (p.make) f.splice(1, 0, [`Is this a genuine ${p.make} product?`,
     `Yes. We supply only authentic ${p.make} products sourced through proper channels — no local duplicates or refurbished units.`]);
   return f;
+}
+
+/* ---------- duplicate-naam detector ----------
+   Sheet me kai products ka naam bilkul ek jaisa hota hai (jaise "5/10 micron" 5 baar).
+   Aise products ka slug bhi ek hi banta hai, isliye unke page ek doosre ko mita dete the.
+
+   Alag page banana bhi theek nahi hoga — kyunki 5 page jinme sirf price ka farq hai,
+   Google ke liye "thin/duplicate content" hain aur wo poore site ko neeche kheenchte hain.
+   ("5/10 micron" jaise naam par koi search bhi nahi karta.)
+
+   Isliye: aise products ka static page NAHI banta. Wo apni category page par dikhte hain,
+   aur unka link wahin jaata hai. Sheet me naam unique karte hi page apne aap ban jayega.
+*/
+function markDuplicateNames(P) {
+  const byName = {};
+  P.forEach(p => {
+    const k = String(p.n).toLowerCase().replace(/\s+/g, ' ').trim();
+    (byName[k] = byName[k] || []).push(p);
+  });
+  const dupGroups = [];
+  Object.keys(byName).forEach(k => {
+    if (byName[k].length > 1) {
+      byName[k].forEach(p => { p.dupName = true; });
+      dupGroups.push(byName[k]);
+    }
+  });
+  return dupGroups;
 }
 
 /* ---------- individual product page ---------- */
@@ -543,6 +674,51 @@ function buildProductPages(qualityList) {
   return n;
 }
 
+/* ---- Blog pages me live price table bharo ----
+   Blog HTML me marker lagao:
+     <!--WTPE_PRICES:ASTER ROTAMETERS-->  ...purana table...  <!--WTPE_PRICES_END-->
+   Har build par table Sheet ke live data se dobara ban jaata hai —
+   yaani blog ka price kabhi purana nahi rehta.
+*/
+function injectBlogPrices(P) {
+  let files = [];
+  try { files = fs.readdirSync('blog').filter(f => f.endsWith('.html')).map(f => 'blog/' + f); }
+  catch (e) { return; }
+  let count = 0;
+  for (const f of files) {
+    let html;
+    try { html = fs.readFileSync(f, 'utf8'); } catch (e) { continue; }
+    if (html.indexOf('<!--WTPE_PRICES:') < 0) continue;
+
+    const out = html.replace(/<!--WTPE_PRICES:([^>]+)-->[\s\S]*?<!--WTPE_PRICES_END-->/g, (m, catRaw) => {
+      const want = String(catRaw).trim().toUpperCase();
+      const items = P.filter(p => String(p.c).trim().toUpperCase() === want && p.p > 0);
+      if (!items.length) return m;   /* category na mile to purana hi rehne do */
+
+      /* flow range aur NB naam se nikaal lete hain (Sheet me alag column nahi hai) */
+      const rows = items.map(p => {
+        const model = (p.n.match(/ROTAMETER\s+(\S+)/i) || [])[1] || p.model || extractModel(p.n) || '—';
+        const rg = p.n.match(/FLOW RANGE\s+([\d,]+)\s*TO\s*([\d,]+)\s*LPH/i);
+        const nb = p.n.match(/I\/O\s*(\d+\s?NB)/i);
+        const link = STATIC_SLUGS.has(p.slug) ? `/products/${p.slug}.html` : `/?p=${p.slug}`;
+        return `<tr><td><b>${esc(model)}</b></td><td>${rg ? esc(rg[1] + ' – ' + rg[2]) : '—'}</td><td>${nb ? esc(nb[1].replace(/\s+/g, '')) : '—'}</td><td>${rupee(p.p)}</td><td><a href="${link}">Dekhein</a></td></tr>`;
+      }).join('\n');
+
+      return `<!--WTPE_PRICES:${catRaw}-->
+<table>
+<thead><tr><th>Model</th><th>Flow range (LPH)</th><th>I/O size</th><th>Price</th><th>Page</th></tr></thead>
+<tbody>
+${rows}
+</tbody></table>
+<p style="font-size:12.5px;color:#8b9aa5;margin-top:-8px">Live price list se — last updated ${new Date().toISOString().slice(0, 10)}. GST extra, confirm before order.</p>
+<!--WTPE_PRICES_END-->`;
+    });
+
+    if (out !== html) { fs.writeFileSync(f, out); count++; }
+  }
+  console.log('Blog price tables refreshed in', count, 'file(s)');
+}
+
 /* ---------- build ---------- */
 
 /* ---- Category pages me static product list bharo (Google ke liye) ---- */
@@ -606,6 +782,30 @@ function injectStatic(P) {
   const P = await load();
   console.log('Products loaded:', P.length);
 
+  /* ---- duplicate naam pakdo (inka static page nahi banega) ---- */
+  const dupGroups = markDuplicateNames(P);
+  const dupCount = dupGroups.reduce((a, g) => a + g.length, 0);
+  if (dupCount) {
+    let rep = 'SHEET ME YE NAAM SUDHARNE HAIN\n';
+    rep += '='.repeat(60) + '\n\n';
+    rep += `${dupCount} products ka naam doosre products se bilkul milta hai.\n`;
+    rep += `Isliye inka alag page NAHI banaya gaya — ye category page par dikhte hain.\n\n`;
+    rep += `Naam unique karte hi page apne aap ban jayega. Kuch aur karne ki zaroorat nahi.\n\n`;
+    rep += `TIP: naam aisa rakhein jaise customer Google par khojta hai —\n`;
+    rep += `     "5/10 micron" ki jagah "PP Spun Cartridge Filter 10 inch 5 Micron"\n\n`;
+    rep += '='.repeat(60) + '\n';
+    dupGroups
+      .sort((a, b) => b.length - a.length)
+      .forEach(g => {
+        rep += `\n"${g[0].n}"  — ${g.length} products ka yahi naam hai:\n`;
+        g.forEach(p => { rep += `    ${p.c}  |  ${p.p > 0 ? rupee(p.p) : 'price nahi'}\n`; });
+      });
+    fs.writeFileSync('seo-rename-list.txt', rep);
+    console.log('⚠ ' + dupCount + ' products ke naam duplicate hain — seo-rename-list.txt dekhein');
+  } else {
+    try { fs.unlinkSync('seo-rename-list.txt'); } catch (e) { }
+  }
+
   /* ---- individual SEO product pages (naye) ---- */
   const QP = P.filter(isQualityProduct);
   const skipped = P.length - QP.length;
@@ -665,6 +865,7 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   const all = new Set(staticUrls);
   all.add(SITE + '/products.html');
   CHEM_PAGES.forEach(u => all.add(SITE + u));
+  BLOG_PAGES.forEach(u => all.add(SITE + u));
   const today = new Date().toISOString().slice(0, 10);
   const urls = [...all].map(u => `<url><loc>${u}</loc><lastmod>${today}</lastmod><priority>${u.endsWith('.co.in/') ? '1.0' : '0.8'}</priority></url>`)
     .concat(QP.map(p => {
@@ -676,8 +877,9 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   console.log('sitemap.xml ✓ (' + urls.length + ' URLs)');
 
   injectStatic(P);
+  injectBlogPrices(P);
 
   /* ---- summary for the action log ---- */
   fs.writeFileSync('seo-build-log.txt',
-    `Last build: ${new Date().toISOString()}\nProducts: ${P.length}\nCategories: ${catNames.length}\nProduct pages built: ${madeCount}\nSkipped (thin/junk): ${skipped}\nSitemap URLs: ${urls.length}\n`);
+    `Last build: ${new Date().toISOString()}\nProducts: ${P.length}\nCategories: ${catNames.length}\nProduct pages built: ${madeCount}\nSkipped (thin/junk/duplicate-name): ${skipped}\nDuplicate names to fix in Sheet: ${dupCount}\nSitemap URLs: ${urls.length}\n`);
 })().catch(e => { console.error('BUILD FAIL:', e.message); process.exit(1); });

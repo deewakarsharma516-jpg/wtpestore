@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RO Antiscalant Dosing Calculation Step By Step | WTPESTORE</title>
+<meta name="description" content="How much RO antiscalant to dose: from ppm to ml per hour, making up the solution, setting pump stroke, and the mistakes that waste chemical.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/antiscalant-dosing-calculation.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Antiscalant dosing calculation — step by step">
+<meta property="og:description" content="How much RO antiscalant to dose: from ppm to ml per hour, making up the solution, setting pump stroke, and the mistakes that waste chemical.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/antiscalant-dosing-calculation.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Antiscalant dosing calculation — step by step","description":"How much RO antiscalant to dose: from ppm to ml per hour, making up the solution, setting pump stroke, and the mistakes that waste chemical.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/antiscalant-dosing-calculation.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the correct RO antiscalant dose?","acceptedAnswer":{"@type":"Answer","text":"Usually three to five ppm on feed water. For low TDS water two to three ppm is adequate, while above three thousand TDS you may need five to six ppm. A water analysis is the reliable way to fix the dose."}},{"@type":"Question","name":"How concentrated should the antiscalant solution be?","acceptedAnswer":{"@type":"Answer","text":"Five to ten percent is the most common. A very dilute solution means refilling the tank daily, while a very concentrated one forces the pump to run at a very low stroke where accuracy is poor. Five percent suits most plants."}},{"@type":"Question","name":"Where should antiscalant be injected?","acceptedAnswer":{"@type":"Answer","text":"After the cartridge filter and before the high pressure pump. Injected before the cartridge it is simply trapped by the filter, and injected after the high pressure pump you would need a much more expensive high pressure dosing pump."}},{"@type":"Question","name":"How long can a made-up solution be used?","acceptedAnswer":{"@type":"Answer","text":"Not more than fifteen to twenty days. After that bacteria can grow in the solution, which is itself harmful to the membrane. Choose a tank size so that the solution is consumed within two to three weeks."}},{"@type":"Question","name":"What happens if I dose too much antiscalant?","acceptedAnswer":{"@type":"Answer","text":"There is no additional benefit, and the excess can itself deposit on the membrane and act as a foulant. It also wastes chemical. Staying at the correct dose is the right approach."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"Antiscalant dosing calculation","item":"https://www.wtpestore.co.in/blog/antiscalant-dosing-calculation.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › Antiscalant dosing calculation</nav>
+<h1>Antiscalant dosing calculation — step by step</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> The usual RO antiscalant dose is <b>3 to 5 ppm on feed water</b>. For 1,000 LPH of feed that works out to roughly <b>4 grams per hour</b> of neat antiscalant. It is never dosed neat — you make up a 5 or 10 percent solution first, then meter that in with the pump.</p>
+<p>Below is the complete calculation, how to make up the solution, and how to set the pump.</p>
+
+<h2>How much dose — by feed TDS</h2>
+<table>
+<thead><tr><th>Feed TDS</th><th>Hardness</th><th>Dose (ppm)</th></tr></thead>
+<tbody>
+<tr><td>Below 500</td><td>Low</td><td>2 – 3 ppm</td></tr>
+<tr><td>500 – 1,500</td><td>Moderate</td><td>3 – 4 ppm</td></tr>
+<tr><td>1,500 – 3,000</td><td>High</td><td>4 – 5 ppm</td></tr>
+<tr><td>Above 3,000</td><td>Very high</td><td>5 – 6 ppm (confirm by lab test)</td></tr>
+</tbody></table>
+<div class="warn"><b>Important:</b> the dose applies to <b>feed</b> water, not permeate. People often calculate on the plant output figure, which is wrong. At 500 LPH output and 65 percent recovery the feed is about 770 LPH, and the dose applies to that 770.</div>
+
+<h2>Step 1: Neat chemical required</h2>
+<div class="tip"><b>Grams per hour = (Feed LPH × dose ppm) ÷ 1,000</b></div>
+<p><b>Example:</b> feed 770 LPH, dose 4 ppm → (770 × 4) ÷ 1,000 = <b>3.08 grams per hour</b></p>
+<p>Over 24 hours: 3.08 × 24 ≈ <b>74 grams a day</b>. So a 25 kg drum lasts around <b>11 months</b>.</p>
+
+<h2>Step 2: Make up the solution</h2>
+<p>Dosing 3 grams an hour directly is not practical — no pump can meter such a small quantity accurately. That is why a dilute solution is prepared.</p>
+<table>
+<thead><tr><th>Solution</th><th>In a 10 L tank</th><th>Duration at 3 g/hr</th></tr></thead>
+<tbody>
+<tr><td>5%</td><td>500 g antiscalant plus water</td><td>~7 days</td></tr>
+<tr><td>10%</td><td>1 kg antiscalant plus water</td><td>~14 days</td></tr>
+<tr><td>20%</td><td>2 kg antiscalant plus water</td><td>~28 days</td></tr>
+</tbody></table>
+<p><b>Which to choose:</b> 10 percent is the most common. Too dilute (2 to 3 percent) and you are refilling the tank daily; too concentrated (30 percent and above) and the pump runs at a very low stroke where accuracy falls away.</p>
+
+<h2>Step 3: Work out the pump setting</h2>
+<div class="tip"><b>Solution ml/hr = (grams per hour ÷ solution %) × 100</b></div>
+<p><b>Example:</b> 3.08 g/hr with a 10 percent solution → (3.08 ÷ 10) × 100 = <b>30.8 ml per hour</b></p>
+<p>Now compare with pump capacity. An <a href="/products/edose-neo-6lph-6lph-at-4kg-cm2.html">Edose NEO 6 LPH</a> delivers 6,000 ml per hour at full stroke, and you need 31 ml:</p>
+<p>Stroke = (31 ÷ 6,000) × 100 = <b>0.5 percent</b></p>
+<div class="warn"><b>And here is the problem.</b> No pump meters accurately at 0.5 percent stroke. The answer is to <b>dilute the solution further</b>. At 2 percent you would need 154 ml/hr, which is 2.5 percent stroke — still low, so read on.</div>
+
+<h2>A better approach — working backwards</h2>
+<p>Start from the pump instead. A pump should run at <b>30 to 70 percent stroke</b>, which for a 6 LPH pump means 1,800 to 4,200 ml per hour.</p>
+<p>If you need 3.08 g/hr and the pump delivers 2,000 ml/hr, the solution strength works out to (3.08 ÷ 2,000) × 100 = <b>0.15 percent</b> — only 15 grams in a 10 litre tank.</p>
+<p><b>The practical compromise:</b> making up such a dilute solution means refilling daily. So in real plants people use a <b>5 or 10 percent solution</b> and accept a low stroke setting, or fit a <b>timer</b> so the pump runs in short bursts.</p>
+<div class="tip"><b>The setup that works in practice:</b> a 5 percent solution in a 15 litre tank, with the pump at 5 to 10 percent stroke. The tank lasts around 20 to 25 days. Thousands of plants run exactly like this.</div>
+
+<h2>Worked example — 1,000 LPH RO plant</h2>
+<table>
+<thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Plant output</td><td>1,000 LPH</td></tr>
+<tr><td>Recovery</td><td>65%</td></tr>
+<tr><td>Feed flow</td><td>1,538 LPH</td></tr>
+<tr><td>Dose</td><td>4 ppm</td></tr>
+<tr><td><b>Neat chemical</b></td><td><b>6.15 g/hr</b> (~148 g/day)</td></tr>
+<tr><td>Solution</td><td>5% (750 g in 15 L)</td></tr>
+<tr><td><b>Solution flow</b></td><td><b>123 ml/hr</b></td></tr>
+<tr><td>Pump</td><td><a href="/products/edose-neo-6lph-6lph-at-4kg-cm2.html">Edose NEO 6 LPH</a> at ~2% stroke</td></tr>
+<tr><td>Tank</td><td><a href="/products/vessel-15-litres.html">15 litre LLDPE</a>, lasts ~5 days</td></tr>
+<tr><td>Drum consumption</td><td>25 kg lasts about 5.5 months</td></tr>
+</tbody></table>
+
+<h2>Where to inject</h2>
+<p>Antiscalant should always go in <b>after the cartridge filter and before the HP pump</b>. The reasons:</p>
+<ul>
+<li>Injected before the cartridge, the chemical is simply trapped by the filter</li>
+<li>Injected after the HP pump, you need an expensive high pressure dosing pump</li>
+<li>Injected in between, it mixes properly and reaches the membrane</li>
+</ul>
+
+<h2>Four common mistakes</h2>
+<ol>
+<li><b>Calculating on permeate</b> — the dose always applies to feed</li>
+<li><b>Making up solution and forgetting it</b> — antiscalant solution should not be kept beyond 15 to 20 days, as bacteria can grow in it</li>
+<li><b>Assuming the pump is running</b> — check the tank level weekly. If the level is not dropping, the pump is not dosing</li>
+<li><b>Thinking more dose means more protection</b> — excess antiscalant can itself foul the membrane, and it wastes money</li>
+</ol>
+<p>For chemicals see our <a href="/products.html#ro-antiscalant-and-chemicals">RO antiscalant range</a>, and for the ZeroScale line see the <a href="/ro-chemicals.html">RO chemicals page</a>.</p>
+<div class="cta">
+<h3>Get your dosing calculated</h3>
+<p>Send your plant capacity, recovery and feed TDS — we will work out the exact dose, solution strength and pump setting.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20please%20help%20me%20calculate%20antiscalant%20dosing.%20Plant%3A%20___%20LPH%2C%20Recovery%3A%20___%25%2C%20Feed%20TDS%3A%20___%20ppm" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>What is the correct RO antiscalant dose?</summary><p>Usually three to five ppm on feed water. For low TDS water two to three ppm is adequate, while above three thousand TDS you may need five to six ppm. A water analysis is the reliable way to fix the dose.</p></details>
+<details><summary>How concentrated should the antiscalant solution be?</summary><p>Five to ten percent is the most common. A very dilute solution means refilling the tank daily, while a very concentrated one forces the pump to run at a very low stroke where accuracy is poor. Five percent suits most plants.</p></details>
+<details><summary>Where should antiscalant be injected?</summary><p>After the cartridge filter and before the high pressure pump. Injected before the cartridge it is simply trapped by the filter, and injected after the high pressure pump you would need a much more expensive high pressure dosing pump.</p></details>
+<details><summary>How long can a made-up solution be used?</summary><p>Not more than fifteen to twenty days. After that bacteria can grow in the solution, which is itself harmful to the membrane. Choose a tank size so that the solution is consumed within two to three weeks.</p></details>
+<details><summary>What happens if I dose too much antiscalant?</summary><p>There is no additional benefit, and the excess can itself deposit on the membrane and act as a foulant. It also wastes chemical. Staying at the correct dose is the right approach.</p></details>
+<div class="next"><b>Read next:</b> See the <a href="/blog/dosing-pump-kaise-select-karein.html">dosing pump selection guide</a> and <a href="/blog/dosing-tank-size-kaise-nikalein.html">how to size a dosing tank</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=Antiscalant%20dosing%20calculation%20%E2%80%94%20step%20by%20step%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fantiscalant-dosing-calculation.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fantiscalant-dosing-calculation.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/antiscalant-dosing-calculation.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>

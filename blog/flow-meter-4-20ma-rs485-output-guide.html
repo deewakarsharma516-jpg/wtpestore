@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3XGD177T0C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>4-20mA vs RS485 Output — When You Need It | WTPESTORE</title>
+<meta name="description" content="What 4-20mA and RS485 outputs do, the difference between them, add-on costs by instrument, and how to get data to a panel, datalogger or mobile.">
+<link rel="canonical" href="https://www.wtpestore.co.in/blog/flow-meter-4-20ma-rs485-output-guide.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4-20mA and RS485 outputs explained — when you need them">
+<meta property="og:description" content="What 4-20mA and RS485 outputs do, the difference between them, add-on costs by instrument, and how to get data to a panel, datalogger or mobile.">
+<meta property="og:url" content="https://www.wtpestore.co.in/blog/flow-meter-4-20ma-rs485-output-guide.html">
+<meta property="og:image" content="https://www.wtpestore.co.in/og-banner.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#0B2A4A">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"4-20mA and RS485 outputs explained — when you need them","description":"What 4-20mA and RS485 outputs do, the difference between them, add-on costs by instrument, and how to get data to a panel, datalogger or mobile.","author":{"@type":"Organization","name":"Aqua Filtration System"},"publisher":{"@type":"Organization","name":"WTPESTORE — powered by Aqua Filtration System","logo":{"@type":"ImageObject","url":"https://www.wtpestore.co.in/icons/icon-512.png"}},"datePublished":"2026-09-05","dateModified":"2026-09-05","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.wtpestore.co.in/blog/flow-meter-4-20ma-rs485-output-guide.html"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which is better, 4-20mA or RS485?","acceptedAnswer":{"@type":"Answer","text":"They do different jobs. If you only need to send one value to a panel or PLC, 4-20mA is simple and very reliable. If you need full data from several meters carried to a computer or datalogger on a single cable, RS485 is better."}},{"@type":"Question","name":"Can an output be added later?","acceptedAnswer":{"@type":"Answer","text":"Usually not. It is part of the instrument itself, so it has to be ordered at the time of purchase. Adding it afterwards normally means replacing the whole unit, which is considerably more expensive."}},{"@type":"Question","name":"Does adding an output improve accuracy?","acceptedAnswer":{"@type":"Answer","text":"No. The output has nothing to do with accuracy. The meter measures exactly as it did before, and the output simply carries that reading to a panel, computer or server."}},{"@type":"Question","name":"How many meters can share one RS485 cable?","acceptedAnswer":{"@type":"Answer","text":"Typically ten to thirty devices, and the cable can run over a kilometre. Each device is given its own address so the data does not get mixed up."}},{"@type":"Question","name":"What is needed for pollution board monitoring?","acceptedAnswer":{"@type":"Answer","text":"An instrument with an output, along with a telemetry or 4G modem that sends the data to the board server. This usually requires an electromagnetic flow meter and the associated sensors, and we can supply the complete list."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"4-20mA and RS485 output","item":"https://www.wtpestore.co.in/blog/flow-meter-4-20ma-rs485-output-guide.html"}]}</script>
+<style>
+:root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
+header{background:var(--navy);position:sticky;top:0;z-index:50;padding:10px 0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;max-width:1180px}
+header img{height:40px;width:auto;display:block}
+header a.call{margin-left:auto;color:#fff;font-weight:700;font-size:14px;text-decoration:none;background:rgba(255,255,255,.12);padding:8px 14px;border-radius:8px}
+article{background:#fff;margin:16px auto;padding:26px 30px 36px;border-radius:14px;border:1px solid var(--border)}
+.bc{font-size:13px;color:#565959;margin-bottom:10px}
+.bc a{color:var(--navy)}
+h1{font-size:29px;color:var(--navy);margin:6px 0 8px;line-height:1.25}
+.meta{font-size:12.5px;color:#8b9aa5;border-bottom:1px solid #eef1f4;padding-bottom:14px;margin-bottom:18px}
+h2{font-size:21px;color:var(--navy);margin:30px 0 10px;padding-bottom:6px;border-bottom:2px solid #e3e9ee}
+h3{font-size:16.5px;color:var(--navy);margin:20px 0 6px}
+p{margin:0 0 13px;font-size:15.5px;color:#2b3b47}
+ul,ol{margin:0 0 14px;padding-left:22px}
+li{margin:7px 0;font-size:15px;color:#2b3b47}
+a{color:#0b6ea8}
+table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:14px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 11px;font-size:13px}
+td{padding:9px 11px;border-bottom:1px solid #eef1f4}
+tr:nth-child(even) td{background:#f8fafc}
+td a{font-weight:700;text-decoration:none}
+.tip{background:#f0f8f4;border-left:4px solid var(--green);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.tip b{color:var(--green)}
+.warn{background:#fff8ec;border-left:4px solid var(--orange);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+.warn b{color:#a86400}
+.cta{background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff;padding:24px;border-radius:14px;margin:26px 0;text-align:center}
+.cta h3{color:#fff;margin:0 0 8px;font-size:19px}
+.cta p{color:#dff1f9;font-size:14.5px;margin-bottom:16px}
+.cta a{display:inline-block;margin:5px;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14.5px;text-decoration:none}
+.cta .wa{background:#25d366;color:#fff}.cta .cl{background:#fff;color:#0e4d6b}
+details{background:#fbfdfe;border:1px solid #e6edf1;border-radius:11px;padding:13px 17px;margin-bottom:9px}
+summary{font-weight:700;color:var(--navy);cursor:pointer;font-size:15px}
+details p{margin:10px 0 0;font-size:14.5px;color:#51606e}
+.share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:26px;padding-top:16px;border-top:1px dashed #dfe6ec}
+.share .lbl{font-size:13px;color:#64737f;font-weight:600}
+.share .sh{font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;text-decoration:none;border:1px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-family:inherit}
+.share .sh.wa{background:#25d366;color:#fff;border-color:#25d366}
+.share .sh.fb{background:#1877f2;color:#fff;border-color:#1877f2}
+.next{background:#f4f9fb;border:1px solid #e6edf1;border-radius:12px;padding:16px 20px;margin-top:22px}
+.next b{color:var(--navy)}
+footer{background:var(--navy);color:#cfe0ee;margin-top:20px;padding:22px 0;font-size:13px}
+footer a{color:#7ff0ff}
+@media(max-width:600px){article{padding:20px 17px 28px;border-radius:0}h1{font-size:23px}table{font-size:13px}th,td{padding:8px 7px}}</style></head><body>
+<header><div class="wrap">
+<a href="/"><img src="/icons/logo-white.png" alt="WTPeSTORE™ — powered by Aqua Filtration System"></a>
+<a class="call" href="tel:+919910646957">📞 9910646957</a>
+</div></header>
+
+<div class="wrap"><article>
+<nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › 4-20mA and RS485 output</nav>
+<h1>4-20mA and RS485 outputs explained — when you need them</h1>
+<div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
+<p><b>Short answer:</b> Both are ways of <b>sending meter data somewhere else</b>. <b>4-20mA</b> is the older, very reliable method that carries a single value such as flow, and suits a panel or PLC. <b>RS485</b> is digital, can carry several meters on one pair of wires and sends more data, which suits a computer, datalogger or remote monitoring.</p>
+<p>If you only ever read the meter standing next to it, <b>you need neither</b> — and you save the money.</p>
+
+<h2>What 4-20mA actually is</h2>
+<p>The meter sends its reading as a <b>current signal</b>. 4 milliamps means minimum and 20 milliamps means maximum, with everything in between proportional.</p>
+<p>So on a meter ranged 0 to 1,000 LPH: 4mA = 0 LPH, 12mA = 500 LPH, 20mA = 1,000 LPH.</p>
+<p><b>Its strength:</b> a current signal does not weaken over long distances and tolerates a certain amount of electrical noise. That is why it has been the industrial standard for decades.</p>
+<p><b>Its limitation:</b> one pair of wires carries <b>one value only</b>. If you need both flow and total, you need two connections.</p>
+
+<h2>What RS485 is</h2>
+<p>This is <b>digital communication</b>. The meter sends its complete data — flow, total, status — as numbers. The big advantage is that <b>several meters can share one pair of wires</b>, typically ten to thirty of them.</p>
+<p>Imagine six meters around a plant. With 4-20mA each needs its own cable run to the control room — six cables. With RS485 they all connect along a single loop.</p>
+
+<h2>Comparison</h2>
+<table>
+<thead><tr><th>Feature</th><th>4-20mA</th><th>RS485</th></tr></thead>
+<tbody>
+<tr><td><b>What it carries</b></td><td>One value</td><td>Full data (flow, total, status)</td></tr>
+<tr><td><b>Devices per cable</b></td><td>One</td><td>Many (10–30)</td></tr>
+<tr><td><b>Distance</b></td><td>Good</td><td>Very good (over 1 km)</td></tr>
+<tr><td><b>Best suited to</b></td><td>Panel, PLC, indicator</td><td>Computer, datalogger, SCADA</td></tr>
+<tr><td><b>Wiring</b></td><td>Separate run per meter</td><td>One shared loop</td></tr>
+<tr><td><b>Simplicity</b></td><td>Very simple</td><td>Needs some configuration</td></tr>
+</tbody></table>
+
+<h2>Add-on cost by instrument</h2>
+<table>
+<thead><tr><th>Instrument</th><th>Output add-on</th><th>Price</th><th>Page</th></tr></thead>
+<tbody>
+<tr><td>FT-650 flow meter</td><td>4-20mA / RS485</td><td>₹4,200</td><td><a href="/products/extra-price-for-ft-650-with-4-20ma-rs485-output.html">View</a></td></tr>
+<tr><td>CT-650 conductivity</td><td>4-20mA / RS485 (5m cable)</td><td>₹3,150</td><td><a href="/products/extra-price-for-ct-650-with-4-20-ma-rs485-output-with-5-mtrs-cable-instruments-o.html">View</a></td></tr>
+<tr><td>pH / ORP / Chlorine</td><td>4-20mA / RS485</td><td>₹3,360</td><td><a href="/products.html#aster-instruments">View</a></td></tr>
+<tr><td>ASTERO NXT panel</td><td>RS485</td><td>₹2,625</td><td><a href="/products/extra-price-for-rs485-nxt.html">View</a></td></tr>
+</tbody></table>
+<div class="tip"><b>Worth knowing:</b> these outputs are much cheaper when ordered <b>with the instrument</b>. Adding one later usually means replacing the whole unit. So if automation is likely within a year or two, order it now.</div>
+
+<h2>Where the data goes — four options</h2>
+<h3>1. Just a larger display</h3>
+<p>The meter is in an awkward position and the reading needs to be visible from a distance. Use a <a href="/products/universal-indicator-ut-650.html">Universal Indicator UT-650</a> (₹7,035), or the version with output, <a href="/products/universal-indicator-ut-650-4-20-ma-rs485.html">UT-650 with 4-20mA/RS485</a> (₹10,500).</p>
+<h3>2. Keeping records for audit or validation</h3>
+<p>A <a href="/products/datalogger-dl-650-with-8gb-memory-card.html">DL-650 datalogger with 8GB card</a> (₹11,550) writes every reading to a memory card automatically. This is often mandatory in pharma and food plants.</p>
+<h3>3. Viewing on a computer</h3>
+<p>An <a href="/products/converter-rs485-to-usb.html">RS485 to USB converter</a> (₹6,300) connects the meter to a laptop.</p>
+<h3>4. On a mobile or server, from anywhere</h3>
+<p>A <a href="/products/4g-modem-with-rs485-input.html">4G modem with RS485 input</a> (₹9,450) sends data over the internet, which suits pollution board monitoring or multi-site plants. A <a href="/products/telemetry-modem.html">telemetry modem</a> (₹13,650) does the same job.</p>
+
+<h2>When you do not need any of this</h2>
+<ul>
+<li>A small RO plant where the operator reads the meter daily</li>
+<li>Domestic or small commercial installations</li>
+<li>Anywhere with no record-keeping or audit requirement</li>
+</ul>
+<p>In those cases a ₹504 <a href="/products/rotameter-f500-flow-range-50-to-500-lph-i-o-15nb-m.html">rotameter</a> is the sensible choice. An output add-on only pays for itself when the data is genuinely used.</p>
+
+<h2>A common misconception</h2>
+<p>People often assume that adding a 4-20mA output makes the reading more accurate. It does not. <b>An output does not change accuracy</b> — the meter measures exactly as well as it did before. The output only carries that reading somewhere else.</p>
+<div class="cta">
+<h3>Planning automation? Tell us now</h3>
+<p>If a panel or remote monitoring is coming later, ordering the output version now is far cheaper. Send us your requirement.</p>
+<a class="wa" href="https://wa.me/919899193589?text=Hi%20WTPESTORE%2C%20I%20need%20an%20instrument%20with%20output.%20Instrument%3A%20___%2C%20Output%3A%204-20mA%20%2F%20RS485.%20Data%20needed%20at%3A%20panel%20%2F%20computer%20%2F%20mobile" rel="nofollow">💬 WhatsApp par poochhein</a>
+<a class="cl" href="tel:+919910646957">📞 9910646957</a>
+</div>
+<h2>Frequently asked questions</h2>
+<details><summary>Which is better, 4-20mA or RS485?</summary><p>They do different jobs. If you only need to send one value to a panel or PLC, 4-20mA is simple and very reliable. If you need full data from several meters carried to a computer or datalogger on a single cable, RS485 is better.</p></details>
+<details><summary>Can an output be added later?</summary><p>Usually not. It is part of the instrument itself, so it has to be ordered at the time of purchase. Adding it afterwards normally means replacing the whole unit, which is considerably more expensive.</p></details>
+<details><summary>Does adding an output improve accuracy?</summary><p>No. The output has nothing to do with accuracy. The meter measures exactly as it did before, and the output simply carries that reading to a panel, computer or server.</p></details>
+<details><summary>How many meters can share one RS485 cable?</summary><p>Typically ten to thirty devices, and the cable can run over a kilometre. Each device is given its own address so the data does not get mixed up.</p></details>
+<details><summary>What is needed for pollution board monitoring?</summary><p>An instrument with an output, along with a telemetry or 4G modem that sends the data to the board server. This usually requires an electromagnetic flow meter and the associated sensors, and we can supply the complete list.</p></details>
+<div class="next"><b>Read next:</b> See <a href="/blog/ft-650-insertion-vs-full-bore.html">FT-650 insertion vs full bore</a> and the <a href="/blog/electromagnetic-flow-meter-kab-lein.html">electromagnetic flow meter guide</a>.</div>
+<div class="share"><span class="lbl">Share this guide:</span>
+<a class="sh wa" href="https://wa.me/?text=4-20mA%20and%20RS485%20outputs%20explained%20%E2%80%94%20when%20you%20need%20them%20%E2%80%94%20https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fflow-meter-4-20ma-rs485-output-guide.html" target="_blank" rel="noopener nofollow">WhatsApp</a>
+<a class="sh fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.wtpestore.co.in%2Fblog%2Fflow-meter-4-20ma-rs485-output-guide.html" target="_blank" rel="noopener nofollow">Facebook</a>
+<button class="sh" onclick="bCopy(this)" data-u="https://www.wtpestore.co.in/blog/flow-meter-4-20ma-rs485-output-guide.html">Copy link</button></div>
+</article></div>
+
+<footer><div class="wrap">
+<b>WTPESTORE — powered by Aqua Filtration System</b><br>
+Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
+📞 9910646950 · 9910646957 · 0129-4340856<br>
+<a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/blog.html">Blog</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — please confirm on WhatsApp before ordering.</span>
+</div></footer>
+<script>
+function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
+if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
+else{prompt('Copy this link:',u);}}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body></html>
