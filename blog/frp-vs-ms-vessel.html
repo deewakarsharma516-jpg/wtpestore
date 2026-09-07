@@ -17,6 +17,14 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which is better, FRP or MS vessel?","acceptedAnswer":{"@type":"Answer","text":"For almost all water treatment work FRP is better because it does not rust, is light and needs no lining maintenance. MS is only preferable where pressure or temperature exceeds what FRP can handle, or where a large custom vessel is required."}},{"@type":"Question","name":"What is the main problem with MS vessels?","acceptedAnswer":{"@type":"Answer","text":"The internal lining. Once it develops a crack or pinhole, water reaches the steel and rust starts spreading unseen inside the vessel. That iron then enters the treated water and can foul RO membranes."}},{"@type":"Question","name":"How long does an FRP vessel last?","acceptedAnswer":{"@type":"Answer","text":"Typically ten to fifteen years in normal service. MS vessels last five to ten years depending on how well the lining is maintained."}},{"@type":"Question","name":"When is an MS vessel the right choice?","acceptedAnswer":{"@type":"Answer","text":"Where pressure exceeds about ten kg per cm2, where the water is hotter than about fifty degrees, or where a very large or custom shaped vessel is needed that is not available in standard FRP sizes."}},{"@type":"Question","name":"What can damage an FRP vessel?","acceptedAnswer":{"@type":"Answer","text":"Over-pressure can cause bulging, and a vacuum can collapse it inward if it drains without air entering, which is why a vacuum breaker should always be fitted. Over-tightening the valve cracks the top thread, and prolonged sunlight degrades the outer surface."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"FRP vs MS vessel","item":"https://www.wtpestore.co.in/blog/frp-vs-ms-vessel.html"}]}</script>
 <style>
+
+.xlate{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#f2f6f9;border:1px solid #dbe4ec;border-radius:10px;padding:9px 13px;margin:14px 0 18px}
+.xlate .xl{font-size:13px;color:#456;font-weight:600;white-space:nowrap}
+.xlate select{padding:7px 10px;border:1px solid #c7d3dd;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;color:#0B2A4A;cursor:pointer;min-width:150px}
+.xlate select:focus{outline:2px solid #ff9900;outline-offset:-1px}
+#google_translate_element{display:none}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
 :root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
@@ -70,6 +78,26 @@ footer a{color:#7ff0ff}
 
 <div class="wrap"><article>
 <nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › FRP vs MS vessel</nav>
+<div class="xlate">
+<span class="xl">🌐 Read in your language:</span>
+<select id="xlateSel" aria-label="Choose language">
+<option value="">English (original)</option>
+<option value="hi">हिन्दी — Hindi</option>
+<option value="bn">বাংলা — Bengali</option>
+<option value="mr">मराठी — Marathi</option>
+<option value="te">తెలుగు — Telugu</option>
+<option value="ta">தமிழ் — Tamil</option>
+<option value="gu">ગુજરાતી — Gujarati</option>
+<option value="kn">ಕನ್ನಡ — Kannada</option>
+<option value="ml">മലയാളം — Malayalam</option>
+<option value="pa">ਪੰਜਾਬੀ — Punjabi</option>
+<option value="or">ଓଡ଼ିଆ — Odia</option>
+<option value="as">অসমীয়া — Assamese</option>
+<option value="ur">اردو — Urdu</option>
+<option value="ne">नेपाली — Nepali</option>
+</select>
+</div>
+<div id="google_translate_element"></div>
 <h1>FRP vs MS vessel — which should you choose</h1>
 <div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
 <p><b>Short answer:</b> <b>FRP is the better choice for almost all water treatment work</b> — it does not rust, it is light, and it needs no lining maintenance. MS (mild steel) is only preferable where pressure or temperature is beyond what FRP can handle, or where a very large custom vessel is required.</p>
@@ -174,6 +202,43 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
 if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
 else{prompt('Copy this link:',u);}}
+
+/* --- language selector: loads Google Translate only when a language is picked --- */
+(function(){
+ var sel=document.getElementById('xlateSel'); if(!sel) return;
+ var loaded=false;
+ function setCookie(v){
+   var host=location.hostname, val=v?('/en/'+v):'/en/en';
+   ['','.'+host,host].forEach(function(d){
+     document.cookie='googtrans='+val+';path=/'+(d?';domain='+d:'');
+   });
+ }
+ window.xlateInit=function(){
+   new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');
+ };
+ function load(cb){
+   if(loaded){cb&&cb();return;}
+   loaded=true;
+   var s=document.createElement('script');
+   s.src='//translate.google.com/translate_a/element.js?cb=xlateInit';
+   s.onload=function(){setTimeout(function(){cb&&cb();},400);};
+   document.body.appendChild(s);
+ }
+ try{
+   var m=document.cookie.match(/googtrans=/en/([a-zA-Z-]+)/);
+   if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}
+ }catch(e){}
+ sel.addEventListener('change',function(){
+   var v=sel.value;
+   setCookie(v);
+   if(!v){ location.reload(); return; }
+   load(function(){
+     var c=document.querySelector('#google_translate_element select');
+     if(c){c.value=v;c.dispatchEvent(new Event('change'));}
+     else{location.reload();}
+   });
+ });
+})();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
 </body></html>

@@ -17,6 +17,14 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the main stages of an ETP?","acceptedAnswer":{"@type":"Answer","text":"Primary treatment removes solids physically and chemically, secondary treatment uses bacteria to consume the organic load, and tertiary treatment polishes the water to meet discharge standards."}},{"@type":"Question","name":"Why is the equalisation tank important?","acceptedAnswer":{"@type":"Answer","text":"Effluent arrives in batches with varying pH and strength, and the equalisation tank evens it out. Without adequate buffering a shock load can reach the aeration tank directly and kill the biomass, after which recovery takes weeks."}},{"@type":"Question","name":"Why do most ETP failures happen in the secondary stage?","acceptedAnswer":{"@type":"Answer","text":"Because it depends on living bacteria, which are sensitive to pH, oxygen levels and shock loads. If pH goes outside six point five to eight point five, or dissolved oxygen falls too low, the bacteria stop working."}},{"@type":"Question","name":"Why does sludge return matter?","acceptedAnswer":{"@type":"Answer","text":"Part of the settled biomass is returned to the aeration tank to maintain the bacterial population. If the return stops, the population washes out and treatment fails within days."}},{"@type":"Question","name":"How long does it take to recover after the biomass dies?","acceptedAnswer":{"@type":"Answer","text":"Typically two to four weeks. The cause must be fixed first, then pH and DO corrected, the plant seeded if possible, and fed gradually at reduced load while the population rebuilds."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"ETP stages","item":"https://www.wtpestore.co.in/blog/etp-plant-stages-explained.html"}]}</script>
 <style>
+
+.xlate{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#f2f6f9;border:1px solid #dbe4ec;border-radius:10px;padding:9px 13px;margin:14px 0 18px}
+.xlate .xl{font-size:13px;color:#456;font-weight:600;white-space:nowrap}
+.xlate select{padding:7px 10px;border:1px solid #c7d3dd;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;color:#0B2A4A;cursor:pointer;min-width:150px}
+.xlate select:focus{outline:2px solid #ff9900;outline-offset:-1px}
+#google_translate_element{display:none}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
 :root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
@@ -70,6 +78,26 @@ footer a{color:#7ff0ff}
 
 <div class="wrap"><article>
 <nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › ETP stages</nav>
+<div class="xlate">
+<span class="xl">🌐 Read in your language:</span>
+<select id="xlateSel" aria-label="Choose language">
+<option value="">English (original)</option>
+<option value="hi">हिन्दी — Hindi</option>
+<option value="bn">বাংলা — Bengali</option>
+<option value="mr">मराठी — Marathi</option>
+<option value="te">తెలుగు — Telugu</option>
+<option value="ta">தமிழ் — Tamil</option>
+<option value="gu">ગુજરાતી — Gujarati</option>
+<option value="kn">ಕನ್ನಡ — Kannada</option>
+<option value="ml">മലയാളം — Malayalam</option>
+<option value="pa">ਪੰਜਾਬੀ — Punjabi</option>
+<option value="or">ଓଡ଼ିଆ — Odia</option>
+<option value="as">অসমীয়া — Assamese</option>
+<option value="ur">اردو — Urdu</option>
+<option value="ne">नेपाली — Nepali</option>
+</select>
+</div>
+<div id="google_translate_element"></div>
 <h1>ETP stages explained — from raw effluent to discharge</h1>
 <div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
 <p><b>Short answer:</b> An ETP works in three broad stages — <b>primary</b> removes solids physically and chemically, <b>secondary</b> uses bacteria to consume the organic load, and <b>tertiary</b> polishes the water to meet discharge standards.</p>
@@ -191,6 +219,43 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
 if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
 else{prompt('Copy this link:',u);}}
+
+/* --- language selector: loads Google Translate only when a language is picked --- */
+(function(){
+ var sel=document.getElementById('xlateSel'); if(!sel) return;
+ var loaded=false;
+ function setCookie(v){
+   var host=location.hostname, val=v?('/en/'+v):'/en/en';
+   ['','.'+host,host].forEach(function(d){
+     document.cookie='googtrans='+val+';path=/'+(d?';domain='+d:'');
+   });
+ }
+ window.xlateInit=function(){
+   new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');
+ };
+ function load(cb){
+   if(loaded){cb&&cb();return;}
+   loaded=true;
+   var s=document.createElement('script');
+   s.src='//translate.google.com/translate_a/element.js?cb=xlateInit';
+   s.onload=function(){setTimeout(function(){cb&&cb();},400);};
+   document.body.appendChild(s);
+ }
+ try{
+   var m=document.cookie.match(/googtrans=/en/([a-zA-Z-]+)/);
+   if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}
+ }catch(e){}
+ sel.addEventListener('change',function(){
+   var v=sel.value;
+   setCookie(v);
+   if(!v){ location.reload(); return; }
+   load(function(){
+     var c=document.querySelector('#google_translate_element select');
+     if(c){c.value=v;c.dispatchEvent(new Event('change'));}
+     else{location.reload();}
+   });
+ });
+})();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
 </body></html>

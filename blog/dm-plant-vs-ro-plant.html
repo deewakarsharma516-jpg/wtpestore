@@ -17,6 +17,14 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between a DM plant and an RO plant?","acceptedAnswer":{"@type":"Answer","text":"RO uses pressure and a membrane to remove ninety five to ninety eight percent of dissolved salts. DM uses ion exchange resins to remove essentially all ionic salts, producing water below one ppm but at a higher chemical running cost."}},{"@type":"Question","name":"Why is DM expensive to run on high TDS water?","acceptedAnswer":{"@type":"Answer","text":"Because every ion removed consumes regeneration chemical. On high TDS feed the resins need frequent regeneration with acid and alkali, so chemical consumption and effluent volume both become very high."}},{"@type":"Question","name":"Why is RO used before DM?","acceptedAnswer":{"@type":"Answer","text":"The RO reduces TDS from perhaps fifteen hundred to thirty ppm, so the DM only has to remove that last small amount. Regeneration frequency falls dramatically, which cuts acid and alkali consumption and effluent."}},{"@type":"Question","name":"What is the difference between two bed and mixed bed DM?","acceptedAnswer":{"@type":"Answer","text":"Two bed uses separate cation and anion vessels and gives one to ten microsiemens. Mixed bed has both resins in one vessel and gives below one microsiemens, but regeneration is more complex because the resins must be separated first."}},{"@type":"Question","name":"Does a DM plant remove bacteria?","acceptedAnswer":{"@type":"Answer","text":"No. DM removes ionic salts but not bacteria, and resin beds can actually harbour bacterial growth. Where microbiological quality matters, separate disinfection is needed."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"DM plant vs RO","item":"https://www.wtpestore.co.in/blog/dm-plant-vs-ro-plant.html"}]}</script>
 <style>
+
+.xlate{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#f2f6f9;border:1px solid #dbe4ec;border-radius:10px;padding:9px 13px;margin:14px 0 18px}
+.xlate .xl{font-size:13px;color:#456;font-weight:600;white-space:nowrap}
+.xlate select{padding:7px 10px;border:1px solid #c7d3dd;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;color:#0B2A4A;cursor:pointer;min-width:150px}
+.xlate select:focus{outline:2px solid #ff9900;outline-offset:-1px}
+#google_translate_element{display:none}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
 :root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
@@ -70,6 +78,26 @@ footer a{color:#7ff0ff}
 
 <div class="wrap"><article>
 <nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › DM plant vs RO</nav>
+<div class="xlate">
+<span class="xl">🌐 Read in your language:</span>
+<select id="xlateSel" aria-label="Choose language">
+<option value="">English (original)</option>
+<option value="hi">हिन्दी — Hindi</option>
+<option value="bn">বাংলা — Bengali</option>
+<option value="mr">मराठी — Marathi</option>
+<option value="te">తెలుగు — Telugu</option>
+<option value="ta">தமிழ் — Tamil</option>
+<option value="gu">ગુજરાતી — Gujarati</option>
+<option value="kn">ಕನ್ನಡ — Kannada</option>
+<option value="ml">മലയാളം — Malayalam</option>
+<option value="pa">ਪੰਜਾਬੀ — Punjabi</option>
+<option value="or">ଓଡ଼ିଆ — Odia</option>
+<option value="as">অসমীয়া — Assamese</option>
+<option value="ur">اردو — Urdu</option>
+<option value="ne">नेपाली — Nepali</option>
+</select>
+</div>
+<div id="google_translate_element"></div>
 <h1>DM plant vs RO plant — which do you need</h1>
 <div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
 <p><b>Short answer:</b> <b>RO</b> removes 95 to 98 percent of dissolved salts using pressure and a membrane. <b>DM</b> (demineralisation) uses ion exchange resins to remove essentially <b>all</b> ionic salts, producing water of very low conductivity.</p>
@@ -193,6 +221,43 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
 if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
 else{prompt('Copy this link:',u);}}
+
+/* --- language selector: loads Google Translate only when a language is picked --- */
+(function(){
+ var sel=document.getElementById('xlateSel'); if(!sel) return;
+ var loaded=false;
+ function setCookie(v){
+   var host=location.hostname, val=v?('/en/'+v):'/en/en';
+   ['','.'+host,host].forEach(function(d){
+     document.cookie='googtrans='+val+';path=/'+(d?';domain='+d:'');
+   });
+ }
+ window.xlateInit=function(){
+   new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');
+ };
+ function load(cb){
+   if(loaded){cb&&cb();return;}
+   loaded=true;
+   var s=document.createElement('script');
+   s.src='//translate.google.com/translate_a/element.js?cb=xlateInit';
+   s.onload=function(){setTimeout(function(){cb&&cb();},400);};
+   document.body.appendChild(s);
+ }
+ try{
+   var m=document.cookie.match(/googtrans=/en/([a-zA-Z-]+)/);
+   if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}
+ }catch(e){}
+ sel.addEventListener('change',function(){
+   var v=sel.value;
+   setCookie(v);
+   if(!v){ location.reload(); return; }
+   load(function(){
+     var c=document.querySelector('#google_translate_element select');
+     if(c){c.value=v;c.dispatchEvent(new Event('change'));}
+     else{location.reload();}
+   });
+ });
+})();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
 </body></html>

@@ -17,6 +17,14 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the backwash water never run clear?","acceptedAnswer":{"@type":"Answer","text":"Usually the backwash flow is too low to lift the media bed, or the vessel is overfilled so there is no freeboard for the bed to expand into. Measure the actual backwash flow with a rotameter first."}},{"@type":"Question","name":"There is water at the drain during service — what does that mean?","acceptedAnswer":{"@type":"Answer","text":"The valve seals have worn, so water is leaking between ports instead of going where it should. The seal kit needs replacing, which is a periodic maintenance item on heavily used valves."}},{"@type":"Question","name":"Media is coming out during backwash — why?","acceptedAnswer":{"@type":"Answer","text":"Either the backwash flow is too high and is carrying media away, or the vessel is overfilled so the expanding bed reaches the top distributor. Check the flow first, then the media quantity."}},{"@type":"Question","name":"The softener regenerates but capacity is still low — what should I check?","acceptedAnswer":{"@type":"Answer","text":"The brine draw step is the usual cause. Watch the brine tank level during that step; if it does not fall, brine is not being drawn. Check the brine director, the brine line for blockage or air leaks, and the salt level."}},{"@type":"Question","name":"How should the drain line be arranged?","acceptedAnswer":{"@type":"Answer","text":"Keep it short, at least the same size as the valve drain port, and discharging freely without having to lift. A restricted drain throttles the backwash flow regardless of how much inlet pressure you have."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"MPV backwash problems","item":"https://www.wtpestore.co.in/blog/mpv-backwash-troubleshooting.html"}]}</script>
 <style>
+
+.xlate{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#f2f6f9;border:1px solid #dbe4ec;border-radius:10px;padding:9px 13px;margin:14px 0 18px}
+.xlate .xl{font-size:13px;color:#456;font-weight:600;white-space:nowrap}
+.xlate select{padding:7px 10px;border:1px solid #c7d3dd;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;color:#0B2A4A;cursor:pointer;min-width:150px}
+.xlate select:focus{outline:2px solid #ff9900;outline-offset:-1px}
+#google_translate_element{display:none}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
 :root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
@@ -70,6 +78,26 @@ footer a{color:#7ff0ff}
 
 <div class="wrap"><article>
 <nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › MPV backwash problems</nav>
+<div class="xlate">
+<span class="xl">🌐 Read in your language:</span>
+<select id="xlateSel" aria-label="Choose language">
+<option value="">English (original)</option>
+<option value="hi">हिन्दी — Hindi</option>
+<option value="bn">বাংলা — Bengali</option>
+<option value="mr">मराठी — Marathi</option>
+<option value="te">తెలుగు — Telugu</option>
+<option value="ta">தமிழ் — Tamil</option>
+<option value="gu">ગુજરાતી — Gujarati</option>
+<option value="kn">ಕನ್ನಡ — Kannada</option>
+<option value="ml">മലയാളം — Malayalam</option>
+<option value="pa">ਪੰਜਾਬੀ — Punjabi</option>
+<option value="or">ଓଡ଼ିଆ — Odia</option>
+<option value="as">অসমীয়া — Assamese</option>
+<option value="ur">اردو — Urdu</option>
+<option value="ne">नेपाली — Nepali</option>
+</select>
+</div>
+<div id="google_translate_element"></div>
 <h1>Multiport valve backwash not working — troubleshooting</h1>
 <div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
 <p><b>Short answer:</b> When backwash is not working, the three usual causes are <b>insufficient backwash flow</b>, a <b>worn valve seal</b> letting water bypass, or a <b>restricted drain line</b>. All three are diagnosable in a few minutes with a pressure gauge and a rotameter.</p>
@@ -195,6 +223,43 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
 if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
 else{prompt('Copy this link:',u);}}
+
+/* --- language selector: loads Google Translate only when a language is picked --- */
+(function(){
+ var sel=document.getElementById('xlateSel'); if(!sel) return;
+ var loaded=false;
+ function setCookie(v){
+   var host=location.hostname, val=v?('/en/'+v):'/en/en';
+   ['','.'+host,host].forEach(function(d){
+     document.cookie='googtrans='+val+';path=/'+(d?';domain='+d:'');
+   });
+ }
+ window.xlateInit=function(){
+   new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');
+ };
+ function load(cb){
+   if(loaded){cb&&cb();return;}
+   loaded=true;
+   var s=document.createElement('script');
+   s.src='//translate.google.com/translate_a/element.js?cb=xlateInit';
+   s.onload=function(){setTimeout(function(){cb&&cb();},400);};
+   document.body.appendChild(s);
+ }
+ try{
+   var m=document.cookie.match(/googtrans=/en/([a-zA-Z-]+)/);
+   if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}
+ }catch(e){}
+ sel.addEventListener('change',function(){
+   var v=sel.value;
+   setCookie(v);
+   if(!v){ location.reload(); return; }
+   load(function(){
+     var c=document.querySelector('#google_translate_element select');
+     if(c){c.value=v;c.dispatchEvent(new Event('change'));}
+     else{location.reload();}
+   });
+ });
+})();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
 </body></html>

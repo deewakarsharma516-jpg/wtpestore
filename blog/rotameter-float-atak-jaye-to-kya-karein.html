@@ -17,6 +17,14 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How should a rotameter float be cleaned?","acceptedAnswer":{"@type":"Answer","text":"Mild detergent with a soft cloth or sponge is enough. For scale, soak it for fifteen to twenty minutes in a mild acidic cleaning solution. Never use a wire brush or scouring pad, because a scratched tube is permanently ruined and the reading will never be correct again."}},{"@type":"Question","name":"What does it mean if the float is pinned at the top?","acceptedAnswer":{"@type":"Answer","text":"Either your flow has exceeded the range of the rotameter, meaning the wrong model was selected, or the meter is installed upside down. Water must always flow from bottom to top through a rotameter. Check both."}},{"@type":"Question","name":"How often should a rotameter be cleaned?","acceptedAnswer":{"@type":"Answer","text":"If a cartridge filter is fitted upstream, once or twice a year is usually enough. Without a filter, and especially on raw water, cleaning may be needed every two to three months."}},{"@type":"Question","name":"Does an oscillating float give a wrong reading?","acceptedAnswer":{"@type":"Answer","text":"Yes, only a steady float gives a reliable reading. The usual cause is that the rotameter is fitted immediately after a pump or elbow, or that air is trapped in the line. Leaving straight pipe upstream normally resolves it."}},{"@type":"Question","name":"The tube is scratched — can it be repaired?","acceptedAnswer":{"@type":"Answer","text":"No. Once an acrylic tube is scratched the mark is permanent and it interferes with the movement of the float, so the rotameter has to be replaced. This is exactly why scrubbing during cleaning must be avoided."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"Rotameter float stuck","item":"https://www.wtpestore.co.in/blog/rotameter-float-atak-jaye-to-kya-karein.html"}]}</script>
 <style>
+
+.xlate{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#f2f6f9;border:1px solid #dbe4ec;border-radius:10px;padding:9px 13px;margin:14px 0 18px}
+.xlate .xl{font-size:13px;color:#456;font-weight:600;white-space:nowrap}
+.xlate select{padding:7px 10px;border:1px solid #c7d3dd;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;color:#0B2A4A;cursor:pointer;min-width:150px}
+.xlate select:focus{outline:2px solid #ff9900;outline-offset:-1px}
+#google_translate_element{display:none}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
 :root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
@@ -70,6 +78,26 @@ footer a{color:#7ff0ff}
 
 <div class="wrap"><article>
 <nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › Rotameter float stuck</nav>
+<div class="xlate">
+<span class="xl">🌐 Read in your language:</span>
+<select id="xlateSel" aria-label="Choose language">
+<option value="">English (original)</option>
+<option value="hi">हिन्दी — Hindi</option>
+<option value="bn">বাংলা — Bengali</option>
+<option value="mr">मराठी — Marathi</option>
+<option value="te">తెలుగు — Telugu</option>
+<option value="ta">தமிழ் — Tamil</option>
+<option value="gu">ગુજરાતી — Gujarati</option>
+<option value="kn">ಕನ್ನಡ — Kannada</option>
+<option value="ml">മലയാളം — Malayalam</option>
+<option value="pa">ਪੰਜਾਬੀ — Punjabi</option>
+<option value="or">ଓଡ଼ିଆ — Odia</option>
+<option value="as">অসমীয়া — Assamese</option>
+<option value="ur">اردو — Urdu</option>
+<option value="ne">नेपाली — Nepali</option>
+</select>
+</div>
+<div id="google_translate_element"></div>
 <h1>Rotameter float stuck — cleaning and repair guide</h1>
 <div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
 <p><b>Short answer:</b> There are only three real causes — <b>scale build-up</b>, <b>dirt and particles</b>, or <b>incorrect installation</b> such as mounting at an angle. In most cases opening the rotameter and gently cleaning the tube and float solves it. A replacement is rarely needed.</p>
@@ -167,6 +195,43 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
 if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
 else{prompt('Copy this link:',u);}}
+
+/* --- language selector: loads Google Translate only when a language is picked --- */
+(function(){
+ var sel=document.getElementById('xlateSel'); if(!sel) return;
+ var loaded=false;
+ function setCookie(v){
+   var host=location.hostname, val=v?('/en/'+v):'/en/en';
+   ['','.'+host,host].forEach(function(d){
+     document.cookie='googtrans='+val+';path=/'+(d?';domain='+d:'');
+   });
+ }
+ window.xlateInit=function(){
+   new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');
+ };
+ function load(cb){
+   if(loaded){cb&&cb();return;}
+   loaded=true;
+   var s=document.createElement('script');
+   s.src='//translate.google.com/translate_a/element.js?cb=xlateInit';
+   s.onload=function(){setTimeout(function(){cb&&cb();},400);};
+   document.body.appendChild(s);
+ }
+ try{
+   var m=document.cookie.match(/googtrans=/en/([a-zA-Z-]+)/);
+   if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}
+ }catch(e){}
+ sel.addEventListener('change',function(){
+   var v=sel.value;
+   setCookie(v);
+   if(!v){ location.reload(); return; }
+   load(function(){
+     var c=document.querySelector('#google_translate_element select');
+     if(c){c.value=v;c.dispatchEvent(new Event('change'));}
+     else{location.reload();}
+   });
+ });
+})();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
 </body></html>

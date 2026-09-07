@@ -17,6 +17,14 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I choose the right rotameter flow range?","acceptedAnswer":{"@type":"Answer","text":"Work out the flow your plant normally runs at, then pick a model where that flow falls roughly in the middle of the scale, around 40 to 70 percent. For 300 LPH the F500 with its 50 to 500 LPH range is correct, because on an F1200 the same 300 LPH would sit right at the bottom of the scale and be difficult to read."}},{"@type":"Question","name":"What is the difference between a rotameter and a digital flow meter?","acceptedAnswer":{"@type":"Answer","text":"In a rotameter a float rises and falls to show flow directly, it needs no power supply and it is the cheapest option, but it can only be read by eye. A digital flow meter such as the FT-650 also totalises, so it tells you how much water has passed in total, and it can be connected to a panel or SCADA through a 4-20mA or RS485 output."}},{"@type":"Question","name":"Can a rotameter be installed in any position?","acceptedAnswer":{"@type":"Answer","text":"No. A variable area rotameter must always be mounted vertically with the flow going from bottom to top. Fitted at an angle or horizontally, the float jams and the reading is wrong. Leave at least five pipe diameters of straight line upstream."}},{"@type":"Question","name":"What do 15NB, 20NB and 25NB mean?","acceptedAnswer":{"@type":"Answer","text":"NB stands for nominal bore, which is the pipe size. 15NB is roughly half an inch, 20NB three-quarter inch and 25NB one inch. The rotameter NB should match your line, otherwise reducers are needed and they disturb the flow."}},{"@type":"Question","name":"When should I use an electromagnetic flow meter instead?","acceptedAnswer":{"@type":"Answer","text":"When the line is larger than 40NB, when the water is dirty or carries solids, or when you need the reading in a panel or SCADA system. It has no moving parts so it does not wear, but it costs considerably more than a rotameter and needs a power supply."}},{"@type":"Question","name":"What should I do if the rotameter float is stuck?","acceptedAnswer":{"@type":"Answer","text":"The usual cause is scale or dirt. Isolate the line, open the rotameter and clean the tube and float gently with a mild detergent — never scrub them. If it keeps happening the water carries too many suspended solids, so fitting a cartridge or screen filter upstream is the better fix."}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wtpestore.co.in/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wtpestore.co.in/blog.html"},{"@type":"ListItem","position":3,"name":"Rotameter selection guide","item":"https://www.wtpestore.co.in/blog/rotameter-kaise-chunein-flow-range-guide.html"}]}</script>
 <style>
+
+.xlate{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#f2f6f9;border:1px solid #dbe4ec;border-radius:10px;padding:9px 13px;margin:14px 0 18px}
+.xlate .xl{font-size:13px;color:#456;font-weight:600;white-space:nowrap}
+.xlate select{padding:7px 10px;border:1px solid #c7d3dd;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;color:#0B2A4A;cursor:pointer;min-width:150px}
+.xlate select:focus{outline:2px solid #ff9900;outline-offset:-1px}
+#google_translate_element{display:none}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
 :root{--navy:#0B2A4A;--orange:#ff9900;--green:#067d62;--border:#d5d9d9}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Inter,system-ui,Arial,sans-serif;background:#eaeded;color:#0f1111;line-height:1.7}
@@ -70,6 +78,26 @@ footer a{color:#7ff0ff}
 
 <div class="wrap"><article>
 <nav class="bc"><a href="/">Home</a> › <a href="/blog.html">Blog</a> › Rotameter selection guide</nav>
+<div class="xlate">
+<span class="xl">🌐 Read in your language:</span>
+<select id="xlateSel" aria-label="Choose language">
+<option value="">English (original)</option>
+<option value="hi">हिन्दी — Hindi</option>
+<option value="bn">বাংলা — Bengali</option>
+<option value="mr">मराठी — Marathi</option>
+<option value="te">తెలుగు — Telugu</option>
+<option value="ta">தமிழ் — Tamil</option>
+<option value="gu">ગુજરાતી — Gujarati</option>
+<option value="kn">ಕನ್ನಡ — Kannada</option>
+<option value="ml">മലയാളം — Malayalam</option>
+<option value="pa">ਪੰਜਾਬੀ — Punjabi</option>
+<option value="or">ଓଡ଼ିଆ — Odia</option>
+<option value="as">অসমীয়া — Assamese</option>
+<option value="ur">اردو — Urdu</option>
+<option value="ne">नेपाली — Nepali</option>
+</select>
+</div>
+<div id="google_translate_element"></div>
 <h1>How to select a rotameter — sizing by flow range (LPH)</h1>
 <div class="meta">Aqua Filtration System, Faridabad · 9+ years in water treatment · Updated September 2026</div>
 <p><b>Short answer:</b> There is really only one rule that matters — <b>your normal running flow should fall in the middle of the rotameter scale</b>, roughly between 40 and 70 percent. If your RO plant runs at 300 LPH, the right model is <b>F500 (50–500 LPH)</b>, not F1200. After that you only need to check two things: the <b>NB size</b> of your pipe, and whether you need a totaliser or just a visual reading.</p>
@@ -213,6 +241,43 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 function bCopy(b){var u=b.getAttribute('data-u');var d=function(){var o=b.textContent;b.textContent='Copied!';setTimeout(function(){b.textContent=o;},1600);};
 if(navigator.clipboard){navigator.clipboard.writeText(u).then(d).catch(function(){prompt('Copy this link:',u);});}
 else{prompt('Copy this link:',u);}}
+
+/* --- language selector: loads Google Translate only when a language is picked --- */
+(function(){
+ var sel=document.getElementById('xlateSel'); if(!sel) return;
+ var loaded=false;
+ function setCookie(v){
+   var host=location.hostname, val=v?('/en/'+v):'/en/en';
+   ['','.'+host,host].forEach(function(d){
+     document.cookie='googtrans='+val+';path=/'+(d?';domain='+d:'');
+   });
+ }
+ window.xlateInit=function(){
+   new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');
+ };
+ function load(cb){
+   if(loaded){cb&&cb();return;}
+   loaded=true;
+   var s=document.createElement('script');
+   s.src='//translate.google.com/translate_a/element.js?cb=xlateInit';
+   s.onload=function(){setTimeout(function(){cb&&cb();},400);};
+   document.body.appendChild(s);
+ }
+ try{
+   var m=document.cookie.match(/googtrans=/en/([a-zA-Z-]+)/);
+   if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}
+ }catch(e){}
+ sel.addEventListener('change',function(){
+   var v=sel.value;
+   setCookie(v);
+   if(!v){ location.reload(); return; }
+   load(function(){
+     var c=document.querySelector('#google_translate_element select');
+     if(c){c.value=v;c.dispatchEvent(new Event('change'));}
+     else{location.reload();}
+   });
+ });
+})();
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
 </script>
 </body></html>

@@ -42,6 +42,13 @@ h2{font-size:20px;color:var(--navy);margin:26px 0 2px;padding-bottom:6px;border-
 .none{display:none;padding:26px 0;color:#666;font-size:15px}
 footer{background:var(--navy);color:#cfe0ee;margin-top:26px;padding:22px 0;font-size:13px}
 footer a{color:#fff;text-decoration:none}
+
+.xlate{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#f2f6f9;border:1px solid #dbe4ec;border-radius:10px;padding:9px 13px;margin:14px 0 4px}
+.xlate .xl{font-size:13px;color:#456;font-weight:600;white-space:nowrap}
+.xlate select{padding:7px 10px;border:1px solid #c7d3dd;border-radius:7px;font-size:14px;font-family:inherit;background:#fff;color:#0B2A4A;cursor:pointer;min-width:150px}
+#google_translate_element{display:none}
+.goog-te-banner-frame,.skiptranslate iframe{display:none!important}
+body{top:0!important}
 @media(max-width:640px){h1{font-size:24px}.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -53,6 +60,9 @@ footer a{color:#fff;text-decoration:none}
 
 <div class="wrap">
 <nav class="bc"><a href="/">Home</a> › Blog</nav>
+<div class="xlate"><span class="xl">🌐 Read in your language:</span><select id="xlateSel" aria-label="Choose language"><option value="">English (original)</option><option value="hi">हिन्दी — Hindi</option><option value="bn">বাংলা — Bengali</option><option value="mr">मराठी — Marathi</option><option value="te">తెలుగు — Telugu</option><option value="ta">தமிழ் — Tamil</option><option value="gu">ગુજરાતી — Gujarati</option><option value="kn">ಕನ್ನಡ — Kannada</option><option value="ml">മലയാളം — Malayalam</option><option value="pa">ਪੰਜਾਬੀ — Punjabi</option><option value="or">ଓଡ଼ିଆ — Odia</option><option value="as">অসমীয়া — Assamese</option><option value="ur">اردو — Urdu</option><option value="ne">नेपाली — Nepali</option></select></div>
+<div id="google_translate_element"></div>
+
 
 <div class="hero">
 <h1>Water treatment guides</h1>
@@ -241,6 +251,23 @@ footer a{color:#fff;text-decoration:none}
 </div></footer>
 
 <script>
+
+(function(){
+ var sel=document.getElementById('xlateSel'); if(!sel) return;
+ var loaded=false;
+ function setCookie(v){var host=location.hostname,val=v?('/en/'+v):'/en/en';
+  ['','.'+host,host].forEach(function(d){document.cookie='googtrans='+val+';path=/'+(d?';domain='+d:'');});}
+ window.xlateInit=function(){new google.translate.TranslateElement({pageLanguage:'en',autoDisplay:false},'google_translate_element');};
+ function load(cb){if(loaded){cb&&cb();return;}loaded=true;
+  var s=document.createElement('script');s.src='//translate.google.com/translate_a/element.js?cb=xlateInit';
+  s.onload=function(){setTimeout(function(){cb&&cb();},400);};document.body.appendChild(s);}
+ try{var m=document.cookie.match(/googtrans=\/en\/([a-zA-Z-]+)/);if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}}catch(e){}
+ sel.addEventListener('change',function(){var v=sel.value;setCookie(v);
+  if(!v){location.reload();return;}
+  load(function(){var c=document.querySelector('#google_translate_element select');
+   if(c){c.value=v;c.dispatchEvent(new Event('change'));}else{location.reload();}});});
+})();
+
 (function(){
  var secs=[].slice.call(document.querySelectorAll('.sec'));
  var chips=document.getElementById('chips');
