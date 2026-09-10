@@ -86,7 +86,6 @@ const BLOG_PAGES = [
   '/blog/ft-650-insertion-vs-full-bore.html',
   '/blog/hard-water-nuksan.html',
   '/blog/housing-se-leakage-o-ring.html',
-  '/blog/icons',
   '/blog/level-switch-dosing-pump-mein-kyun-zaroori.html',
   '/blog/manual-vs-automatic-mpv.html',
   '/blog/membrane-cip-cleaning.html',
@@ -441,17 +440,82 @@ function specRowsFromSpec(spec) {
   return [];
 }
 /* Category ke hisaab se 3-4 selling points */
+/* Google recommends priceValidUntil on Offer - rolls forward 1 year each build */
+const PRICE_VALID_UNTIL = (function () {
+  const d = new Date(); d.setFullYear(d.getFullYear() + 1);
+  return d.toISOString().slice(0, 10);
+})();
+
+/* ---------------------------------------------------------------
+   REDIRECTS - old slug : new slug
+   Use when a product NAME is corrected in the Sheet and its URL
+   changes. build-seo.js then writes a small redirect page at the
+   old path, so Google and old links reach the new page.
+   Uncomment / add a line, save, run the workflow.
+--------------------------------------------------------------- */
+const REDIRECTS = {
+  // 'ro-plannt-3000-lph': 'ro-plant-3000-lph',
+};
+
 const FEATURE_RULES = [
-  [/rotameter|flow ?meter|electromagnetic/, ['Direct in-line flow reading — no power needed on basic rotameters', 'Corrosion-resistant body suited to treated and raw water lines', 'Helps you spot fouling or leakage before it damages the plant', 'Standard NB end connections for easy retrofit']],
+  /* --- order matters: most specific first --- */
+
+  /* plants */
+  [/industrial ro plant|ro plant/, ['Complete skid — pre-treatment, membranes, pump and panel', 'Sized for your feed TDS and daily requirement', 'Low/high pressure cut-off protects the pump and membranes', 'Installation and commissioning support across India']],
+  [/dm plant/, ['Produces low-conductivity water for boilers and process use', 'Cation and anion resin beds sized for your inlet TDS', 'Manual regeneration with acid and alkali', 'Ideal as a polishing stage after RO']],
+  [/uf plant/, ['Removes turbidity, bacteria and colloids without chemicals', 'Hollow-fibre membranes with automatic backwash', 'Brings SDI below 3 — good RO pre-treatment', '90–95% water recovery, very little reject']],
+  [/etp plant|stp plant/, ['Designed to meet pollution board discharge norms', 'Biological treatment with diffused aeration', 'Tertiary filtration and disinfection included', 'Treated water suitable for gardening and flushing']],
+
+  /* pumps and dosing */
+  [/dosing vessel|lldpe/, ['Food-grade LLDPE — safe with antiscalant, SMBS and acid', 'Moulded in one piece, no joints to leak', 'Graduated body for easy solution make-up', 'Fits standard dosing pump suction assemblies']],
   [/dosing|edose|metering pump/, ['Adjustable stroke for precise chemical dosing', 'Chemical-resistant wetted parts (PP / PVDF options)', 'Protects membranes from scale and biofouling', 'Suitable for antiscalant, chlorine and pH correction']],
-  [/frp|vessel/, ['Corrosion-free FRP construction — no rusting like MS tanks', 'Rated for continuous working pressure', 'Fits standard top or side-mount multiport valves', 'Long service life with minimal maintenance']],
-  [/u\.?v\.?|purif/, ['Chemical-free disinfection — no taste or odour change', 'Effective against bacteria and viruses', 'Low power consumption, continuous operation', 'Simple lamp replacement schedule']],
-  [/membrane/, ['High salt rejection for consistent permeate quality', 'Standard element size — fits existing housings', 'Long life when antiscalant dosing is maintained', 'Genuine sourcing with brand warranty']],
-  [/cartridge|filter/, ['Protects RO membranes and pumps from sediment', 'Available in multiple micron ratings', 'Standard length — fits common housings', 'Economical, easy scheduled replacement']],
-  [/multiport|mpv|valve/, ['Single-handle control of service, backwash and rinse', 'Available in filter and softener configurations', 'Top and side-mount options for different vessels', 'Durable body rated for plant working pressure']],
-  [/controller|astero|instrument|switch|gauge/, ['Automatic pump protection against dry run', 'Clear display for quick operator checks', 'Reduces manual supervision and downtime', 'Panel-mount design for standard enclosures']],
+
+  /* instruments — split from controllers */
+  [/test kit/, ['Simple drop-count method — results in minutes', 'No power or calibration needed', 'Essential for softener and boiler feed checks', 'Refill reagents available separately']],
+  [/pressure gauge/, ['Shows filter choking before flow drops', 'Glycerine-filled options damp pump vibration', 'Standard bottom or back entry connections', 'Stainless internals for water treatment duty']],
+  [/pressure & level switch|level switch|pressure switch/, ['Stops the pump on low or high pressure', 'Protects membranes and pump from dry running', 'Adjustable set point on NXT models', 'Simple two-wire panel connection']],
+  [/instrument|meter|sensor|indicator|transmitter|datalogger/, ['Continuous reading — catch problems before they cost you', 'Field-replaceable sensor keeps running cost low', 'Relay and 4-20mA / RS485 output options', 'Fittings supplied for easy in-line mounting']],
+
+  /* controllers / panels */
+  [/controller|astero|panel/, ['Automatic pump protection against dry run', 'Clear display for quick operator checks', 'Reduces manual supervision and downtime', 'Panel-mount design for RO, UF and ETP plants']],
+
+  /* flow */
+  [/rotameter|flow ?meter|electromagnetic/, ['Direct in-line flow reading — no power needed on basic rotameters', 'Corrosion-resistant body suited to treated and raw water lines', 'Helps you spot fouling or leakage before it damages the plant', 'Standard NB end connections for easy retrofit']],
+
+  /* valves */
+  [/solenoid valve/, ['Opens and closes automatically on a panel signal', 'SS304 and brass bodies for water treatment lines', 'Normally-closed operation fails safe on power loss', 'Available from 15NB to 50NB']],
+  [/mpv accessor|multiport valve accessor|brine director|brine switch|vaccum breaker|vacuum breaker/, ['Genuine spares for Initiative Engineering multiport valves', 'Correct fit — no leakage or thread damage', 'Brine directors, switches, adaptors and air release valves', 'Keeps softener regeneration working as designed']],
+  [/multiport|mpv/, ['Single-handle control of service, backwash and rinse', 'Available in filter and softener configurations', 'Top and side-mount options for different vessels', 'Durable body for continuous plant duty']],
+
+  /* vessels and internals */
+  [/distribution system|diffuser/, ['Spreads flow evenly so the whole media bed works', 'Prevents channelling and media loss', 'Sized to vessel diameter and service flow', 'Corrosion-free construction for long life']],
+  [/frp vessel|pentair|qflo/, ['Corrosion-free FRP construction — no rusting like MS tanks', 'Rated for continuous working pressure', 'Fits standard top or side-mount multiport valves', 'Long service life with minimal maintenance']],
+  [/multigrade|sand filter|media filter/, ['Removes turbidity, silt and suspended solids', 'Graded media bed with backwash and rinse', 'Protects cartridges, membranes and softener resin', 'Sized on flow and inlet turbidity']],
+
+  /* membranes and housings */
+  [/u\.?f\.? membrane|uf membrane|everflow/, ['Removes turbidity, bacteria and colloids — not dissolved salts', 'Hollow-fibre construction withstands repeated backwash', 'Brings SDI below 3 for RO pre-treatment', 'Replacement modules for existing UF skids']],
+  [/membrane housing|pipe joint|coupling|end cap/, ['Rated for RO working pressure with margin', 'Takes standard 4040 and 8040 elements', 'Supplied with O-rings and end connections', 'Corrosion-free construction for long service']],
+  [/membrane/, ['High salt rejection for consistent permeate quality', 'Standard element size — fits existing housings', 'Long life when antiscalant dosing is maintained', 'Genuine sourcing with brand traceability']],
+
+  /* filters */
+  [/cartridge housing/, ['Holds standard 10, 20 and 30 inch cartridges', 'Air release valve makes cartridge changes easy', 'PP and SS304 options for pressure and temperature', 'Standard NB inlet and outlet connections']],
+  [/disc & screen|disc filter|screen filter/, ['Washable and reusable — no recurring cartridge cost', 'Stops sand and coarse particles before the cartridges', 'Y and T type bodies from 3/4 inch to 3 inch', 'Cuts cartridge consumption noticeably']],
+  [/bag filter|filters bag|filter bag/, ['Holds far more dirt than a cartridge of the same size', 'Quick to change — lift out and replace the bag', 'Available from 5 to 100 micron', 'Ideal ahead of cartridges on dirty water']],
+  [/cartridge|gopani|clarywound|ro protect/, ['Protects RO membranes and pumps from sediment', 'Available in multiple micron ratings', 'Standard length — fits common housings', 'Economical, easy scheduled replacement']],
+
+  /* softener */
   [/soft[ei]n/, ['Removes calcium and magnesium hardness', 'Stops scale in pipes, geysers and boilers', 'Automatic or manual regeneration options', 'Extends the life of downstream equipment']],
-  [/chemical|antiscalant|resin|carbon/, ['Formulated for Indian feed-water conditions', 'Protects membranes and equipment from scale and fouling', 'Economical dosing rates', 'Technical dosage support from our team']]
+
+  /* chemicals and media */
+  [/chemical|antiscalant|resin|carbon/, ['Formulated for Indian feed-water conditions', 'Protects membranes and equipment from scale and fouling', 'Economical dosing rates', 'Technical dosage support on request']],
+
+  /* uv */
+  [/u\.?v\.?|purif/, ['Chemical-free disinfection — no taste or odour change', 'Effective against bacteria and viruses', 'Low power consumption, continuous operation', 'Simple lamp replacement schedule']],
+
+  /* misc */
+  [/blower/, ['Supplies diffused air to the aeration tank', 'Twin lobe design for steady low-pressure air', 'Dynamically balanced rotors for long bearing life', 'Supplied ready to install with standard accessories']],
+  [/water atm|dispenser/, ['Card, coin and QR dispensing options', 'Flow sensor and solenoid valve on every tap', 'Suits community and society water points', 'Expandable — add taps as demand grows']],
+  [/pool light|swimming pool/, ['Sealed for continuous underwater use', 'Low-voltage LED — safe and economical', 'Cool white, warm white and RGB options', 'Driver supplied to match the wattage']],
 ];
 function featuresFor(category) {
   const c = String(category || '').toLowerCase();
@@ -488,19 +552,135 @@ function faqsFor(p, blurb) {
    Isliye: aise products ka static page NAHI banta. Wo apni category page par dikhte hain,
    aur unka link wahin jaata hai. Sheet me naam unique karte hi page apne aap ban jayega.
 */
+/* ---------------------------------------------------------------
+   NAME_FIXES - straight typo corrections applied to the Sheet name
+   before anything else. Key = exact name in the Sheet.
+--------------------------------------------------------------- */
+const NAME_FIXES = {
+  'RO PLANNT 3000 LPH': 'RO PLANT 3000 LPH',
+  'PP WITH BAG FLITER': 'PP WITH BAG FILTER',
+  'EDOSE NEO PRO 10LPH PVDF WITH LEVEL SWITCH (10LPH at 4 kg/cm2)': 'EDOSE NEO PRO 10LPH PVDF WITH LEVEL SWITCH (10LPH at 4 kg/cm2)',
+};
+
+/* words that carry no meaning when building a disambiguating suffix */
+const CAT_STOP = new Set(['and','the','for','with','of','systems','system','filters','filter',
+  'cartridges','cartridge','valves','valve','vessels','vessel','pumps','pump','meters','meter',
+  'instruments','instrument','products','product','plant','kits','kit','accessories','accessory',
+  'engineering','initiative','zero','scale','type','types','o','r','u','f','p','c']);
+
+function catToken(cat) {
+  return String(cat || '')
+    .replace(/[^A-Za-z0-9 ]+/g, ' ')
+    .split(/\s+/)
+    .filter(w => w && !CAT_STOP.has(w.toLowerCase()))
+    .slice(0, 3)
+    .join(' ')
+    .trim();
+}
+
+function specToken(spec) {
+  const t = String(spec || '').replace(/\s+/g, ' ').trim();
+  if (!t) return '';
+  /* prefer a volume / size / capacity looking fragment */
+  const m = t.match(/\b\d[\d.,]*\s*(?:litre|liter|l\b|kg|mm|inch|"|lph|kld|m3|micron)\b[^,|]*/i);
+  if (m) return m[0].trim().slice(0, 28);
+  return t.split(/[|,\n]/)[0].trim().slice(0, 28);
+}
+
+function normName(n) { return String(n || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+
+/* ---------------------------------------------------------------
+   autoUniqueNames
+   The product NAME decides the URL slug, so names must be unique
+   across the whole catalogue. Rather than asking the Sheet to be
+   perfect, we disambiguate here:
+     typo fix -> model -> category words -> spec fragment
+   Anything still colliding after that is left excluded and listed
+   in seo-rename-list.txt for a human to sort out.
+--------------------------------------------------------------- */
 function markDuplicateNames(P) {
-  const byName = {};
+  /* 0. typo corrections */
   P.forEach(p => {
-    const k = String(p.n).toLowerCase().replace(/\s+/g, ' ').trim();
-    (byName[k] = byName[k] || []).push(p);
+    const fix = NAME_FIXES[String(p.n).trim()];
+    if (fix && fix !== p.n) { p.nOrig = p.n; p.n = fix; }
   });
+
+  /* catalogue table headings leak in as "[VESSEL MODEL]" etc.
+     Drop them - but never if that would collide with a name that is
+     already fine, and never if it leaves nothing to identify the row. */
+  const existing = new Set(P.map(p => normName(p.n)));
+  P.forEach(p => {
+    const stripped = String(p.n).replace(/\s*\[[^\]]*\]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!stripped || stripped === p.n || stripped.length < 3) return;
+    if (existing.has(normName(stripped))) return;      /* would clash - leave as is */
+    if (!p.model && !p.spec) return;                   /* nothing left to re-identify it */
+    if (!p.nOrig) p.nOrig = p.n;
+    p.n = stripped;
+  });
+
+  const groupsOf = () => {
+    const m = {};
+    P.forEach(p => { const k = normName(p.n); (m[k] = m[k] || []).push(p); });
+    return m;
+  };
+
+  /* --- helpers: keep only what actually differs inside a clashing group --- */
+  const tok = v => String(v || '').split(/[\s\-_/]+/).filter(Boolean);
+  function distinctive(values) {
+    /* strip the tokens every value shares at the start and at the end */
+    const lists = values.map(tok);
+    if (lists.some(l => !l.length)) return values.map(v => String(v || '').trim());
+    let head = 0;
+    const minLen = Math.min(...lists.map(l => l.length));
+    while (head < minLen - 1 &&
+           lists.every(l => l[head].toLowerCase() === lists[0][head].toLowerCase())) head++;
+    let tail = 0;
+    while (tail < minLen - head - 1 &&
+           lists.every(l => l[l.length - 1 - tail].toLowerCase() ===
+                            lists[0][lists[0].length - 1 - tail].toLowerCase())) tail++;
+    return lists.map(l => l.slice(head, l.length - tail).join(' ').trim().slice(0, 30));
+  }
+
+  /* 1..3 - progressively add a suffix, only inside groups that still clash */
+  const steps = [
+    rows => distinctive(rows.map(p => p.model || '')),
+    rows => rows.map(p => catToken(p.c)),
+    rows => distinctive(rows.map(p => specToken(p.spec) || '')),
+  ];
+
+  for (const pick of steps) {
+    const g = groupsOf();
+    Object.keys(g).forEach(k => {
+      const rows = g[k];
+      if (rows.length < 2) return;
+      const suffixes = pick(rows);
+      const distinctSet = new Set(suffixes.filter(Boolean).map(x => x.toLowerCase()));
+      /* only useful if it actually separates the rows */
+      if (distinctSet.size < 2) return;
+      rows.forEach((p, i) => {
+        const sfx = (suffixes[i] || '').trim();
+        if (!sfx) return;
+        if (normName(p.n).includes(normName(sfx))) return;
+        p.nAuto = true;
+        p.n = p.n.trim() + ' ' + sfx;
+      });
+    });
+  }
+
+  /* whatever still collides is excluded, as before */
   const dupGroups = [];
-  Object.keys(byName).forEach(k => {
-    if (byName[k].length > 1) {
-      byName[k].forEach(p => { p.dupName = true; });
-      dupGroups.push(byName[k]);
+  const g = groupsOf();
+  Object.keys(g).forEach(k => {
+    if (g[k].length > 1) {
+      g[k].forEach(p => { p.dupName = true; });
+      dupGroups.push(g[k]);
     }
   });
+
+  const renamed = P.filter(p => p.nAuto).length;
+  const fixed = P.filter(p => p.nOrig).length;
+  if (fixed) console.log('name typos fixed: ' + fixed);
+  if (renamed) console.log('names auto-disambiguated: ' + renamed);
   return dupGroups;
 }
 
@@ -581,6 +761,7 @@ ${relBlock}
       "offers": {
         "@type": "Offer", "price": p.p, "priceCurrency": "INR",
         "availability": "https://schema.org/InStock",
+        "priceValidUntil": PRICE_VALID_UNTIL,
         "url": pageUrl,
         "seller": { "@type": "Organization", "name": "Aqua Filtration System" }
       }
@@ -860,8 +1041,21 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   /* ---- sitemap.xml ---- */
   let sm = '';
   try { sm = fs.readFileSync('sitemap.xml', 'utf8'); } catch (e) { }
+  /* blog filenames — used to purge stale ROOT-level copies from an old sitemap */
+  const BLOG_FILES = new Set(BLOG_PAGES.filter(u => u.startsWith('/blog/')).map(u => u.split('/').pop()));
   const staticUrls = (sm.match(/<loc>[^<]*<\/loc>/g) || []).map(x => x.replace(/<\/?loc>/g, ''))
-    .filter(u => !/\?p=/.test(u) && !/\/products\//.test(u));
+    .filter(u => !/\?p=/.test(u) && !/\/products\//.test(u))
+    /* drop /slug.html when the real page is /blog/slug.html  */
+    .filter(u => {
+      const path = u.replace(SITE, '');
+      const file = path.split('/').pop();
+      const atRoot = /^\/[^/]+\.html$/.test(path);
+      if (atRoot && BLOG_FILES.has(file)) {
+        console.log('  purged stale root URL: ' + path);
+        return false;
+      }
+      return true;
+    });
   const all = new Set(staticUrls);
   all.add(SITE + '/products.html');
   CHEM_PAGES.forEach(u => all.add(SITE + u));
@@ -875,6 +1069,52 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   fs.writeFileSync('sitemap.xml',
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls.join('\n')}\n</urlset>\n`);
   console.log('sitemap.xml ✓ (' + urls.length + ' URLs)');
+
+  /* ---- robots.txt ---- */
+  const robots = [
+    '# WTPESTORE - powered by Aqua Filtration System',
+    '# Generated by build-seo.js - do not edit by hand',
+    '',
+    'User-agent: *',
+    'Allow: /',
+    '',
+    '# Admin pages - internal use only',
+    'Disallow: /admin-add-blog.html',
+    'Disallow: /admin-add-product.html',
+    'Disallow: /admin-leads.html',
+    'Disallow: /admin-quick-quote.html',
+    '',
+    '# Sitemap',
+    'Sitemap: ' + SITE + '/sitemap.xml',
+    ''
+  ].join('\n');
+  fs.writeFileSync('robots.txt', robots);
+  console.log('robots.txt ✓');
+
+  /* ---- redirect pages for renamed products ---- */
+  const redirKeys = Object.keys(REDIRECTS);
+  if (redirKeys.length) {
+    let made = 0;
+    for (const oldSlug of redirKeys) {
+      const newSlug = REDIRECTS[oldSlug];
+      if (!STATIC_SLUGS.has(newSlug)) {
+        console.log('  ! redirect target missing, skipped: ' + newSlug);
+        continue;
+      }
+      const target = SITE + '/products/' + newSlug + '.html';
+      const html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<meta name="robots" content="noindex,follow">' +
+        '<link rel="canonical" href="' + target + '">' +
+        '<meta http-equiv="refresh" content="0; url=' + target + '">' +
+        '<title>Moved</title></head><body>' +
+        '<p>This page has moved to <a href="' + target + '">' + target + '</a>.</p>' +
+        '<script>location.replace(' + JSON.stringify(target) + ');<\/script>' +
+        '</body></html>';
+      fs.writeFileSync('products/' + oldSlug + '.html', html);
+      made++;
+    }
+    console.log('redirects ✓ (' + made + ')');
+  }
 
   injectStatic(P);
   injectBlogPrices(P);

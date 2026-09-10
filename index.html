@@ -510,99 +510,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
   </div>
 </div></div>
 
-<!-- Admin -->
-<div class="ov" id="aov"><div class="box wide">
-  <div class="bxh"><b>WTPESTORE — Admin / Owner Panel</b><button class="x" onclick="closeAdmin()">×</button></div>
-  <div id="aLock" style="padding:34px;text-align:center">
-    <div style="font-size:15px;font-weight:700;margin-bottom:12px">Owner Login</div>
-    <input id="aPass" type="password" placeholder="Password" style="padding:11px 14px;border:1px solid var(--border);border-radius:8px;max-width:240px;width:100%" onkeydown="if(event.key==='Enter')aUnlock()">
-    <div style="margin-top:12px"><button class="qsv" style="padding:11px 24px;border:none;border-radius:8px;font-weight:700" onclick="aUnlock()" id="aUnlockBtn">Unlock</button></div>
-    <div style="margin-top:12px"><a href="#" onclick="aForgot();return false" style="font-size:12.5px;color:#0e4d6b;font-weight:600">Forgot password?</a></div>
-    <div id="aForgotBox" style="display:none;margin-top:12px;max-width:240px;margin-left:auto;margin-right:auto">
-      <input id="aOtp" inputmode="numeric" placeholder="Enter OTP" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;width:100%;text-align:center;letter-spacing:3px">
-      <div style="margin-top:8px"><button class="qsv" style="padding:10px 20px;border:none;border-radius:8px;font-weight:700" onclick="aVerifyForgot()">Verify &amp; Reset</button></div>
-      <div style="font-size:11px;color:#8a5a00;margin-top:8px">OTP aapke email/mobile par aayega. Reset ke baad aapke default password se login hoga.</div>
-    </div>
-  </div>
-  <div id="aMain" style="display:none">
-    <div class="atabs">
-      <div class="atab on" onclick="aTab('prod',this)">Products</div>
-      <div class="atab" onclick="aTab('ord',this)">Orders</div>
-      <div class="atab" onclick="aTab('cust',this)">Customers</div>
-      <div class="atab" onclick="aTab('set',this)">Settings & Payment</div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px;padding:10px 12px;background:#f4f8fb;border:1px solid #e3ecf1;border-radius:10px">
-      <span style="font-weight:700;color:#0B2A4A;font-size:13px;align-self:center">📑 Documents:</span>
-      <a href="quotation.html" target="_blank" rel="noopener" style="background:#ff9900;color:#3a2400;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;text-decoration:none">📄 New Quotation</a>
-      <a href="proforma-invoice.html" target="_blank" rel="noopener" style="background:#0B2A4A;color:#fff;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;text-decoration:none">🧾 New Proforma Invoice</a>
-      <a href="admin-quick-quote.html" target="_blank" rel="noopener" style="background:#19c37d;color:#fff;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;text-decoration:none">⚡ Quick Quotation</a>
-      <a href="admin-add-product.html" target="_blank" rel="noopener" style="background:#146a45;color:#fff;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;text-decoration:none">➕ Add Product</a>
-      <a href="admin-add-blog.html" target="_blank" rel="noopener" style="background:#0e4d6b;color:#fff;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;text-decoration:none">📝 Create Blog</a>
-      <a href="instagram-post.html" target="_blank" rel="noopener" style="background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);color:#fff;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;text-decoration:none">📷 Instagram Post</a>
-      <a href="admin-leads.html" target="_blank" rel="noopener" style="background:#0b7285;color:#fff;font-weight:700;font-size:13px;padding:8px 14px;border-radius:8px;text-decoration:none">📥 Leads</a>
-    </div>
-    <div class="apane on" id="ap-prod">
-      <div class="dcards"><div class="dcard"><div class="n" id="adCount">0</div><div class="l">Total Products</div></div><div class="dcard"><div class="n" id="adCats">0</div><div class="l">Categories</div></div></div>
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><button class="qsv" style="padding:9px 14px;border:none;border-radius:8px;font-weight:700" onclick="aAdd()">+ Add Product</button><button style="padding:9px 14px;border:1px solid var(--border);border-radius:8px;font-weight:700;background:#fff" onclick="aExport()">Export CSV</button><input id="aSearch" placeholder="Search..." oninput="aRender()" style="flex:1;min-width:160px;border:1px solid var(--border);border-radius:8px;padding:9px 12px"></div>
-      <table class="atable"><thead><tr><th>Category</th><th>Product (name/spec)</th><th>Make</th><th>Model</th><th>Price</th><th>Media</th><th></th></tr></thead><tbody id="aBody"></tbody></table>
-    </div>
-    <div class="apane" id="ap-ord">
-      <div style="margin-bottom:10px"><button class="qsv" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700" onclick="aLoadOrders()">🔄 Refresh Orders</button> <span style="font-size:12px;color:var(--muted)">live from Orders Sheet</span></div>
-      <div class="dcards"><div class="dcard"><div class="n">63</div><div class="l">Total Orders (demo)</div></div><div class="dcard"><div class="n">₹2.4L</div><div class="l">Revenue (demo)</div></div></div>
-      <table class="atable"><thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead><tbody id="aOrders"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">Loading...</td></tr></tbody></table>
-      <p style="font-size:12px;color:var(--muted);margin-top:10px">Note: Orders/payments demo hain. Real online payment ke liye payment gateway account + backend chahiye (Settings dekhein).</p>
-    </div>
-    <div class="apane" id="ap-cust">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
-        <button class="qsv" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700" onclick="aLoadLeads()">🔄 Refresh Leads</button>
-        <span id="aLeadCount" style="font-size:12px;color:var(--muted)"></span>
-      </div>
-      <table class="atable"><thead><tr><th>Name</th><th>City</th><th>Phone</th><th>Interest</th><th>Action</th></tr></thead><tbody id="aLeads"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Settings me "Lead Sheet — View CSV link" daal kar Refresh dabayein.</td></tr></tbody></table>
-      <p style="font-size:11px;color:var(--muted);margin-top:8px">Yeh leads sirf Admin (aapko) dikhte hain. Lead capture chalu hone ke baad Apps-Script sheet ka CSV link Settings me daalein.</p>
-    </div>
-    <div class="apane" id="ap-set">
-      <div class="qform" style="padding:0">
-        <div class="fg"><label>WhatsApp Number</label><input id="setWA" value="919899193589"></div>
-        <div class="fg"><label>GSTIN</label><input id="setGST" value="06DMUPS2289L1ZZ"></div>
-        <div class="fg"><label>Payment Gateway</label><select id="setPay"><option>CCAvenue</option><option>Razorpay</option><option>PayU</option><option>Cashfree</option></select></div>
-        <div class="fg"><label>🔐 Admin Login URL (Apps Script /exec)</label><input id="setPass" placeholder="https://script.google.com/macros/s/.../exec"><div style="font-size:11.5px;color:var(--muted);margin-top:4px">Password ab Sheet ki <b>AdminAuth</b> tab (cell B1) me rehta hai — code me nahi. Badalna ho to bas Sheet me B1 badal dein.</div></div>
-        <div class="fg full"><label>Price Google Sheet (published CSV link) — live prices</label><input id="setSheet" placeholder="https://docs.google.com/.../pub?output=csv"></div>
-        <div class="fg full"><label>Lead Save — Apps Script Web-App URL</label><input id="setLead" placeholder="https://script.google.com/macros/s/.../exec"></div>
-        <div class="fg full"><label>Lead Sheet — View CSV link (leads dekhne ke liye, published)</label><input id="setLeadCsv" placeholder="https://docs.google.com/.../pub?output=csv"></div>
-        <div class="fg full"><label>Orders Sheet — CSV link (order tracking ke liye, published)</label><input id="setOrdersCsv" placeholder="https://docs.google.com/.../pub?output=csv"></div>
-        <div class="fg full" style="border-top:2px dashed #d5d9d9;margin-top:8px;padding-top:12px"><label>➕ Add Product — Apps Script /exec URL</label><input id="setAddProd" placeholder="https://script.google.com/macros/s/.../exec"></div>
-        <div class="fg full"><label>📤 Email Quotation — Apps Script /exec URL</label><input id="setQuote" placeholder="https://script.google.com/macros/s/.../exec"></div>
-        <div class="fg full"><label>🔐 OTP / PIN Change — Apps Script /exec URL</label><input id="setOtp" placeholder="https://script.google.com/macros/s/.../exec"></div>
-        <div class="qgen"><button class="qsv" onclick="aSaveSettings(this)">Save Settings</button></div>
-        <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:12px">
-          <label style="font-weight:700;font-size:13px">🔐 Settings Backup — saari links ek code mein</label>
-          <p style="font-size:12px;color:var(--muted);margin:4px 0 8px">Ek baar links bhar ke <b>Backup</b> dabao → code copy karke apne paas rakho (WhatsApp/notes). Naye laptop pe code paste karke <b>Restore</b> → sab wapas. Code private rakho.</p>
-          <div class="qgen"><button class="qsv" style="background:#0B2A4A" onclick="aBackup()">📋 Backup (Copy code)</button></div>
-          <textarea id="aRestoreBox" placeholder="Backup code yahan paste karke Restore dabayein" style="width:100%;min-height:60px;margin-top:8px;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;box-sizing:border-box;font-family:monospace"></textarea>
-          <div class="qgen"><button class="qsv" style="background:#067d62" onclick="aRestore()">♻️ Restore from code</button></div>
-        </div>
-      </div>
-      <p style="font-size:12px;color:var(--muted);margin-top:12px">Payment gateway sirf label hai abhi. Real online payment lene ke liye gateway account (KYC/GST) + backend integration chahiye.</p>
-    </div>
-  </div>
-</div></div>
-
-<!-- Add/Edit product -->
-<div class="ov" id="eov"><div class="box">
-  <div class="bxh"><b id="eTitle">Add Product</b><button class="x" onclick="closeEdit()">×</button></div>
-  <div class="qform">
-    <div class="fg"><label>Category*</label><input id="eCat" placeholder="e.g. Rotameters"></div>
-    <div class="fg"><label>Price (₹)*</label><input id="ePrice" type="number"></div>
-    <div class="fg full"><label>Product Name / Description*</label><input id="eName" placeholder="Full name with specs"></div>
-    <div class="fg"><label>Make / Brand</label><input id="eMake" placeholder="e.g. Aster"></div>
-    <div class="fg"><label>Model</label><input id="eModel" placeholder="e.g. F100"></div>
-    <div class="fg full"><label>Specification</label><input id="eSpec" placeholder="e.g. Flow 10-100 LPH, I/O 15NB"></div>
-    <div class="fg full"><label>Photo — Attach file 📎 or paste link</label><input type="file" accept="image/*" onchange="attachFile(this,'eImg')" style="font-size:12px;padding:7px"><input id="eImg" placeholder="...or paste image URL" style="margin-top:6px"><div id="eImgPrev"></div></div>
-    <div class="fg"><label>Catalogue PDF — Attach 📎 or link</label><input type="file" accept="application/pdf" onchange="attachFile(this,'ePdf')" style="font-size:12px;padding:7px"><input id="ePdf" placeholder="...or paste PDF URL" style="margin-top:6px"></div>
-    <div class="fg"><label>Video URL (YouTube/Drive)</label><input id="eVid" placeholder="https://..."></div>
-    <div class="qgen"><button class="qsv" onclick="saveEdit()">Save Product</button></div>
-  </div>
-</div></div>
+<!-- Admin panel markup lives in /admin-panel.html and is injected on demand -->
 
 <div class="toast" id="toast"></div>
 
@@ -1063,7 +971,7 @@ function quotePrint(){var w=window.open('','_blank');w.document.write('<html><he
 function quoteWA(){var qty=parseInt(document.getElementById('qQty').value)||1,rate=parseFloat(document.getElementById('qRate').value)||0,gst=parseFloat(document.getElementById('qGst').value)||0;var sub=qty*rate,tot=sub+Math.round(sub*gst/100);var msg='*WTPESTORE Quotation*%0A%0AProduct: '+encodeURIComponent(_qi.name)+'%0AQty: '+qty+'%0ARate: '+rupee(rate)+'%0ASubtotal: '+rupee(sub)+'%0AGST @'+gst+'%25%0A*Total: '+rupee(tot)+'*%0A%0AName: '+encodeURIComponent(document.getElementById('qName').value||'')+'%0ACity: '+encodeURIComponent(document.getElementById('qCity').value||'')+'%0A%0APlease confirm.';window.open('https://wa.me/'+WA_NUM+'?text='+msg,'_blank');}
 
 /* ===== Lead (1 min) ===== */
-function showLead(){if(leadShown||document.getElementById('aov').classList.contains('open'))return;leadShown=true;document.getElementById('leadCtx').innerHTML='You viewed: <b>'+esc(lastSearch||lastProduct||'water treatment products')+'</b>';document.getElementById('lov').classList.add('open');}
+function showLead(){var _av=document.getElementById('aov');if(leadShown||(_av&&_av.classList.contains('open')))return;leadShown=true;document.getElementById('leadCtx').innerHTML='You viewed: <b>'+esc(lastSearch||lastProduct||'water treatment products')+'</b>';document.getElementById('lov').classList.add('open');}
 function closeLead(){document.getElementById('lov').classList.remove('open');}
 function submitLead(){var no=(document.getElementById('leadNo').value||'').replace(/[^0-9]/g,'');if(no.length<10){alert('Sahi 10-digit WhatsApp number daalein');return;}
   var lead={token:'WTP2025AFS',number:no,name:document.getElementById('leadName').value||'',search:lastSearch||'',product:lastProduct||'',time:new Date().toLocaleString('en-IN'),page:location.href,link:(lastProduct?location.origin+'/?p='+pSlug(lastProduct):location.href)};
@@ -2167,4 +2075,31 @@ function zChemCards(items){
 })();
 </script>
 <!-- ================= ZARA CHEMICALS KNOWLEDGE END ================= -->
+<script>
+/* ---- Admin panel: markup kept out of the public page, fetched only when needed ---- */
+(function(){
+  var state=null;
+  window.ensureAdminDom=function(cb){
+    if(document.getElementById('aov')){cb&&cb();return;}
+    if(state==='loading'){setTimeout(function(){ensureAdminDom(cb);},120);return;}
+    state='loading';
+    fetch('/admin-panel.html',{cache:'no-store'})
+      .then(function(r){if(!r.ok)throw 0;return r.text();})
+      .then(function(t){
+        var d=document.createElement('div'); d.innerHTML=t;
+        while(d.firstChild){document.body.appendChild(d.firstChild);}
+        state='ready'; cb&&cb();
+      })
+      .catch(function(){
+        state=null;
+        if(typeof toast==='function') toast('Admin panel load nahi ho paya');
+      });
+  };
+  /* wrap the three entry points so the DOM exists before they run */
+  var _o=window.openAdmin, _a=window.aAdd, _e=window.aEdit;
+  if(_o) window.openAdmin=function(){ensureAdminDom(function(){_o();});};
+  if(_a) window.aAdd   =function(){ensureAdminDom(function(){_a();});};
+  if(_e) window.aEdit  =function(id){ensureAdminDom(function(){_e(id);});};
+})();
+</script>
 </body></html>
