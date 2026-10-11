@@ -83,7 +83,7 @@
     '.wcbtn.sec{background:#eef2f7}.wcbtn:disabled{opacity:.6;cursor:wait}.wcerr{color:#b12704;font-weight:600;margin-top:8px}.wcok{text-align:center;padding:10px 0}.wcok h4{font-size:19px;margin:6px 0;color:#067d62}'+
     '.wtpe-atc{display:none}.wtpe-atc.on{display:inline-flex}.wcnote{font-size:12px;color:#565959;margin-top:6px}';
 
-  var fab, ov, panel, view = 'cart';
+  var fab, ov, panel, view = 'cart', inScreen = false;
   function build(){
     if(panel) return;
     var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
@@ -115,6 +115,7 @@
   }
 
   function render(){
+    inScreen = false;
     var c = load(), h = '';
     if(view === 'cart'){
       h += head('🛒 Your Cart') + '<div class="wcb">';
@@ -226,13 +227,13 @@
     sc.onload = function(){ cb(!!window.Razorpay); }; sc.onerror = function(){ cb(false); }; document.head.appendChild(sc);
   }
   function screen(title, icon, msg, r, buttons){
-    build(); ov.classList.add('open'); panel.classList.add('open');
+    build(); inScreen = true; ov.classList.add('open'); panel.classList.add('open');
     panel.innerHTML = head(title) + '<div class="wcb"><div class="wcok"><div style="font-size:40px">' + icon + '</div><h4>Order ID: ' + esc(r.orderId) + '</h4><p>' + msg + '</p></div>' +
-      (r.sub != null ? totalsHTML(r) : '<div class="wct"><div class="g"><span>Total</span><span>' + rupee(r.total) + '</span></div></div>') + buttons + '</div>';
+      (r.sub != null ? totalsHTML(r) : (r.total > 0 ? '<div class="wct"><div class="g"><span>Total</span><span>' + rupee(r.total) + '</span></div></div>' : '')) + buttons + '</div>';
   }
   function waBtn(text){ return '<a class="wcbtn sec" style="text-align:center;text-decoration:none;color:#111" href="https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(text) + '" target="_blank" rel="noopener">💬 WhatsApp us</a>'; }
   function pay(r, d){
-    LAST = { r: r, d: d };
+    LAST = { r: r, d: d }; window.WTPE_BUSY = true;
     loadRzp(function(ok){
       if(!ok){ return screen('Payment not started', '⚠️', 'Your order is saved, but the payment window could not open. Please check your internet and tap Pay Now.', r,
                    '<button type="button" class="wcbtn" data-a="payagain">Pay Now ' + rupee(r.total) + '</button>' + waBtn('Hello WTPESTORE, I need help paying for order ' + r.orderId)); }
@@ -284,7 +285,20 @@
   function init(){
     if(!enabled()) return;
     build(); panel.addEventListener('click', onClick); badge();
-    jsonp(ORDER_URL + '?action=payInfo', function(r){ if(r && r.ok){ PAY.online = !!r.online; if(r.feePct) PAY.pct = r.feePct; if(panel.classList.contains('open')) render(); } });
+    /* Reminder email ka "Pay Now" link: ?pay=ORDERID&t=TOKEN */
+    try{
+      var qs = new URLSearchParams(location.search), pid = qs.get('pay'), ptk = qs.get('t');
+      if(pid && ptk){
+        try{ history.replaceState(null, '', location.pathname); }catch(e){}
+        screen('Loading your order…', '⏳', 'Please wait…', { orderId: pid, total: 0 }, '');
+        jsonp(ORDER_URL + '?action=payOrder&id=' + encodeURIComponent(pid) + '&t=' + encodeURIComponent(ptk), function(r){
+          if(r && r.ok){ var d = { name: r.prefill.name, email: r.prefill.email, phone: r.prefill.phone }; LAST = { r: r, d: d }; return pay(r, d); }
+          if(r && r.error === 'done') return screen('Already paid ✅', '✅', 'This order is already ' + esc(r.status || 'paid') + '. Thank you!', { orderId: pid, total: 0 }, '<button type="button" class="wcbtn sec" data-a="close">Continue shopping</button>');
+          screen('Link not valid', '⚠️', 'This payment link is not valid or has expired. Please message us on WhatsApp with your Order ID.', { orderId: pid, total: 0 }, waBtn('Hello WTPESTORE, I need help paying for order ' + pid));
+        });
+      }
+    }catch(e){}
+    jsonp(ORDER_URL + '?action=payInfo', function(r){ if(r && r.ok){ PAY.online = !!r.online; if(r.feePct) PAY.pct = r.feePct; if(panel.classList.contains('open') && !inScreen) render(); } });
     var bs = document.querySelectorAll('.wtpe-atc'); for(var i = 0; i < bs.length; i++){ bs[i].classList.add('on'); bs[i].style.display = ''; }
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

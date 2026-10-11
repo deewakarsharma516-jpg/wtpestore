@@ -1931,8 +1931,9 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){
     setInterval(function(){ reg.update(); }, 30*60*1000); /* har 30 min update check */
   }).catch(function(){});
   /* naya version activate hone par ek baar page refresh */
-  var _reloaded=false;
-  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(_reloaded)return; _reloaded=true; location.reload(); });
+  var _reloaded=false, _hadCtl=!!navigator.serviceWorker.controller;
+  /* pehli visit par refresh nahi; payment/cart chal raha ho to bhi refresh nahi */
+  navigator.serviceWorker.addEventListener('controllerchange',function(){ if(_reloaded||!_hadCtl||window.WTPE_BUSY)return; _reloaded=true; location.reload(); });
   navigator.serviceWorker.addEventListener('message',function(ev){
     if(ev.data&&ev.data.type==='WTPE_UPDATED'){
       var t=document.createElement('div');
