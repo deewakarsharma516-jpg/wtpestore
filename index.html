@@ -1009,8 +1009,8 @@ function aUnlock(){
   aJsonp(url+'?action=login&pass='+encodeURIComponent(v),function(r){
     if(btn){btn.disabled=false;btn.textContent='Unlock';}
     if(r&&r.ok&&r.token){
-      try{localStorage.setItem('wtpe_tok',r.token);}catch(e){}
-      aAuthed=true;aShow();toast('Login ho gaya');
+      try{localStorage.setItem('wtpe_tok',r.token);localStorage.setItem('wtpe_role',r.role||'Owner');}catch(e){}
+      aAuthed=true;aShow();toast('Login ho gaya'+(r.role==='Staff'?' (Staff)':''));
     }else if(r&&r.error==='no-password-set'){toast('Sheet ki AdminAuth tab me B1 me password daalein');}
     else if(r&&r.error==='network'){toast('Login server se connect nahi hua — URL check karein');}
     else{toast('Galat password');}
@@ -1020,9 +1020,9 @@ function aCheckToken(){
   var url=aLoginUrl(); var t='';
   try{t=localStorage.getItem('wtpe_tok')||'';}catch(e){}
   if(!url||!t)return;
-  aJsonp(url+'?action=verify&token='+encodeURIComponent(t),function(r){if(r&&r.ok){aAuthed=true;}});
+  aJsonp(url+'?action=verify&token='+encodeURIComponent(t),function(r){if(r&&r.ok){aAuthed=true;try{localStorage.setItem('wtpe_role',r.role||'Owner');}catch(e){}try{aApplyRole();}catch(e){}}});
 }
-function aLogout(){try{localStorage.removeItem('wtpe_tok');}catch(e){}aAuthed=false;location.reload();}
+function aLogout(){try{localStorage.removeItem('wtpe_tok');localStorage.removeItem('wtpe_role');}catch(e){}aAuthed=false;location.reload();}
 function aJsonp(url,cb){var done=false;var fn='acb_'+Math.floor(Math.random()*1e9);var s=document.createElement('script');function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn];s.remove();}catch(e){}}}window[fn]=function(r){fin(r);};s.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;s.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(s);setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
 function aOtpUrl(){return cfg('otp_url','https://script.google.com/macros/s/AKfycbynPDNbRvUJHr-owF9Do6ugdTpstHtHS3TFoYm9KtBjO_1UraUu2UfJ41-SjkSRdiV73w/exec');}
 function aForgot(){
@@ -1045,6 +1045,17 @@ function aVerifyForgot(){
   });
 }
 function aShow(){document.getElementById('aLock').style.display='none';document.getElementById('aMain').style.display='block';document.getElementById('setWA').value=WA_NUM;var _pu=document.getElementById('setPass');if(_pu)_pu.value=cfg('login_url','');var _cs=cfg('sheet','')||DEFAULT_SHEET;if(_cs.indexOf('2PACX-1vTriqSh')>-1)_cs=DEFAULT_SHEET;document.getElementById('setSheet').value=_cs;document.getElementById('setLead').value=cfg('lead','')||DEFAULT_LEAD||DEFAULT_LEAD;var _lc=document.getElementById('setLeadCsv');if(_lc)_lc.value=cfg('leadcsv','')||DEFAULT_LEADCSV;var _oc=document.getElementById('setOrdersCsv');if(_oc)_oc.value=cfg('orderscsv','')||DEFAULT_ORDERSCSV;var _ap=document.getElementById('setAddProd');if(_ap)_ap.value=cfg('addproduct_url','');var _qu=document.getElementById('setQuote');if(_qu)_qu.value=cfg('quote_url','');var _ot=document.getElementById('setOtp');if(_ot)_ot.value=cfg('otp_url','');aRender();aLoadLeads();aLoadOrders();}
+/* Staff ko Products / Settings / Add Product nahi dikhte (server bhi staff ko product add nahi karne deta) */
+function aRole(){try{return localStorage.getItem('wtpe_role')||'Owner';}catch(e){return 'Owner';}}
+function aApplyRole(){
+  var staff=aRole()==='Staff', root=document.getElementById('aMain'); if(!root)return;
+  root.querySelectorAll('.atab').forEach(function(t){var m=(t.getAttribute('onclick')||'').match(/aTab\('(\w+)'/);if(m&&(m[1]==='prod'||m[1]==='set'))t.style.display=staff?'none':'';});
+  ['ap-prod','ap-set'].forEach(function(id){var p=document.getElementById(id);if(p&&staff)p.classList.remove('on');});
+  root.querySelectorAll('a[href="admin-add-product.html"]').forEach(function(a){a.style.display=staff?'none':'';});
+  if(staff){var cur=root.querySelector('.atab.on');var bad=!cur||cur.style.display==='none';
+    if(bad){var o=[].filter.call(root.querySelectorAll('.atab'),function(t){return /aTab\('ord'/.test(t.getAttribute('onclick')||'');})[0];if(o)aTab('ord',o);}}
+}
+(function(){var _s=aShow;aShow=function(){_s.apply(this,arguments);try{aApplyRole();}catch(e){}};})();
 function aTab(t,el){document.querySelectorAll('.atab').forEach(function(x){x.classList.remove('on');});el.classList.add('on');document.querySelectorAll('.apane').forEach(function(x){x.classList.remove('on');});document.getElementById('ap-'+t).classList.add('on');}
 function aRender(){var q=(document.getElementById('aSearch').value||'').toLowerCase();document.getElementById('adCount').textContent=STORE_DATA.length;document.getElementById('adCats').textContent=cats().length;
   var list=STORE_DATA.filter(function(p){return sMatch(p,q);}).slice(0,300);

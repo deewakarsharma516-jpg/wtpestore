@@ -137,6 +137,7 @@ function adminTok(){try{return localStorage.getItem('wtpe_admin_token')||'';}cat
 function needLogin(msg){try{localStorage.removeItem('wtpe_admin_token');}catch(e){}showMsg(msg||'Login expire ho gaya. Page reload karke dobara login karein.','err');setTimeout(function(){document.getElementById('gate').style.display='';},1500);}
 function withLogin(url,go){
   aJsonp2(url+'?action=verify&token='+encodeURIComponent(adminTok()),function(d){
+    if(d&&d.ok&&d.role==='Staff')return showMsg('Product sirf Owner add kar sakta hai. Owner se login karein.','err');
     if(d&&d.ok)return go();
     if(d&&(d.error==='network'||d.error==='timeout'))return showMsg('Server se connect nahi hua. Dobara try karein.','err');
     needLogin();
@@ -181,7 +182,7 @@ function checkSavedToken(){
   try{tok=localStorage.getItem('wtpe_admin_token')||'';}catch(e){}
   if(!url||!tok)return;
   aJsonp2(url+'?action=verify&token='+encodeURIComponent(tok),function(d){
-     if(d&&d.ok){document.getElementById('gate').style.display='none';if(typeof afterUnlock==='function')afterUnlock();}
+     if(d&&d.ok){document.getElementById('gate').style.display='none';if(typeof afterUnlock==='function')afterUnlock();if(d.role==='Staff')showMsg('Aap Staff login me hain — product sirf Owner add kar sakta hai.','err');}
    });
 }
 window.addEventListener('load',checkSavedToken);
