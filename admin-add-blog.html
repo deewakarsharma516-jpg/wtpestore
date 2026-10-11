@@ -86,7 +86,8 @@ Baaki lines paragraph banengi. Khali line = naya paragraph."></textarea>
 
 <script>
 function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
-var APPS_URL    = cfg('wtpe_addproduct_url','https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec');     // wahi Add Product wala URL (blog bhi isi se)
+/* purana Add-Product URL (galat script) hatao */try{if((localStorage.getItem('wtpe_addproduct_url')||'').indexOf('AKfycbwRJ2Zt')>-1)localStorage.removeItem('wtpe_addproduct_url');}catch(e){}
+var APPS_URL    = cfg('wtpe_addproduct_url','https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec');     // wahi Add Product wala URL (blog bhi isi se)
 
 /* VERSION 2: Add ab LOGIN TOKEN se hota hai (koi khula secret nahi) */
 try{localStorage.removeItem('wtpe_addproduct_secret');}catch(e){}
