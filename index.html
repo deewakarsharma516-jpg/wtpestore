@@ -521,7 +521,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
   <div class="bxh"><b>Get Best Price</b><button class="x" onclick="closeLead()">×</button></div>
   <div class="lbody"><h3>Best price chahiye?</h3><p>Apna WhatsApp number dijiye — hum is product ka quotation aur best price aapko bhej denge.</p>
     <div class="ctx" id="leadCtx"></div>
-    <input id="leadName" placeholder="Name (optional)"><input id="leadNo" type="tel" placeholder="WhatsApp number*" maxlength="10">
+    <input id="leadName" placeholder="Name (optional)"><input id="leadNo" type="tel" placeholder="WhatsApp number*" maxlength="10"><input id="leadEmail" type="email" placeholder="Email (price turant email par)">
     <button class="go" onclick="submitLead()">Get My Quotation →</button><span class="skip" onclick="closeLead()">Abhi nahi</span>
   </div>
 </div></div>
@@ -667,6 +667,7 @@ function zPlaceOrder(name,num){var oid='ZR-'+String(Date.now()).slice(-5);
   var items=zCart.map(function(c){return c.n+' x'+c.qty+' = ₹'+(c.p*c.qty);}).join(' | ');
   var lead={token:'WTP2025AFS',number:num,name:name||'',search:'🛒 ZARA ORDER '+oid,product:items+' || TOTAL ₹'+zCartTotal()+'+GST',time:new Date().toLocaleString('en-IN'),page:location.href+' (Zara Order)',link:location.origin};
   var url=cfg('lead','')||DEFAULT_LEAD;if(url){try{fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(lead)});}catch(e){}}
+  wtpeLead({phone:num,name:name||'',interest:items,source:'Zara Order '+oid,page:location.href});
   zAwaitOrder=false;zLeadDone=true;var tot=zCartTotal();zCart=[];zSaveCart();
   zAdd('bot','🎉 **Order '+oid+' mil gaya!**\nTotal: ₹'+tot.toLocaleString('en-IN')+' +GST\nHumari team 2 ghante me WhatsApp par confirm karke payment/delivery details bhejegi. Dhanyavaad! 🙏');
   zSpeak('Dhanyavaad! Aapka order mil gaya. Team jaldi WhatsApp par confirm karegi.');}
@@ -981,6 +982,7 @@ function zSend(){var inp=document.getElementById('zin');var msg=(inp.value||'').
     var zlead={token:'WTP2025AFS',number:zph,name:'',search:'Zara Chat',product:((matches[0]&&matches[0].n)||lastProduct||zHist.slice(-3).map(function(h){return h.role==='user'?h.content:''}).join(' ').trim().slice(0,90)||'Zara enquiry'),time:new Date().toLocaleString('en-IN'),page:location.href+' (Zara Chat)',link:((matches[0]&&matches[0].n)?location.origin+'/?p='+pSlug(matches[0].n):(lastProduct?location.origin+'/?p='+pSlug(lastProduct):location.href))};
     var zurl=cfg('lead','')||DEFAULT_LEAD;
     if(zurl){try{fetch(zurl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(zlead)});}catch(e){}}
+    wtpeLead({phone:zph,email:(msg.match(/[^\s@]+@[^\s@]+\.[a-z]{2,}/i)||[''])[0],interest:zlead.product,source:'Zara Chat',page:location.href});
     zAdd('bot','Dhanyavaad! 🙏 Aapka number humari team ko mil gaya — jaldi hi WhatsApp par exact quotation aayega. Tab tak aur kuch poochna ho to batayein.');
   }}catch(e){}
   var t=zAdd('bot','');t.innerHTML='<div class="ztyping"><i></i><i></i><i></i></div>';
@@ -999,9 +1001,12 @@ function quoteWA(){var qty=parseInt(document.getElementById('qQty').value)||1,ra
 /* ===== Lead (1 min) ===== */
 function showLead(){var _av=document.getElementById('aov');if(leadShown||(_av&&_av.classList.contains('open')))return;leadShown=true;document.getElementById('leadCtx').innerHTML='You viewed: <b>'+esc(lastSearch||lastProduct||'water treatment products')+'</b>';document.getElementById('lov').classList.add('open');}
 function closeLead(){document.getElementById('lov').classList.remove('open');}
+function wtpeLead(o){try{var u=window.WTPE_ORDER_URL||LOGIN_URL_DEFAULT;if(!u)return;var q='action=lead';for(var k in o)q+='&'+k+'='+encodeURIComponent(o[k]||'');fetch(u+'?'+q,{mode:'no-cors'});}catch(e){}}
 function submitLead(){var no=(document.getElementById('leadNo').value||'').replace(/[^0-9]/g,'');if(no.length<10){alert('Sahi 10-digit WhatsApp number daalein');return;}
   var lead={token:'WTP2025AFS',number:no,name:document.getElementById('leadName').value||'',search:lastSearch||'',product:lastProduct||'',time:new Date().toLocaleString('en-IN'),page:location.href,link:(lastProduct?location.origin+'/?p='+pSlug(lastProduct):location.href)};
   var url=cfg('lead','')||DEFAULT_LEAD;if(url){try{fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(lead)});}catch(e){}}
+  var _em=(document.getElementById('leadEmail')||{}).value||'';if(_em&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(_em.trim())){alert('Email sahi nahi lag raha — sahi karein ya khaali chhod dein');return;}
+  wtpeLead({phone:no,name:lead.name,email:_em.trim(),interest:lead.product||lead.search,source:'Website',page:location.href});
   closeLead();toast('Dhanyavaad! Hum jaldi sampark karenge.');
   window.open('https://wa.me/'+WA_NUM+'?text='+('Namaste WTPESTORE!%0AQuotation chahiye.%0AProduct/Search: '+encodeURIComponent(lead.product||lead.search)+'%0AName: '+encodeURIComponent(lead.name)+'%0AMy number: '+no),'_blank');}
 setTimeout(showLead,60000);
