@@ -51,7 +51,7 @@
     if(!enabled() || !sellable(p)) return false;
     var c = load(), k = p.k || p.n;
     for(var i = 0; i < c.length; i++){ if(c[i].k === k){ c[i].q = Math.min(MAX_QTY, c[i].q + 1); save(c); open(); return true; } }
-    if(c.length >= MAX_ITEMS){ alert('Ek order me ' + MAX_ITEMS + ' se zyada products nahi. Baaki ke liye WhatsApp karein.'); return false; }
+    if(c.length >= MAX_ITEMS){ alert('Maximum ' + MAX_ITEMS + ' products per order. Please WhatsApp us for larger orders.'); return false; }
     c.push({ k: k, n: p.dn || p.n, p: num(p.p), ship: num(p.ship), gst: isNaN(num(p.gst)) ? 18 : num(p.gst),
              disp: isNaN(num(p.disp)) ? 3 : num(p.disp), img: p.img || '', url: p.url || '', q: 1 });
     save(c); open(); return true;
@@ -111,8 +111,8 @@
   function render(){
     var c = load(), h = '';
     if(view === 'cart'){
-      h += head('🛒 Aapka Cart') + '<div class="wcb">';
-      if(!c.length){ h += '<p>Cart khaali hai.</p></div>'; panel.innerHTML = h; return; }
+      h += head('🛒 Your Cart') + '<div class="wcb">';
+      if(!c.length){ h += '<p>Your cart is empty.</p></div>'; panel.innerHTML = h; return; }
       c.forEach(function(it, i){
         h += '<div class="wci">' + (it.img ? '<img src="' + esc(it.img) + '" alt="">' : '') +
           '<div class="t"><div>' + esc(it.n) + '</div><span class="pr">' + rupee(it.p) + '</span> <small>+ GST</small>' +
@@ -120,23 +120,23 @@
           '<button type="button" data-a="inc" data-i="' + i + '">+</button><button type="button" class="rm" data-a="rm" data-i="' + i + '">Remove</button></div></div></div>';
       });
       var t = totals(c);
-      h += totalsHTML(t) + '<p class="wcnote">Dispatch: ' + t.disp + ' working days ke andar · GST invoice milega</p>' +
+      h += totalsHTML(t) + '<p class="wcnote">Dispatch within ' + t.disp + ' working days · GST invoice included</p>' +
         '<button type="button" class="wcbtn" data-a="checkout">Checkout →</button></div>';
     } else if(view === 'form'){
       var s = {}; try{ s = JSON.parse(ls('wtpe_ship') || '{}'); }catch(e){}
       var f = function(id, lab, type, extra){ return '<label for="wc_' + id + '">' + lab + '</label><input id="wc_' + id + '" type="' + (type || 'text') + '" value="' + esc(s[id] || '') + '" ' + (extra || '') + '>'; };
       h += head('Delivery details') + '<div class="wcb wcf">' +
-        f('name', 'Poora naam *', 'text', 'autocomplete="name" maxlength="80"') +
+        f('name', 'Full name *', 'text', 'autocomplete="name" maxlength="80"') +
         '<div class="row"><div>' + f('phone', 'Mobile *', 'tel', 'inputmode="numeric" maxlength="10" autocomplete="tel-national"') + '</div><div>' + f('email', 'Email *', 'email', 'autocomplete="email" maxlength="100"') + '</div></div>' +
-        '<label for="wc_addr">Poora address *</label><textarea id="wc_addr" rows="3" maxlength="300" autocomplete="street-address">' + esc(s.addr || '') + '</textarea>' +
+        '<label for="wc_addr">Full address *</label><textarea id="wc_addr" rows="3" maxlength="300" autocomplete="street-address">' + esc(s.addr || '') + '</textarea>' +
         '<div class="row"><div>' + f('city', 'City *', 'text', 'maxlength="60"') + '</div><div>' + f('pin', 'Pincode *', 'text', 'inputmode="numeric" maxlength="6"') + '</div></div>' +
         f('state', 'State *', 'text', 'maxlength="40"') +
-        '<div class="row"><div>' + f('gstin', 'GSTIN (optional)', 'text', 'maxlength="15" style="text-transform:uppercase"') + '</div><div>' + f('biz', 'Business name (GST ke liye)', 'text', 'maxlength="100"') + '</div></div>' +
+        '<div class="row"><div>' + f('gstin', 'GSTIN (optional)', 'text', 'maxlength="15" style="text-transform:uppercase"') + '</div><div>' + f('biz', 'Business name (for GST)', 'text', 'maxlength="100"') + '</div></div>' +
         totalsHTML(totals(c)) +
-        '<label class="wcagree"><input type="checkbox" id="wc_agree"><span>Maine samajh liya hai ki order hone ke baad <b>cancel/refund nahi</b> hoga. Sirf damaged/galat item par 48 ghante me unboxing video ke saath replacement milega. <a href="/cancellation-refund-policy.html" target="_blank">Policy padhein</a></span></label>' +
+        '<label class="wcagree"><input type="checkbox" id="wc_agree"><span>I understand that orders <b>cannot be cancelled or refunded</b> after placing. Damaged or wrong items are replaced only if reported within 48 hours with an unboxing video. <a href="/cancellation-refund-policy.html" target="_blank">Read policy</a></span></label>' +
         '<div class="wcerr" id="wc_err"></div>' +
-        '<button type="button" class="wcbtn" id="wc_place" data-a="place">Order Place Karein</button>' +
-        '<button type="button" class="wcbtn sec" data-a="back">← Cart par wapas</button></div>';
+        '<button type="button" class="wcbtn" id="wc_place" data-a="place">Place Order</button>' +
+        '<button type="button" class="wcbtn sec" data-a="back">← Back to cart</button></div>';
     }
     panel.innerHTML = h;
   }
@@ -146,15 +146,15 @@
     var d = { name: val('name'), phone: val('phone').replace(/\D/g, '').slice(-10), email: val('email'), addr: val('addr'),
               city: val('city'), pin: val('pin').replace(/\D/g, ''), state: val('state'), gstin: val('gstin').toUpperCase(), biz: val('biz') };
     ls('wtpe_ship', JSON.stringify(d));
-    if(d.name.length < 2) return 'Naam likhiye.';
-    if(!/^[6-9]\d{9}$/.test(d.phone)) return 'Sahi 10 digit mobile number likhiye.';
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return 'Sahi email likhiye.';
-    if(d.addr.length < 10) return 'Poora address likhiye.';
-    if(d.city.length < 2) return 'City likhiye.';
-    if(!/^[1-9]\d{5}$/.test(d.pin)) return 'Sahi 6 digit pincode likhiye.';
-    if(d.state.length < 2) return 'State likhiye.';
-    if(d.gstin && !/^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(d.gstin)) return 'GSTIN sahi nahi lag raha (15 characters).';
-    if(!document.getElementById('wc_agree').checked) return 'Policy wala box tick karein.';
+    if(d.name.length < 2) return 'Please enter your name.';
+    if(!/^[6-9]\d{9}$/.test(d.phone)) return 'Please enter a valid 10-digit mobile number.';
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return 'Please enter a valid email address.';
+    if(d.addr.length < 10) return 'Please enter your full address.';
+    if(d.city.length < 2) return 'Please enter your city.';
+    if(!/^[1-9]\d{5}$/.test(d.pin)) return 'Please enter a valid 6-digit pincode.';
+    if(d.state.length < 2) return 'Please enter your state.';
+    if(d.gstin && !/^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(d.gstin)) return 'GSTIN looks invalid (15 characters).';
+    if(!document.getElementById('wc_agree').checked) return 'Please tick the policy box to continue.';
     return d;
   }
 
@@ -170,25 +170,25 @@
     if(typeof d === 'string'){ err.textContent = d; return; }
     err.textContent = '';
     var c = load(), btn = document.getElementById('wc_place');
-    btn.disabled = true; btn.textContent = 'Order save ho raha hai…';
+    btn.disabled = true; btn.textContent = 'Placing your order…';
     var items = c.map(function(i){ return { n: i.k, q: i.q }; });
     var u = ORDER_URL + '?action=createOrder&items=' + encodeURIComponent(JSON.stringify(items));
     Object.keys(d).forEach(function(k){ u += '&' + k + '=' + encodeURIComponent(d[k]); });
     u += '&agree=1&page=' + encodeURIComponent(location.pathname);
     jsonp(u, function(r){
       if(!r || !r.ok){
-        btn.disabled = false; btn.textContent = 'Order Place Karein';
-        var m = { network: 'Internet/server se connect nahi hua. Dobara try karein.', timeout: 'Server ne jawab nahi diya. Dobara try karein.',
-                  busy: 'Abhi bahut orders aa rahe hain. 2 minute baad try karein.', quote: 'Cart ke kuch product ab sirf quote par hain: ', notfound: 'Kuch product ab list me nahi hain: ' };
-        err.textContent = (m[r && r.error] || ('Order save nahi hua: ' + ((r && r.error) || 'unknown'))) + ((r && r.items) ? r.items.join(', ') : '');
+        btn.disabled = false; btn.textContent = 'Place Order';
+        var m = { network: 'Could not connect. Please check your internet and try again.', timeout: 'The server did not respond. Please try again.',
+                  busy: 'We are receiving many orders right now. Please try again in 2 minutes.', quote: 'Some items are now available on quotation only: ', notfound: 'Some items are no longer available: ' };
+        err.textContent = (m[r && r.error] || ('Order could not be placed: ' + ((r && r.error) || 'unknown'))) + ((r && r.items) ? r.items.join(', ') : '');
         return;
       }
       save([]);
-      var wa = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent('Namaste WTPESTORE, maine order ' + r.orderId + ' place kiya hai. Total ' + rupee(r.total) + '. Payment details bhejiye.');
-      panel.innerHTML = head('Order mil gaya ✅') + '<div class="wcb"><div class="wcok"><div style="font-size:40px">✅</div><h4>Order ID: ' + esc(r.orderId) + '</h4>' +
-        '<p>Aapka order save ho gaya hai.</p></div>' + totalsHTML(r) +
-        '<p class="wcnote">Hamari team payment aur dispatch ke liye aapse contact karegi. Jaldi ke liye WhatsApp karein.</p>' +
-        '<a class="wcbtn" style="text-align:center;text-decoration:none;color:#111" href="' + wa + '" target="_blank" rel="noopener">💬 WhatsApp par confirm karein</a></div>';
+      var wa = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent('Hello WTPESTORE, I have placed order ' + r.orderId + '. Total ' + rupee(r.total) + '. Please share payment details.');
+      panel.innerHTML = head('Order received ✅') + '<div class="wcb"><div class="wcok"><div style="font-size:40px">✅</div><h4>Order ID: ' + esc(r.orderId) + '</h4>' +
+        '<p>Thank you! Your order has been placed.</p></div>' + totalsHTML(r) +
+        '<p class="wcnote">Our team will contact you shortly for payment and dispatch. For a faster response, message us on WhatsApp.</p>' +
+        '<a class="wcbtn" style="text-align:center;text-decoration:none;color:#111" href="' + wa + '" target="_blank" rel="noopener">💬 Confirm on WhatsApp</a></div>';
     });
   }
 
