@@ -87,7 +87,18 @@ Baaki lines paragraph banengi. Khali line = naya paragraph."></textarea>
 <script>
 function cfg(k,d){try{var v=localStorage.getItem(k);return (v!==null&&v!=='')?v:d;}catch(e){return d;}}
 var APPS_URL    = cfg('wtpe_addproduct_url','https://script.google.com/macros/s/AKfycbwRJ2Zt_eSsiuHe_NZRtRcHwGDcMSW6Fn9cGMYEN923LOzyM3yYBPhZwi1B3Q15gAJ5/exec');     // wahi Add Product wala URL (blog bhi isi se)
-var SECRET      = cfg('wtpe_addproduct_secret','wtp-add-2026');
+
+/* VERSION 2: Add ab LOGIN TOKEN se hota hai (koi khula secret nahi) */
+try{localStorage.removeItem('wtpe_addproduct_secret');}catch(e){}
+function adminTok(){try{return localStorage.getItem('wtpe_admin_token')||'';}catch(e){return '';}}
+function needLogin(msg){try{localStorage.removeItem('wtpe_admin_token');}catch(e){}showMsg(msg||'Login expire ho gaya. Page reload karke dobara login karein.','err');setTimeout(function(){document.getElementById('gate').style.display='';},1500);}
+function withLogin(url,go){
+  aJsonp2(url+'?action=verify&token='+encodeURIComponent(adminTok()),function(d){
+    if(d&&d.ok)return go();
+    if(d&&(d.error==='network'||d.error==='timeout'))return showMsg('Server se connect nahi hua. Dobara try karein.','err');
+    needLogin();
+  });
+}
 
 
 /* ===== Server-side Admin Login (password server par, browser me nahi) ===== */
@@ -115,7 +126,7 @@ function unlock(){
        document.getElementById('gate').style.display='none';
        if(typeof afterUnlock==='function')afterUnlock();
      }else{
-       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me B1 me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua — URL check karein':'Wrong password');
+       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me B1 me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua — URL check karein':(d&&d.error==='locked')?'Bahut galat koshish — 15 minute baad try karein':'Wrong password');
        errEl.style.display='block';
      }
    });
@@ -138,7 +149,7 @@ function preview(){var img=val('f_image'),c=document.getElementById('cover');if(
 function showMsg(t,cl){var m=document.getElementById('msg');m.className='msg '+cl;m.textContent=t;}
 
 function blogData(){
-  return {token:SECRET,kind:'blog',
+  return {token:adminTok(),kind:'blog',
     title:val('f_title'),category:val('f_category')||'Water Treatment',
     date:val('f_date')||todayStr(),image:val('f_image'),
     excerpt:val('f_excerpt')||val('f_title'),content:val('f_content'),
@@ -149,6 +160,7 @@ function publishBlog(){
   if(!val('f_content')){showMsg('Content zaroori hai.','err');return;}
   if(!APPS_URL){showMsg('Apps Script URL set nahi hai. Admin Settings me "Add Product" URL daalein, ya "Copy row" use karein.','info');copyRow();return;}
   showMsg('Publishing… please wait.','info');
+  withLogin(APPS_URL,function(){
   fetch(APPS_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(blogData())})
     .then(function(){
       showMsg('✅ Blog publish ho gaya! Blog page par 2-5 min me dikhega. (Blog tab me check kar lein.)','ok');
@@ -156,6 +168,7 @@ function publishBlog(){
       preview();
     })
     .catch(function(){showMsg('Network issue. Dobara try karein ya "Copy row" use karein.','err');});
+  });
 }
 function copyRow(){
   var d=blogData();

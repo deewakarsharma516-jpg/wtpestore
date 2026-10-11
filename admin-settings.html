@@ -65,8 +65,7 @@ input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
 <h3>➕ Add Product (Apps Script)</h3>
 <label>Apps Script /exec URL</label>
 <input id="s_addurl" placeholder="https://script.google.com/macros/s/.../exec">
-<label>Secret</label>
-<input id="s_addsec" placeholder="wtp-add-2026">
+<div class="hint">Secret ki zaroorat nahi — login se hi kaam hota hai.</div>
 
 <h3>📤 Email Quotation (Apps Script)</h3>
 <label>Apps Script /exec URL</label>
@@ -116,7 +115,7 @@ function unlock(){
        document.getElementById('gate').style.display='none';
        if(typeof afterUnlock==='function')afterUnlock();
      }else{
-       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me B1 me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua — URL check karein':'Wrong password');
+       errEl.textContent=(d&&d.error==='no-password-set')?'Sheet ki AdminAuth tab me B1 me password daalein':((d&&(d.error==='network'||d.error==='timeout'))?'Login server se connect nahi hua — URL check karein':(d&&d.error==='locked')?'Bahut galat koshish — 15 minute baad try karein':'Wrong password');
        errEl.style.display='block';
      }
    });
@@ -140,7 +139,6 @@ function load(){
   document.getElementById('s_loginurl').value=cfg('wtpe_login_url','');
   document.getElementById('s_csv').value=cfg('wtpe_csv_url',DEF_CSV);
   document.getElementById('s_addurl').value=cfg('wtpe_addproduct_url','');
-  document.getElementById('s_addsec').value=cfg('wtpe_addproduct_secret','wtp-add-2026');
   document.getElementById('s_quoteurl').value=cfg('wtpe_quote_url','');
   document.getElementById('s_quotesec').value=cfg('wtpe_quote_secret','wtp-quote-2026');
   document.getElementById('s_otpurl').value=cfg('wtpe_otp_url','');
@@ -153,7 +151,7 @@ function saveAll(){
   setLS('wtpe_login_url',loginurl);
   setLS('wtpe_csv_url',document.getElementById('s_csv').value);
   setLS('wtpe_addproduct_url',document.getElementById('s_addurl').value);
-  setLS('wtpe_addproduct_secret',document.getElementById('s_addsec').value);
+  try{localStorage.removeItem('wtpe_addproduct_secret');}catch(e){}
   setLS('wtpe_quote_url',document.getElementById('s_quoteurl').value);
   setLS('wtpe_quote_secret',document.getElementById('s_quotesec').value);
   setLS('wtpe_otp_url',document.getElementById('s_otpurl').value);
