@@ -639,11 +639,21 @@ function zSpeak(txt){try{if(!zVoiceOn||!window.speechSynthesis)return;
 function zVoiceToggle(){zVoiceOn=!zVoiceOn;localStorage.setItem('zvoice',zVoiceOn?'on':'off');var b=document.getElementById('zspk');if(b)b.textContent=zVoiceOn?'🔊':'🔇';if(!zVoiceOn)try{speechSynthesis.cancel();}catch(e){}}
 function zSaveCart(){try{localStorage.setItem('zcart',JSON.stringify(zCart));}catch(e){}}
 function zCartTotal(){var t=0;zCart.forEach(function(c){t+=c.p*c.qty;});return t;}
-function zAddCart(n,p){for(var i=0;i<zCart.length;i++){if(zCart[i].n===n){zCart[i].qty++;zSaveCart();zCartMsg();return;}}
+function zAddCart(n,p){
+  /* Online kharidne layak product (Price + Courier Charge) -> website ke asli cart me (Razorpay checkout) */
+  try{var it=(typeof STORE_DATA!=='undefined'?STORE_DATA:[]).filter(function(x){return x.n===n;})[0];
+    if(it&&window.WTPE_SELLABLE&&WTPE_SELLABLE(it)&&window.wtpeAddToCart){
+      var im=(it.imgs&&it.imgs[0])||it.img||'';
+      if(wtpeAddToCart({k:it.n,n:it.n,p:it.p,ship:it.ship,gst:it.gst,disp:it.disp,img:im})){
+        zAdd('bot','✅ **'+(n.length>40?n.slice(0,38)+'…':n)+'** cart me add ho gaya.\nCart me Shipping + GST ke saath total dikhega — wahin se **online payment** karke order pakka karein.');
+        zSpeak('Cart me add ho gaya. Checkout karke online payment karein.');return;}
+    }}catch(e){}
+  /* Baaki (quote wale) products -> Zara ki quote list, team WhatsApp par rate bhejegi */
+  for(var i=0;i<zCart.length;i++){if(zCart[i].n===n){zCart[i].qty++;zSaveCart();zCartMsg();return;}}
   zCart.push({n:n,p:p,qty:1});zSaveCart();zCartMsg();}
 function zQty(i,d){if(!zCart[i])return;zCart[i].qty+=d;if(zCart[i].qty<1)zCart.splice(i,1);zSaveCart();zCartMsg();}
 function zCartMsg(){if(!zCart.length){var e=zAdd('bot','Cart khaali hai. Products dekh ke 🛒 dabayein!');zSpeak('Cart khaali hai');return;}
-  var h='<b>🛒 Aapka Cart:</b><br>';
+  var h='<b>📝 Quote List</b> <small style="color:#64748b">(in products ka rate/freight team WhatsApp par confirm karegi)</small><br>';
   zCart.forEach(function(c,i){h+='<div style="display:flex;align-items:center;gap:6px;margin:5px 0;font-size:13px"><span style="flex:1">'+esc(c.n.length>34?c.n.slice(0,32)+'…':c.n)+'</span><button onclick="zQty('+i+',-1)" style="width:22px;height:22px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer">−</button><b>'+c.qty+'</b><button onclick="zQty('+i+',1)" style="width:22px;height:22px;border:1px solid #ccc;border-radius:5px;background:#fff;cursor:pointer">+</button><span style="min-width:70px;text-align:right">'+rupee(c.p*c.qty)+'</span></div>';});
   h+='<div style="border-top:1px solid #e5e7eb;margin-top:6px;padding-top:6px"><b>Total: '+rupee(zCartTotal())+' <small>+GST</small></b></div>';
   h+='<div style="margin-top:8px;display:flex;gap:7px;flex-wrap:wrap"><button onclick="zOrderNow()" style="background:#0e7a3d;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-family:inherit">✅ Order karo</button><button onclick="zClearCart()" style="background:#f1f5f9;border:1px solid #ccc;border-radius:8px;padding:8px 12px;cursor:pointer;font-family:inherit">🗑️ Khaali karo</button></div>';
