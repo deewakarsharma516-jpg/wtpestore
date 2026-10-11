@@ -174,7 +174,10 @@ function csvParse(t) {
 const clean = x => String(x || '').replace(/^\uFEFF/, '').replace(/\s+/g, ' ').trim();
 const esc = s => String(s || '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const slug = n => String(n || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
-const rupee = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+const rupee = n => { n = Number(n || 0); return '₹' + n.toLocaleString('en-IN', Number.isInteger(n) ? {} : { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+/* GST-inclusive price — Google Merchant Center (India) ko GST sahit price chahiye, aur page par bhi wahi dikhna chahiye */
+const gstOf = p => (p.gst == null ? 18 : p.gst);
+const inclGst = (p, amt) => Math.round((amt == null ? p.p : amt) * (100 + gstOf(p))) / 100;
 
 /* ---------- read sheet ---------- */
 async function load() {
@@ -1132,7 +1135,7 @@ function productPage(p, related, blurb) {
   const catSlug = slug(p.c);
   const off = p.mrp && p.mrp > p.p ? Math.round((p.mrp - p.p) * 100 / p.mrp) : 0;
   const priceBlock = p.p > 0
-    ? `<div class="pp-price">${off ? `<span class="old">${rupee(p.mrp)}</span>` : ''}${rupee(p.p)}<small> + GST</small>${off ? `<span class="off">${off}% OFF</span>` : ''}</div>`
+    ? `<div class="pp-price">${off ? `<span class="old">${rupee(inclGst(p, p.mrp))}</span>` : ''}${rupee(inclGst(p))}<small> incl. GST</small>${off ? `<span class="off">${off}% OFF</span>` : ''}</div><div style="font-size:13px;color:#565959;margin-top:-4px">${rupee(p.p)} + ${gstOf(p)}% GST${p.ship != null ? ` · Courier ${rupee(p.ship)} + GST` : ''}</div>`
     : `<div class="pp-price" style="color:#565959;font-size:16px">Price on request — ask on WhatsApp</div>`;
   const wa = `https://wa.me/919899193589?text=${encodeURIComponent('Hi WTPESTORE, I want a quotation for: ' + p.n + (p.model ? ' (Model ' + p.model + ')' : '') + '. Please share best price.')}`;
   const imgBlock = p.img
@@ -1218,7 +1221,7 @@ ${relBlock}
     "url": pageUrl,
     ...(p.p > 0 ? {
       "offers": {
-        "@type": "Offer", "price": p.p, "priceCurrency": "INR",
+        "@type": "Offer", "price": inclGst(p), "priceCurrency": "INR",
         "availability": "https://schema.org/InStock",
         "priceValidUntil": PRICE_VALID_UNTIL,
         "url": pageUrl,
@@ -1296,6 +1299,48 @@ else{var i=document.createElement('input');i.value=u;document.body.appendChild(i
 
 /* Sabhi quality products ke liye /products/<slug>.html banao.
    Purani/hata di gayi product ki file bhi apne aap saaf ho jaati hai (dir clear karke dobara banate hain). */
+/* ---------- Google Merchant Center feed: products/merchant-feed.xml ----------
+   Sirf woh products jo website par KHAREEDE ja sakte hain (Price + Courier Charge bhara, photo ho, page bana ho).
+   Price aur shipping GST sahit (India rule). */
+function writeMerchantFeed(list) {
+  const x = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+  const money = n => (Math.round(n * 100) / 100).toFixed(2) + ' INR';
+  const items = [], seen = new Set();
+  for (const p of list) {
+    if (!(p.p > 0) || p.ship == null || !/^https?:\/\//.test(p.img || '')) continue;
+    if (!fs.existsSync(path.join('products', p.slug + '.html')) || seen.has(p.slug)) continue;
+    seen.add(p.slug);
+    const model = p.model || extractModel(p.n);
+    const desc = (p.spec ? p.spec + '. ' : '') + p.n + (p.make ? ' by ' + p.make : '') + '. Genuine product with GST invoice, dispatched pan-India from Faridabad by WTPESTORE (Aqua Filtration System).';
+    items.push(`<item>
+<g:id>${x(p.slug.slice(0, 50))}</g:id>
+<g:title>${x(p.n.slice(0, 150))}</g:title>
+<g:description>${x(desc.slice(0, 4900))}</g:description>
+<g:link>${x(SITE + '/products/' + p.slug + '.html')}</g:link>
+<g:image_link>${x(p.img)}</g:image_link>
+<g:availability>in_stock</g:availability>
+<g:condition>new</g:condition>
+<g:price>${money(inclGst(p))}</g:price>
+${p.make ? `<g:brand>${x(p.make)}</g:brand>\n` : ''}${model ? `<g:mpn>${x(model)}</g:mpn>\n` : ''}<g:identifier_exists>${p.make && model ? 'yes' : 'no'}</g:identifier_exists>
+<g:product_type>${x(titleCaseCat(p.c))}</g:product_type>
+<g:shipping><g:country>IN</g:country><g:service>Courier</g:service><g:price>${money(inclGst(p, p.ship))}</g:price></g:shipping>
+</item>`);
+  }
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+<channel>
+<title>WTPESTORE — Aqua Filtration System</title>
+<link>${SITE}/</link>
+<description>Water treatment products sold online on WTPESTORE</description>
+${items.join('\n')}
+</channel>
+</rss>
+`;
+  fs.writeFileSync(path.join('products', 'merchant-feed.xml'), xml);
+  console.log('Merchant feed:', items.length, 'products (products/merchant-feed.xml)');
+  return items.length;
+}
+
 function buildProductPages(qualityList) {
   fs.rmSync(PRODUCTS_DIR, { recursive: true, force: true });
   fs.mkdirSync(PRODUCTS_DIR, { recursive: true });
@@ -1474,6 +1519,7 @@ function injectStatic(P) {
   const QP = P.filter(isQualityProduct);
   const skipped = P.length - QP.length;
   const madeCount = buildProductPages(QP);
+  writeMerchantFeed(QP);
   console.log('Product pages built:', madeCount, '(skipped as thin/junk:', skipped, ')');
   writeOldSharedSlugPages(P);
   writeStaticMapIntoIndex(P);
@@ -1508,7 +1554,7 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
         "url": STATIC_SLUGS.has(p.slug) ? (SITE + "/products/" + p.slug + ".html") : (SITE + "/?p=" + (p.slugOrig || p.slug)),
         ...(p.p > 0 ? {
           "offers": {
-            "@type": "Offer", "price": p.p, "priceCurrency": "INR",
+            "@type": "Offer", "price": inclGst(p), "priceCurrency": "INR",
             "availability": "https://schema.org/InStock",
             "seller": { "@type": "Organization", "name": "Aqua Filtration System" }
           }
