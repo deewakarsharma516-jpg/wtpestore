@@ -1,7 +1,7 @@
 name: Update SEO pages from Google Sheet
 on:
   schedule:
-    - cron: '30 1 * * *'      # roz subah 7:00 IST (01:30 UTC)
+           - cron: '15 */2 * * *'    # har 2 ghante
   workflow_dispatch:           # button dabake bhi chala sakte hain
 permissions:
   contents: write
