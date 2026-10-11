@@ -175,7 +175,7 @@
     var d = validate(), err = document.getElementById('wc_err');
     if(typeof d === 'string'){ err.textContent = d; return; }
     err.textContent = '';
-    var c = load(), btn = document.getElementById('wc_place');
+    var c = load(), btn = document.getElementById('wc_place'), est = totals(c);
     btn.disabled = true; btn.textContent = 'Placing your order…';
     var items = c.map(function(i){ return { n: i.k, q: i.q }; });
     var u = ORDER_URL + '?action=createOrder&items=' + encodeURIComponent(JSON.stringify(items));
@@ -196,7 +196,13 @@
         mo.push({ id: r.orderId, date: new Date().toLocaleDateString('en-IN'), total: r.total, items: cnt, disp: r.disp, phone: d.phone });
         ls('wtpe_orders', JSON.stringify(mo.slice(-30)));
       }catch(e){}
-      if(r.rzp){ LAST = { r: r, d: d }; remember(r.orderId, { rzp: r.rzp }); return pay(r, d); }
+      if(r.rzp){ LAST = { r: r, d: d }; remember(r.orderId, { rzp: r.rzp });
+        /* Price Sheet me badal gaya ho to pehle customer ko naya total dikhao, phir hi pay */
+        if(Math.abs(Number(r.total) - Number(est.total)) >= 0.5){
+          return screen('Price updated', '🔄', 'Some prices or charges have changed since this page was loaded. Please check the updated total below before paying.', r,
+            '<button type="button" class="wcbtn" data-a="payagain">Pay ' + rupee(r.total) + '</button>' + waBtn('Hello WTPESTORE, I have a question about order ' + r.orderId));
+        }
+        return pay(r, d); }
       if(r.payError) return screen('Payment could not start', '⚠️', 'Your order is saved, but online payment could not start right now. Please message us on WhatsApp with your Order ID and we will send you a payment link.', r,
         waBtn('Hello WTPESTORE, online payment did not start for order ' + r.orderId + '. Total ' + rupee(r.total) + '. Please send a payment link.'));
       var wa = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent('Hello WTPESTORE, I have placed order ' + r.orderId + '. Total ' + rupee(r.total) + '. Please share payment details.');
