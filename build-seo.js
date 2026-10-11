@@ -142,6 +142,8 @@ const BLOG_PAGES = [
 
 /* ---------- helpers ---------- */
 function get(url, redirects) {
+  /* local test: SHEET_CSV=file:/path/to.csv */
+  if (/^file:/.test(url)) return Promise.resolve(fs.readFileSync(url.slice(5), 'utf8'));
   redirects = redirects || 0;
   return new Promise((res, rej) => {
     https.get(url, r => {
@@ -301,6 +303,115 @@ Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 /* Slugs jinke apne static /products/<slug>.html page ban chuke hain (card() isse View link decide karta hai) */
 const STATIC_SLUGS = new Set();
 
+/* ---------------------------------------------------------------
+   LASTMOD - a page's date changes only when its content changes.
+   Stamping every URL with today's date on every build teaches
+   Google to ignore our lastmod, which slows crawling of pages that
+   really did change. State lives in products/ (the workflow commits
+   that folder).
+--------------------------------------------------------------- */
+const LASTMOD_FILE = path.join(PRODUCTS_DIR, 'lastmod-state.json');
+function readLastmodState() {
+  try { return JSON.parse(fs.readFileSync(LASTMOD_FILE, 'utf8')); } catch (e) { return {}; }
+}
+/* hash only what a reader would see change - dates (build stamps,
+   priceValidUntil, "last updated") are removed first */
+function contentHash(file) {
+  let t;
+  try { t = fs.readFileSync(file, 'utf8'); } catch (e) { return null; }
+  t = t.replace(/\d{4}-\d{2}-\d{2}(T[\d:.]+Z?)?/g, '')
+       .replace(/<!--WTPE_SP_START-->[\s\S]*?<!--WTPE_SP_END-->/, '');
+  return require('crypto').createHash('sha1').update(t).digest('hex').slice(0, 16);
+}
+/* site URL -> local file in the checkout (null if it is not a file) */
+function urlToFile(u) {
+  let p = String(u).replace(SITE, '');
+  if (p.indexOf('?') > -1 || p.indexOf('#') > -1) return null;
+  if (p === '' || p === '/') return 'index.html';
+  p = decodeURIComponent(p.replace(/^\//, ''));
+  if (!/\.html$/.test(p)) return null;               /* folders like /blog/icons */
+  try { return fs.statSync(p).isFile() ? p : null; } catch (e) { return null; }
+}
+
+/* ---------------------------------------------------------------
+   index.html needs to know which products have a real page, so that
+   an old /?p=<slug> link goes straight to /products/<slug>.html
+   instead of opening a popup on a copy of the homepage.
+   Written between markers; harmless if the markers are missing.
+--------------------------------------------------------------- */
+function writeStaticMapIntoIndex(P) {
+  const groups = {};
+  P.forEach(p => { (groups[p.slugOrig] = groups[p.slugOrig] || []).push(p); });
+  const same = [], moved = {};
+  Object.keys(groups).forEach(orig => {
+    const g = groups[orig];
+    if (g.length !== 1) {                          /* old shared slug: send to its chooser page, if one was written */
+      if (fs.existsSync(path.join(PRODUCTS_DIR, orig + '.html'))) same.push(orig);
+      return;
+    }
+    const p = g[0];
+    if (!STATIC_SLUGS.has(p.slug)) return;
+    if (p.slug === orig) same.push(orig); else moved[orig] = p.slug;
+  });
+  /* very old links were made before "&" became "and" in URLs
+     (…-tank-application-fitting). Point those at the same page. */
+  const legacySlug = n => String(n || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+  const known = new Set(Object.keys(groups));
+  let legacy = 0;
+  P.forEach(p => {
+    if (!STATIC_SLUGS.has(p.slug)) return;
+    const old = legacySlug(p.nOrig || p.n);
+    if (old && !known.has(old) && !moved[old]) { moved[old] = p.slug; legacy++; }
+  });
+  if (legacy) console.log('index.html: ' + legacy + ' legacy ?p= links mapped');
+  let html;
+  try { html = fs.readFileSync('index.html', 'utf8'); } catch (e) { return; }
+  if (html.indexOf('<!--WTPE_SP_START-->') < 0) { console.log('index.html: static map markers missing - skipped'); return; }
+  const data = JSON.stringify({ s: same.join('|'), m: moved }).replace(/</g, '\\u003c');
+  const block = '<!--WTPE_SP_START--><script>window.WTPE_SP=' + data + ';</script><!--WTPE_SP_END-->';
+  const out = html.replace(/<!--WTPE_SP_START-->[\s\S]*?<!--WTPE_SP_END-->/, block);
+  if (out !== html) fs.writeFileSync('index.html', out);
+  console.log('index.html static map ✓ (' + same.length + ' direct, ' + Object.keys(moved).length + ' renamed)');
+}
+
+/* ---------------------------------------------------------------
+   Several products once shared ONE url (e.g. /products/water-softener.html).
+   Now each has its own page. Google still knows the old url, so it
+   becomes a small noindex page listing the real products - Google
+   follows the links, old visitors pick the right one, nothing 404s.
+--------------------------------------------------------------- */
+function writeOldSharedSlugPages(P) {
+  const groups = {};
+  P.forEach(p => { (groups[p.slugOrig] = groups[p.slugOrig] || []).push(p); });
+  let made = 0;
+  Object.keys(groups).forEach(orig => {
+    const live = groups[orig].filter(p => STATIC_SLUGS.has(p.slug) && p.slug !== orig);
+    if (!live.length || STATIC_SLUGS.has(orig)) return;
+    if (live.length === 1) {                        /* renamed (e.g. typo fix) - plain redirect */
+      const target = SITE + '/products/' + live[0].slug + '.html';
+      fs.writeFileSync(path.join(PRODUCTS_DIR, orig + '.html'),
+        '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+        '<meta name="robots" content="noindex,follow"><link rel="canonical" href="' + target + '">' +
+        '<meta http-equiv="refresh" content="0; url=' + target + '"><title>Moved</title></head><body>' +
+        '<p>This page has moved to <a href="' + target + '">' + esc(live[0].n) + '</a>.</p>' +
+        '<script>location.replace(' + JSON.stringify(target) + ');<\/script></body></html>');
+      made++; return;
+    }
+    const items = live.map(p =>
+      `<li><a href="/products/${p.slug}.html">${esc(p.n)}</a>${p.p > 0 ? ' &mdash; ' + rupee(p.p) + ' + GST' : ''}</li>`).join('');
+    const html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<meta name="robots" content="noindex,follow"><title>Choose a model | WTPESTORE</title>' +
+      '<style>body{font-family:system-ui,Arial,sans-serif;max-width:720px;margin:30px auto;padding:0 16px;color:#0f1111}' +
+      'h1{font-size:21px;color:#0B2A4A}li{margin:10px 0;font-size:15px}a{color:#0B2A4A;font-weight:600}</style></head><body>' +
+      '<h1>This product now has a separate page for each model</h1><p>Please choose the one you need:</p>' +
+      '<ul>' + items + '</ul><p><a href="/products.html">See all products</a> &middot; <a href="/">Home</a></p></body></html>';
+    fs.writeFileSync(path.join(PRODUCTS_DIR, orig + '.html'), html);
+    made++;
+  });
+  if (made) console.log('old shared-url chooser pages ✓ (' + made + ')');
+}
+
 function card(p) {
   const off = p.mrp && p.mrp > p.p ? Math.round((p.mrp - p.p) * 100 / p.mrp) : 0;
   const price = p.p > 0
@@ -456,6 +567,329 @@ const PRICE_VALID_UNTIL = (function () {
 const REDIRECTS = {
   // 'ro-plannt-3000-lph': 'ro-plant-3000-lph',
 };
+
+/* ---------------------------------------------------------------
+   CATEGORY_GUIDE - real, category-specific content for the
+   Applications / Compatibility / Selection sections plus links to
+   the matching guides. Nothing generic: if a category is not
+   listed, those sections are simply not rendered.
+--------------------------------------------------------------- */
+/* ---------------------------------------------------------------
+   productIntro - a unique opening paragraph built from the
+   product's OWN data: the figures in its name, its model, its
+   category context and its price. Sentence order is varied by a
+   hash of the slug so neighbouring pages do not read alike.
+   Nothing is invented: every clause comes from real data.
+--------------------------------------------------------------- */
+const CAT_NOUN = [
+  [/rotameter/, 'rotameter'],
+  [/digital flow meter|flow ?meter|electromagnetic/, 'flow meter'],
+  [/dosing vessel|lldpe/, 'LLDPE dosing vessel'],
+  [/dosing|edose|metering pump/, 'metering pump'],
+  [/test kit/, 'test kit'],
+  [/pressure gauge/, 'pressure gauge'],
+  [/level switch|pressure switch|pressure & level/, 'switch'],
+  [/instrument|indicator|transmitter|datalogger/, 'instrument'],
+  [/controller|astero|panel/, 'control panel'],
+  [/solenoid valve/, 'solenoid valve'],
+  [/mpv accessor|multiport valve accessor/, 'multiport valve accessory'],
+  [/multiport|mpv/, 'multiport valve'],
+  [/distribution system/, 'distribution system'],
+  [/diffuser/, 'diffuser'],
+  [/frp vessel|pentair|qflo/, 'FRP vessel'],
+  [/multigrade|sand filter/, 'multigrade filter'],
+  [/membrane housing|pipe joint|coupling/, 'membrane housing'],
+  [/u\.?f\.? membrane|everflow/, 'UF membrane'],
+  [/membrane/, 'RO membrane'],
+  [/cartridge housing/, 'cartridge housing'],
+  [/disc & screen|disc filter|screen filter/, 'disc / screen filter'],
+  [/bag filter|filters bag|filter bag/, 'bag filter'],
+  [/cartridge|gopani|clarywound|ro protect/, 'cartridge filter'],
+  [/soft[ei]n/, 'water softener'],
+  [/chemical|antiscalant|resin|carbon/, 'treatment chemical'],
+  [/industrial ro plant|ro plant\b/, 'RO plant'],
+  [/dm plant/, 'DM plant'],
+  [/uf plant/, 'UF plant'],
+  [/etp plant/, 'ETP'],
+  [/stp plant/, 'STP'],
+  [/u\.?v\.?|purif/, 'UV system'],
+  [/blower/, 'air blower'],
+  [/water atm|dispenser/, 'water dispenser'],
+  [/pool light|swimming pool/, 'underwater light'],
+];
+function catNoun(c) {
+  const s = String(c || '').toLowerCase();
+  for (const [re, n] of CAT_NOUN) if (re.test(s)) return n;
+  return 'product';
+}
+
+/* pull the real technical figures out of the product name */
+function nameFacts(n) {
+  const t = String(n || '');
+  const out = [];
+  let m;
+  if ((m = t.match(/(\d[\d,]*)\s*(?:to|-|–)\s*(\d[\d,]*)\s*LPH/i))) out.push('a flow range of ' + m[1] + ' to ' + m[2] + ' LPH');
+  else if ((m = t.match(/(\d[\d,]*)\s*LPH/i))) out.push(m[1] + ' LPH');
+  if ((m = t.match(/(\d[\d,]*)\s*KLD/i))) out.push(m[1] + ' KLD');
+  if ((m = t.match(/(\d+)\s*NB/i))) out.push(m[1] + 'NB connections');
+  if ((m = t.match(/([\d.]+)\s*(?:\/[\d.]+)*\s*micron/i))) out.push(m[0].replace(/\s+/g, ' ').trim());
+  if ((m = t.match(/(\d+)\s*(?:"|''|inch)/i))) out.push(m[1] + ' inch');
+  if ((m = t.match(/([\d.]+)\s*kg\/cm2/i))) out.push('up to ' + m[1] + ' kg/cm²');
+  if ((m = t.match(/([\d.]+)\s*HP/i))) out.push(m[1] + ' HP');
+  if ((m = t.match(/(\d+)\s*(?:litre|liter)/i))) out.push(m[1] + ' litre capacity');
+  if (/PVDF/i.test(t)) out.push('a PVDF wetted head for aggressive chemicals');
+  else if (/PTFE/i.test(t)) out.push('PTFE wetted parts');
+  if (/SS\s*304/i.test(t)) out.push('SS304 construction');
+  if (/top mount/i.test(t)) out.push('top mounting');
+  else if (/side mount/i.test(t)) out.push('side mounting');
+  if (/softener/i.test(t) && /mpv|multiport/i.test(t)) out.push('a brine port for regeneration');
+  return out;
+}
+
+function aOrAn(w) { return /^[aeiou]/i.test(String(w || '').trim()) ? 'an' : 'a'; }
+
+/* lowercase the first word only if it is not an acronym like RO, ETP, UV */
+function softLower(t) {
+  const s = String(t || '');
+  const first = s.split(/\s+/)[0] || '';
+  if (/^[A-Z0-9.&/-]{2,}$/.test(first)) return s;      /* RO, ETP, SDI, 4-20mA */
+  return s.charAt(0).toLowerCase() + s.slice(1);
+}
+
+function productIntro(p, G) {
+  const noun = catNoun(p.c);
+  const art = aOrAn(noun);
+  const facts = nameFacts(p.n);
+  const apps = (G && G.apps) ? G.apps : [];
+  const name = String(p.n).trim();
+
+  /* stable per-product variation */
+  let h = 0;
+  const key = String(p.slug || name);
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 100000;
+
+  const openings = [
+    `${name} is ${art} ${noun} supplied by WTPESTORE, powered by Aqua Filtration System, Faridabad.`,
+    `The ${name} is ${art} ${noun} we stock and supply across India from our Faridabad base.`,
+    `WTPESTORE supplies the ${name} — ${art} ${noun} for water and wastewater treatment duty.`,
+  ];
+  let s = [openings[h % openings.length]];
+
+  if (p.model) s.push(`It carries model reference ${String(p.model).trim()}.`);
+
+  if (facts.length) {
+    const f = facts.slice(0, 3);
+    const joined = f.length > 1 ? f.slice(0, -1).join(', ') + ' and ' + f[f.length - 1] : f[0];
+    s.push(`Key figures for this model are ${joined}.`);
+  }
+
+  if (apps.length) {
+    const a = [apps[h % apps.length], apps[(h + 1) % apps.length]]
+      .filter((x, i, arr) => x && arr.indexOf(x) === i)
+      .map(softLower);
+    if (a.length) s.push(`It is commonly used for ${a.join(' and ')}.`);
+  }
+
+  if (p.make) s.push(`Supplied as a genuine ${String(p.make).trim()} item.`);
+
+  const closers = [
+    `Price shown is ex-Faridabad and a GST invoice is issued with every order. Send us your requirement for a quotation on this exact model.`,
+    `A GST invoice is issued on every dispatch, and we usually reply to enquiries within two working hours.`,
+    `Available from stock with GST billing and pan-India dispatch. Tell us your flow, pressure or water analysis and we will confirm the right model.`,
+  ];
+  s.push(closers[(h >> 3) % closers.length]);
+
+  return s.join(' ');
+}
+
+const CATEGORY_GUIDE = [
+  [/rotameter/, {
+    apps: ['RO plant permeate and reject lines', 'Softener and filter backwash setting', 'Dosing and chemical feed lines', 'Cooling tower make-up and blowdown'],
+    compat: 'Matches 15NB to 65NB lines. Choose the model whose range puts your normal flow near the middle of the scale, not at either end.',
+    select: 'Pick on flow range first, then on the NB of your line. A rotameter reading near the top or bottom of its scale gives poor accuracy, so size it so your working flow sits mid-scale.',
+    guides: [['rotameter-kaise-chunein-flow-range-guide', 'How to select a rotameter'], ['flow-meter-nb-size-kaise-chunein', 'Choosing the NB size'], ['rotameter-float-atak-jaye-to-kya-karein', 'If the float sticks']]
+  }],
+  [/digital flow meter|electromagnetic/, {
+    apps: ['ETP and STP discharge flow records', 'Bulk water and process metering', 'Effluent lines with solids', 'Pollution board telemetry reporting'],
+    compat: 'Available 25NB to 150NB. 4-20mA and RS485 outputs connect to panels, dataloggers and telemetry modems.',
+    select: 'Use an electromagnetic meter where the liquid carries solids or is corrosive, since there is no obstruction in the flow path. For clean water a rotameter or FT-650 costs far less.',
+    guides: [['electromagnetic-flow-meter-kab-lein', 'When to use an electromagnetic meter'], ['flow-meter-4-20ma-rs485-output-guide', '4-20mA and RS485 outputs'], ['etp-discharge-norms-monitoring', 'ETP discharge monitoring']]
+  }],
+  [/dosing|edose|metering pump/, {
+    apps: ['Antiscalant dosing ahead of RO membranes', 'SMBS dosing for dechlorination', 'pH correction in ETP and process water', 'Chlorine dosing for disinfection'],
+    compat: 'PP heads suit antiscalant, SMBS and hypochlorite. PVDF or PTFE is needed for strong acid. Pair with a level switch, foot valve and injection nozzle.',
+    select: 'Size on the LPH you need at your line pressure, then set the stroke to about 50 to 70 percent so there is adjustment either way. Choose the head material from the chemical, not the price.',
+    guides: [['dosing-pump-kaise-select-karein', 'How to select a dosing pump'], ['pvdf-vs-pp-dosing-pump', 'PVDF vs PP heads'], ['antiscalant-dosing-calculation', 'Antiscalant dosing calculation'], ['level-switch-dosing-pump-mein-kyun-zaroori', 'Why a level switch matters']]
+  }],
+  [/controller|astero|panel/, {
+    apps: ['RO plant automation and pump control', 'UF plant backwash sequencing', 'ETP and STP pump and blower control', 'Unmanned plants needing protection and alarms'],
+    compat: 'Select by pump phase and HP for both raw water and high pressure pumps. Works with conductivity sensors, level switches and pressure switches.',
+    select: 'Match the RWP and HPP ratings to your actual motors with margin. Above about 10 HP a star delta panel is needed. Add RS485 only if you will actually read the data.',
+    guides: [['ro-plant-control-panel-kaise-chunein', 'Choosing an RO control panel'], ['astero-11nxt-vs-13nxt-vs-33nxt', 'NXT model comparison'], ['dry-run-protection-kya-hai', 'Dry run protection'], ['star-delta-panel-kab-chahiye', 'When you need star delta']]
+  }],
+  [/instrument|indicator|transmitter|datalogger/, {
+    apps: ['RO permeate and feed quality monitoring', 'Boiler and cooling water control', 'ETP pH and discharge monitoring', 'Drinking water and packaged water plants'],
+    compat: 'Sensors are field replaceable. Relay versions can drive a dosing pump or diverter valve. 4-20mA and RS485 options feed panels and dataloggers.',
+    select: 'Decide first whether you need only a reading or also automatic control. An indicator shows the value; a controller has a relay and can act on it. Match the sensor to the temperature and the water condition.',
+    guides: [['tds-meter-vs-conductivity-meter', 'TDS vs conductivity'], ['sensor-calibration-kaise-karein', 'How to calibrate sensors'], ['ph-sensor-life-kab-badlein', 'pH sensor life'], ['etp-ke-liye-special-sensor-kyun', 'Why ETP needs special sensors']]
+  }],
+  [/pressure & level switch|level switch|pressure switch/, {
+    apps: ['Dry run protection on RO high pressure pumps', 'Tank level control', 'High pressure cut-off on membrane housings', 'Pump start and stop automation'],
+    compat: 'Two-wire connection to any RO or filtration control panel. Low pressure 0.5 to 5 kg, high pressure 2 to 25 kg.',
+    select: 'Fit a low pressure switch on the pump suction and a high pressure switch on the discharge. NXT metal-body versions allow the set point to be adjusted in the field.',
+    guides: [['dry-run-protection-kya-hai', 'Dry run protection'], ['pump-baar-baar-trip-ho-raha-hai', 'Why the pump keeps tripping']]
+  }],
+  [/pressure gauge/, {
+    apps: ['Before and after cartridge filters', 'Across membrane housings', 'Pump discharge pressure', 'Media filter backwash monitoring'],
+    compat: 'Bottom or back entry, 1/4 and 3/8 connections. Glycerine filled versions suit lines with pump vibration.',
+    select: 'Choose a range where your normal pressure sits near mid-scale. Pre-treatment lines usually need 0 to 7 kg; RO membrane feed needs 0 to 25 kg.',
+    guides: [['pressure-gauge-kahan-lagayein', 'Where to fit pressure gauges'], ['cartridge-kitne-din-mein-badlein', 'When to change a cartridge']]
+  }],
+  [/test kit/, {
+    apps: ['Daily feed hardness check on softeners', 'Boiler feed water testing', 'SDI measurement before RO design', 'Routine plant log readings'],
+    compat: 'No power or instrument needed. Refill reagents and SDI papers available separately.',
+    select: 'A hardness kit is the single most useful daily test on any softener. An SDI kit is more relevant than turbidity when designing RO pre-treatment.',
+    guides: [['water-testing-kya-karayein', 'Which water tests you need'], ['softener-not-working-troubleshooting', 'Softener troubleshooting']]
+  }],
+  [/cartridge housing/, {
+    apps: ['Final filtration before RO membranes', 'Point-of-use and process filtration', 'Chemical and dosing line filtration', 'Pre-filtration on softeners and plants'],
+    compat: 'Takes standard 10, 20 and 30 inch cartridges in slim and jumbo diameters. 15NB to 40NB connections.',
+    select: 'Size on flow, not plant output. Always take the air release version. Choose SS304 where pressure is higher, water is hot, or the plant runs continuously.',
+    guides: [['cartridge-housing-size-guide', 'Housing size guide'], ['ss304-housing-kab-zaroori', 'When SS304 is necessary'], ['housing-se-leakage-o-ring', 'Fixing housing leaks']]
+  }],
+  [/disc & screen|disc filter|screen filter/, {
+    apps: ['Ahead of cartridge filters to cut consumption', 'Borewell water with sand', 'Cooling tower side stream filtration', 'Irrigation and garden lines'],
+    compat: 'Y type up to 1.5 inch, T type from 2 inch upward. Fits directly in line, no housing needed.',
+    select: 'Use a screen filter for sand and coarse particles; a disc filter where there is algae or organic matter. Both are washed and reused, so there is no recurring cost.',
+    guides: [['disc-vs-screen-filter-kaunsa-lein', 'Disc vs screen filter'], ['cartridge-filter-kitne-micron-lagayein', 'Choosing the micron rating']]
+  }],
+  [/bag filter|filters bag|filter bag/, {
+    apps: ['Very dirty borewell and river water', 'ETP and STP filter feed', 'Pre-filtration ahead of cartridges', 'Cooling tower side stream'],
+    compat: 'Fits PP and SS304 bag housings. Available 5 to 100 micron in several sizes.',
+    select: 'Use a bag filter where cartridges are choking weekly. Fit 25 to 50 micron ahead of a 5 micron cartridge; the cartridge then lasts far longer.',
+    guides: [['bag-filter-kab-behtar-hai', 'When a bag filter is better'], ['cartridge-filter-kitne-micron-lagayein', 'Micron selection']]
+  }],
+  [/cartridge|gopani|clarywound|ro protect/, {
+    apps: ['Final protection before RO membranes', 'Sediment removal on borewell water', 'Polishing after media filters', 'Process and drinking water lines'],
+    compat: 'Standard lengths fit common housings. Slim and jumbo diameters available.',
+    select: '5 micron is the standard before RO. On dirty water fit 20 micron first and 5 micron after. Change on pressure drop, not on a guess.',
+    guides: [['cartridge-filter-kitne-micron-lagayein', 'What micron to use'], ['pp-spun-vs-string-wound-vs-pleated', 'PP spun vs string wound vs pleated'], ['cartridge-kitne-din-mein-badlein', 'When to change it']]
+  }],
+  [/frp vessel|pentair|qflo/, {
+    apps: ['Water softeners', 'Multigrade and sand filters', 'Activated carbon filters', 'DM and iron removal plants'],
+    compat: 'Fits standard top and side mount multiport valves. Needs a distribution system and graded media.',
+    select: 'Work out the media volume you need first, then take the smallest vessel that holds it, keeping media under about 60 percent so backwash works. Check flow as well as volume.',
+    guides: [['frp-vessel-size-chart', 'FRP vessel size chart'], ['vessel-media-freeboard-rule', 'Media loading and freeboard'], ['top-mount-vs-side-mount-vessel', 'Top vs side mount']]
+  }],
+  [/distribution system|diffuser/, {
+    apps: ['Inside softener and filter vessels', 'ETP and STP aeration tanks', 'Even flow distribution across media beds', 'Backwash water distribution'],
+    compat: 'Sized to vessel diameter and service flow. Hub and lateral systems for larger vessels.',
+    select: 'Choose on vessel size and flow together. An undersized distributor causes channelling, so the vessel treats far less water than it should.',
+    guides: [['distribution-system-hub-lateral', 'Distribution system guide'], ['vessel-media-freeboard-rule', 'Media loading guide']]
+  }],
+  [/multiport|mpv/, {
+    apps: ['Softener service and regeneration', 'Sand and carbon filter backwash', 'Multigrade filter operation', 'Automatic plant sequencing with EVOLVE'],
+    compat: 'Filter and softener versions are not interchangeable. Must match the vessel mounting, top or side. 20NB to 65NB.',
+    select: 'Decide four things: filter or softener, top or side mount, NB size from your flow, and manual or automatic. A filter valve cannot regenerate a softener.',
+    guides: [['mpv-kaise-chunein', 'How to select a multiport valve'], ['mpv-code-samajhna', 'Understanding MPV codes'], ['manual-vs-automatic-mpv', 'Manual vs automatic']]
+  }],
+  [/membrane housing|pipe joint|coupling/, {
+    apps: ['Holding RO membrane elements', 'Multi-element RO skids', 'Membrane replacement on existing plants'],
+    compat: 'Takes standard 4040 and 8040 elements. Supplied with O-rings and end connections.',
+    select: 'Choose a pressure rating comfortably above your operating pressure. Allow clear space at one end equal to the vessel length so elements can be withdrawn.',
+    guides: [['ro-membrane-housing-pressure-rating', 'Housing pressure rating'], ['ro-membrane-4040-vs-8040', '4040 vs 8040']]
+  }],
+  [/membrane/, {
+    apps: ['RO plants for drinking and process water', 'Boiler feed water treatment', 'Packaged drinking water', 'UF pre-treatment and tertiary reuse'],
+    compat: 'Standard element sizes fit existing housings. Needs antiscalant dosing and chlorine removal upstream.',
+    select: 'Choose the element size and count from your plant capacity and feed TDS. Life depends far more on pre-treatment and dosing than on the brand.',
+    guides: [['ro-membrane-4040-vs-8040', 'Membrane sizing'], ['membrane-life-kaise-badhayein', 'How to extend membrane life'], ['ro-membrane-kab-badlein', 'When to replace it'], ['membrane-cip-cleaning', 'CIP cleaning']]
+  }],
+  [/soft[ei]n/, {
+    apps: ['Boiler feed water pre-treatment', 'Hotels, hospitals and housing societies', 'Laundry and process water', 'Protecting geysers, fittings and RO membranes'],
+    compat: 'Needs a brine tank with a brine director and a supply of clean softener salt.',
+    select: 'Size from your water hardness, daily consumption and how often you are willing to regenerate. Check the service flow limit as well as the resin volume.',
+    guides: [['softener-sizing-hardness-resin', 'Softener sizing'], ['softener-regeneration-process', 'Regeneration explained'], ['hard-water-nuksan', 'What hard water costs you']]
+  }],
+  [/multigrade|sand filter/, {
+    apps: ['Turbidity removal ahead of RO', 'Borewell water with silt and sand', 'Pre-treatment for softeners', 'Tertiary filtration in ETP and STP'],
+    compat: 'FRP vessel with graded media and a filter multiport valve. Needs a drain able to take backwash flow.',
+    select: 'Size on flow and inlet turbidity. Above about 5 NTU a media filter is needed before cartridges, otherwise cartridge cost becomes very high.',
+    guides: [['turbidity-meter-ntu-kitna-hona-chahiye', 'Turbidity and NTU levels'], ['ro-plant-pretreatment-design', 'Pre-treatment design']]
+  }],
+  [/chemical|antiscalant|resin|carbon/, {
+    apps: ['RO membrane scale and fouling control', 'Boiler scale and corrosion protection', 'Cooling tower biocide and inhibitor programmes', 'CIP cleaning of membranes'],
+    compat: 'Dosed with a metering pump into the feed line. Keep each chemical in its own tank with its own pump.',
+    select: 'Dose on feed flow, not plant output. Match the product to your water analysis; send us the analysis and we will confirm the dosage.',
+    guides: [['ro-antiscalant-kya-karta-hai', 'What antiscalant does'], ['antiscalant-dosing-calculation', 'Dosing calculation'], ['cip-acidic-vs-alkaline', 'Acidic vs alkaline CIP']]
+  }],
+  [/industrial ro plant|ro plant\b/, {
+    apps: ['Drinking water for offices, schools and hostels', 'Hotels, hospitals and housing societies', 'Packaged drinking water units', 'Industrial process and boiler feed water'],
+    compat: 'Supplied as a complete skid. Needs raw water storage able to supply the feed flow, a drain for reject, and the stated power supply.',
+    select: 'Size from daily requirement divided by running hours, then work back through recovery to the feed flow. Check your borewell can actually deliver that feed flow.',
+    guides: [['ro-plant-capacity-kaise-nikalein', 'RO plant sizing'], ['ro-plant-pretreatment-design', 'Pre-treatment design'], ['ro-recovery-reject-water', 'Recovery and reject water']]
+  }],
+  [/dm plant/, {
+    apps: ['High pressure boiler feed water', 'Pharmaceutical and laboratory water', 'Battery and electronics rinsing', 'Polishing after RO'],
+    compat: 'Needs acid and alkali for regeneration, with safe storage and effluent neutralisation.',
+    select: 'DM running cost rises with feed TDS, so RO followed by DM is usually far cheaper than DM alone. Decide from the outlet conductivity your process actually requires.',
+    guides: [['dm-plant-vs-ro-plant', 'DM vs RO'], ['tds-meter-vs-conductivity-meter', 'Conductivity monitoring']]
+  }],
+  [/uf plant/, {
+    apps: ['RO pre-treatment on river and surface water', 'Housing societies and institutions', 'STP tertiary treatment and reuse', 'Bacteria and turbidity removal'],
+    compat: 'Needs a controller for automatic backwash, a drain, and feed water within the stated turbidity.',
+    select: 'UF removes turbidity and bacteria but not dissolved salts. If the TDS also needs reducing, use UF ahead of an RO rather than instead of it.',
+    guides: [['uf-vs-ro-membrane', 'UF vs RO'], ['uf-plant-backwash-cycle', 'UF backwash and operation']]
+  }],
+  [/etp plant|stp plant/, {
+    apps: ['Industrial effluent treatment', 'Housing society and hotel sewage', 'Hospitals, malls and institutions', 'Treated water reuse for gardening and flushing'],
+    compat: 'Needs civil tanks or a prefab skid, power for blowers and pumps, and pH and DO monitoring to run properly.',
+    select: 'Size on KLD and inlet BOD/COD. MBBR and SBR suit limited space; conventional needs more land but is simpler to operate.',
+    guides: [['etp-plant-stages-explained', 'ETP stages explained'], ['stp-plant-mbbr-sbr-difference', 'MBBR vs SBR vs conventional'], ['do-meter-etp-mein-kaise-use-karein', 'DO monitoring and power saving']]
+  }],
+  [/u\.?v\.?|purif/, {
+    apps: ['Final disinfection after RO', 'Drinking water polishing', 'STP and reuse water disinfection', 'Borewell water bacteriological safety'],
+    compat: 'Fits in line at the stated LPH. Water must be low in turbidity for UV to work, so filtration comes first.',
+    select: 'Choose on the flow rate through the unit, not on tank size. UV needs clear water, so fit it after filtration and RO, never before.',
+    guides: [['turbidity-meter-ntu-kitna-hona-chahiye', 'Why turbidity matters'], ['chlorine-meter-kab-lagayein', 'UV vs chlorination']]
+  }],
+  [/solenoid valve/, {
+    apps: ['Automatic RO permeate diversion on TDS', 'Water ATM and dispenser taps', 'Automatic flush and drain lines', 'Panel-controlled on-off duty'],
+    compat: 'Driven by a relay from a controller or panel. SS304 and brass bodies, 15NB to 50NB.',
+    select: 'Size on the line NB and check the pressure rating. Choose the normally-closed or open position so that on power failure water goes where it is safe.',
+    guides: [['conductivity-controller-se-ro-reject-control', 'Automatic TDS diversion'], ['ro-plant-control-panel-kaise-chunein', 'Panel selection']]
+  }],
+  [/water atm|dispenser/, {
+    apps: ['Community and society water points', 'RO water shops and vending', 'Schools, factories and bus stands', 'Paid water dispensing with usage records'],
+    compat: 'Each tap needs a flow sensor and a solenoid valve. Card, coin and QR options; more taps can be added later.',
+    select: 'Choose the payment types you actually need, then count the taps. Every additional tap needs its own flow sensor and solenoid valve.',
+    guides: [['conductivity-controller-se-ro-reject-control', 'Keeping dispensed water quality right'], ['ro-plant-capacity-kaise-nikalein', 'Sizing the RO plant behind it']]
+  }],
+  [/pool light|swimming pool/, {
+    apps: ['Swimming pool underwater lighting', 'Fountain and water feature lighting', 'Decorative pond lighting'],
+    compat: 'Low-voltage operation with a matching LED driver, supplied separately by wattage.',
+    select: 'Choose the wattage from pool size and depth, and the colour from the effect you want. Order the driver to match the wattage.',
+    guides: [['orp-kya-hai-cooling-tower-mein', 'Pool water ORP and disinfection'], ['ph-correction-dosing-system', 'Pool pH control']]
+  }],
+  [/aster products/, {
+    apps: ['Pollution board online monitoring (CPCB)', 'Borewell water level monitoring (DWLR)', 'Tank level indication and transmission', 'Remote plant data logging'],
+    compat: 'Outputs 4-20mA and RS485. Telemetry versions include SIM and server data hosting for the first year.',
+    select: 'Confirm what your pollution board or process actually requires before choosing, since these are specialised instruments with annual hosting costs.',
+    guides: [['etp-discharge-norms-monitoring', 'ETP discharge monitoring'], ['sensor-calibration-kaise-karein', 'Sensor calibration']]
+  }],
+  [/blower/, {
+    apps: ['ETP and STP aeration tanks', 'Diffused aeration systems', 'Tank mixing and agitation'],
+    compat: 'Supplied with standard accessories ready to install. Pair with disc or tube diffusers sized to the airflow.',
+    select: 'Size on airflow and discharge pressure for your tank depth. The blower is the largest power consumer in an ETP, so DO monitoring pays for itself.',
+    guides: [['do-meter-etp-mein-kaise-use-karein', 'DO monitoring and blower cost'], ['etp-plant-stages-explained', 'ETP stages']]
+  }],
+];
+
+function guideFor(cat) {
+  const c = String(cat || '').toLowerCase();
+  for (const [re, g] of CATEGORY_GUIDE) if (re.test(c)) return g;
+  return null;
+}
 
 const FEATURE_RULES = [
   /* --- order matters: most specific first --- */
@@ -725,6 +1159,18 @@ function productPage(p, related, blurb) {
   const pdfLink = p.pdf && /^https?:\/\//i.test(p.pdf)
     ? `<p><a class="pp-pdf" href="${esc(p.pdf)}" target="_blank" rel="noopener">Download catalogue (PDF)</a></p>` : '';
 
+  /* --- category-specific content: applications, compatibility, selection, guides --- */
+  const G = guideFor(p.c);
+  const introBlock = `<p class="pp-intro">${esc(productIntro(p, G))}</p>`;
+  const appsBlock = (G && G.apps && G.apps.length)
+    ? `<h2>Applications</h2><ul class="pfeat">${G.apps.map(a => `<li>${esc(a)}</li>`).join('')}</ul>` : '';
+  const selBlock = (G && (G.select || G.compat))
+    ? `<h2>How to choose</h2>${G.select ? `<p>${esc(G.select)}</p>` : ''}${G.compat ? `<p><b>Compatibility:</b> ${esc(G.compat)}</p>` : ''}` : '';
+  const guideBlock = (G && G.guides && G.guides.length)
+    ? `<h2>Related guides</h2><ul class="pfeat">${G.guides.map(function (x) {
+        return `<li><a href="/blog/${x[0]}.html">${esc(x[1])}</a></li>`;
+      }).join('')}</ul>` : '';
+
   const relBlock = related.length
     ? `<h2>Related ${esc(blurb.label)}</h2><div class="pgrid">${related.map(card).join('')}</div>` : '';
 
@@ -738,14 +1184,18 @@ function productPage(p, related, blurb) {
     <p class="pp-avail">In stock — dispatched pan-India · GST invoice · Reply within 2 working hours</p>
     <div class="pp-cta"><a class="b wa" href="${wa}" rel="nofollow">💬 Get Quotation on WhatsApp</a><a class="b vw" href="tel:+919910646957">📞 Call 9910646957</a></div>
     ${shareBlock}
+    ${introBlock}
   </div>
 </div>
 ${specTable}
 ${featBlock}
+${appsBlock}
+${selBlock}
 <section class="pp-about"><h2>About ${esc(blurb.label)}</h2><p>${esc(blurb.text)}</p>
 <p>This ${esc(p.n)} is supplied by <b>WTPESTORE — powered by Aqua Filtration System</b>, a water-treatment manufacturer, trader and supplier operating from Faridabad, Haryana since 2017. Every unit is genuine, billed with a GST invoice and dispatched pan-India with tracking. For dosage, sizing or compatibility questions, message our team on WhatsApp and we will help you pick the right model for your plant.</p>
 ${pdfLink}</section>
 ${faqBlock}
+${guideBlock}
 ${relBlock}
 <p style="margin-top:18px"><a href="/products.html#${catSlug}">← View all ${esc(titleCaseCat(p.c))} products</a></p>`;
 
@@ -797,6 +1247,7 @@ ${relBlock}
 .pp-price .old{color:#8a94a6;text-decoration:line-through;font-size:15px;font-weight:600;margin-right:6px}
 .pp-price .off{background:#e7f7ee;color:#0e7a3d;border:1px solid #bfe6cf;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;margin-left:6px}
 .pp-avail{font-size:12.5px;color:#0e7a3d;font-weight:600;margin:2px 0 4px}
+.pp-intro{font-size:15px;line-height:1.65;color:#333;margin:14px 0 4px;max-width:70ch}
 .pp-cta{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
 .pp-cta a.b{text-decoration:none;font-weight:700;font-size:13.5px;padding:11px 16px;border-radius:9px}
 .pp-cta a.wa{background:#25d366;color:#fff}
@@ -881,7 +1332,7 @@ function injectBlogPrices(P) {
         const model = (p.n.match(/ROTAMETER\s+(\S+)/i) || [])[1] || p.model || extractModel(p.n) || '—';
         const rg = p.n.match(/FLOW RANGE\s+([\d,]+)\s*TO\s*([\d,]+)\s*LPH/i);
         const nb = p.n.match(/I\/O\s*(\d+\s?NB)/i);
-        const link = STATIC_SLUGS.has(p.slug) ? `/products/${p.slug}.html` : `/?p=${p.slug}`;
+        const link = STATIC_SLUGS.has(p.slug) ? `/products/${p.slug}.html` : `/?p=${p.slugOrig || p.slug}`;
         return `<tr><td><b>${esc(model)}</b></td><td>${rg ? esc(rg[1] + ' – ' + rg[2]) : '—'}</td><td>${nb ? esc(nb[1].replace(/\s+/g, '')) : '—'}</td><td>${rupee(p.p)}</td><td><a href="${link}">Dekhein</a></td></tr>`;
       }).join('\n');
 
@@ -963,8 +1414,31 @@ function injectStatic(P) {
   const P = await load();
   console.log('Products loaded:', P.length);
 
+  /* page-change dates from the previous build (read BEFORE products/ is wiped) */
+  const LASTMOD_PREV = readLastmodState();
+
+  /* every product remembers the slug of its ORIGINAL Sheet name -
+     that is what old /?p= links and index.html use */
+  P.forEach(p => { p.slugOrig = p.slug; });
+
   /* ---- duplicate naam pakdo (inka static page nahi banega) ---- */
   const dupGroups = markDuplicateNames(P);
+
+  /* names may have been corrected / disambiguated above - the URL must
+     follow the FINAL name, otherwise two products land on one page */
+  P.forEach(p => { p.slug = slug(p.n); });
+
+  /* last line of defence: one URL = one product. If two products still
+     end up on the same slug (80-char cut), only the first gets the page. */
+  {
+    const seen = new Map(); let clash = 0;
+    P.forEach(p => {
+      if (!isQualityProduct(p)) return;
+      if (seen.has(p.slug)) { p.dupName = true; clash++; }
+      else seen.set(p.slug, p);
+    });
+    if (clash) console.log('slug clashes excluded: ' + clash);
+  }
   const dupCount = dupGroups.reduce((a, g) => a + g.length, 0);
   if (dupCount) {
     let rep = 'SHEET ME YE NAAM SUDHARNE HAIN\n';
@@ -992,6 +1466,8 @@ function injectStatic(P) {
   const skipped = P.length - QP.length;
   const madeCount = buildProductPages(QP);
   console.log('Product pages built:', madeCount, '(skipped as thin/junk:', skipped, ')');
+  writeOldSharedSlugPages(P);
+  writeStaticMapIntoIndex(P);
 
   const cats = {};
   P.forEach(p => { (cats[p.c] = cats[p.c] || []).push(p); });
@@ -1020,7 +1496,7 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
         ...(p.make ? { "brand": { "@type": "Brand", "name": p.make } } : {}),
         ...(p.model ? { "model": p.model } : {}),
         ...(p.spec ? { "description": p.spec.slice(0, 200) } : {}),
-        "url": STATIC_SLUGS.has(p.slug) ? (SITE + "/products/" + p.slug + ".html") : (SITE + "/?p=" + p.slug),
+        "url": STATIC_SLUGS.has(p.slug) ? (SITE + "/products/" + p.slug + ".html") : (SITE + "/?p=" + (p.slugOrig || p.slug)),
         ...(p.p > 0 ? {
           "offers": {
             "@type": "Offer", "price": p.p, "priceCurrency": "INR",
@@ -1061,35 +1537,87 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   CHEM_PAGES.forEach(u => all.add(SITE + u));
   BLOG_PAGES.forEach(u => all.add(SITE + u));
   const today = new Date().toISOString().slice(0, 10);
-  const urls = [...all].map(u => `<url><loc>${u}</loc><lastmod>${today}</lastmod><priority>${u.endsWith('.co.in/') ? '1.0' : '0.8'}</priority></url>`)
-    .concat(QP.map(p => {
-      const img = p.img ? `<image:image><image:loc>${esc(p.img)}</image:loc></image:image>` : '';
-      return `<url><loc>${SITE}/products/${p.slug}.html</loc><lastmod>${today}</lastmod><priority>0.6</priority>${img}</url>`;
-    }));
+
+  /* lastmod: keep the previous date unless the page content changed */
+  const lastmodNext = {};
+  const lastmodFor = (u, file) => {
+    const h = file ? contentHash(file) : null;
+    const prev = LASTMOD_PREV[u];
+    const d = (prev && h && prev.h === h) ? prev.d : today;
+    lastmodNext[u] = { h: h, d: d };
+    return d;
+  };
+
+  const seenUrl = new Set();
+  let dropped = 0;
+  const urls = [];
+  [...all].forEach(u => {
+    const file = urlToFile(u);
+    if (!file || seenUrl.has(u)) { dropped++; return; }   /* no 404s, no folders, no repeats */
+    seenUrl.add(u);
+    urls.push(`<url><loc>${u}</loc><lastmod>${lastmodFor(u, file)}</lastmod><priority>${u.endsWith('.co.in/') ? '1.0' : '0.8'}</priority></url>`);
+  });
+  QP.forEach(p => {
+    const u = SITE + '/products/' + p.slug + '.html';
+    if (seenUrl.has(u)) { dropped++; return; }
+    seenUrl.add(u);
+    const img = p.img ? `<image:image><image:loc>${esc(p.img)}</image:loc></image:image>` : '';
+    urls.push(`<url><loc>${u}</loc><lastmod>${lastmodFor(u, path.join(PRODUCTS_DIR, p.slug + '.html'))}</lastmod><priority>0.6</priority>${img}</url>`);
+  });
+  if (dropped) console.log('sitemap: skipped ' + dropped + ' url(s) - missing file, folder or repeat');
+  fs.writeFileSync(LASTMOD_FILE, JSON.stringify(lastmodNext));
   fs.writeFileSync('sitemap.xml',
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls.join('\n')}\n</urlset>\n`);
   console.log('sitemap.xml ✓ (' + urls.length + ' URLs)');
 
-  /* ---- robots.txt ---- */
-  const robots = [
-    '# WTPESTORE - powered by Aqua Filtration System',
-    '# Generated by build-seo.js - do not edit by hand',
-    '',
-    'User-agent: *',
-    'Allow: /',
-    '',
-    '# Admin pages - internal use only',
-    'Disallow: /admin-add-blog.html',
-    'Disallow: /admin-add-product.html',
-    'Disallow: /admin-leads.html',
-    'Disallow: /admin-quick-quote.html',
-    '',
-    '# Sitemap',
-    'Sitemap: ' + SITE + '/sitemap.xml',
-    ''
-  ].join('\n');
-  fs.writeFileSync('robots.txt', robots);
-  console.log('robots.txt ✓');
+  /* ---- robots.txt ----
+     A hand-written robots.txt may already exist and be better than
+     anything generated here, so NEVER overwrite it. We only:
+       - create one if the file is missing
+       - add the Sitemap: line if it is absent
+  --------------------------------------------------------------- */
+  const SITEMAP_LINE = 'Sitemap: ' + SITE + '/sitemap.xml';
+  let existingRobots = null;
+  try { existingRobots = fs.readFileSync('robots.txt', 'utf8'); } catch (e) { }
+
+  if (existingRobots === null) {
+    const robots = [
+      '# WTPESTORE - powered by Aqua Filtration System',
+      '',
+      'User-agent: *',
+      'Allow: /',
+      '',
+      '# Admin and billing pages - should not appear in Google',
+      'Disallow: /admin.html',
+      'Disallow: /admin-add-product.html',
+      'Disallow: /admin-add-blog.html',
+      'Disallow: /admin-change-pin.html',
+      'Disallow: /admin-settings.html',
+      'Disallow: /admin-quick-quote.html',
+      'Disallow: /admin-seo-pages.html',
+      'Disallow: /admin-leads.html',
+      'Disallow: /admin-panel.html',
+      'Disallow: /quotation.html',
+      'Disallow: /proforma-invoice.html',
+      'Disallow: /payment.html',
+      '',
+      '# Google Sheet / data URLs',
+      'Disallow: /pub',
+      'Disallow: /pubhtml',
+      'Disallow: /groq',
+      'Disallow: /*?output=csv',
+      '',
+      SITEMAP_LINE,
+      ''
+    ].join('\n');
+    fs.writeFileSync('robots.txt', robots);
+    console.log('robots.txt ✓ (created)');
+  } else if (!/^\s*Sitemap:/mi.test(existingRobots)) {
+    fs.writeFileSync('robots.txt', existingRobots.replace(/\s*$/, '') + '\n\n' + SITEMAP_LINE + '\n');
+    console.log('robots.txt ✓ (kept yours, added Sitemap line)');
+  } else {
+    console.log('robots.txt ✓ (kept as-is, not overwritten)');
+  }
 
   /* ---- redirect pages for renamed products ---- */
   const redirKeys = Object.keys(REDIRECTS);
