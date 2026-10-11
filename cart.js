@@ -6,7 +6,7 @@
    - Rate/shipping/GST ka asli hisaab server (Apps Script) karta hai — yahan sirf estimate.
    ===================================================================== */
 (function(){
-  var CART_LIVE = false;   // <-- Razorpay test ho jaane ke baad true karenge
+  var CART_LIVE = true;    // LIVE: cart sabke liye chalu (band karna ho to false)
   var ORDER_URL = 'https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec';
   var WA_NUM = '919899193589';
   var KEY = 'wtpe_cart';
@@ -197,6 +197,8 @@
         ls('wtpe_orders', JSON.stringify(mo.slice(-30)));
       }catch(e){}
       if(r.rzp){ LAST = { r: r, d: d }; remember(r.orderId, { rzp: r.rzp }); return pay(r, d); }
+      if(r.payError) return screen('Payment could not start', '⚠️', 'Your order is saved, but online payment could not start right now. Please message us on WhatsApp with your Order ID and we will send you a payment link.', r,
+        waBtn('Hello WTPESTORE, online payment did not start for order ' + r.orderId + '. Total ' + rupee(r.total) + '. Please send a payment link.'));
       var wa = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent('Hello WTPESTORE, I have placed order ' + r.orderId + '. Total ' + rupee(r.total) + '. Please share payment details.');
       panel.innerHTML = head('Order received ✅') + '<div class="wcb"><div class="wcok"><div style="font-size:40px">✅</div><h4>Order ID: ' + esc(r.orderId) + '</h4>' +
         '<p>Thank you! Your order has been placed.</p></div>' + totalsHTML(r) +
