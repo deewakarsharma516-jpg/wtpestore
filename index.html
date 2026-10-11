@@ -1042,8 +1042,8 @@ function aShow(){document.getElementById('aLock').style.display='none';document.
 function aRole(){try{return localStorage.getItem('wtpe_role')||'Owner';}catch(e){return 'Owner';}}
 function aApplyRole(){
   var staff=aRole()==='Staff', root=document.getElementById('aMain'); if(!root)return;
-  root.querySelectorAll('.atab').forEach(function(t){var m=(t.getAttribute('onclick')||'').match(/aTab\('(\w+)'/);if(m&&(m[1]==='prod'||m[1]==='set'))t.style.display=staff?'none':'';});
-  ['ap-prod','ap-set'].forEach(function(id){var p=document.getElementById(id);if(p&&staff)p.classList.remove('on');});
+  root.querySelectorAll('.atab').forEach(function(t){var m=(t.getAttribute('onclick')||'').match(/aTab\('(\w+)'/);if(m&&(m[1]==='prod'||m[1]==='set'||m[1]==='rep'))t.style.display=staff?'none':'';});
+  ['ap-prod','ap-set','ap-rep'].forEach(function(id){var p=document.getElementById(id);if(p&&staff)p.classList.remove('on');});
   root.querySelectorAll('a[href="admin-add-product.html"]').forEach(function(a){a.style.display=staff?'none':'';});
   if(staff){var cur=root.querySelector('.atab.on');var bad=!cur||cur.style.display==='none';
     if(bad){var o=[].filter.call(root.querySelectorAll('.atab'),function(t){return /aTab\('ord'/.test(t.getAttribute('onclick')||'');})[0];if(o)aTab('ord',o);}}
@@ -1514,6 +1514,58 @@ function aoRender(){
       '</div>'+(o.updated?'<div style="font-size:11px;color:#8b9aa5;margin-top:4px">Last update: '+esc(o.updated)+'</div>':'')+
     '</div>';
   }).join('');
+}
+/* ===== 📊 SALES REPORT (Owner) — WebOrders se ===== */
+var AR_PAID={'paid':1,'dispatched':1,'delivered':1};
+function arMonthKey(ts){var d=new Date(ts);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);}
+function arMonthName(k){var p=k.split('-');return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1]-1]+' '+p[0];}
+function aRepLoad(force){
+  if(AO_LIST.length&&!force){aRepFill();return;}
+  var b=document.getElementById('arBody');if(b)b.innerHTML='<p style="text-align:center;color:var(--muted);padding:18px">Loading...</p>';
+  aJsonp(aLoginUrl()+'?action=listOrders&token='+encodeURIComponent(aoTok()),function(r){
+    if(r&&r.ok){AO_LIST=r.orders||[];aRepFill();return;}
+    if(b)b.innerHTML='<p style="text-align:center;color:#cc1212;padding:18px">Report load nahi hua ('+esc(String((r&&r.error)||'error'))+'). Logout karke dobara login karein.</p>';
+  });
+}
+function aRepFill(){
+  var sel=document.getElementById('arMonth');if(!sel)return;var cur=sel.value;
+  var ks={};AO_LIST.forEach(function(o){if(o.ts)ks[arMonthKey(o.ts)]=1;});
+  var keys=Object.keys(ks).sort().reverse(),now=arMonthKey(Date.now());if(keys.indexOf(now)<0)keys.unshift(now);
+  sel.innerHTML='<option value="all">Saare mahine</option>'+keys.map(function(k){return '<option value="'+k+'">'+arMonthName(k)+'</option>';}).join('');
+  sel.value=cur&&(cur==='all'||keys.indexOf(cur)>-1)?cur:now;aRepRender();
+}
+function aRepList(){var m=(document.getElementById('arMonth')||{}).value||'all';return AO_LIST.filter(function(o){return m==='all'||(o.ts&&arMonthKey(o.ts)===m);});}
+function aRepRender(){
+  var b=document.getElementById('arBody');if(!b)return;var L=aRepList();
+  var paid=L.filter(function(o){return AR_PAID[String(o.status).toLowerCase()];}),pend=L.filter(function(o){return String(o.status).toLowerCase()==='payment pending';});
+  var sum=function(a,f){return a.reduce(function(s,o){return s+(Number(o[f])||0);},0);};
+  var rev=sum(paid,'total'),net=sum(paid,'sub'),aov=paid.length?rev/paid.length:0,conv=L.length?Math.round(paid.length*100/L.length):0;
+  var R=function(n){return '₹'+Math.round(n).toLocaleString('en-IN');};
+  var card=function(n,l){return '<div class="dcard"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>';};
+  var h='<div class="dcards">'+card(paid.length,'Paid orders')+card(R(rev),'Kul bikri (GST+shipping sahit)')+card(R(net),'Products (GST ke bina)')+card(R(aov),'Ek order ka average')+card(pend.length+' · '+R(sum(pend,'total')),'Payment pending')+card(conv+'%','Order → payment')+'</div>';
+  /* top products */
+  var P={};paid.forEach(function(o){String(o.items||'').split('\n').forEach(function(l){var m=l.match(/^(\d+)\s*x\s*(.+?)\s*@\s*Rs\s*([\d.]+)/);if(!m)return;var k=m[2];P[k]=P[k]||{q:0,v:0};P[k].q+=+m[1];P[k].v+=(+m[1])*(+m[3]);});});
+  var top=Object.keys(P).sort(function(a,c){return P[c].v-P[a].v;}).slice(0,10);
+  var bar=function(v,max){return '<div style="background:#e8eef5;border-radius:4px;height:8px;margin-top:3px"><div style="background:#ff9900;height:8px;border-radius:4px;width:'+(max?Math.max(3,Math.round(v*100/max)):0)+'%"></div></div>';};
+  h+='<h4 style="margin:16px 0 6px">🏆 Top products (bikri)</h4>';
+  h+=top.length?top.map(function(k){return '<div style="font-size:13px;margin:6px 0"><div style="display:flex;justify-content:space-between;gap:8px"><span>'+esc(k)+'</span><b>'+P[k].q+' pcs · '+R(P[k].v)+'</b></div>'+bar(P[k].v,P[top[0]].v)+'</div>';}).join(''):'<p style="color:var(--muted)">Is mahine abhi koi paid order nahi.</p>';
+  /* cities */
+  var C={};paid.forEach(function(o){var k=(o.city||'-')+', '+(o.state||'');C[k]=C[k]||{n:0,v:0};C[k].n++;C[k].v+=Number(o.total)||0;});
+  var tc=Object.keys(C).sort(function(a,c){return C[c].v-C[a].v;}).slice(0,8);
+  h+='<h4 style="margin:16px 0 6px">📍 Kahan se orders aaye</h4>'+(tc.length?tc.map(function(k){return '<div style="font-size:13px;margin:6px 0"><div style="display:flex;justify-content:space-between"><span>'+esc(k)+'</span><b>'+C[k].n+' order · '+R(C[k].v)+'</b></div>'+bar(C[k].v,C[tc[0]].v)+'</div>';}).join(''):'<p style="color:var(--muted)">—</p>');
+  /* daily */
+  var D={};paid.forEach(function(o){if(!o.ts)return;var d=new Date(o.ts),k=('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2);D[k]=(D[k]||0)+(Number(o.total)||0);});
+  var dk=Object.keys(D).sort(function(a,c){var x=a.split('/'),y=c.split('/');return (x[1]+x[0])<(y[1]+y[0])?-1:1;}),dm=Math.max.apply(null,dk.map(function(k){return D[k];}).concat([0]));
+  if(dk.length)h+='<h4 style="margin:16px 0 6px">📅 Din-wise bikri</h4><div style="display:flex;align-items:flex-end;gap:4px;height:120px;overflow-x:auto;padding-bottom:4px">'+dk.map(function(k){return '<div title="'+k+': '+R(D[k])+'" style="flex:0 0 22px;text-align:center;font-size:9px;color:#64748b"><div style="background:#0b2545;border-radius:3px 3px 0 0;height:'+Math.max(4,Math.round(D[k]*95/dm))+'px"></div>'+k.split('/')[0]+'</div>';}).join('')+'</div>';
+  b.innerHTML=h;
+}
+function aRepCsv(){
+  var L=aRepList();if(!L.length){toast('Is mahine koi order nahi');return;}
+  var cols=[['Order ID','id'],['Date','time'],['Status','status'],['Name','name'],['Mobile','phone'],['Email','email'],['Address','addr'],['City','city'],['State','state'],['Pincode','pin'],['GSTIN','gstin'],['Business Name','biz'],['Items','items'],['Products (Rs)','sub'],['Shipping (Rs)','ship'],['GST (Rs)','gst'],['Payment Charges (Rs)','payfee'],['Total (Rs)','total'],['Payment ID','payment'],['Courier / Tracking','tracking']];
+  var q=function(v){v=String(v==null?'':v).replace(/\r?\n/g,' | ');if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};
+  var csv='﻿'+cols.map(function(c){return q(c[0]);}).join(',')+'\n'+L.map(function(o){return cols.map(function(c){return q(o[c[1]]);}).join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download='wtpestore-orders-'+((document.getElementById('arMonth')||{}).value||'all')+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);
 }
 function aoRecheck(id){
   toast('Razorpay se check kar rahe hain…');

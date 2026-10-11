@@ -18,6 +18,7 @@
       <div class="atab on" onclick="aTab('prod',this)">Products</div>
       <div class="atab" onclick="aTab('ord',this)">Orders</div>
       <div class="atab" onclick="aTab('cust',this)">Customers</div>
+      <div class="atab" onclick="aTab('rep',this);aRepLoad()">📊 Report</div>
       <div class="atab" onclick="aTab('set',this)">Settings & Payment</div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px;padding:10px 12px;background:#f4f8fb;border:1px solid #e3ecf1;border-radius:10px">
@@ -46,6 +47,15 @@
       <div class="dcards" id="aoStats"></div>
       <div id="aOrders"><p style="text-align:center;color:var(--muted);padding:18px">Loading...</p></div>
       <p style="font-size:12px;color:var(--muted);margin-top:10px">Website cart ke orders (Sheet ka WebOrders tab). Status/Tracking yahin se badlein — customer ko Track Order par turant dikhega.</p>
+    </div>
+    <div class="apane" id="ap-rep">
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">
+        <select id="arMonth" onchange="aRepRender()" style="padding:8px;border-radius:8px;border:1px solid #ccd3db"></select>
+        <button class="qsv" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700" onclick="aRepLoad(true)">🔄 Refresh</button>
+        <button style="padding:8px 14px;border:0;border-radius:8px;background:#146a45;color:#fff;font-weight:700;cursor:pointer" onclick="aRepCsv()">⬇️ Excel (CSV) download</button>
+      </div>
+      <div id="arBody"><p style="text-align:center;color:var(--muted);padding:18px">Loading...</p></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px">Sirf website ke online orders (WebOrders). "Bikri" me sirf Paid / Dispatched / Delivered orders gine jaate hain.</p>
     </div>
     <div class="apane" id="ap-cust">
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
