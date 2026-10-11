@@ -1377,8 +1377,9 @@ function buildHomepage(){
         '<a onclick="openPage(\'troubleshooting\')">Troubleshooting Guide</a><a onclick="openPage(\'water-facts\')">Amazing Water Facts</a>'+
         '<a onclick="openPage(\'water-dictionary\')">Water Dictionary</a></div>'+
       '<div><h4>Policies</h4>'+
-        '<a onclick="openPage(\'privacy\')">Privacy Policy</a><a onclick="openPage(\'refund\')">Cancellation &amp; Refund</a>'+
-        '<a onclick="openPage(\'terms\')">Terms &amp; Conditions</a><a onclick="openPage(\'copyright\')">Copyright Policy</a></div>'+
+        '<a href="/shipping-policy.html">Shipping Policy</a><a href="/cancellation-refund-policy.html">Cancellation &amp; Refund</a>'+
+        '<a href="/terms-and-conditions.html">Terms &amp; Conditions</a><a href="/privacy-policy.html">Privacy Policy</a>'+
+        '<a href="/pricing-policy.html">Pricing Policy</a><a onclick="openPage(\'copyright\')">Copyright Policy</a></div>'+
       '<div><h4>My Account</h4>'+
         '<a onclick="openPage(\'my-account\')">My Account</a><a onclick="openPage(\'my-orders\')">My Orders</a>'+
         '<a onclick="openPage(\'track-order\')">Track Order</a></div>'+
@@ -1397,6 +1398,8 @@ function buildHomepage(){
 })();
 
 function openPage(key){
+  var WT_REAL={privacy:'/privacy-policy.html',terms:'/terms-and-conditions.html',refund:'/cancellation-refund-policy.html',shipping:'/shipping-policy.html'};
+  if(WT_REAL[key]){location.href=WT_REAL[key];return;}
   var p=WT_PAGES[key]; if(!p)return;
   document.getElementById('wtPTitle').textContent=p.t;
   document.getElementById('wtPBody').innerHTML=p.h;
