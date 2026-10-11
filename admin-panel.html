@@ -36,10 +36,16 @@
       <table class="atable"><thead><tr><th>Category</th><th>Product (name/spec)</th><th>Make</th><th>Model</th><th>Price</th><th>Media</th><th></th></tr></thead><tbody id="aBody"></tbody></table>
     </div>
     <div class="apane" id="ap-ord">
-      <div style="margin-bottom:10px"><button class="qsv" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700" onclick="aLoadOrders()">🔄 Refresh Orders</button> <span style="font-size:12px;color:var(--muted)">live from Orders Sheet</span></div>
-      <div class="dcards"><div class="dcard"><div class="n">63</div><div class="l">Total Orders (demo)</div></div><div class="dcard"><div class="n">₹2.4L</div><div class="l">Revenue (demo)</div></div></div>
-      <table class="atable"><thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Amount</th><th>Payment</th><th>Status</th></tr></thead><tbody id="aOrders"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:18px">Loading...</td></tr></tbody></table>
-      <p style="font-size:12px;color:var(--muted);margin-top:10px">Note: Orders/payments demo hain. Real online payment ke liye payment gateway account + backend chahiye (Settings dekhein).</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px">
+        <button class="qsv" style="padding:8px 14px;border:none;border-radius:8px;font-weight:700" onclick="aLoadOrders()">🔄 Refresh</button>
+        <select id="aoFilter" onchange="aoRender()" style="padding:8px;border-radius:8px;border:1px solid #ccd3db">
+          <option value="">All orders</option><option>Payment pending</option><option>Paid</option><option>Dispatched</option><option>Delivered</option><option>Cancelled</option>
+        </select>
+        <input id="aoSearch" oninput="aoRender()" placeholder="Search name / mobile / Order ID" style="flex:1;min-width:180px;padding:8px;border-radius:8px;border:1px solid #ccd3db">
+      </div>
+      <div class="dcards" id="aoStats"></div>
+      <div id="aOrders"><p style="text-align:center;color:var(--muted);padding:18px">Loading...</p></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px">Website cart ke orders (Sheet ka WebOrders tab). Status/Tracking yahin se badlein — customer ko Track Order par turant dikhega.</p>
     </div>
     <div class="apane" id="ap-cust">
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
