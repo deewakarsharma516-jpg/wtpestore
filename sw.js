@@ -3,7 +3,7 @@
  * JAB BHI WEBSITE UPDATE KAREIN: neeche 'wtpe-v4' ko 'wtpe-v5' kar dein
  * (phir v5, v6...). Isse sabke phone/app me naya version apne aap aa jayega.
  * ------------------------------------------------------------------ */
-var CACHE = 'wtpe-v14';
+var CACHE = 'wtpe-v15';
 var CORE = ['/', '/index.html', '/catalogues.html', '/plant-calculators.html',
   '/icons/icon-192.png', '/icons/icon-512.png', '/apple-touch-icon.png', '/manifest.json'];
 /* Ye pages kabhi cache nahi hote — hamesha fresh (admin tools + live data)
@@ -38,7 +38,7 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   /* Google Sheet / Apps Script / Worker => hamesha network (live price & leads) */
-  if (url.hostname.indexOf('google') > -1 || url.hostname.indexOf('workers.dev') > -1 || url.hostname.indexOf('script.google') > -1) return;
+  if (url.hostname.indexOf('google') > -1 || url.hostname.indexOf('workers.dev') > -1 || url.hostname.indexOf('script.google') > -1 || url.hostname.indexOf('razorpay') > -1) return;  /* payment => kabhi cache nahi */
   /* Admin tools, documents & .json list => hamesha network, kabhi purana nahi */
   if (url.origin === location.origin && isAlwaysFresh(url)) {
     e.respondWith(fetch(req, { cache: 'no-store' }).catch(function () { return caches.match(req); }));

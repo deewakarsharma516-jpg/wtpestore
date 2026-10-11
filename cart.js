@@ -34,6 +34,7 @@
   window.WTPE_SELLABLE = function(p){ return enabled() && sellable(p); };
 
   /* Hisaab — server bhi bilkul yahi formula use karta hai (paise me) */
+  var PAY = { online: false, pct: 2.36 };   // server se "payInfo" aata hai
   function totals(c){
     var sub = 0, gst = 0, ship = 0, gmax = 0, disp = 0;
     c.forEach(function(it){
@@ -45,7 +46,8 @@
       disp = Math.max(disp, isNaN(num(it.disp)) ? 3 : num(it.disp));
     });
     gst += Math.round(ship * gmax / 100);
-    return { sub: sub / 100, ship: ship / 100, gst: gst / 100, total: (sub + ship + gst) / 100, disp: disp };
+    var base = sub + ship + gst, payfee = PAY.online ? Math.round(base / (1 - PAY.pct / 100)) - base : 0;  // server bhi yahi formula
+    return { sub: sub / 100, ship: ship / 100, gst: gst / 100, payfee: payfee / 100, total: (base + payfee) / 100, disp: disp };
   }
 
   function add(p){
@@ -108,6 +110,7 @@
     return '<div class="wct"><div><span>Products</span><span>' + rupee(t.sub) + '</span></div>' +
       '<div><span>Shipping</span><span>' + rupee(t.ship) + '</span></div>' +
       '<div><span>GST</span><span>' + rupee(t.gst) + '</span></div>' +
+      (t.payfee > 0 ? '<div><span>Online payment charges (' + PAY.pct + '%)</span><span>' + rupee(t.payfee) + '</span></div>' : '') +
       '<div class="g"><span>Total</span><span>' + rupee(t.total) + '</span></div></div>';
   }
 
@@ -138,7 +141,7 @@
         totalsHTML(totals(c)) +
         '<label class="wcagree"><input type="checkbox" id="wc_agree"><span>I understand that orders <b>cannot be cancelled or refunded</b> after placing. Damaged or wrong items are replaced only if reported within 48 hours with an unboxing video. <a href="/cancellation-refund-policy.html" target="_blank">Read policy</a></span></label>' +
         '<div class="wcerr" id="wc_err"></div>' +
-        '<button type="button" class="wcbtn" id="wc_place" data-a="place">Place Order</button>' +
+        '<button type="button" class="wcbtn" id="wc_place" data-a="place">' + placeLabel(c) + '</button>' +
         '<button type="button" class="wcbtn sec" data-a="back">← Back to cart</button></div>';
     }
     panel.innerHTML = h;
@@ -180,7 +183,7 @@
     u += '&agree=1&page=' + encodeURIComponent(location.pathname);
     jsonp(u, function(r){
       if(!r || !r.ok){
-        btn.disabled = false; btn.textContent = 'Place Order';
+        btn.disabled = false; btn.textContent = placeLabel(c);
         var m = { network: 'Could not connect. Please check your internet and try again.', timeout: 'The server did not respond. Please try again.',
                   busy: 'We are receiving many orders right now. Please try again in 2 minutes.', quote: 'Some items are now available on quotation only: ', notfound: 'Some items are no longer available: ' };
         err.textContent = (m[r && r.error] || ('Order could not be placed: ' + ((r && r.error) || 'unknown'))) + ((r && r.items) ? r.items.join(', ') : '');
@@ -193,6 +196,7 @@
         mo.push({ id: r.orderId, date: new Date().toLocaleDateString('en-IN'), total: r.total, items: cnt, disp: r.disp, phone: d.phone });
         ls('wtpe_orders', JSON.stringify(mo.slice(-30)));
       }catch(e){}
+      if(r.rzp){ LAST = { r: r, d: d }; remember(r.orderId, { rzp: r.rzp }); return pay(r, d); }
       var wa = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent('Hello WTPESTORE, I have placed order ' + r.orderId + '. Total ' + rupee(r.total) + '. Please share payment details.');
       panel.innerHTML = head('Order received ✅') + '<div class="wcb"><div class="wcok"><div style="font-size:40px">✅</div><h4>Order ID: ' + esc(r.orderId) + '</h4>' +
         '<p>Thank you! Your order has been placed.</p></div>' + totalsHTML(r) +
@@ -200,6 +204,61 @@
         '<a class="wcbtn" style="text-align:center;text-decoration:none;color:#111" href="' + wa + '" target="_blank" rel="noopener">💬 Confirm on WhatsApp</a></div>';
     });
   }
+
+  function placeLabel(c){ return PAY.online ? ('Place Order & Pay ' + rupee(totals(c).total)) : 'Place Order'; }
+
+  /* ---------- Razorpay ---------- */
+  var LAST = null;
+  function remember(id, extra){
+    try{ var mo = JSON.parse(ls('wtpe_orders') || '[]'); mo.forEach(function(o){ if(o.id === id){ for(var k in extra) o[k] = extra[k]; } }); ls('wtpe_orders', JSON.stringify(mo)); }catch(e){}
+  }
+  function loadRzp(cb){
+    if(window.Razorpay) return cb(true);
+    var sc = document.createElement('script'); sc.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    sc.onload = function(){ cb(!!window.Razorpay); }; sc.onerror = function(){ cb(false); }; document.head.appendChild(sc);
+  }
+  function screen(title, icon, msg, r, buttons){
+    build(); ov.classList.add('open'); panel.classList.add('open');
+    panel.innerHTML = head(title) + '<div class="wcb"><div class="wcok"><div style="font-size:40px">' + icon + '</div><h4>Order ID: ' + esc(r.orderId) + '</h4><p>' + msg + '</p></div>' +
+      (r.sub != null ? totalsHTML(r) : '<div class="wct"><div class="g"><span>Total</span><span>' + rupee(r.total) + '</span></div></div>') + buttons + '</div>';
+  }
+  function waBtn(text){ return '<a class="wcbtn sec" style="text-align:center;text-decoration:none;color:#111" href="https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(text) + '" target="_blank" rel="noopener">💬 WhatsApp us</a>'; }
+  function pay(r, d){
+    LAST = { r: r, d: d };
+    loadRzp(function(ok){
+      if(!ok){ return screen('Payment not started', '⚠️', 'Your order is saved, but the payment window could not open. Please check your internet and tap Pay Now.', r,
+                   '<button type="button" class="wcbtn" data-a="payagain">Pay Now ' + rupee(r.total) + '</button>' + waBtn('Hello WTPESTORE, I need help paying for order ' + r.orderId)); }
+      var rz = new window.Razorpay({
+        key: r.rzp.key, amount: r.rzp.amount, currency: 'INR', order_id: r.rzp.order_id,
+        name: 'WTPESTORE', description: 'Order ' + r.orderId,
+        prefill: { name: (d && d.name) || '', email: (d && d.email) || '', contact: (d && d.phone) || '' },
+        notes: { order_id: r.orderId }, theme: { color: '#0b2545' },
+        handler: function(resp){
+          screen('Confirming payment…', '⏳', 'Please wait, do not close this page.', r, '');
+          jsonp(ORDER_URL + '?action=verifyPayment&id=' + encodeURIComponent(r.orderId) + '&rzp_order_id=' + encodeURIComponent(resp.razorpay_order_id) +
+                '&rzp_payment_id=' + encodeURIComponent(resp.razorpay_payment_id) + '&rzp_signature=' + encodeURIComponent(resp.razorpay_signature), function(v){
+            if(v && v.ok){ remember(r.orderId, { paid: true }); LAST = null;
+              return screen('Payment successful ✅', '✅', 'Thank you! We have received your payment. A confirmation email is on its way. We will share the courier tracking number once your order ships.', r,
+                '<button type="button" class="wcbtn sec" data-a="close">Continue shopping</button>'); }
+            screen('Payment received — confirming', '⏳', 'Your payment went through. Our system will confirm it within 15 minutes. Payment ID: ' + esc(resp.razorpay_payment_id), r,
+              waBtn('Hello WTPESTORE, I paid for order ' + r.orderId + '. Payment ID ' + resp.razorpay_payment_id));
+          });
+        },
+        modal: { ondismiss: function(){
+          screen('Payment pending', '🕒', 'Your order is saved but payment is not complete yet. Tap Pay Now to complete it.', r,
+            '<button type="button" class="wcbtn" data-a="payagain">Pay Now ' + rupee(r.total) + '</button>' + waBtn('Hello WTPESTORE, I need help paying for order ' + r.orderId));
+        } }
+      });
+      rz.on('payment.failed', function(){ /* Razorpay khud retry dikhata hai; band karne par ondismiss chalega */ });
+      rz.open();
+    });
+  }
+  /* My Orders se "Pay Now" */
+  window.wtpePayAgain = function(id){
+    try{ var mo = JSON.parse(ls('wtpe_orders') || '[]'), o = mo.filter(function(x){ return x.id === id; })[0], s = JSON.parse(ls('wtpe_ship') || '{}');
+      if(o && o.rzp){ pay({ orderId: o.id, total: o.total, rzp: o.rzp }, s); return true; } }catch(e){}
+    return false;
+  };
 
   function onClick(e){
     var a = e.target.closest && e.target.closest('[data-a]'); if(!a || !panel.contains(a)) return;
@@ -211,11 +270,13 @@
     if(act === 'checkout'){ view = 'form'; render(); }
     if(act === 'back'){ view = 'cart'; render(); }
     if(act === 'place') place();
+    if(act === 'payagain' && LAST) pay(LAST.r, LAST.d);
   }
 
   function init(){
     if(!enabled()) return;
     build(); panel.addEventListener('click', onClick); badge();
+    jsonp(ORDER_URL + '?action=payInfo', function(r){ if(r && r.ok){ PAY.online = !!r.online; if(r.feePct) PAY.pct = r.feePct; if(panel.classList.contains('open')) render(); } });
     var bs = document.querySelectorAll('.wtpe-atc'); for(var i = 0; i < bs.length; i++){ bs[i].classList.add('on'); bs[i].style.display = ''; }
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
