@@ -63,7 +63,7 @@
   };
 
   /* ---------- UI ---------- */
-  var css = '.wcfab{position:fixed;left:16px;bottom:16px;z-index:950;background:#ff9900;color:#111;border:0;border-radius:30px;padding:11px 16px;font:700 14px Inter,Arial,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;display:none}'+
+  var css = '.wcfab{position:fixed;left:16px;bottom:16px;z-index:898;background:#ff9900;color:#111;border:0;border-radius:30px;padding:11px 16px;font:700 14px Inter,Arial,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;display:none}'+
     '.wcfab b{background:#0b2545;color:#fff;border-radius:12px;padding:1px 8px;margin-left:6px}'+
     '.wcov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none}.wcov.open{display:block}'+
     '.wcp{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:#fff;z-index:1001;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s;font:14px/1.5 Inter,Arial,sans-serif;color:#111}'+
@@ -95,6 +95,8 @@
     var c = load(), n = 0; c.forEach(function(i){ n += i.q; });
     fab.innerHTML = '🛒 Cart<b>' + n + '</b>';
     fab.style.display = (enabled() && n > 0) ? 'block' : 'none';
+    /* home page par Share/WhatsApp/Call buttons ke upar rakho, warna neeche kone me */
+    fab.style.bottom = document.querySelector('.wtp-share-fab,.float-cta') ? '216px' : '16px';
   }
   function open(){ if(!enabled()) return; build(); view = 'cart'; render(); ov.classList.add('open'); panel.classList.add('open'); }
   function close(){ if(!panel) return; ov.classList.remove('open'); panel.classList.remove('open'); }
