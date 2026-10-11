@@ -1398,6 +1398,7 @@ function buildHomepage(){
 })();
 
 function openPage(key){
+  if(key==='my-orders')setTimeout(function(){try{wtMyOrders();}catch(e){}},0);
   var WT_REAL={privacy:'/privacy-policy.html',terms:'/terms-and-conditions.html',refund:'/cancellation-refund-policy.html',shipping:'/shipping-policy.html'};
   if(WT_REAL[key]){location.href=WT_REAL[key];return;}
   var p=WT_PAGES[key]; if(!p)return;
@@ -1426,35 +1427,48 @@ function wtFetchOrders(cb){
     cb(out);
   }).catch(function(){cb(false);});
 }
+function wtTrackCall(id,ph,cb){
+  var u=window.WTPE_ORDER_URL; if(!u){cb({ok:false,error:'network'});return;}
+  aJsonp(u+'?action=trackOrder&id='+encodeURIComponent(id)+'&phone='+encodeURIComponent(ph),cb);
+}
+function wtTrackCard(r){
+  var st=String(r.status||'Received');
+  return '<div class="wt-card" style="border-left:4px solid #06b6d4;padding:12px 14px;margin:10px 0;background:#f8fbfd;border-radius:8px">'+
+    '<b>#'+esc(String(r.orderId||''))+'</b> &middot; '+wtOrdStatus(st)+
+    '<div style="font-size:13px;color:#475569;margin-top:6px">Placed: '+esc(String(r.date||'-'))+' &middot; Items: '+esc(String(r.items||'-'))+' &middot; Total: \u20b9'+Number(r.total||0).toLocaleString('en-IN')+'</div>'+
+    (r.tracking?'<div style="font-size:13px;margin-top:4px">Courier / Tracking: <b>'+esc(String(r.tracking))+'</b></div>':'<div style="font-size:13px;color:#64737f;margin-top:4px">Dispatch within '+esc(String(r.disp||3))+' working days after payment.</div>')+
+    '</div>';
+}
 function wtTrack(){
-  var id=((document.getElementById('wtTOid')||{}).value||'').replace(/[^a-z0-9]/gi,'').toLowerCase();
-  var ph=((document.getElementById('wtTOph')||{}).value||'').replace(/[^0-9]/g,'');
+  var id=((document.getElementById('wtTOid')||{}).value||'').trim().toUpperCase();
+  var ph=((document.getElementById('wtTOph')||{}).value||'').replace(/[^0-9]/g,'').slice(-10);
   var res=document.getElementById('wtTOres');
-  if(!id&&!ph){alert('Order ID ya phone daalein');return;}
-  if(res)res.innerHTML='<p style="color:#64737f">Checking...</p>';
-  wtFetchOrders(function(list){
-    if(list===null){
-      var t='Namaste WTPESTORE, order status chahiye.%0AOrder ID: '+encodeURIComponent(id||'(N/A)')+'%0APhone: '+encodeURIComponent(ph);
-      if(res)res.innerHTML='<p>Online tracking abhi set nahi hai \u2014 WhatsApp pe poochh rahe hain.</p>';
-      window.open('https://wa.me/919899193589?text='+t,'_blank'); return;
-    }
-    if(list===false){ if(res)res.innerHTML='<p style="color:#cc1212">Abhi check nahi ho paya. Thodi der baad try karein.</p>'; return; }
-    var found=list.filter(function(o){var oid=(o.id||'').replace(/[^a-z0-9]/gi,'').toLowerCase();return (id&&oid===id)||(ph&&o.phone&&o.phone.indexOf(ph.slice(-10))>=0);});
-    if(!found.length){ if(res)res.innerHTML='<p style="color:#b45309">Is detail se koi order nahi mila. Check karein, ya <a onclick="openPage(\'contact\')">contact</a> karein.</p>'; return; }
-    if(res)res.innerHTML='<h3>Your order'+(found.length>1?'s':'')+'</h3>'+found.map(wtOrderCard).join('');
+  if(!id||ph.length!==10){alert('Please enter your Order ID and 10-digit mobile number.');return;}
+  if(res)res.innerHTML='<p style="color:#64737f">Checking&hellip;</p>';
+  wtTrackCall(id,ph,function(r){
+    if(!res)return;
+    if(r&&r.ok){res.innerHTML=wtTrackCard(r);return;}
+    if(r&&r.error==='busy'){res.innerHTML='<p style="color:#b45309">Too many attempts. Please try again in a few minutes.</p>';return;}
+    if(r&&r.error==='notfound'){res.innerHTML='<p style="color:#b45309">No order found with this Order ID and mobile number. Please check and try again, or <a href="https://wa.me/919899193589?text='+encodeURIComponent('Hello WTPESTORE, please share the status of order '+id)+'" target="_blank" rel="noopener">ask on WhatsApp</a>.</p>';return;}
+    res.innerHTML='<p style="color:#cc1212">Could not check right now. Please try again shortly.</p>';
   });
 }
 function wtMyOrders(){
-  var ph=((document.getElementById('wtMOph')||{}).value||'').replace(/[^0-9]/g,'');
-  var res=document.getElementById('wtMOres');
-  if(!ph){alert('Phone number daalein');return;}
-  if(res)res.innerHTML='<p style="color:#64737f">Loading...</p>';
-  wtFetchOrders(function(list){
-    if(!list){var t='Namaste WTPESTORE, mere orders dikhayein. Phone: '+encodeURIComponent(ph);window.open('https://wa.me/919899193589?text='+t,'_blank');if(res)res.innerHTML='<p>WhatsApp pe bheja gaya.</p>';return;}
-    var found=list.filter(function(o){return o.phone&&o.phone.indexOf(ph.slice(-10))>=0;});
-    if(!found.length){if(res)res.innerHTML='<p style="color:#b45309">Is number pe koi order nahi mila.</p>';return;}
-    if(res)res.innerHTML='<h3>'+found.length+' order'+(found.length>1?'s':'')+'</h3>'+found.map(wtOrderCard).join('');
+  var res=document.getElementById('wtMOres'); if(!res)return;
+  var list=[],ph='';
+  try{list=JSON.parse(localStorage.getItem('wtpe_orders')||'[]');}catch(e){}
+  try{ph=(JSON.parse(localStorage.getItem('wtpe_ship')||'{}').phone)||'';}catch(e){}
+  if(!list.length){res.innerHTML='<p>No orders from this device yet.</p>';return;}
+  res.innerHTML=list.slice().reverse().map(function(o){return '<div id="wtmo_'+esc(String(o.id)).replace(/[^A-Za-z0-9_-]/g,'')+'">'+wtTrackCard({orderId:o.id,date:o.date,items:o.items,total:o.total,status:'Checking\u2026',disp:o.disp})+'</div>';}).join('');
+  list.forEach(function(o){
+    var p=o.phone||ph; if(!p)return;
+    wtTrackCall(o.id,p,function(r){var el=document.getElementById('wtmo_'+String(o.id).replace(/[^A-Za-z0-9_-]/g,''));if(el&&r&&r.ok)el.innerHTML=wtTrackCard(r);});
   });
+}
+function wtForgetMe(){
+  if(!confirm('Remove your saved address and order list from this device?'))return;
+  try{['wtpe_ship','wtpe_orders'].forEach(function(k){localStorage.removeItem(k);});}catch(e){}
+  alert('Done. Your saved details were removed from this device.');
 }
 function aLoadOrders(){
   var tb=document.getElementById('aOrders'); if(!tb)return;
@@ -1474,18 +1488,12 @@ function wtContact(){
 var WT_C='<div class="wt-card"><b>WTPESTORE</b> — powered by Aqua Filtration System<br>Faridabad, Haryana · GSTIN 06DMUPS2289L1ZZ<br>📞 9910646950 · 9910646957 · 0129-4340856<br>✉ aquazone350@gmail.com</div>';
 var WT_PAGES={
  'about':{t:'About Us',h:'<p><b>WTPESTORE — powered by Aqua Filtration System</b> is a water-treatment products store serving homes, businesses and industries across India since <b>2017</b>, based in Faridabad, Haryana.</p><p>We supply genuine, branded water-treatment equipment and spares — RO &amp; DM plants, water softeners, dosing systems, FRP vessels, UV systems, flow meters, filters and consumables — from trusted brands like <b>AFS, Aster, Pentair and Vontron</b>.</p><h3>What we do</h3><ul><li>Supply of genuine water-treatment products at fair prices</li><li>Custom plant design based on your water source &amp; capacity</li><li>Installation guidance, AMC and after-sales service</li><li>Pan-India delivery with proper GST invoicing</li></ul><h3>Why customers trust us</h3><p>9+ years of hands-on water-treatment expertise, honest advice, and dependable support on call &amp; WhatsApp.</p>'+WT_C},
- 'how-to-buy':{t:'How to Buy',h:'<p>Ordering from WTPESTORE is simple:</p><div class="wt-dt"><b>1. Browse or ask Zara</b><br>Search products, or open <a onclick="closePage();openZara()">Zara AI</a> and tell us your water problem &amp; required capacity (LPH).</div><div class="wt-dt"><b>2. Get a quotation</b><br>Tap <b>“Get Quotation”</b> on any product, or message us on WhatsApp. You’ll get a clear, GST-ready quote.</div><div class="wt-dt"><b>3. Confirm &amp; pay</b><br>Confirm the order and pay via UPI / Net Banking / NEFT / RTGS.</div><div class="wt-dt"><b>4. Delivery &amp; support</b><br>We dispatch pan-India and support you through installation and service.</div><p>Need help choosing? <a onclick="closePage();openZara()">Ask Zara</a> or call <a href="tel:9910646957">9910646957</a>.</p>'},
- 'faqs':{t:"FAQ's",h:'<details><summary>How do I get a price/quotation?</summary><p>Open any product and tap “Get Quotation”, or chat with Zara, or WhatsApp us at 9910646957. Prices are exclusive of GST.</p></details>'+
-   '<details><summary>Are products genuine and branded?</summary><p>Yes. We supply only authentic AFS, Aster, Pentair and Vontron products — no local duplicates.</p></details>'+
-   '<details><summary>Do you deliver across India?</summary><p>Yes, we dispatch pan-India through reputed courier &amp; transport partners with tracking.</p></details>'+
-   '<details><summary>Which RO/plant capacity do I need?</summary><p>It depends on your water source, TDS and daily requirement (LPH). Tell Zara these details and we’ll recommend the right system.</p></details>'+
-   '<details><summary>Do you provide installation &amp; AMC?</summary><p>Yes — we guide installation and offer annual maintenance &amp; service support.</p></details>'+
-   '<details><summary>What payment methods are accepted?</summary><p>UPI, RuPay/Visa/Mastercard, Net Banking and NEFT/RTGS.</p></details>'+
-   '<details><summary>Is GST invoice provided?</summary><p>Yes, a valid GST invoice is provided on every order. GSTIN: 06DMUPS2289L1ZZ.</p></details>'},
+ 'how-to-buy':{t:'How to Buy',h:'<p>There are two easy ways to buy from WTPESTORE:</p><h3>A. Products with a listed price &mdash; order online</h3><div class="wt-dt"><b>1. Add to Cart</b><br>Open a product and tap <b>&ldquo;Add to Cart&rdquo;</b>. You can change quantity in the cart.</div><div class="wt-dt"><b>2. Check the total</b><br>The cart shows <b>Products + Shipping + GST = Total</b> before you order. Prices are exclusive of GST.</div><div class="wt-dt"><b>3. Place your order</b><br>Enter your delivery address (and GSTIN for a business invoice), tick the policy box and tap <b>Place Order</b>. You get an <b>Order ID</b> instantly.</div><div class="wt-dt"><b>4. Payment &amp; dispatch</b><br>Pay online. Your order is dispatched within the time shown on the product page, and we share the courier tracking number on WhatsApp / email.</div><h3>B. Plants, large equipment &amp; custom items &mdash; get a quote</h3><div class="wt-dt">Tap <b>&ldquo;Get Quotation&rdquo;</b> on the product or message us on WhatsApp. We confirm the price, freight and delivery time, then send you a payment link.</div><h3>Good to know</h3><ul><li>GST invoice on every order (GSTIN 06DMUPS2289L1ZZ).</li><li>Cash on Delivery is not available &mdash; online payment only.</li><li>Orders cannot be cancelled once placed. Damaged / wrong items are replaced if reported within 48 hours with an unboxing video.</li></ul><p><a href="/shipping-policy.html">Shipping Policy</a> &middot; <a href="/cancellation-refund-policy.html">Cancellation &amp; Refund</a> &middot; <a href="/terms-and-conditions.html">Terms</a></p><p>Need help choosing? <a onclick="closePage();openZara()">Ask Zara</a> or call <a href="tel:+919910646957">9910646957</a>.</p>'},
+ 'faqs':{t:"FAQ's",h:'<details><summary>How do I buy a product?</summary><p>Products with a listed price can be added to the cart and ordered online. For plants and large items tap &ldquo;Get Quotation&rdquo; or WhatsApp us. See <a onclick="openPage(\'how-to-buy\')">How to Buy</a>.</p></details><details><summary>Are prices inclusive of GST?</summary><p>No. Prices shown are exclusive of GST. The cart shows the product total, shipping and GST separately before you order.</p></details><details><summary>How much is shipping?</summary><p>Each product has its own courier charge, shown in the cart. If you order several products together, only the highest single courier charge is applied once. Large items are quoted separately.</p></details><details><summary>When will my order be dispatched?</summary><p>Each product page shows its dispatch time in working days, counted from payment. Delivery usually takes 2&ndash;7 working days after dispatch, depending on your location.</p></details><details><summary>Can I cancel my order or get a refund?</summary><p>Orders cannot be cancelled once placed and products are not returnable. If we are unable to supply your order, you get a full refund within 7 working days. <a href="/cancellation-refund-policy.html">Read the policy</a>.</p></details><details><summary>What if the item arrives damaged or wrong?</summary><p>Message us on WhatsApp within 48 hours of delivery with a continuous unboxing video. We will replace the item free of cost.</p></details><details><summary>Is Cash on Delivery available?</summary><p>No. We accept online payment only &mdash; UPI, cards, net banking and NEFT/RTGS.</p></details><details><summary>How do I track my order?</summary><p>Open <a onclick="openPage(\'track-order\')">Track Order</a> and enter your Order ID and mobile number. We also send the courier tracking number on WhatsApp / email.</p></details><details><summary>Will I get a GST invoice?</summary><p>Yes, a GST invoice is issued on every order. Enter your GSTIN and business name at checkout to claim input tax credit. Our GSTIN: 06DMUPS2289L1ZZ.</p></details><details><summary>Are the products genuine?</summary><p>Yes. We supply only authentic branded products from AFS, Aster, Pentair, Vontron and other trusted brands.</p></details><details><summary>Which RO / plant capacity do I need?</summary><p>It depends on your water source, TDS and daily requirement (LPH). Share these with Zara or on WhatsApp and we will recommend the right system.</p></details><details><summary>Do you provide installation and AMC?</summary><p>Yes &mdash; we guide installation and offer annual maintenance and service support.</p></details>'},
  'contact':{t:'Contact Us',h:WT_C+'<h3>Send us a message</h3><div class="wt-form"><input id="wtCn" placeholder="Your name"><input id="wtCp" placeholder="Phone / WhatsApp"><textarea id="wtCm" rows="4" placeholder="Your requirement / message"></textarea><button onclick="wtContact()">Send on WhatsApp</button></div><p style="font-size:13px;color:#8b9aa5">We usually reply within working hours. For urgent help, call 9910646957.</p>'},
- 'track-order':{t:'Track Order',h:'<p>Apna Order ID aur phone daalein — live status yahin dikhega.</p><div class="wt-form"><input id="wtTOid" placeholder="Order ID (e.g. WTP1048)"><input id="wtTOph" placeholder="Registered phone number"><button onclick="wtTrack()">Track Order</button></div><div id="wtTOres"></div><p style="font-size:13px;color:#8b9aa5">Order na mile to hum WhatsApp pe madad karenge, ya call 9910646957.</p>'},
- 'my-account':{t:'My Account',h:'<p>WTPESTORE orders are handled personally by our team for the best service and pricing — so there’s no complex login required.</p><ul><li><a onclick="openPage(\'my-orders\')">My Orders</a> — view/ask about your orders</li><li><a onclick="openPage(\'track-order\')">Track Order</a> — get live status</li><li><a onclick="openPage(\'contact\')">Contact Us</a> — reach our team</li></ul>'+WT_C},
- 'my-orders':{t:'My Orders',h:'<p>Apna registered phone number daalein — aapke saare orders dikh jayenge.</p><div class="wt-form"><input id="wtMOph" placeholder="Registered phone number"><button onclick="wtMyOrders()">Show My Orders</button></div><div id="wtMOres"></div>'},
+ 'track-order':{t:'Track Order',h:'<p>Enter your <b>Order ID</b> and the <b>mobile number</b> used for the order.</p><div class="wt-form"><input id="wtTOid" placeholder="Order ID (e.g. WTW261011-1234)" autocomplete="off"><input id="wtTOph" placeholder="Mobile number" inputmode="numeric" maxlength="10"><button onclick="wtTrack()">Track Order</button></div><div id="wtTOres"></div><p style="font-size:13px;color:#8b9aa5">Can&rsquo;t find your order? WhatsApp us or call 9910646957.</p>'},
+ 'my-account':{t:'My Account',h:'<p>No sign-up needed. Your cart, delivery details and recent orders are saved on this device.</p><div class="wt-dt"><b><a onclick="openPage(\'my-orders\')">My Orders</a></b><br>Orders placed from this device, with live status.</div><div class="wt-dt"><b><a onclick="openPage(\'track-order\')">Track Order</a></b><br>Track any order with its Order ID and mobile number.</div><div class="wt-dt"><b><a onclick="closePage();if(window.wtpeOpenCart)wtpeOpenCart()">My Cart</a></b><br>Items you have added to the cart.</div><div class="wt-dt"><b><a onclick="wtForgetMe()">Clear my saved details</a></b><br>Remove your saved address and order list from this device.</div>'+WT_C},
+ 'my-orders':{t:'My Orders',h:'<p>Orders placed from this device:</p><div id="wtMOres"><p style="color:#64737f">Loading&hellip;</p></div><p style="font-size:13px;color:#8b9aa5">Ordered from another phone or computer? Use <a onclick="openPage(\'track-order\')">Track Order</a> with your Order ID.</p>'},
  'troubleshooting':{t:'General Troubleshooting Principles',h:'<p>Common water-system issues and what usually causes them. Always switch off power &amp; water supply before checking, and call us if unsure.</p><h3>Low or no water output</h3><ul><li>Check input water supply &amp; tap pressure</li><li>Clogged pre-filters (sediment/carbon) — replace if dirty</li><li>Membrane choked or low feed pressure</li></ul><h3>Water tastes salty / high TDS</h3><ul><li>RO membrane life over — needs replacement</li><li>Bypass valve open or TDS controller mis-set</li></ul><h3>Continuous drain / never stops</h3><ul><li>Faulty solenoid valve or float switch</li><li>Membrane or flow restrictor issue</li></ul><h3>Leakage</h3><ul><li>Loose fittings / connectors — tighten or replace</li><li>Cracked housing or worn O-rings</li></ul><h3>Bad odor or color</h3><ul><li>Carbon filter exhausted</li><li>Tank needs cleaning / sanitization</li></ul><p><b>Golden rule:</b> change filters on schedule, keep feed water within limits, and service annually. Need a part? <a onclick="closePage();openZara()">Ask Zara</a>.</p>'},
  'water-facts':{t:'Amazing Water Facts',h:'<ul><li>About <b>71%</b> of the Earth’s surface is water, but less than <b>1%</b> is easily usable freshwater.</li><li>The human body is roughly <b>60% water</b>; even mild dehydration affects focus and energy.</li><li>Hot water can freeze faster than cold under certain conditions — the <b>Mpemba effect</b>.</li><li><b>TDS</b> (Total Dissolved Solids) measures dissolved minerals/salts; drinking water is typically best around <b>50–150 ppm</b>.</li><li>Hard water doesn’t harm health much but causes <b>scaling</b> in pipes, geysers and machines.</li><li>RO (Reverse Osmosis) pushes water through a membrane with pores ~<b>0.0001 micron</b> — small enough to block most salts &amp; germs.</li><li>Boiling kills germs but does <b>not</b> remove dissolved salts or heavy metals — RO/DM does.</li></ul>'},
  'water-dictionary':{t:'Water Dictionary',h:'<div class="wt-dt"><b>TDS</b> — Total Dissolved Solids; total minerals/salts dissolved in water (ppm).</div><div class="wt-dt"><b>RO</b> — Reverse Osmosis; removes dissolved salts using a semi-permeable membrane.</div><div class="wt-dt"><b>DM Plant</b> — Demineralization; removes ions via resin for ultra-pure water (lab/boiler/pharma).</div><div class="wt-dt"><b>Water Softener</b> — Removes hardness (calcium/magnesium) to stop scaling.</div><div class="wt-dt"><b>Hardness</b> — Calcium &amp; magnesium content; causes scale &amp; reduces soap lather.</div><div class="wt-dt"><b>Dosing Pump</b> — Injects precise chemical doses (antiscalant, chlorine) into water.</div><div class="wt-dt"><b>FRP Vessel</b> — Fibre-Reinforced Plastic tank holding filter media or resin.</div><div class="wt-dt"><b>UV System</b> — Uses ultraviolet light to disinfect bacteria &amp; viruses.</div><div class="wt-dt"><b>MGF / Sand Filter</b> — Multigrade filter; removes turbidity &amp; suspended particles.</div><div class="wt-dt"><b>ACF</b> — Activated Carbon Filter; removes chlorine, odor &amp; color.</div><div class="wt-dt"><b>LPH</b> — Litres Per Hour; a plant’s output capacity.</div><div class="wt-dt"><b>Antiscalant</b> — Chemical that prevents scale on RO membranes.</div>'},

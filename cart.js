@@ -20,6 +20,7 @@
   }catch(e){}
   function enabled(){ return CART_LIVE || ls('wtpe_cart_preview') === '1'; }
   window.WTPE_CART_ON = enabled;
+  window.WTPE_ORDER_URL = ORDER_URL;
 
   function num(v){ var n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.]/g, '')); return isFinite(n) ? n : NaN; }
   function rupee(n){ return '₹' + Number(n || 0).toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 2}); }
@@ -65,8 +66,8 @@
   /* ---------- UI ---------- */
   var css = '.wcfab{position:fixed;left:16px;bottom:16px;z-index:898;background:#ff9900;color:#111;border:0;border-radius:30px;padding:11px 16px;font:700 14px Inter,Arial,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.25);cursor:pointer;display:none}'+
     '.wcfab b{background:#0b2545;color:#fff;border-radius:12px;padding:1px 8px;margin-left:6px}'+
-    '.wcov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none}.wcov.open{display:block}'+
-    '.wcp{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:#fff;z-index:1001;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s;font:14px/1.5 Inter,Arial,sans-serif;color:#111}'+
+    '.wcov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2147483000;display:none}.wcov.open{display:block}'+
+    '.wcp{position:fixed;top:0;right:0;height:100%;width:min(440px,100%);background:#fff;z-index:2147483001;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s;font:14px/1.5 Inter,Arial,sans-serif;color:#111}'+
     '.wcp.open{transform:none}.wch{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#0b2545;color:#fff}.wch h3{margin:0;font-size:17px}'+
     '.wch button{background:none;border:0;color:#fff;font-size:26px;cursor:pointer;line-height:1}.wcb{flex:1;overflow:auto;padding:12px 16px}'+
     '.wci{display:flex;gap:10px;border-bottom:1px solid #eee;padding:10px 0}.wci img{width:56px;height:56px;object-fit:contain;border:1px solid #eee;border-radius:6px;background:#fafafa}'+
@@ -186,6 +187,12 @@
         return;
       }
       save([]);
+      try{ /* "My Orders" ke liye is device par order yaad rakho */
+        var mo = JSON.parse(ls('wtpe_orders') || '[]'); if(!Array.isArray(mo)) mo = [];
+        var cnt = 0; c.forEach(function(i){ cnt += i.q; });
+        mo.push({ id: r.orderId, date: new Date().toLocaleDateString('en-IN'), total: r.total, items: cnt, disp: r.disp, phone: d.phone });
+        ls('wtpe_orders', JSON.stringify(mo.slice(-30)));
+      }catch(e){}
       var wa = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent('Hello WTPESTORE, I have placed order ' + r.orderId + '. Total ' + rupee(r.total) + '. Please share payment details.');
       panel.innerHTML = head('Order received ✅') + '<div class="wcb"><div class="wcok"><div style="font-size:40px">✅</div><h4>Order ID: ' + esc(r.orderId) + '</h4>' +
         '<p>Thank you! Your order has been placed.</p></div>' + totalsHTML(r) +
