@@ -185,7 +185,10 @@ async function load() {
   const ci = ix('category'), ni = ix('product', 'name'), pi = ix('price'),
     mi = ix('make', 'brand'), mo = ix('model'), sp = ix('specification', 'spec'),
     ii = ix('image', 'photo'), mrp = ix('mrp', 'list price', 'old price'),
-    dsc = ix('discount', 'disc', 'off'), pdfi = ix('catalogue', 'catalog', 'pdf');
+    dsc = ix('discount', 'disc', 'off'), pdfi = ix('catalogue', 'catalog', 'pdf'),
+    shi = ix('courier charge', 'courier', 'shipping', 'shipping charge'),
+    gsi = ix('gst rate', 'gst', 'gst %', 'gst%'), dti = ix('dispatch time', 'dispatch', 'dispatch days');
+  const numOr = (v) => { const t = String(v == null ? '' : v).trim(); if (!t) return null; const x = parseFloat(t.replace(/[^0-9.]/g, '')); return isFinite(x) ? x : null; };
   const out = [];
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i], n = clean(r[ni]);
@@ -195,7 +198,11 @@ async function load() {
       p: parseInt(String(r[pi] || '').replace(/[^0-9]/g, '')) || 0,
       make: mi > -1 ? clean(r[mi]) : '', model: mo > -1 ? clean(r[mo]) : '',
       spec: sp > -1 ? clean(r[sp]) : '', img: ii > -1 ? clean(r[ii]) : '', mrp: 0,
-      pdf: pdfi > -1 ? clean(r[pdfi]) : ''
+      pdf: pdfi > -1 ? clean(r[pdfi]) : '',
+      k: n,  /* Sheet ka asli naam — cart/server isi se product pehchante hain */
+      ship: shi > -1 ? numOr(r[shi]) : null,
+      gst: gsi > -1 ? numOr(r[gsi]) : null,
+      disp: dti > -1 ? numOr(r[dti]) : null
     };
     if (mrp > -1) { const m = parseInt(String(r[mrp] || '').replace(/[^0-9]/g, '')) || 0; if (m > o.p) o.mrp = m; }
     if (!o.mrp && dsc > -1) {
@@ -294,9 +301,11 @@ ${body}
 Mathura Road, Faridabad, Haryana 121003 · GSTIN 06DMUPS2289L1ZZ<br>
 📞 9910646950 · 9910646957 · 0129-4340856 · <a href="mailto:info@aquafiltrationsystem.in">info@aquafiltrationsystem.in</a><br>
 <a href="/">Home</a> · <a href="/products.html">All Products</a> · <a href="/catalogues.html">Catalogues</a> · <a href="/plant-calculators.html">Calculators</a><br>
+<a href="/shipping-policy.html">Shipping</a> · <a href="/cancellation-refund-policy.html">Cancellation &amp; Refund</a> · <a href="/terms-and-conditions.html">Terms</a> · <a href="/privacy-policy.html">Privacy</a> · <a href="/contact-us.html">Contact</a><br>
 <span style="font-size:11.5px;color:#8fb8d6">*Prices exclusive of GST and subject to change — confirm on WhatsApp before order.</span>
 </div></footer>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
+<script src="/cart.js" defer></script>
 </body></html>`;
 }
 
@@ -1182,7 +1191,7 @@ function productPage(p, related, blurb) {
     ${autoModel ? `<span class="pp-model">Model: ${esc(autoModel)}</span>` : ''}
     ${priceBlock}
     <p class="pp-avail">In stock — dispatched pan-India · GST invoice · Reply within 2 working hours</p>
-    <div class="pp-cta"><a class="b wa" href="${wa}" rel="nofollow">💬 Get Quotation on WhatsApp</a><a class="b vw" href="tel:+919910646957">📞 Call 9910646957</a></div>
+    <div class="pp-cta">${(p.p > 0 && p.ship != null) ? `<button type="button" class="b wtpe-atc" style="display:none;background:#ff9900;color:#111;border:0;cursor:pointer;font-weight:800" data-k="${esc(p.k || p.n)}" data-n="${esc(p.n)}" data-p="${p.p}" data-ship="${p.ship}" data-gst="${p.gst == null ? 18 : p.gst}" data-disp="${p.disp == null ? 3 : p.disp}" data-img="${esc(p.img || '')}" onclick="wtpeAddFromBtn(this)">🛒 Add to Cart</button>` : ''}<a class="b wa" href="${wa}" rel="nofollow">💬 Get Quotation on WhatsApp</a><a class="b vw" href="tel:+919910646957">📞 Call 9910646957</a></div>
     ${shareBlock}
     ${introBlock}
   </div>
@@ -1249,7 +1258,7 @@ ${relBlock}
 .pp-avail{font-size:12.5px;color:#0e7a3d;font-weight:600;margin:2px 0 4px}
 .pp-intro{font-size:15px;line-height:1.65;color:#333;margin:14px 0 4px;max-width:70ch}
 .pp-cta{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
-.pp-cta a.b{text-decoration:none;font-weight:700;font-size:13.5px;padding:11px 16px;border-radius:9px}
+.pp-cta a.b,.pp-cta button.b{text-decoration:none;font-weight:700;font-size:13.5px;padding:11px 16px;border-radius:9px;font-family:inherit;line-height:1.3}
 .pp-cta a.wa{background:#25d366;color:#fff}
 .pp-cta a.vw{background:var(--navy);color:#fff}
 .pp-share{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed #dfe6ec}
