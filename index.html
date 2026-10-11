@@ -1024,26 +1024,9 @@ function aCheckToken(){
 }
 function aLogout(){try{localStorage.removeItem('wtpe_tok');localStorage.removeItem('wtpe_role');}catch(e){}aAuthed=false;location.reload();}
 function aJsonp(url,cb){var done=false;var fn='acb_'+Math.floor(Math.random()*1e9);var s=document.createElement('script');function fin(r){if(done)return;done=true;try{cb(r);}finally{try{delete window[fn];s.remove();}catch(e){}}}window[fn]=function(r){fin(r);};s.src=url+(url.indexOf('?')<0?'?':'&')+'callback='+fn;s.onerror=function(){fin({ok:false,error:'network'});};document.body.appendChild(s);setTimeout(function(){fin({ok:false,error:'timeout'});},12000);}
-function aOtpUrl(){return cfg('otp_url','https://script.google.com/macros/s/AKfycbynPDNbRvUJHr-owF9Do6ugdTpstHtHS3TFoYm9KtBjO_1UraUu2UfJ41-SjkSRdiV73w/exec');}
-function aForgot(){
-  var url=aOtpUrl();
-  if(!url){toast('Is device par OTP setup nahi hai. Doosre laptop par apna default password use karein.');return;}
-  toast('OTP bheja ja raha hai…');
-  try{ fetch(url+'?action=send&token='+encodeURIComponent(cfg('otp_secret','wtp-otp-2026')),{mode:'no-cors'}); }catch(e){}
-  setTimeout(function(){
-    document.getElementById('aForgotBox').style.display='block';
-    toast('OTP aapke email (aquazone350@gmail.com) par bheja gaya. Inbox/Spam check karein, phir OTP daal ke Verify dabayein.');
-  },1000);
-}
-function aVerifyForgot(){
-  var otp=(document.getElementById('aOtp').value||'').trim();
-  if(!otp){toast('OTP daalein');return;}
-  var url=aOtpUrl();if(!url){toast('OTP URL nahi mila');return;}
-  aJsonp(url+'?action=verify&token='+encodeURIComponent(cfg('otp_secret','wtp-otp-2026'))+'&otp='+encodeURIComponent(otp),function(r){
-    if(r&&r.ok){try{localStorage.removeItem('wtpe_apass');}catch(e){}aAuthed=true;aShow();toast('OTP sahi! Login ho gaya. Naya password Settings me set karein.');}
-    else toast('Galat/expired OTP: '+((r&&r.error)||'error'));
-  });
-}
+/* OTP wala "Forgot password" band (11 Oct 2026) — password ab Sheet ke AdminAuth tab me hai */
+function aForgot(){toast('Password bhool gaye? Owner Google Sheet ka "AdminAuth" tab kholkar password dekh/badal sakta hai.');}
+function aVerifyForgot(){aForgot();}
 function aShow(){document.getElementById('aLock').style.display='none';document.getElementById('aMain').style.display='block';document.getElementById('setWA').value=WA_NUM;var _pu=document.getElementById('setPass');if(_pu)_pu.value=cfg('login_url','');var _cs=cfg('sheet','')||DEFAULT_SHEET;if(_cs.indexOf('2PACX-1vTriqSh')>-1)_cs=DEFAULT_SHEET;document.getElementById('setSheet').value=_cs;document.getElementById('setLead').value=cfg('lead','')||DEFAULT_LEAD||DEFAULT_LEAD;var _lc=document.getElementById('setLeadCsv');if(_lc)_lc.value=cfg('leadcsv','')||DEFAULT_LEADCSV;var _oc=document.getElementById('setOrdersCsv');if(_oc)_oc.value=cfg('orderscsv','')||DEFAULT_ORDERSCSV;var _ap=document.getElementById('setAddProd');if(_ap)_ap.value=cfg('addproduct_url','');var _qu=document.getElementById('setQuote');if(_qu)_qu.value=cfg('quote_url','');var _ot=document.getElementById('setOtp');if(_ot)_ot.value=cfg('otp_url','');aRender();aLoadLeads();aLoadOrders();}
 /* Staff ko Products / Settings / Add Product nahi dikhte (server bhi staff ko product add nahi karne deta) */
 function aRole(){try{return localStorage.getItem('wtpe_role')||'Owner';}catch(e){return 'Owner';}}
