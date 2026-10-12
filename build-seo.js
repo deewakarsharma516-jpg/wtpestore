@@ -424,6 +424,42 @@ function writeOldSharedSlugPages(P) {
   if (made) console.log('old shared-url chooser pages ✓ (' + made + ')');
 }
 
+
+/* ---------------------------------------------------------------
+   Purane product URL kabhi 404 na hon (Search Console "Not found").
+   seo-known-slugs.txt me har woh slug yaad rehta hai jo kabhi bana.
+   Agar ab us naam ka page nahi hai (naam badla / product hata),
+   to sabse milte-julte live page par redirect page ban jata hai.
+--------------------------------------------------------------- */
+function writeRetiredSlugPages() {
+  const F = 'seo-known-slugs.txt';
+  let known = [];
+  try { known = fs.readFileSync(F, 'utf8').split(/\r?\n/).map(x => x.trim()).filter(Boolean); } catch (e) { }
+  const live = Array.from(STATIC_SLUGS);
+  const toks = x => new Set(x.split('-').filter(t => t.length > 1));
+  let made = 0;
+  known.forEach(old => {
+    if (STATIC_SLUGS.has(old) || fs.existsSync(path.join(PRODUCTS_DIR, old + '.html'))) return;
+    const A = toks(old); let best = null, bs = 0;
+    live.forEach(l => {
+      const B = toks(l); let c = 0; A.forEach(t => { if (B.has(t)) c++; });
+      const sc = c / (A.size + B.size - c || 1);
+      if (sc > bs) { bs = sc; best = l; }
+    });
+    const target = SITE + (best && bs >= 0.4 ? '/products/' + best + '.html' : '/products.html');
+    fs.writeFileSync(path.join(PRODUCTS_DIR, old + '.html'),
+      '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+      '<meta name="robots" content="noindex,follow"><link rel="canonical" href="' + target + '">' +
+      '<meta http-equiv="refresh" content="0; url=' + target + '"><title>Moved | WTPESTORE</title></head><body>' +
+      '<p>This page has moved. <a href="' + target + '">Continue</a></p>' +
+      '<script>location.replace(' + JSON.stringify(target) + ');<\/script></body></html>');
+    made++;
+  });
+  const all = Array.from(new Set(known.concat(live))).sort();
+  fs.writeFileSync(F, all.join('\n') + '\n');
+  if (made) console.log('retired-url redirect pages ✓ (' + made + ')');
+}
+
 function card(p) {
   const off = p.mrp && p.mrp > p.p ? Math.round((p.mrp - p.p) * 100 / p.mrp) : 0;
   const price = p.p > 0
@@ -1522,6 +1558,7 @@ function injectStatic(P) {
   writeMerchantFeed(QP);
   console.log('Product pages built:', madeCount, '(skipped as thin/junk:', skipped, ')');
   writeOldSharedSlugPages(P);
+  writeRetiredSlugPages();
   writeStaticMapIntoIndex(P);
 
   const cats = {};
