@@ -1,0 +1,37 @@
+SHEET ME YE NAAM SUDHARNE HAIN
+============================================================
+
+13 products ka naam doosre products se bilkul milta hai.
+Isliye inka alag page NAHI banaya gaya — ye category page par dikhte hain.
+
+Naam unique karte hi page apne aap ban jayega. Kuch aur karne ki zaroorat nahi.
+
+TIP: naam aisa rakhein jaise customer Google par khojta hai —
+     "5/10 micron" ki jagah "PP Spun Cartridge Filter 10 inch 5 Micron"
+
+============================================================
+
+"DISTRIBUTION SYSTEM RM ST6103 – 12 Long Lateral"  — 3 products ka yahi naam hai:
+    Distribution Systems  |  ₹5,880
+    Distribution Systems  |  ₹7,140
+    Distribution Systems  |  ₹13,125
+
+"MODEL F5000/F9000/F12000/F15000 WITH 40NB FLANGED END CONNECTION"  — 2 products ka yahi naam hai:
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹5,880
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹14,700
+
+"MODEL F5000/F9000/F12000/F15000 WITH 50NB FLANGED END CONNECTION"  — 2 products ka yahi naam hai:
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹7,245
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹17,325
+
+"MODEL F20000/F30000/F50000 WITH 65NB FLANGED END CONNECTION"  — 2 products ka yahi naam hai:
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹12,180
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹27,300
+
+"MODEL F20000/F30000/F50000 WITH 80NB FLANGED END CONNECTION"  — 2 products ka yahi naam hai:
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹13,650
+    ASTER ROTAMETERS & DIGITAL FLOW METERS  |  ₹28,875
+
+"20NB I/O WITH BRASS INSERTS"  — 2 products ka yahi naam hai:
+    CARTRIDGE HOUSINGS  |  ₹761
+    CARTRIDGE HOUSINGS  |  ₹682
