@@ -1242,20 +1242,37 @@ function stRow(title,list,cat){
   if(list.length<3) return '';
   return '<section class="st-sec"><div class="st-h"><h2>'+title+'</h2>'+(cat?'<a onclick="openFolder('+JSON.stringify(cat).replace(/"/g,'&quot;')+')">View all →</a>':'<a href="/products.html">View all →</a>')+'</div><div class="st-row">'+list.map(stCard).join('')+'</div></section>';
 }
+function stEurekaImg(){
+  var d=(typeof STORE_DATA!=='undefined')?STORE_DATA:[],i,p;
+  for(i=0;i<d.length;i++){p=d[i];if(p&&p.n&&/aws\s*i[\s-]*1200/i.test(p.n)){var im=(p.imgs&&p.imgs.length)?p.imgs[0]:p.img;if(im)return im;}}
+  for(i=0;i<d.length;i++){p=d[i];if(p&&p.img&&/eureka|aquaguard/i.test((p.c||'')+' '+(p.make||'')+' '+p.n))return p.img;}
+  return '';
+}
+function stFindImg(re,skip){
+  var d=(typeof STORE_DATA!=='undefined')?STORE_DATA:[];
+  for(var i=0;i<d.length;i++){var p=d[i];if(!p||!p.n)continue;var im=(p.imgs&&p.imgs.length)?p.imgs[0]:p.img;if(im&&(!skip||skip.indexOf(im)<0)&&re.test((p.c||'')+' '+(p.make||'')+' '+p.n))return im;}
+  return '';
+}
+function stTileImg(im,emoji,alt){return '<span class="st-cimg'+(im?'':' st-ctxt')+'">'+(im?'<img loading="lazy" src="'+esc(im)+'" alt="'+esc(alt)+'">':emoji)+'</span>';}
 function storeTop(){
+  var eImg=stEurekaImg();
+  var zImg=stFindImg(/zero\s*scale[^|]*soften|soften[^|]*zero\s*scale|\bZS[-\s]?\d{3}/i,[eImg]);
+  var cImg=stFindImg(/antiscal|chemical|biocide|cleaner|smbs|scavenger|inhibitor|activated carbon/i,[eImg,zImg]);
+  var mImg=stFindImg(/more products|new arrival/i,[eImg,zImg,cImg])||stFindImg(/./,[eImg,zImg,cImg]);
   var cs=(typeof cats==='function')?cats():[];
   var catTiles=cs.map(function(c){return {c:c,n:(typeof catCount==='function')?catCount(c):0};}).sort(function(a,b){return b.n-a.n;})
     .map(function(o){return '<button class="st-cat" onclick="openFolder('+JSON.stringify(o.c).replace(/"/g,'&quot;')+')"><span class="st-cimg"><img loading="lazy" src="'+catImage(o.c)+'" alt="'+esc(o.c)+'"></span><span class="st-cn">'+esc(o.c)+'</span></button>';}).join('')+
-    '<a class="st-cat" href="/eureka-forbes-water-softener.html"><span class="st-cimg st-ctxt">💧</span><span class="st-cn">Eureka Forbes Softeners</span></a>'+
-    '<a class="st-cat" href="/zero-scale-water-softener.html"><span class="st-cimg st-ctxt">💧</span><span class="st-cn">Zero Scale Softeners</span></a>'+
-    '<a class="st-cat" href="/zeroscale-chemicals.html"><span class="st-cimg st-ctxt">🧪</span><span class="st-cn">Chemicals</span></a>'+
-    '<a class="st-cat" href="/more-products.html"><span class="st-cimg st-ctxt">✨</span><span class="st-cn">More Products</span></a>';
+    '<a class="st-cat" href="/eureka-forbes-water-softener.html"><span class="st-cimg'+(eImg?'':' st-ctxt')+'">'+(eImg?'<img loading="lazy" src="'+esc(eImg)+'" alt="Aquaguard AWS I-1200 Water Softener">':'💧')+'</span><span class="st-cn">Eureka Forbes Softeners</span></a>'+
+    '<a class="st-cat" href="/zero-scale-water-softener.html">'+stTileImg(zImg,'💧','Zero Scale Water Softener')+'<span class="st-cn">Zero Scale Softeners</span></a>'+
+    '<a class="st-cat" href="/zeroscale-chemicals.html">'+stTileImg(cImg,'🧪','Water treatment chemicals')+'<span class="st-cn">Chemicals</span></a>'+
+    '<a class="st-cat" href="/more-products.html">'+stTileImg(mImg,'✨','More products')+'<span class="st-cn">More Products</span></a>';
   var slides=[
+    ['✅ Authorized Distributor','Eureka Forbes Water Softeners','Aquaguard AWS range for homes, villas and commercial use — genuine product, GST invoice and installation support from Faridabad.','Shop Eureka Forbes','/eureka-forbes-water-softener.html',eImg],
     ['Faridabad se seedha · GST invoice','Water Softener Plants — all capacities','Manual & automatic softeners, multiport valves, FRP vessels and resin. Online price, pan-India dispatch.','Shop Softeners','/water-softener.html'],
     ['RO plants & spares','RO Membranes, Housings & Cartridges','Genuine membranes, cartridge filters and housings for every RO plant — order online with GST invoice.','Shop RO Spares','/ro-membrane.html'],
     ['Free tools','Plant size nikaalein — free calculator','RO, softener, DM, ETP, STP and UF sizing in one minute, then get a quotation on WhatsApp or email.','Open Calculator','/plant-calculators.html']
   ];
-  var sl=slides.map(function(x,i){return '<div class="st-slide'+(i?'':' on')+'"><div class="st-eb">'+esc(x[0])+'</div><h1>'+esc(x[1])+'</h1><p>'+esc(x[2])+'</p><a class="st-btn" href="'+x[4]+'">'+esc(x[3])+' →</a></div>';}).join('');
+  var sl=slides.map(function(x,i){return '<div class="st-slide'+(i?'':' on')+(x[5]?' st-hasimg':'')+'"><div class="st-eb">'+esc(x[0])+'</div><h1>'+esc(x[1])+'</h1><p>'+esc(x[2])+'</p><a class="st-btn" href="'+x[4]+'">'+esc(x[3])+' →</a>'+(x[5]?'<img class="st-simg" src="'+esc(x[5])+'" alt="Aquaguard AWS I-1200 Water Softener">':'')+'</div>';}).join('');
   var dots=slides.map(function(x,i){return '<i class="'+(i?'':'on')+'" onclick="stGo('+i+')"></i>';}).join('');
   var best=stPick(function(p){return +p.p>0;},12,2);
   var spares=stPick(function(p){return +p.p>0&&/membrane|cartridge|filter|housing|vessel|bag|multiport|mpv/i.test(p.c||'');},12,3);
@@ -2294,6 +2311,8 @@ function zChemCards(items){
 .st-slide h1{font-family:'Sora',Inter,Arial,sans-serif;font-size:30px;line-height:1.15;margin:8px 0;max-width:560px;text-wrap:balance}
 .st-slide p{margin:0 0 16px;color:#d6ecf6;font-size:14.5px;line-height:1.5;max-width:520px}
 .st-btn{align-self:flex-start;background:#ff9900;color:#1b1200;font-weight:800;padding:10px 18px;border-radius:22px;font-size:14px;text-decoration:none}
+.st-slide .st-simg{position:absolute;right:24px;top:50%;transform:translateY(-50%);max-height:82%;max-width:34%;object-fit:contain;background:#fff;border-radius:12px;padding:8px}.st-hasimg h1,.st-hasimg p{max-width:58%}
+@media(max-width:820px){.st-slide .st-simg{position:static;transform:none;max-height:120px;max-width:60%;margin-top:12px;align-self:flex-start}.st-hasimg h1,.st-hasimg p{max-width:none}}
 .st-dots{position:absolute;left:28px;bottom:14px;display:flex;gap:6px;z-index:2}.st-dots i{width:22px;height:4px;border-radius:2px;background:rgba(255,255,255,.35);cursor:pointer}.st-dots i.on{background:#fff}
 .st-promos{display:grid;gap:10px}
 .st-promo{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;text-decoration:none;color:inherit}
