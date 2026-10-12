@@ -1353,7 +1353,7 @@ function buildHomepage(){
   '.wt-flinks h4{color:#fff;font-size:14px;margin:0 0 12px}'+
   '.wt-flinks a{display:block;color:#b9c6cf;text-decoration:none;font-size:13px;padding:4px 0;cursor:pointer}'+
   '.wt-flinks a:hover{color:#ff9a4d}'+
-  '.wt-payrow{max-width:1240px;margin:0 auto;padding:18px 26px;border-top:1px solid rgba(255,255,255,.1);display:flex;flex-wrap:wrap;gap:30px}'+
+  '.wt-trust{display:grid!important;grid-template-columns:1fr 1fr;gap:16px!important}.wt-tbox{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 16px 12px}.wt-tbox h4{color:#fff;font-size:14.5px;margin:0 0 10px!important}.wt-tbox h4 small{color:#9fd8e8;font-weight:600;font-size:12px;margin-left:4px}.wt-tbox .wt-payg,.wt-tbox .wt-courg{gap:6px!important}.wt-chip i{font-style:normal;margin-right:5px}.wt-paynow{display:inline-block;background:#ff9900;color:#3a2400;font-weight:800;padding:8px 16px;border-radius:8px;text-decoration:none;font-size:13px}.wt-trk{display:inline-block;background:#fff;color:#0B2A4A;font-weight:800;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px}.wt-pts{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:5px}.wt-pts li{color:#bfe6c9;font-size:12.5px}@media(max-width:820px){.wt-trust{grid-template-columns:1fr}}.wt-payrow{max-width:1240px;margin:0 auto;padding:18px 26px;border-top:1px solid rgba(255,255,255,.1);display:flex;flex-wrap:wrap;gap:30px}'+
   '.wt-payrow h4{color:#fff;font-size:13px;margin:0 8px 0 0;align-self:center}'+
   '.wt-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);color:#e7eef3;font-size:12px;font-weight:600;padding:6px 12px;border-radius:7px;margin:3px}'+
   '.wt-payg,.wt-courg{display:flex;flex-wrap:wrap;align-items:center;gap:2px}'+
@@ -1397,13 +1397,14 @@ function buildHomepage(){
         '<a onclick="openPage(\'my-account\')">My Account</a><a onclick="openPage(\'my-orders\')">My Orders</a>'+
         '<a onclick="openPage(\'track-order\')">Track Order</a></div>'+
       '</div>'+
-      '<div class="wt-payrow"><h4>Payments:</h4><div class="wt-payg">'+
-        ['UPI','RuPay','Visa','Mastercard','Net Banking','NEFT / RTGS'].map(function(p){return '<span class="wt-chip">'+p+'</span>';}).join('')+
-        '<a href="payment.html" style="display:inline-block;background:#ff9900;color:#3a2400;font-weight:800;padding:8px 18px;border-radius:8px;text-decoration:none;margin-left:8px;font-size:13px">💳 Pay Now</a>'+
-      '</div></div>'+
-      '<div class="wt-payrow"><h4>Courier Partners:</h4><div class="wt-courg">'+
+      '<div class="wt-payrow wt-trust"><div class="wt-tbox"><h4>🔒 100% Secure Payment <small>via Razorpay</small></h4><div class="wt-payg">'+
+        [['📱','UPI'],['💳','RuPay'],['💳','Visa'],['💳','Mastercard'],['🏦','Net Banking'],['🏦','NEFT / RTGS']].map(function(p){return '<span class="wt-chip"><i>'+p[0]+'</i>'+p[1]+'</span>';}).join('')+
+        '<a href="payment.html" class="wt-paynow">💳 Pay Now</a></div>'+
+        '<ul class="wt-pts"><li>✓ GST invoice with every order</li><li>✓ Instant payment confirmation on email</li><li>✓ No hidden charges — full amount shown at checkout</li></ul></div>'+
+      '<div class="wt-tbox"><h4>🚚 Shipping &amp; Courier Partners</h4><div class="wt-courg">'+
         ['DTDC','Delhivery','Blue Dart','Shree Maruti','Professional','Gati','Transport (LTL)'].map(function(p){return '<span class="wt-chip">'+p+'</span>';}).join('')+
-      '</div></div>'+
+        '<a onclick="openPage(\'track-order\')" class="wt-trk">📦 Track Order</a></div>'+
+        '<ul class="wt-pts"><li>✓ Pan-India delivery from Faridabad</li><li>✓ Tracking number sent on email after dispatch</li><li>✓ Dispatch time shown on every product</li></ul></div></div>'+
       '<div class="wt-fmap"><h4>Find Us  Faridabad, Haryana</h4><iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Aqua%20Filtration%20System%20Mathura%20Road%20Faridabad&output=embed"></iframe></div>';
     fb.insertAdjacentHTML('beforebegin', html);
   }
