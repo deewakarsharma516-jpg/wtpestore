@@ -84,6 +84,18 @@ body{font-family:'Inter',Arial,sans-serif;background:#eef1f3;color:#0f1111;min-h
         <button onclick="copyPayMsg()" style="background:#0b2545;color:#fff;border:none;border-radius:10px;padding:12px 16px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit">📋 Copy</button>
       </div>
 
+      <div class="rzbox" id="rzbox">
+        <div class="rzh">⚡ Option 1 — Card / Net Banking / UPI <small>instant confirmation · Razorpay</small></div>
+        <div class="rzgrid">
+          <input id="rzName" placeholder="Your name*" autocomplete="name">
+          <input id="rzPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="Mobile number*" autocomplete="tel">
+          <input id="rzEmail" type="email" placeholder="Email (receipt ke liye)" autocomplete="email">
+        </div>
+        <div class="rzsum" id="rzSum">Upar amount daalein</div>
+        <button class="rzbtn" id="rzBtn" onclick="rzPay()">🔒 Pay securely</button>
+        <div class="rzmsg" id="rzMsg" hidden></div>
+      </div>
+      <div class="opt2">Option 2 — UPI QR / UPI app <small>(koi extra charge nahi · payment ke baad screenshot bhejein)</small></div>
       <div class="qrwrap">
         <div id="qrcode"></div>
         <div class="qrhint">Kisi bhi UPI app se scan karein — PhonePe, GPay, Paytm, BHIM</div>
@@ -142,10 +154,10 @@ function drawQR(){
   }else{fallbackQR(uri,box);}
 }
 function fallbackQR(uri,box){
-  box.innerHTML='<img alt="UPI QR" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(uri)+'">';
+  box.innerHTML='<div style="width:200px;padding:20px 10px;font-size:13px;color:#555;text-align:center">QR load nahi hua. Neeche <b>Pay via UPI App</b> button dabayein ya UPI ID use karein: <b>'+UPI_PA+'</b></div>';
 }
 function updPay(){
-  drawQR();
+  drawQR(); if(typeof rzSummary==='function')rzSummary();
   document.getElementById('upilink').href=upiUri();
   var amt=parseFloat(document.getElementById('amt').value);
   var msg="*WTPESTORE — Payment*%0A"+(amt>0?("Amount: ₹"+amt+"%0A"):"")+"Main payment kar diya hai, screenshot bhej raha/rahi hoon. Kripya confirm karein.";
@@ -264,5 +276,59 @@ function sendPayLink(){
   if(r&&document.getElementById('payref'))document.getElementById('payref').value=r;
 }catch(e){}})();
 
+</script>
+
+<style>
+.rzbox{margin-top:16px;border:2px solid #0b2545;border-radius:14px;padding:14px;background:#f6f9fc}
+.rzh{font-weight:800;color:#0b2545;font-size:14.5px;margin-bottom:10px}.rzh small{display:block;font-weight:600;color:#067d62;font-size:12px;margin-top:2px}
+.rzgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rzgrid input{padding:11px 12px;border:1.5px solid #d5d9d9;border-radius:10px;font-size:14px;font-family:inherit;min-width:0}
+.rzgrid input#rzEmail{grid-column:1/-1}
+.rzsum{margin:10px 0;font-size:13.5px;color:#333;line-height:1.7;background:#fff;border-radius:10px;padding:9px 12px;border:1px solid #e3e8ee}
+.rzsum b{font-size:16px;color:#0b2545}
+.rzbtn{width:100%;background:#ff9900;color:#1b1200;border:0;border-radius:12px;padding:13px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit}
+.rzbtn:disabled{opacity:.6;cursor:wait}
+.rzmsg{margin-top:10px;padding:11px 12px;border-radius:10px;font-size:13.5px;font-weight:600}
+.rzmsg.ok{background:#e7f7ef;color:#0b5d3b;border:1px solid #9bd8b6}.rzmsg.err{background:#fdecec;color:#8a1c1c;border:1px solid #f1b3b3}
+.opt2{margin-top:18px;font-weight:800;color:#0b2545;font-size:14px;text-align:center}.opt2 small{display:block;font-weight:500;color:#666;font-size:12px}
+@media(max-width:420px){.rzgrid{grid-template-columns:1fr}}
+</style>
+<script>
+var RZ_URL='https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec', RZ_FEE=2.36;
+function rzInr(n){return '₹'+Number(n).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function rzCalc(){var a=Math.round((parseFloat((document.getElementById('amt')||{}).value)||0)*100);if(!(a>=100))return null;var t=Math.round(a/(1-RZ_FEE/100));return {a:a/100,f:(t-a)/100,t:t/100};}
+function rzSummary(){var c=rzCalc(),el=document.getElementById('rzSum'),b=document.getElementById('rzBtn');if(!el)return;
+  if(!c){el.innerHTML='Upar amount daalein (kam se kam ₹1)';b.textContent='🔒 Pay securely';return;}
+  el.innerHTML='Amount: '+rzInr(c.a)+'<br>Online payment charges ('+RZ_FEE+'%): '+rzInr(c.f)+'<br>Total: <b>'+rzInr(c.t)+'</b>';b.textContent='🔒 Pay '+rzInr(c.t)+' securely';}
+function rzMsg(t,ok){var m=document.getElementById('rzMsg');m.hidden=false;m.className='rzmsg '+(ok?'ok':'err');m.innerHTML=t;}
+function rzJsonp(params,cb){var n='rzcb'+Date.now()+Math.floor(Math.random()*1e4),s=document.createElement('script'),done=false;
+  window[n]=function(r){done=true;try{delete window[n]}catch(e){};s.remove();cb(r);};
+  s.onerror=function(){if(!done)cb({ok:false,error:'Network error, dobara try karein'});};
+  s.src=RZ_URL+'?'+Object.keys(params).map(function(k){return k+'='+encodeURIComponent(params[k])}).join('&')+'&callback='+n;document.body.appendChild(s);
+  setTimeout(function(){if(!done)cb({ok:false,error:'Server se jawab nahi aaya, dobara try karein'});},25000);}
+function rzLoad(cb){if(window.Razorpay)return cb();var s=document.createElement('script');s.src='https://checkout.razorpay.com/v1/checkout.js';s.onload=cb;s.onerror=function(){rzMsg('Payment window load nahi hui. Internet check karein ya UPI QR use karein.',false);rzBusy(false);};document.head.appendChild(s);}
+function rzBusy(b){var x=document.getElementById('rzBtn');x.disabled=b;if(!b)rzSummary();else x.textContent='Please wait…';}
+function rzPay(){
+  var c=rzCalc(),nm=document.getElementById('rzName').value.trim(),ph=document.getElementById('rzPhone').value.replace(/\D/g,'').slice(-10),em=document.getElementById('rzEmail').value.trim(),ref=(document.getElementById('payref')||{}).value||'';
+  if(!c){rzMsg('Pehle upar amount daalein.',false);document.getElementById('amt').focus();return;}
+  if(nm.length<2){rzMsg('Apna naam daalein.',false);return;}
+  if(!/^[6-9]\d{9}$/.test(ph)){rzMsg('Sahi 10-digit mobile number daalein.',false);return;}
+  if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){rzMsg('Email sahi nahi lag raha.',false);return;}
+  document.getElementById('rzMsg').hidden=true;rzBusy(true);
+  rzJsonp({action:'invoicePay',amt:c.a,name:nm,phone:ph,email:em,ref:ref.trim()},function(r){
+    if(!r||!r.ok){rzMsg(r&&r.error?r.error:'Payment shuru nahi ho paya.',false);rzBusy(false);return;}
+    rzLoad(function(){
+      var opt={key:r.rzp.key,order_id:r.rzp.order_id,amount:r.rzp.amount,currency:'INR',name:'WTPESTORE',description:(ref?ref+' · ':'')+'Aqua Filtration System',
+        prefill:{name:nm,contact:'+91'+ph,email:em},theme:{color:'#0b2545'},
+        handler:function(res){rzMsg('Payment confirm ho raha hai…',true);
+          rzJsonp({action:'invoiceVerify',payId:r.payId,rzp_order_id:res.razorpay_order_id,rzp_payment_id:res.razorpay_payment_id,rzp_signature:res.razorpay_signature},function(v){
+            if(v&&v.ok)rzMsg('✅ Payment successful! '+rzInr(r.total)+' mil gaye.<br>Reference: <b>'+r.payId+'</b>'+(em?'<br>Receipt '+em.replace(/</g,'')+' par email ho rahi hai.':''),true);
+            else rzMsg('Payment ho gaya hai, confirmation thodi der me aayega. Reference: <b>'+r.payId+'</b>. Koi dikkat ho to WhatsApp karein.',true);
+            rzBusy(false);});},
+        modal:{ondismiss:function(){rzMsg('Payment poora nahi hua. Dobara try karein ya UPI QR use karein.',false);rzBusy(false);}}};
+      try{new Razorpay(opt).open();}catch(e){rzMsg('Payment window nahi khuli. UPI QR use karein.',false);rzBusy(false);}
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded',rzSummary);setTimeout(rzSummary,300);
 </script>
 </body></html>
