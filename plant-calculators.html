@@ -162,6 +162,10 @@ footer a{color:var(--navy)}
 <footer>© Aqua Filtration System · WTPESTORE · <a href="/">wtpestore.co.in</a> · <a href="/catalogues.html">Catalogues</a></footer>
 
 <script>
+(function(){try{var k='wtpe_src',s=JSON.parse(localStorage.getItem(k)||'null');if(!s||Date.now()-s.t>2592e6){var q=new URLSearchParams(location.search),r=document.referrer||'',h='';try{h=new URL(r).hostname}catch(e){}
+var v=q.get('utm_source')||(q.get('gclid')?'Google Ads':'')||(/wtpestore\.co\.in$/.test(h)?'':(/google\./.test(h)?'Google':/bing\./.test(h)?'Bing':/instagram/.test(h)?'Instagram':/facebook|fb\./.test(h)?'Facebook':/youtube/.test(h)?'YouTube':/indiamart/.test(h)?'IndiaMART':h?h:'Direct'));
+if(v)localStorage.setItem(k,JSON.stringify({v:v,t:Date.now(),l:location.pathname}))}}catch(e){}})();
+function wtpeSrc(){try{var s=JSON.parse(localStorage.getItem('wtpe_src')||'null');return s?s.v+(s.l?' → '+s.l:''):'Direct'}catch(e){return ''}}
 function show(id,btn){
   document.querySelectorAll('.calc').forEach(function(c){c.classList.remove('on');});
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
@@ -173,9 +177,31 @@ function waBtn(txt){
   var msg='Namaste WTPESTORE! Calculator se sizing nikali hai:\n'+txt+'\nKripya quotation bhejein.';
   return '<a class="wa" target="_blank" rel="noopener" href="https://wa.me/919899193589?text='+encodeURIComponent(msg)+'">📱 WhatsApp par Quotation lein</a>';
 }
+function leadBox(id,txt){
+  return '<div class="clead" style="margin-top:12px;background:#fff8e6;border:1px solid #ffd27a;border-radius:10px;padding:12px">'+
+   '<b style="color:#0B2A4A">📄 Is size ka price / quotation paayein</b>'+
+   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">'+
+   '<input id="'+id+'_nm" placeholder="Naam" style="padding:10px;border:1px solid #ccc;border-radius:8px">'+
+   '<input id="'+id+'_mb" type="tel" maxlength="10" placeholder="Mobile number*" style="padding:10px;border:1px solid #ccc;border-radius:8px">'+
+   '<input id="'+id+'_em" type="email" placeholder="Email (optional)" style="grid-column:1/-1;padding:10px;border:1px solid #ccc;border-radius:8px">'+
+   '<button onclick="calcLead(\''+id+'\')" style="grid-column:1/-1;background:#ff9900;border:0;border-radius:20px;padding:11px;font-weight:800;cursor:pointer">Quotation bhejo →</button></div>'+
+   '<div id="'+id+'_ok" style="display:none;margin-top:8px;color:#0b5d3b;font-weight:700">✓ Dhanyavaad! Hum jaldi price ke saath sampark karenge.</div></div>';
+}
+var LAST_CALC={};
+function calcLead(id){
+  var no=(document.getElementById(id+'_mb').value||'').replace(/\D/g,'').slice(-10);
+  if(!/^[6-9]\d{9}$/.test(no)){alert('Sahi 10-digit mobile number daalein');return;}
+  var em=(document.getElementById(id+'_em').value||'').trim();
+  if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){alert('Email sahi nahi lag raha');return;}
+  var p={action:'lead',phone:no,name:document.getElementById(id+'_nm').value||'',email:em,interest:(LAST_CALC[id]||'Plant calculator').slice(0,200),source:'Calculator',page:location.href,via:wtpeSrc()};
+  var q=Object.keys(p).map(function(k){return k+'='+encodeURIComponent(p[k])}).join('&');
+  try{fetch('https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec?'+q,{mode:'no-cors'})}catch(e){}
+  try{gtag('event','generate_lead',{page:'calculator'})}catch(e){}
+  document.getElementById(id+'_ok').style.display='block';
+}
 function out(id,title,rows,wa,note){
-  var el=document.getElementById(id);
-  el.innerHTML='<h3>'+title+'</h3>'+rows+waBtn(wa)+(note?'<div class="note">'+note+'</div>':'');
+  var el=document.getElementById(id); LAST_CALC[id]=wa;
+  el.innerHTML='<h3>'+title+'</h3>'+rows+leadBox(id,wa)+waBtn(wa)+(note?'<div class="note">'+note+'</div>':'');
   el.classList.add('on');
 }
 

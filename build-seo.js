@@ -1590,6 +1590,11 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   const all = new Set(staticUrls);
   all.add(SITE + '/products.html');
   CHEM_PAGES.forEach(u => all.add(SITE + u));
+  /* category + landing pages jo pehle sitemap me chhoot gaye the */
+  ['/pumps.html','/alfa-uv-systems.html','/contact-us.html','/plant-calculators.html','/water-treatment-solutions.html',
+   '/water-treatment-plant-faridabad.html','/water-treatment-plant-gurgaon.html','/water-treatment-plant-noida.html','/water-treatment-plant-delhi.html','/water-treatment-plant-ghaziabad.html',
+   '/water-treatment-for-hotels.html','/water-treatment-for-hospitals.html','/water-treatment-for-pharma.html','/water-treatment-for-food-dairy.html','/water-treatment-for-housing-societies.html'
+  ].forEach(u => all.add(SITE + u));
   BLOG_PAGES.forEach(u => all.add(SITE + u));
   const today = new Date().toISOString().slice(0, 10);
 
