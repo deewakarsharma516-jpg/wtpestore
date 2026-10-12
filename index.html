@@ -451,8 +451,7 @@ footer h4{color:#fff;font-size:14px;margin-bottom:11px}footer a,footer p{color:#
     <a class="hbtn" href="tel:9910646957"><span class="s">Call / Help</span><b>9910646957</b></a>
     <div class="hbtn acc" onclick="openZara()"><span class="s">Ask</span><b>Zara AI</b></div>
   </div>
-  <div class="subnav"><div class="wrap subnav-in" id="subnav"><a class="b" onclick="goHome()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> All Categories</a><a class="b" href="/blog.html">📝 Blog</a><a href="/plant-calculators.html" style="margin-left:14px">🧮 Calculators</a></div></div>
-  <a href="/zeroscale-chemicals.html" style="margin-left:6px">🧪 Chemicals</a>
+  <div class="subnav"><div class="wrap subnav-in" id="subnav"><a class="b" onclick="goHome()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> All Categories</a><a class="b" href="/blog.html">📝 Blog</a><a href="/plant-calculators.html" style="margin-left:14px">🧮 Calculators</a><a href="/zeroscale-chemicals.html">🧪 Chemicals</a><a href="/catalogues.html">📘 Catalogues</a><a onclick="openPage('contact')" style="cursor:pointer">📞 Contact Us</a></div></div>
 </header>
 <div class="catbar"><div class="in"><button class="catbtn" onclick="toggleMega()">▤ All Categories</button><span id="catChips"></span></div></div>
 <div class="megaback" id="megaBack" onclick="toggleMega(true)"></div>
@@ -791,7 +790,7 @@ function buildSide(){
   el.innerHTML='<div class="scat'+(curCat===null?' on':'')+'" onclick="goHome()"><span>All Products</span><span class="ct">'+STORE_DATA.length+'</span></div>'+
     cats().map(function(c){return '<div class="scat'+(curCat===c?' on':'')+'" onclick="openFolder('+JSON.stringify(c).replace(/"/g,'&quot;')+')"><span class="fld" style="margin-right:6px;opacity:.75">📁</span><span>'+esc(c)+'</span><span class="ct">'+catCount(c)+'</span></div>';}).join('');
   var sub=document.getElementById('subnav');var b=sub.querySelector('.b').outerHTML;
-  sub.innerHTML=b+'<a class="b" href="/blog.html">📝 Blog</a>';
+  sub.innerHTML=b+'<a class="b" href="/blog.html">📝 Blog</a><a href="/plant-calculators.html">🧮 Calculators</a><a href="/zeroscale-chemicals.html">🧪 Chemicals</a><a href="/catalogues.html">📘 Catalogues</a><a href="/water-treatment-solutions.html">🏭 Solutions</a><a onclick="openPage(\'contact\')">📞 Contact Us</a>';
 }
 function goHome(){curCat=null;var _ly=document.querySelector('.layout');if(_ly)_ly.classList.add('home');document.getElementById('hero').style.display='block';document.getElementById('ticker').style.display='block';buildTicker();document.getElementById('crumb').innerHTML='';document.getElementById('mtitle').textContent='All Products';buildSide();renderList(STORE_DATA);if(typeof buildHomepage==='function')buildHomepage();if(typeof buildMega==='function')buildMega();}
 function buildTicker(){var cs=cats();var picks=[];cs.forEach(function(c){var arr=STORE_DATA.filter(function(p){return p.c===c&&p.p>0;});if(arr.length)picks.push(arr[Math.floor(Math.random()*arr.length)]);});picks=picks.slice(0,16);if(picks.length<5){document.getElementById('ticker').style.display='none';return;}var chip=function(p){return '<div class="tchip" onclick="openQuote('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+p.p+')"><div class="ti">'+(p.img?'<img src="'+esc(p.img)+'" alt="'+esc(p.n)+'">':boxIcon())+'</div><div class="tn">'+esc(p.n.length>40?p.n.slice(0,38)+'…':p.n)+'</div><div class="tp">'+rupee(p.p)+'</div></div>';};var html=picks.map(chip).join('');document.getElementById('tickerTrack').innerHTML=html+html;}
@@ -1213,39 +1212,77 @@ function fpStrip(){
   }).join('');
   return '<section class="hp-fp"><div class="fph">● Featured Products · Live Prices</div><div class="hp-fp-wrap"><div class="hp-fp-track">'+one+one+'</div></div></section>';
 }
+
+/* ===== STORE TOP (v2 homepage: banner + categories + product rows) ===== */
+function stInr(n){return '₹'+Math.round(n).toLocaleString('en-IN');}
+function stCard(p){
+  var sl=(typeof pSlug==='function')?pSlug(p.n):encodeURIComponent(p.n);
+  var im=(p.imgs&&p.imgs.length)?p.imgs[0]:(p.img||(typeof CAT_PH==='function'?CAT_PH(p.c,p.n):''));
+  var g=(p.gst===''||p.gst==null||isNaN(+p.gst))?18:+p.gst, price=+p.p||0, buy=!!(window.WTPE_SELLABLE&&WTPE_SELLABLE(p));
+  var key='st_'+Math.random().toString(36).slice(2,9); (window.__stItems=window.__stItems||{})[key]={k:p.n,n:p.n,p:p.p,ship:p.ship,gst:p.gst,disp:p.disp,img:im};
+  var ship=(p.ship!==''&&p.ship!=null&&!isNaN(+p.ship))?+p.ship:null;
+  return '<div class="st-pc" onclick="gotoProduct(\''+sl+'\')">'+
+    '<div class="st-img">'+(im?'<img loading="lazy" src="'+esc(im)+'" alt="'+esc(p.n)+'">':'<span>📦</span>')+'</div>'+
+    '<div class="st-bd">'+(p.make?'<div class="st-br">'+esc(p.make)+'</div>':'')+
+    '<div class="st-nm">'+esc(p.n)+'</div>'+
+    (price>0?'<div class="st-pr">'+stInr(price*(1+g/100))+'<small>incl. GST</small></div>':'<div class="st-pr st-ask">Price on request</div>')+
+    '<div class="st-sh">'+(price>0&&ship!==null?'+ courier '+stInr(ship):'&nbsp;')+'</div>'+
+    (buy?'<button class="st-add" onclick="event.stopPropagation();wtpeAddToCart(window.__stItems[\''+key+'\'])">Add to Cart</button>'
+        :'<button class="st-add st-q" onclick="event.stopPropagation();waProduct('+JSON.stringify(p.n).replace(/"/g,'&quot;')+','+(price||0)+')">Get Quote</button>')+
+    '</div></div>';
+}
+function stPick(test,n,perCat){
+  var seen={},out=[];
+  var pool=STORE_DATA.filter(function(p){return p&&p.n&&test(p);});
+  pool.sort(function(a,b){var sa=(window.WTPE_SELLABLE&&WTPE_SELLABLE(a)?2:0)+(a.img?1:0),sb=(window.WTPE_SELLABLE&&WTPE_SELLABLE(b)?2:0)+(b.img?1:0);return sb-sa;});
+  for(var i=0;i<pool.length&&out.length<n;i++){var c=pool[i].c||'';seen[c]=(seen[c]||0)+1;if(seen[c]<=perCat)out.push(pool[i]);}
+  return out;
+}
+function stRow(title,list,cat){
+  if(list.length<3) return '';
+  return '<section class="st-sec"><div class="st-h"><h2>'+title+'</h2>'+(cat?'<a onclick="openFolder('+JSON.stringify(cat).replace(/"/g,'&quot;')+')">View all →</a>':'<a href="/products.html">View all →</a>')+'</div><div class="st-row">'+list.map(stCard).join('')+'</div></section>';
+}
+function storeTop(){
+  var cs=(typeof cats==='function')?cats():[];
+  var catTiles=cs.map(function(c){return {c:c,n:(typeof catCount==='function')?catCount(c):0};}).sort(function(a,b){return b.n-a.n;})
+    .map(function(o){return '<button class="st-cat" onclick="openFolder('+JSON.stringify(o.c).replace(/"/g,'&quot;')+')"><span class="st-cimg"><img loading="lazy" src="'+catImage(o.c)+'" alt="'+esc(o.c)+'"></span><span class="st-cn">'+esc(o.c)+'</span></button>';}).join('')+
+    '<a class="st-cat" href="/eureka-forbes-water-softener.html"><span class="st-cimg st-ctxt">💧</span><span class="st-cn">Eureka Forbes Softeners</span></a>'+
+    '<a class="st-cat" href="/zero-scale-water-softener.html"><span class="st-cimg st-ctxt">💧</span><span class="st-cn">Zero Scale Softeners</span></a>'+
+    '<a class="st-cat" href="/zeroscale-chemicals.html"><span class="st-cimg st-ctxt">🧪</span><span class="st-cn">Chemicals</span></a>'+
+    '<a class="st-cat" href="/more-products.html"><span class="st-cimg st-ctxt">✨</span><span class="st-cn">More Products</span></a>';
+  var slides=[
+    ['Faridabad se seedha · GST invoice','Water Softener Plants — all capacities','Manual & automatic softeners, multiport valves, FRP vessels and resin. Online price, pan-India dispatch.','Shop Softeners','/water-softener.html'],
+    ['RO plants & spares','RO Membranes, Housings & Cartridges','Genuine membranes, cartridge filters and housings for every RO plant — order online with GST invoice.','Shop RO Spares','/ro-membrane.html'],
+    ['Free tools','Plant size nikaalein — free calculator','RO, softener, DM, ETP, STP and UF sizing in one minute, then get a quotation on WhatsApp or email.','Open Calculator','/plant-calculators.html']
+  ];
+  var sl=slides.map(function(x,i){return '<div class="st-slide'+(i?'':' on')+'"><div class="st-eb">'+esc(x[0])+'</div><h1>'+esc(x[1])+'</h1><p>'+esc(x[2])+'</p><a class="st-btn" href="'+x[4]+'">'+esc(x[3])+' →</a></div>';}).join('');
+  var dots=slides.map(function(x,i){return '<i class="'+(i?'':'on')+'" onclick="stGo('+i+')"></i>';}).join('');
+  var best=stPick(function(p){return +p.p>0;},12,2);
+  var spares=stPick(function(p){return +p.p>0&&/membrane|cartridge|filter|housing|vessel|bag|multiport|mpv/i.test(p.c||'');},12,3);
+  var H='<div class="st-wrap">'+
+   '<section class="st-hero"><div class="st-slides" id="stSlides">'+sl+'<div class="st-dots">'+dots+'</div></div>'+
+   '<div class="st-promos">'+
+     '<a class="st-promo" onclick="document.getElementById(\'stBest\')&&document.getElementById(\'stBest\').scrollIntoView({behavior:\'smooth\'})"><span class="ic" style="background:#fff1db">🏷️</span><span><b>Ready to ship spares</b><small>Membranes, cartridges, flow meters</small></span></a>'+
+     '<a class="st-promo" href="/plant-calculators.html"><span class="ic" style="background:#e3f3fb">🧮</span><span><b>Free plant calculator</b><small>RO, softener, ETP sizing</small></span></a>'+
+     '<a class="st-promo" onclick="openEnquiry(\'Bulk quotation\')"><span class="ic" style="background:#e8f6ef">📄</span><span><b>Bulk quotation</b><small>Many items, one quote</small></span></a>'+
+   '</div></section>'+
+   '<div class="st-trust"><span>🔒 Secure payment · Razorpay</span><span>🧾 GST invoice · 06DMUPS2289L1ZZ</span><span>🚚 Pan-India delivery</span><span>🏭 Since 2017 · Faridabad</span></div>'+
+   '<section class="st-sec" id="hpShop"><div class="st-h"><h2>Shop by category</h2><a onclick="toggleMega()">All categories →</a></div><div class="st-cats">'+catTiles+'</div></section>'+
+   '<div id="stBest">'+stRow('Best sellers',best)+'</div>'+
+   stRow('RO membranes, filters &amp; spares',spares)+
+  '</div>';
+  setTimeout(stAuto,50);
+  return H;
+}
+var stIdx=0,stTimer=null;
+function stGo(i){var w=document.getElementById('stSlides');if(!w)return;var a=w.querySelectorAll('.st-slide'),d=w.querySelectorAll('.st-dots i');if(!a.length)return;stIdx=(i+a.length)%a.length;for(var k=0;k<a.length;k++){a[k].classList.toggle('on',k===stIdx);if(d[k])d[k].classList.toggle('on',k===stIdx);}}
+function stAuto(){clearInterval(stTimer);if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;stTimer=setInterval(function(){if(!document.getElementById('stSlides')){clearInterval(stTimer);return;}stGo(stIdx+1);},6000);}
 function buildHomepage(){
   var hero=document.getElementById('hero'); if(!hero) return;
   var totalP=STORE_DATA.length, totalC=((typeof cats==='function')?cats():[]).length||32;
   var yrs=(new Date().getFullYear())-2017;
   var H='';
-  /* HERO */
-  H+='<section class="hp hp-hero hasbg">'+
-     '<img class="hb-img" src="https://i.ibb.co/SWcR5T5/istockphoto-2191732266-612x612.jpg" '+
-       'alt="" aria-hidden="true" fetchpriority="high" decoding="async">'+
-     '<div class="hb-scrim"></div>'+
-     '<div class="hp-inner"><div>'+
-      '<span class="hp-eyebrow">Since 2017 · Faridabad, India</span>'+
-      '<h1><span style="font-size:.42em;letter-spacing:.06em;display:block;color:#7ff0ff;font-weight:800;margin-bottom:4px">WTPeSTORE™ · powered by Aqua Filtration System</span>Your Complete<br><em>Water Treatment Store.</em></h1>'+'<span class="hp-underline"></span>'+
-      '<p class="lead">RO &amp; DM plants, softeners, dosing systems, flow meters, FRP vessels, UV systems and '+totalP+'+ genuine spares  all in one place, at the right price.</p>'+
-      '<div class="hp-cta-row">'+
-        '<button class="hp-btn primary" onclick="document.getElementById(\'hpShop\').scrollIntoView({behavior:\'smooth\'})">Browse Products</button>'+
-        '<button class="hp-btn ghost" onclick="openZara()">Ask Zara AI</button>'+
-        '<a class="hp-btn wa" href="https://wa.me/919899193589" target="_blank">WhatsApp Us</a>'+
-      '</div>'+
-      '<div class="hp-trustchips"><span>✔ <b>Genuine</b>&nbsp;branded products</span><span>🚚 <b>Pan-India</b>&nbsp;delivery</span><span>🧾 GSTIN <b>06DMUPS2289L1ZZ</b></span><span>⚡ <b>Same-day</b>&nbsp;quote · reply in 2 hrs</span></div>'+
-     '</div>'+
-     '</div>'+
-     '<div class="hp-wave"><svg viewBox="0 0 1440 70" preserveAspectRatio="none" fill="#fff"><path d="M0 40c180-40 360-40 540-8s360 56 540 24 300-44 360-48v62H0z"/></svg></div>'+
-    '</section>';
-  /* TRUST */
-  H+='<section class="hp hp-trust"><div class="hp-inner">'+
-      
-      '<div class="hp-badges">'+
-        '<div class="hp-badge"><i>'+_ic('M9 12l2 2 4-4M12 3l7 4v5c0 4-3 7-7 9-4-2-7-5-7-9V7z')+'</i>100% Genuine</div>'+
-        '<div class="hp-badge"><i>'+_ic('M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6')+'</i>Best Price</div>'+
-        '<div class="hp-badge"><i>'+_ic('M3 11l18-5v13M3 11v6l18 0M3 11l9 3')+'</i>Expert Support</div>'+
-        '<div class="hp-badge"><i>'+_ic('M1 3h15v13H1zM16 8h4l3 3v5h-7M5.5 18.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18.5 18.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4z')+'</i>Fast Delivery</div>'+
-      '</div></div></section>';
+  H+=storeTop();
   /* FREE SURVEY / OFFER BANNER */
   H+='<section class="hp" style="background:linear-gradient(135deg,#0e4d6b,#0aa2c6);color:#fff">'+
      '<div class="hp-inner" style="padding-top:38px;padding-bottom:38px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px">'+
@@ -1274,8 +1311,6 @@ function buildHomepage(){
    '<div class="hp-pt"><b>GST Invoice</b><span>GSTIN 06DMUPS2289L1ZZ</span></div>'+
    '</div></div></section>';
   H+=hpBrands();
-  H+='<section class="hp-fp"><div class="fph">● Shop by Category</div><div class="hp-fp-wrap"><div class="hp-cat-rotor-track">'+hpCatCards()+hpCatCards()+'</div></div></section>';
-  H+='<section id="hpShop" class="hp hp-cats hp-sec"><div class="hp-inner hp-reveal"><span class="hp-eyebrow">Explore</span><h2 class="hp-h">Shop by Category</h2><p class="hp-sub">From flow meters to complete treatment plants — find exactly what your water needs.</p><div class="hp-cat-grid">'+hpCatCards()+'</div></div></section>';
   /* FEATURED */
   H+=hpRailsSection();
   /* WHY */
@@ -2247,4 +2282,68 @@ function zChemCards(items){
 })();
 </script>
 <script src="/cart.js" defer></script>
+
+<style>
+/* ===== STORE TOP (v2) ===== */
+.st-wrap{display:grid;gap:18px;padding-block:14px 6px;padding-inline:16px;max-width:1240px;margin:0 auto;min-width:0;width:100%;box-sizing:border-box}.st-wrap>*,.st-hero>*,.st-sec{min-width:0}#hero{min-width:0;max-width:100%}
+.st-hero{display:grid;grid-template-columns:2.2fr 1fr;gap:14px}
+.st-slides{position:relative;border-radius:14px;overflow:hidden;background:linear-gradient(120deg,#0B2A4A 0%,#0e4d6b 55%,#137a8f 100%);color:#fff;min-height:230px}
+.st-slide{position:absolute;inset:0;padding:26px 28px 40px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .5s;pointer-events:none}
+.st-slide.on{opacity:1;pointer-events:auto;position:relative}
+.st-eb{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#7ff0ff;font-weight:700}
+.st-slide h1{font-family:'Sora',Inter,Arial,sans-serif;font-size:30px;line-height:1.15;margin:8px 0;max-width:560px;text-wrap:balance}
+.st-slide p{margin:0 0 16px;color:#d6ecf6;font-size:14.5px;line-height:1.5;max-width:520px}
+.st-btn{align-self:flex-start;background:#ff9900;color:#1b1200;font-weight:800;padding:10px 18px;border-radius:22px;font-size:14px;text-decoration:none}
+.st-dots{position:absolute;left:28px;bottom:14px;display:flex;gap:6px;z-index:2}.st-dots i{width:22px;height:4px;border-radius:2px;background:rgba(255,255,255,.35);cursor:pointer}.st-dots i.on{background:#fff}
+.st-promos{display:grid;gap:10px}
+.st-promo{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;text-decoration:none;color:inherit}
+.st-promo .ic{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;flex:none;font-size:22px}
+.st-promo b{display:block;font-size:14.5px}.st-promo small{font-size:12.5px;color:var(--muted)}
+.st-trust{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:space-between;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:13px;color:#24313d;font-weight:600}
+.st-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 10px}
+.st-h h2{font-family:'Sora',Inter,Arial,sans-serif;font-size:20px;margin:0}.st-h a{font-size:13px;font-weight:600;color:var(--green,#067d62);cursor:pointer;text-decoration:none}
+.st-cats{display:grid;grid-auto-flow:column;grid-auto-columns:104px;gap:10px;overflow-x:auto;padding-bottom:6px}
+.st-cat{background:none;border:0;text-align:center;font:600 12.5px Inter,Arial,sans-serif;color:#1f2d3a;cursor:pointer;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px}
+.st-cimg{width:86px;height:86px;border-radius:50%;background:#fff;border:1px solid var(--border);overflow:hidden;display:grid;place-items:center}
+.st-cimg img{width:100%;height:100%;object-fit:cover}.st-ctxt{font-size:32px;background:linear-gradient(135deg,#e8f5ff,#d3ecfa)}
+.st-cn{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3}
+.st-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(180px,200px);gap:12px;overflow-x:auto;padding-bottom:6px}
+.st-pc{background:#fff;border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;cursor:pointer}
+.st-pc:hover{box-shadow:0 6px 18px rgba(11,42,74,.12)}
+.st-img{height:140px;background:#f6f8fa;display:grid;place-items:center;overflow:hidden}.st-img img{width:100%;height:100%;object-fit:contain}.st-img span{font-size:34px;opacity:.5}
+.st-bd{padding:10px 11px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.st-br{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.st-nm{font-size:13.5px;line-height:1.35;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.st-pr{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}.st-pr small{font-size:11px;font-weight:600;color:var(--muted);margin-left:4px}.st-ask{font-size:14px;color:var(--muted)}
+.st-sh{font-size:11.5px;color:var(--muted)}
+.st-add{margin-top:auto;border:0;background:#ffd814;border-radius:18px;padding:8px;font:800 13px Inter,Arial,sans-serif;cursor:pointer;color:#111}.st-add.st-q{background:#fff;border:1px solid var(--border)}
+.catfab{position:fixed;right:20px;bottom:128px;z-index:899;background:#2f86c9;color:#fff;border-radius:30px;padding:10px 15px;font:700 13px Inter,Arial,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.25);text-decoration:none}
+.st-bbar{display:none}
+@media(max-width:820px){
+  .st-hero{grid-template-columns:1fr}.st-promos{grid-template-columns:repeat(3,1fr)}
+  .st-promo{flex-direction:column;text-align:center;padding:10px 6px;gap:6px}.st-promo small{display:none}.st-promo b{font-size:12.5px}
+  .st-slide h1{font-size:23px}.st-slides{min-height:250px}
+  .st-bbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:950;background:#fff;border-top:1px solid #d9dee3;justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px))}
+  .st-bbar a{display:flex;flex-direction:column;align-items:center;font:600 11px Inter,Arial,sans-serif;color:#33414e;gap:2px;cursor:pointer;text-decoration:none;position:relative;min-width:56px}
+  .st-bbar a span{font-size:19px}.st-bbar a b{position:absolute;top:-3px;right:6px;background:#ff9900;color:#111;border-radius:9px;font-size:10px;padding:0 5px}
+  body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
+  .float-cta{bottom:74px!important}.wtp-share-fab{bottom:210px!important}.wtp-share-menu{bottom:272px!important}
+  .zfab{bottom:76px!important}.enqfab{bottom:130px!important}.catfab{bottom:184px!important}
+  .wcfab{display:none!important}#wtpInstallBtn{bottom:74px!important}
+}
+@media(max-width:520px){.htop{gap:6px}.htop a.hbtn[href^='tel']{display:none}.htop .logo img{height:34px!important}}
+@media(max-width:820px){.catfab,.enqfab{font-size:0!important;width:46px;height:46px;padding:0!important;border-radius:50%!important;display:grid;place-items:center;right:16px!important}.catfab::after{content:'\2B07';font-size:19px}.enqfab::after{content:'\1F4DD';font-size:19px}}
+</style>
+<a class="catfab" href="/catalogues.html" aria-label="Download catalogue">⬇ Catalogue</a>
+<nav class="st-bbar" aria-label="Quick menu">
+  <a onclick="goHome();window.scrollTo(0,0)"><span>🏠</span>Home</a>
+  <a onclick="toggleMega()"><span>☰</span>Categories</a>
+  <a onclick="var s=document.getElementById('search');if(s){window.scrollTo(0,0);s.focus();}"><span>🔍</span>Search</a>
+  <a onclick="if(window.wtpeOpenCart)wtpeOpenCart();else openPage('my-orders')"><span>🛒</span>Cart<b id="stCartN" hidden>0</b></a>
+  <a onclick="openPage('my-account')"><span>👤</span>Account</a>
+</nav>
+<script>
+(function(){function n(){try{var c=JSON.parse(localStorage.getItem('wtpe_cart')||'[]'),t=0;c.forEach(function(x){t+=+x.q||0;});var b=document.getElementById('stCartN');if(b){b.textContent=t;b.hidden=!t;}}catch(e){}}
+n();setInterval(n,1500);window.addEventListener('storage',n);})();
+</script>
 </body></html>
