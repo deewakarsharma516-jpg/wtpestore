@@ -2148,7 +2148,7 @@ function wtpvBuild(){
   for(var i=0;i<STORE_DATA.length;i++){
     var p=STORE_DATA[i], id=wtpvId(p.vid);
     if(!id||seen[id]) continue; seen[id]=1;
-    WTPV.push({id:id,n:p.n||'Product Video'});
+    WTPV.push({id:id,n:p.n||'Product Video',p:p});
     if(WTPV.length>=20) break;
   }
   if(!WTPV.length) return;   /* koi video nahi -> kuch mat dikhao */
@@ -2158,6 +2158,7 @@ function wtpvBuild(){
     return '<div class="wtpv-card">'
       +'<div class="wtpv-th" onclick="wtpvOpen('+i+')"><img loading="lazy" src="https://i.ytimg.com/vi/'+v.id+'/hqdefault.jpg" alt="'+esc2(v.n)+'"><div class="wtpv-pl"><i>&#9654;</i></div></div>'
       +'<div class="wtpv-b"><div class="wtpv-n" onclick="wtpvOpen('+i+')">'+esc2(v.n)+'</div>'
+      +((window.WTPE_SELLABLE&&WTPE_SELLABLE(v.p))?(function(){var q=v.p,k='vd_'+i;(window.__stItems=window.__stItems||{})[k]={k:q.n,n:q.n,p:q.p,ship:q.ship,gst:q.gst,disp:q.disp,img:((q.imgs&&q.imgs[0])||q.img||'')};return '<a class="wtpv-enq" style="background:#ff9900;color:#111;margin-right:6px;cursor:pointer" onclick="wtpeAddToCart(window.__stItems[\''+k+'\'])">&#128722; Add to Cart</a>';})():'')
       +'<a class="wtpv-enq" href="https://wa.me/919899193589?text='+encodeURIComponent(msg)+'" target="_blank" rel="noopener">&#128172; Enquiry</a>'
       +'</div></div>';
   }).join('');
@@ -2402,4 +2403,5 @@ body .fbot{background:#081522;color:#8fa3b5;border-top:1px solid rgba(255,255,25
 @media(max-width:620px){body .seolinks .sgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}body .seolinks .sgrid>div{padding:12px 10px 8px}
   body footer .cols,body .wt-flinks{grid-template-columns:1fr 1fr;gap:18px}.ft-cta{padding:14px}.ft-cta-b{width:100%}.ft-cta-b a{flex:1;text-align:center}}
 </style>
+<script src="/cat-cart.js" defer></script>
 </body></html>
