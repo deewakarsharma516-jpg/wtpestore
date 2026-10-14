@@ -59,3 +59,37 @@
     if (typeof window.render === 'function') window.render();
   }).catch(function(){});
 })();
+
+/* Enquiry form: email ka khana + lead script ko bhejo (auto quotation PDF) */
+(function(){
+  function addEmail(){
+    var ph = document.getElementById('enqPhone');
+    if (!ph || document.getElementById('enqEmail')) return;
+    var em = document.createElement('input');
+    em.id = 'enqEmail'; em.type = 'email'; em.placeholder = 'Email (quotation PDF ke liye)';
+    em.className = ph.className; em.style.cssText = ph.style.cssText; em.style.marginTop = '8px';
+    ph.parentNode.insertBefore(em, ph.nextSibling);
+  }
+  addEmail(); document.addEventListener('DOMContentLoaded', addEmail);
+  var orig = window.submitEnquiry;
+  if (typeof orig !== 'function') return;
+  window.submitEnquiry = function(){
+    try {
+      var g = function(id){ var e = document.getElementById(id); return e ? String(e.value || '').trim() : ''; };
+      var name = g('enqName'), phone = g('enqPhone').replace(/\D/g, '').slice(-10), email = g('enqEmail'), item = g('enqItem');
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+        var res = document.getElementById('enqResult'); if (res){ res.style.display = 'block'; res.style.color = '#c0392b'; res.textContent = 'Email sahi nahi lag raha — sahi karein ya khaali chhod dein.'; }
+        return;
+      }
+      if (name && /^[6-9]\d{9}$/.test(phone) && window.WTPE_ORDER_URL) {
+        var via = ''; try { var s = JSON.parse(localStorage.getItem('wtpe_src') || 'null'); via = s ? s.v + (s.l ? ' → ' + s.l : '') : 'Direct'; } catch(e){}
+        var o = { phone: phone, name: name, email: email, interest: item || (document.title || '').split('|')[0], source: 'Category Enquiry', page: location.href, via: via };
+        var q = 'action=lead'; for (var k in o) q += '&' + k + '=' + encodeURIComponent(o[k] || '');
+        fetch(window.WTPE_ORDER_URL + '?' + q, { mode: 'no-cors' }).catch(function(){});
+      }
+    } catch(e){}
+    var r = orig.apply(this, arguments);
+    var em = document.getElementById('enqEmail'); if (em) setTimeout(function(){ em.value = ''; }, 2700);
+    return r;
+  };
+})();
