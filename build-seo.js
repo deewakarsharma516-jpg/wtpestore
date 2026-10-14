@@ -1223,6 +1223,7 @@ function productPage(p, related, blurb) {
     ? `<h2>Related ${esc(blurb.label)}</h2><div class="pgrid">${related.map(card).join('')}</div>` : '';
 
   const body = `<nav class="bc"><a href="/">Home</a> › <a href="/products.html#${catSlug}">${esc(titleCaseCat(p.c))}</a> › ${esc(p.n)}</nav>
+<div class="pp-sticky"><div class="ps-pr">${p.p > 0 ? rupee(p.p) + '<small> +GST</small>' : '<small>Price on request</small>'}</div>${(p.p > 0 && p.ship != null) ? `<button type="button" class="ps-b ps-atc wtpe-atc" style="display:none" data-k="${esc(p.k || p.n)}" data-n="${esc(p.n)}" data-p="${p.p}" data-ship="${p.ship}" data-gst="${p.gst == null ? 18 : p.gst}" data-disp="${p.disp == null ? 3 : p.disp}" data-img="${esc(p.img || '')}" onclick="wtpeAddFromBtn(this)">🛒 Add to Cart</button>` : ''}<a class="ps-b ps-wa" href="${wa}" rel="nofollow">💬 ${p.p > 0 ? 'WhatsApp' : 'Get Quote'}</a></div>
 <div class="pp-top">
   ${imgBlock}
   <div class="pp-info">
@@ -1296,6 +1297,12 @@ ${relBlock}
 .pp-price .off{background:#e7f7ee;color:#0e7a3d;border:1px solid #bfe6cf;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:800;margin-left:6px}
 .pp-avail{font-size:12.5px;color:#0e7a3d;font-weight:600;margin:2px 0 4px}
 .pp-intro{font-size:15px;line-height:1.65;color:#333;margin:14px 0 4px;max-width:70ch}
+.pp-sticky{display:none}
+@media(max-width:760px){.pp-sticky{display:flex;align-items:center;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:9990;background:#fff;border-top:1px solid #e3e8ef;box-shadow:0 -4px 14px rgba(0,0,0,.12);padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+.ps-pr{flex:1;min-width:0;font-weight:800;font-size:16px;color:#0b2545;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ps-pr small{font-size:11px;font-weight:600;color:#565959}
+.ps-b{border:0;border-radius:9px;padding:11px 13px;font-weight:800;font-size:13.5px;text-decoration:none;font-family:inherit;cursor:pointer;white-space:nowrap}
+.ps-atc{background:#ff9900;color:#111}.ps-wa{background:#25d366;color:#fff}
+body{padding-bottom:70px}}
 .pp-cta{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
 .pp-cta a.b,.pp-cta button.b{text-decoration:none;font-weight:700;font-size:13.5px;padding:11px 16px;border-radius:9px;font-family:inherit;line-height:1.3}
 .pp-cta a.wa{background:#25d366;color:#fff}
