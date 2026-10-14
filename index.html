@@ -811,7 +811,7 @@ function prow(p){
     '<div class="hpc-b">'+(md?'<span class="hpc-md">'+esc(md)+'</span>':'')+
     '<div class="hpc-n">'+nm+'</div>'+
     '<div class="hpc-f"><div class="hpc-p">'+(p.p>0?priceHTML(p):'On request')+'</div>'+
-    '<button class="hpc-q" onclick="event.stopPropagation();waProduct('+nameJS+','+(p.p||0)+')">Get Quote</button>'+
+    ((window.WTPE_SELLABLE&&WTPE_SELLABLE(p))?(function(){var k='pr_'+Math.random().toString(36).slice(2,9);(window.__stItems=window.__stItems||{})[k]={k:p.n,n:p.n,p:p.p,ship:p.ship,gst:p.gst,disp:p.disp,img:(imlist[0]||'')};return '<button class="hpc-q" style="background:#ff9900;color:#111" onclick="event.stopPropagation();wtpeAddToCart(window.__stItems[\''+k+'\'])">🛒 Add to Cart</button>';})():'<button class="hpc-q" onclick="event.stopPropagation();waProduct('+nameJS+','+(p.p||0)+')">Get Quote</button>')+
     '<button class="hpc-q" style="background:#0b2545;margin-left:5px;padding-left:9px;padding-right:9px" title="Customer ko bhejein" onclick="event.stopPropagation();wtpSendTo('+nameJS+',\'https://www.wtpestore.co.in/?p='+slug+'\')">\ud83d\udce4</button></div>'+
     '</div></div>';
 }
