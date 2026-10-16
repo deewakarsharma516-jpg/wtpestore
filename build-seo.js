@@ -19,6 +19,8 @@ const https = require('https');
 const SHEET = process.env.SHEET_CSV ||
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv';
 const SITE = 'https://www.wtpestore.co.in';
+/* Bing/Google: meta description 25-160 akshar */
+const clampDesc = d => { d = String(d || '').replace(/\s+/g, ' ').trim(); if (d.length <= 158) return d; let s = d.slice(0, 155); const i = s.lastIndexOf('. '); s = i > 90 ? s.slice(0, i + 1) : s.slice(0, s.lastIndexOf(' ')).replace(/[ ,—·]+$/, ''); return s; };
 const INDEXNOW_KEY = '8f5a3c07370eb06f0e0c740875f9589d';   /* Bing IndexNow key - same naam ki .txt file site par hai */
 const PRODUCTS_DIR = 'products';
 
@@ -251,7 +253,7 @@ function shell(title, desc, canon, body, extraLd) {
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3XGD177T0C');</script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>${esc(title)}</title>
-<meta name="description" content="${esc(desc)}">
+<meta name="description" content="${esc(clampDesc(desc))}">
 <link rel="canonical" href="${canon}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canon}"><meta property="og:image" content="${SITE}/og-banner.png">
