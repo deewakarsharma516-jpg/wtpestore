@@ -19,6 +19,7 @@ const https = require('https');
 const SHEET = process.env.SHEET_CSV ||
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSwvqzlRLqyMtcXio41rcwR4jZK0aHASM0uApcARGUC-qvIn9Zvk6ywVUfSUVbO3OsjGbvzFgrikg-/pub?gid=170402937&single=true&output=csv';
 const SITE = 'https://www.wtpestore.co.in';
+const INDEXNOW_KEY = '8f5a3c07370eb06f0e0c740875f9589d';   /* Bing IndexNow key - same naam ki .txt file site par hai */
 const PRODUCTS_DIR = 'products';
 
 /* Chemical pages — sitemap me hamesha rahenge */
@@ -1009,7 +1010,9 @@ function faqsFor(p, blurb) {
   const nm = p.n;
   const f = [
     [`What is the price of ${nm}?`, p.p > 0
-      ? `The current price is ${rupee(p.p)} plus GST, ex-Faridabad. Freight is extra at actual. Prices can change with market rates, so please confirm on WhatsApp at 9899193589 before placing your order.`
+      ? `The current price is ${rupee(p.p)} plus ${gstOf(p)}% GST (${rupee(inclGst(p))} including GST), ex-Faridabad.` +
+        (p.ship != null ? ` Courier charge is ${rupee(p.ship)} plus GST.` : ` Freight is extra at actual.`) +
+        ` You can order it online on WTPESTORE or confirm on WhatsApp at 9899193589.`
       : `The price for this item is quoted on request as rates vary with specification and quantity. Send us the required size and quantity on WhatsApp at 9899193589 and our team will share a GST quotation the same working day.`],
     [`Is a GST invoice provided for ${nm}?`,
       `Yes. Every order is billed with a valid GST invoice under GSTIN 06DMUPS2289L1ZZ from Aqua Filtration System, Faridabad, so you can claim input credit where applicable.`],
@@ -1018,6 +1021,11 @@ function faqsFor(p, blurb) {
     [`How do I choose the right ${blurb.label.toLowerCase()} for my plant?`,
       `Share your water source, required capacity in LPH and the line or vessel size with our team. We will recommend the correct model, or you can use the free plant calculators on our website for a quick estimate.`]
   ];
+  const _sr = (specRowsFromSpec(p.spec).length ? specRowsFromSpec(p.spec) : specFromName(p.n)).slice(0, 8);
+  if (_sr.length) f.splice(1, 0, [`What are the specifications of ${nm}?`,
+    _sr.map(([k, v]) => `${k}: ${v}`).join('; ') + '. Full details are in the specification table on this page.']);
+  if (p.p > 0 && p.ship != null) f.push([`How soon is ${nm} dispatched?`,
+    `It is usually dispatched from Faridabad within ${p.disp == null ? 3 : p.disp} working day(s) after payment. Delivery normally takes 2 to 7 working days depending on your location.`]);
   if (p.make) f.splice(1, 0, [`Is this a genuine ${p.make} product?`,
     `Yes. We supply only authentic ${p.make} products sourced through proper channels — no local duplicates or refurbished units.`]);
   return f;
@@ -1262,7 +1270,15 @@ ${relBlock}
         "availability": "https://schema.org/InStock",
         "priceValidUntil": PRICE_VALID_UNTIL,
         "url": pageUrl,
-        "seller": { "@type": "Organization", "name": "Aqua Filtration System" }
+        "seller": { "@type": "Organization", "name": "Aqua Filtration System" },
+        "itemCondition": "https://schema.org/NewCondition",
+        "hasMerchantReturnPolicy": { "@type": "MerchantReturnPolicy", "applicableCountry": "IN", "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted" },
+        ...(p.ship != null ? { "shippingDetails": { "@type": "OfferShippingDetails",
+          "shippingRate": { "@type": "MonetaryAmount", "value": Math.round(p.ship * (100 + gstOf(p))) / 100, "currency": "INR" },
+          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "IN" },
+          "deliveryTime": { "@type": "ShippingDeliveryTime",
+            "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": p.disp == null ? 3 : p.disp, "unitCode": "DAY" },
+            "transitTime": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 7, "unitCode": "DAY" } } } } : {})
       }
     } : {})
   };
@@ -1673,6 +1689,37 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   fs.writeFileSync('sitemap.xml',
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls.join('\n')}\n</urlset>\n`);
   console.log('sitemap.xml ✓ (' + urls.length + ' URLs)');
+
+  /* ---- llms-full.txt: poora catalogue AI ke liye ---- */
+  try {
+    let L = '# WTPESTORE — full product catalogue\n\n> Online store of Aqua Filtration System, Faridabad, India. Prices in INR, exclusive of GST unless stated. Order online at ' + SITE + ' or WhatsApp +91 98991 93589.\n\nUpdated: ' + today + '\n';
+    catNames.forEach(c => {
+      L += '\n## ' + titleCaseCat(c) + '\n';
+      cats[c].forEach(p => {
+        const live = STATIC_SLUGS.has(p.slug) ? SITE + '/products/' + p.slug + '.html' : SITE + '/products.html#' + slug(p.c);
+        const bits = [];
+        if (p.make) bits.push('Brand: ' + p.make);
+        const md = p.model || extractModel(p.n); if (md) bits.push('Model: ' + md);
+        bits.push(p.p > 0 ? 'Price: ' + rupee(p.p) + ' + ' + gstOf(p) + '% GST' : 'Price: on request');
+        if (p.p > 0 && p.ship != null) bits.push('Courier: ' + rupee(p.ship) + ' + GST');
+        if (p.spec) bits.push('Spec: ' + String(p.spec).replace(/\s+/g, ' ').slice(0, 220));
+        L += '- [' + p.n.replace(/[\[\]]/g, '') + '](' + live + '): ' + bits.join('; ') + '\n';
+      });
+    });
+    fs.writeFileSync('llms-full.txt', L);
+    console.log('llms-full.txt ✓');
+  } catch (e) { console.log('llms-full.txt skip: ' + e.message); }
+
+  /* ---- IndexNow: naye / badle pages turant Bing (ChatGPT, Copilot) ko batao ---- */
+  try {
+    const changed = Object.keys(lastmodNext).filter(u => { const o = LASTMOD_PREV[u]; return !o || o.h !== lastmodNext[u].h; });
+    ['/llms.txt', '/llms-full.txt'].forEach(x => changed.push(SITE + x));
+    if (changed.length && Object.keys(LASTMOD_PREV).length) {
+      const r = await fetch('https://api.indexnow.org/indexnow', { method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify({ host: 'www.wtpestore.co.in', key: INDEXNOW_KEY, keyLocation: SITE + '/' + INDEXNOW_KEY + '.txt', urlList: changed.slice(0, 10000) }) });
+      console.log('IndexNow: ' + changed.length + ' URL bheje -> HTTP ' + r.status);
+    } else console.log('IndexNow: koi badla page nahi');
+  } catch (e) { console.log('IndexNow skip: ' + e.message); }
 
   /* ---- robots.txt ----
      A hand-written robots.txt may already exist and be better than
