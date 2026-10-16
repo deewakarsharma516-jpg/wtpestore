@@ -253,7 +253,7 @@ else{prompt('Copy this link:',u);}}
    document.body.appendChild(s);
  }
  try{
-   var m=document.cookie.match(/googtrans=/en/([a-zA-Z-]+)/);
+   var m=document.cookie.match(/googtrans=\/en\/([a-zA-Z-]+)/);
    if(m&&m[1]&&m[1]!=='en'){sel.value=m[1];load();}
  }catch(e){}
  sel.addEventListener('change',function(){
