@@ -100,6 +100,14 @@ aquaguard-aws-i-600-water-softener
 aquaguard-select-aws-5000-water-softener
 aquaguard-select-aws-7500-water-softener
 aquaguard-select-aws-i-2500-water-softener
+aster-rotameter-model-f1200-f2400-f3000-with-25nb-flanged-end-connection-e
+aster-rotameter-model-f200-f500-f1200es-with-15nb-end-connection
+aster-rotameter-model-f20000-f30000-f50000-with-65nb-flanged-end-connection
+aster-rotameter-model-f20000-f30000-f50000-with-65nb-flanged-end-connection-c
+aster-rotameter-model-f20000-f30000-f50000-with-80nb-flanged-end-connection
+aster-rotameter-model-f20000-f30000-f50000-with-80nb-flanged-end-connection-d
+aster-rotameter-model-f5000-f9000-f12000-f15000-with-40nb-flanged-end-connection
+aster-rotameter-model-f5000-f9000-f12000-f15000-with-50nb-flanged-end-connection
 astero-11-uf-ng
 astero-11nxt-rm-rwp-1ph-max-2hp-hpp-1ph-max-3hp-cut-out-size-190hx222v
 astero-11nxt-rwp-1ph-max-2hp-hpp-1ph-max-3hp-cut-out-size-190hx222v
@@ -173,6 +181,9 @@ distribution-system-rm-st1101-top-distribution
 distribution-system-rm-st6101-6-long-lateral
 distribution-system-rm-st6102-12-lateral
 distribution-system-rm-st6103-12-long-lateral
+distribution-system-rm-st6103-12-long-lateral-vessel-size-2472
+distribution-system-rm-st6103-12-long-lateral-vessel-size-3072
+distribution-system-rm-st6103-12-long-lateral-vessel-size-3672
 dm-plant-20-lph
 dm-plant-200-lph
 dm-plant-mix-bed
