@@ -1,0 +1,31 @@
+name: Restore last good version (website wapas pichhle sahi din par)
+# Actions -> is workflow par click -> "Run workflow" -> likhein: HAAN -> Run
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Pakka? Website pichhle sahi version par wapas jayegi. Likhein: HAAN'
+        required: true
+        default: 'nahi'
+permissions:
+  contents: write
+jobs:
+  restore:
+    if: github.event.inputs.confirm == 'HAAN'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Pichhla achha version wapas lao
+        run: |
+          git rev-parse -q --verify refs/tags/good-latest || { echo "Koi achha version save nahi hai abhi"; exit 1; }
+          git config user.name "wtpestore-guard"
+          git config user.email "guard@users.noreply.github.com"
+          echo "Achha version: $(git log -1 --format='%cd  %s' good-latest)"
+          git checkout good-latest -- . ':(exclude).github'
+          git add -A . ':(exclude).github'
+          if git diff --staged --quiet; then echo "Website pehle se hi achhe version par hai"; exit 0; fi
+          git commit -m "Restore: website wapas pichhle achhe version par (good-latest)"
+          for i in 1 2 3; do git pull --rebase --autostash -q origin main && git push -q origin HEAD:main && echo "✅ Restore ho gaya. 2-3 minute me website update ho jayegi." && exit 0; sleep 15; done
+          exit 1

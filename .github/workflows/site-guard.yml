@@ -1,0 +1,38 @@
+name: Site Guard (website ki jaanch)
+# Har ghante + har upload ke baad website check karta hai.
+# Problem mili -> ye run laal (fail) hoga aur GitHub aapko EMAIL bhejega.
+# Homepage / cart / payment toot jaaye -> pichhla achha version apne aap wapas.
+on:
+  schedule:
+    - cron: '40 * * * *'      # har ghante (:40 par, SEO update se alag samay)
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: site-guard
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Upload ke baad website publish hone do (2 min)
+        if: github.event_name == 'push'
+        run: sleep 120
+      - name: Website ki jaanch
+        run: node tools/site-guard.js
+      - name: Sab theek -> is version ko "achha" yaad rakho
+        if: success()
+        run: |
+          git tag -f good-latest
+          git push -f origin good-latest
+      - name: Zaroori file tooti -> pichhla achha version wapas
+        if: failure()
+        run: node tools/auto-heal.js
