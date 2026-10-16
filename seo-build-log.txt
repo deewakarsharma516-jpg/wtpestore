@@ -1,7 +1,7 @@
-Last build: 2026-10-16T18:20:48.195Z
+Last build: 2026-10-16T21:07:06.443Z
 Products: 457
 Categories: 49
-Product pages built: 443
-Skipped (thin/junk/duplicate-name): 14
-Duplicate names to fix in Sheet: 2
-Sitemap URLs: 608
+Product pages built: 445
+Skipped (thin/junk/duplicate-name): 12
+Duplicate names to fix in Sheet: 0
+Sitemap URLs: 610

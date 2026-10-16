@@ -26,6 +26,8 @@
 2-to-3-days
 20nb-i-o-500mm-transparent
 20nb-i-o-with-brass-inserts
+20nb-i-o-with-brass-inserts-a
+20nb-i-o-with-brass-inserts-b
 250mm-b-b-112mm-dia
 250mm-b-b-112mm-dia-pp-spun
 250mm-b-b-112mm-dia-string-wound
