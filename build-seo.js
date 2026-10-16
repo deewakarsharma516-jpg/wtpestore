@@ -1363,6 +1363,64 @@ else{var i=document.createElement('input');i.value=u;document.body.appendChild(i
 /* ---------- Google Merchant Center feed: products/merchant-feed.xml ----------
    Sirf woh products jo website par KHAREEDE ja sakte hain (Price + Courier Charge bhara, photo ho, page bana ho).
    Price aur shipping GST sahit (India rule). */
+
+/* ---------------------------------------------------------------
+   Google Merchant sirf JPG / PNG / GIF leta hai. Sheet ki photo
+   WebP / AVIF ho (naam .jpg ho tab bhi), to use JPG banakar
+   /feed-img/ me rakho aur feed me wahi link do. Website ki photo
+   waisi hi rehti hai. Cache: feed-img/map.json (har baar download nahi).
+--------------------------------------------------------------- */
+const FEED_IMG_DIR = 'feed-img';
+function getBin(url, hops) {
+  return new Promise((res) => {
+    let u; try { u = new URL(url); } catch (e) { return res(null); }
+    const mod = u.protocol === 'http:' ? require('http') : https;
+    const req = mod.get(u, { headers: { 'User-Agent': 'Mozilla/5.0 WTPESTORE-feed' }, timeout: 20000 }, r => {
+      if (r.statusCode >= 300 && r.statusCode < 400 && r.headers.location && (hops || 0) < 4) { r.resume(); return getBin(new URL(r.headers.location, u).href, (hops || 0) + 1).then(res); }
+      if (r.statusCode !== 200) { r.resume(); return res(null); }
+      const ch = []; let n = 0;
+      r.on('data', c => { n += c.length; if (n > 15e6) { req.destroy(); } else ch.push(c); });
+      r.on('end', () => res(Buffer.concat(ch)));
+      r.on('error', () => res(null));
+    });
+    req.on('timeout', () => req.destroy());
+    req.on('error', () => res(null));
+  });
+}
+function imgKind(b) {
+  if (!b || b.length < 12) return '';
+  if (b[0] === 0xFF && b[1] === 0xD8) return 'jpg';
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47) return 'png';
+  if (b.slice(0, 3).toString() === 'GIF') return 'gif';
+  if (b.slice(0, 4).toString() === 'RIFF' && b.slice(8, 12).toString() === 'WEBP') return 'webp';
+  if (b.slice(4, 12).toString().indexOf('ftyp') === 0) return 'avif';
+  return 'other';
+}
+async function prepFeedImages(list) {
+  let sharp = null; try { sharp = require('sharp'); } catch (e) { console.log('feed-img: sharp nahi mila - WebP photo convert nahi hongi'); }
+  if (!fs.existsSync(FEED_IMG_DIR)) fs.mkdirSync(FEED_IMG_DIR, { recursive: true });
+  const MAPF = path.join(FEED_IMG_DIR, 'map.json');
+  let map = {}; try { map = JSON.parse(fs.readFileSync(MAPF, 'utf8')); } catch (e) { }
+  const next = {}; let conv = 0, okN = 0, fail = 0;
+  for (const p of list) {
+    if (!(p.p > 0) || p.ship == null || !/^https?:\/\//.test(p.img || '')) continue;
+    const old = map[p.slug], file = path.join(FEED_IMG_DIR, p.slug + '.jpg');
+    if (old && old.src === p.img && (old.ok || (old.file && fs.existsSync(file)))) { next[p.slug] = old; if (old.file) p.feedImg = SITE + '/' + FEED_IMG_DIR + '/' + p.slug + '.jpg'; continue; }
+    const b = await getBin(p.img);
+    const k = imgKind(b);
+    if (k === 'jpg' || k === 'png' || k === 'gif') { next[p.slug] = { src: p.img, ok: 1 }; okN++; continue; }
+    if (!b || !sharp) { fail++; continue; }               /* dobara agli baar try */
+    try {
+      await sharp(b).flatten({ background: '#ffffff' }).resize({ width: 1200, height: 1200, fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 85 }).toFile(file);
+      next[p.slug] = { src: p.img, file: 1, was: k }; p.feedImg = SITE + '/' + FEED_IMG_DIR + '/' + p.slug + '.jpg'; conv++;
+    } catch (e) { fail++; }
+  }
+  /* purani, ab kaam ki nahi files hatao */
+  for (const f of fs.readdirSync(FEED_IMG_DIR)) { if (/\.jpg$/.test(f) && !(next[f.slice(0, -4)] && next[f.slice(0, -4)].file)) fs.unlinkSync(path.join(FEED_IMG_DIR, f)); }
+  fs.writeFileSync(MAPF, JSON.stringify(next));
+  console.log(`feed-img: ${okN} naye theek, ${conv} WebP/AVIF -> JPG bane, ${fail} nahi ho paaye (agli baar)`);
+}
+
 function writeMerchantFeed(list) {
   const x = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
   const money = n => (Math.round(n * 100) / 100).toFixed(2) + ' INR';
@@ -1378,13 +1436,15 @@ function writeMerchantFeed(list) {
 <g:title>${x(p.n.slice(0, 150))}</g:title>
 <g:description>${x(desc.slice(0, 4900))}</g:description>
 <g:link>${x(SITE + '/products/' + p.slug + '.html')}</g:link>
-<g:image_link>${x(p.img)}</g:image_link>
+<g:image_link>${x(p.feedImg || p.img)}</g:image_link>
 <g:availability>in_stock</g:availability>
 <g:condition>new</g:condition>
 <g:price>${money(inclGst(p))}</g:price>
 ${p.make ? `<g:brand>${x(p.make)}</g:brand>\n` : ''}${model ? `<g:mpn>${x(model)}</g:mpn>\n` : ''}<g:identifier_exists>${p.make && model ? 'yes' : 'no'}</g:identifier_exists>
 <g:product_type>${x(titleCaseCat(p.c))}</g:product_type>
-<g:shipping><g:country>IN</g:country><g:service>Courier</g:service><g:price>${money(inclGst(p, p.ship))}</g:price></g:shipping>
+<g:shipping><g:country>IN</g:country><g:service>Courier</g:service><g:price>${money(inclGst(p, p.ship))}</g:price>${p.disp != null ? `<g:min_transit_time>${Math.max(0, Math.round(p.disp))}</g:min_transit_time><g:max_transit_time>${Math.max(0, Math.round(p.disp))}</g:max_transit_time>` : ''}</g:shipping>${p.disp != null ? `
+<g:min_handling_time>0</g:min_handling_time>
+<g:max_handling_time>0</g:max_handling_time>` : ''}
 </item>`);
   }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -1580,6 +1640,7 @@ function injectStatic(P) {
   const QP = P.filter(isQualityProduct);
   const skipped = P.length - QP.length;
   const madeCount = buildProductPages(QP);
+  await prepFeedImages(QP);
   writeMerchantFeed(QP);
   console.log('Product pages built:', madeCount, '(skipped as thin/junk:', skipped, ')');
   writeOldSharedSlugPages(P);
