@@ -393,7 +393,7 @@ function writeStaticMapIntoIndex(P) {
   let html;
   try { html = fs.readFileSync('index.html', 'utf8'); } catch (e) { return; }
   if (html.indexOf('<!--WTPE_SP_START-->') < 0) { console.log('index.html: static map markers missing - skipped'); return; }
-  const data = JSON.stringify({ s: same.join('|'), m: moved }).replace(/</g, '\\u003c');
+  const data = JSON.stringify({ s: same.join('|'), m: moved, c: CHEM_MAP }).replace(/</g, '\\u003c');
   const block = '<!--WTPE_SP_START--><script>window.WTPE_SP=' + data + ';</script><!--WTPE_SP_END-->';
   const out = html.replace(/<!--WTPE_SP_START-->[\s\S]*?<!--WTPE_SP_END-->/, block);
   if (out !== html) fs.writeFileSync('index.html', out);
@@ -1615,6 +1615,7 @@ function injectStatic(P) {
    Model = chemical code (ZS-RO-101), naam me pack size (25 kg).
    Har chemical ka URL wahi purana rehta hai — har pack us page par ek option.
 --------------------------------------------------------------- */
+const CHEM_MAP = {};   /* chemical row slug -> uska page (homepage click ke liye) */
 function writeChemPrices(rows) {
   let list = [];
   try { list = JSON.parse(fs.readFileSync('chemicals/chemicals.json', 'utf8')); } catch (e) { return; }
@@ -1625,6 +1626,7 @@ function writeChemPrices(rows) {
     const f = String(ch.page || '').replace(/^\//, '');
     if (!f || !fs.existsSync(f)) return;
     let html = fs.readFileSync(f, 'utf8');
+    (byCode[String(ch.code).toUpperCase()] || []).forEach(p => { CHEM_MAP[p.slug] = '/' + f; });
     const packs = (byCode[String(ch.code).toUpperCase()] || []).filter(p => p.p > 0);
     const kg = n => { const m = String(n).match(/(\d+(?:\.\d+)?)\s*(kg|ltr|l|litre)\b/i); return m ? m[1] + ' ' + m[2].toLowerCase() : n; };
     packs.sort((a, b) => (parseFloat(kg(a.n)) || 0) - (parseFloat(kg(b.n)) || 0));
