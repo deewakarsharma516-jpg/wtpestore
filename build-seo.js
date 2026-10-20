@@ -1609,8 +1609,65 @@ function injectStatic(P) {
   console.log('Static blocks injected into', count, 'category pages');
 }
 
+/* ---------------------------------------------------------------
+   ZeroScale chemical pages par Sheet se Price / GST / Dispatch +
+   Add to Cart. Sheet me Category = "ZEROSCALE CHEMICALS",
+   Model = chemical code (ZS-RO-101), naam me pack size (25 kg).
+   Har chemical ka URL wahi purana rehta hai — har pack us page par ek option.
+--------------------------------------------------------------- */
+function writeChemPrices(rows) {
+  let list = [];
+  try { list = JSON.parse(fs.readFileSync('chemicals/chemicals.json', 'utf8')); } catch (e) { return; }
+  const byCode = {};
+  rows.forEach(p => { const k = String(p.model || '').toUpperCase().trim(); if (k) (byCode[k] = byCode[k] || []).push(p); });
+  let done = 0;
+  list.forEach(ch => {
+    const f = String(ch.page || '').replace(/^\//, '');
+    if (!f || !fs.existsSync(f)) return;
+    let html = fs.readFileSync(f, 'utf8');
+    const packs = (byCode[String(ch.code).toUpperCase()] || []).filter(p => p.p > 0);
+    const kg = n => { const m = String(n).match(/(\d+(?:\.\d+)?)\s*(kg|ltr|l|litre)\b/i); return m ? m[1] + ' ' + m[2].toLowerCase() : n; };
+    packs.sort((a, b) => (parseFloat(kg(a.n)) || 0) - (parseFloat(kg(b.n)) || 0));
+    let box = '', ld = '';
+    if (packs.length) {
+      const sell = p => p.ship != null;
+      const rowsH = packs.map(p => {
+        const gst = p.gst != null ? p.gst : 18, disp = p.disp != null ? p.disp : null;
+        const btn = sell(p)
+          ? `<button class="zc-add" data-k="${esc(p.k)}" data-n="${esc(p.n)}" data-p="${p.p}" data-ship="${p.ship}" data-gst="${gst}" data-disp="${disp == null ? '' : disp}" data-img="${esc(p.img || '')}" onclick="if(window.wtpeAddFromBtn)wtpeAddFromBtn(this)">🛒 Add to Cart</button>`
+          : `<a class="zc-add" href="https://wa.me/919899193589?text=${encodeURIComponent('Namaste WTPESTORE, mujhe ' + p.n + ' chahiye.')}" target="_blank" rel="noopener">💬 Order</a>`;
+        return `<tr><td><b>${esc(kg(p.n))}</b></td><td>${rupee(p.p)} <small>+ ${gst}% GST</small></td><td>${disp != null ? 'Dispatch in ' + disp + ' day' + (disp == 1 ? '' : 's') : ''}</td><td>${btn}</td></tr>`;
+      }).join('');
+      box = `<div class="zc-price"><div class="zc-h">Price &amp; pack size</div><table>${rowsH}</table><div class="zc-n">Prices exclude GST. GST invoice with every order · pan-India dispatch from Faridabad.</div></div>
+<style>.zc-price{margin:16px 0;border:1px solid #d5d9d9;border-radius:10px;padding:12px 14px;background:#fff}.zc-h{font-weight:700;color:#0B2A4A;margin-bottom:6px}.zc-price table{width:100%;border-collapse:collapse}.zc-price td{padding:8px 6px;border-top:1px solid #eee;font-size:14px;vertical-align:middle}.zc-price small{color:#565959}.zc-add{background:#ff9900;color:#111;border:0;border-radius:20px;padding:7px 12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;display:inline-block}.zc-n{font-size:12px;color:#565959;margin-top:6px}@media(max-width:560px){.zc-price td{display:block;border:0;padding:3px 0}.zc-price tr{display:block;border-top:1px solid #eee;padding:6px 0}}</style>`;
+      const prices = packs.map(p => p.p);
+      ld = `<script type="application/ld+json">${JSON.stringify({
+        '@context': 'https://schema.org', '@type': 'Product', name: 'ZeroScale ' + ch.name + ' ' + ch.code, sku: ch.code, mpn: ch.code,
+        brand: { '@type': 'Brand', name: 'ZeroScale' }, description: ch.desc, image: SITE + '/chemicals/' + f.replace(/\.html$/, '.jpg'),
+        offers: { '@type': 'AggregateOffer', priceCurrency: 'INR', lowPrice: Math.min(...prices), highPrice: Math.max(...prices), offerCount: packs.length,
+          availability: 'https://schema.org/InStock', seller: { '@type': 'Organization', name: 'Aqua Filtration System (WTPESTORE)' } }
+      }).replace(/</g, '\\u003c')}</script>`;
+    }
+    const block = '<!--WTPE_CHEM_START-->' + box + (box && html.indexOf('/cart.js') < 0 ? '<script src="/cart.js" defer></script>' : '') + '<!--WTPE_CHEM_END-->';
+    const lblock = '<!--WTPE_CHEMLD_START-->' + ld + '<!--WTPE_CHEMLD_END-->';
+    if (html.indexOf('<!--WTPE_CHEM_START-->') < 0) html = html.replace(/(<div class="cta">)/, block + '$1');
+    else html = html.replace(/<!--WTPE_CHEM_START-->[\s\S]*?<!--WTPE_CHEM_END-->/, block);
+    if (html.indexOf('<!--WTPE_CHEMLD_START-->') < 0) html = html.replace('</head>', lblock + '</head>');
+    else html = html.replace(/<!--WTPE_CHEMLD_START-->[\s\S]*?<!--WTPE_CHEMLD_END-->/, lblock);
+    html = html.replace(/"postalCode": "121001"/g, '"postalCode": "121003"');
+    if (html !== fs.readFileSync(f, 'utf8')) { fs.writeFileSync(f, html); }
+    if (packs.length) done++;
+  });
+  console.log('chemical price boxes ✓ (' + done + ' pages)');
+}
+
 (async () => {
-  const P = await load();
+  const PALL = await load();
+  /* ZeroScale chemicals ka apna page pehle se hai (ro-antiscalant.html ...) —
+     unka /products/ page NAHI banta; price + Add to Cart unhi pages par jaata hai */
+  const isChem = p => /ZEROSCALE CHEMICAL/i.test(p.c);
+  try { writeChemPrices(PALL.filter(isChem)); } catch (e) { console.log('chemical prices skip: ' + e.message); }
+  const P = PALL.filter(p => !isChem(p));
   console.log('Products loaded:', P.length);
 
   /* page-change dates from the previous build (read BEFORE products/ is wiped) */
