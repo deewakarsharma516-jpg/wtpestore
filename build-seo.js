@@ -182,6 +182,17 @@ const rupee = n => { n = Number(n || 0); return '₹' + n.toLocaleString('en-IN'
 const gstOf = p => (p.gst == null ? 18 : p.gst);
 const inclGst = (p, amt) => Math.round((amt == null ? p.p : amt) * (100 + gstOf(p))) / 100;
 
+/* ---------- Sheet ki aam galtiyan apne aap sudhaaro (Sheet nahi badalti) ----------
+   CAT_FIXES  : ek hi category do tarah likhi ho -> ek naam
+   TYPO_FIXES : spelling galti (naam badla to purana URL apne aap naye par redirect)  */
+const CAT_FIXES = { 'CARTRIDGE FILTERSSTRING WOUND': 'CARTRIDGE FILTERS STRING WOUND', 'FILTER BAG': 'FILTERS BAG' };
+function fixCat(c) { const k = String(c || '').toUpperCase(); return CAT_FIXES[k] || c; }
+const TYPO_FIXES = [[/\bANTISCALENT\b/gi, 'ANTISCALANT'], [/GYLCERINE/gi, 'GLYCERINE'], [/\bWHIT\b/gi, 'WHITE'],
+  [/\bSOFTNER\b/gi, 'SOFTENER'], [/\bFLITER\b/gi, 'FILTER'], [/\bPLANNT\b/gi, 'PLANT'], [/\bSENSSIT\b/gi, 'SENSIT']];
+/* "25NB", "5 micron x 10''" jaise naam Google ko kuch nahi batate -> aage category jodo */
+const GENERIC_OK = new Set(['micron', 'microns', 'inch', 'with', 'type', 'dia', 'top', 'bottom', 'vessel', 'model', 'size', 'fitting', 'between', 'clamp', 'flanged']);
+function isGenericName(n) { return !(String(n).toLowerCase().match(/[a-z]{4,}/g) || []).some(w => !GENERIC_OK.has(w)); }
+
 /* ---------- read sheet ---------- */
 async function load() {
   const rows = csvParse(await get(SHEET)).filter(r => r.length >= 2 && r.join('').trim());
@@ -200,7 +211,7 @@ async function load() {
     const r = rows[i], n = clean(r[ni]);
     if (n.length < 2) continue;
     const o = {
-      c: clean(r[ci]) || 'General', n,
+      c: fixCat(clean(r[ci])) || 'General', n,
       p: parseInt(String(r[pi] || '').replace(/[^0-9]/g, '')) || 0,
       make: mi > -1 ? clean(r[mi]) : '', model: mo > -1 ? clean(r[mo]) : '',
       spec: sp > -1 ? clean(r[sp]) : '', img: ii > -1 ? clean(r[ii]) : '', mrp: 0,
@@ -1095,6 +1106,19 @@ function markDuplicateNames(P) {
   P.forEach(p => {
     const fix = NAME_FIXES[String(p.n).trim()];
     if (fix && fix !== p.n) { p.nOrig = p.n; p.n = fix; }
+  });
+  /* 0b. spelling galti + "M U L T I" jaise faasle wale akshar */
+  P.forEach(p => {
+    let n = String(p.n).replace(/\b(?:[A-Za-z] ){3,}[A-Za-z]\b/g, w => w.replace(/ /g, ''));
+    TYPO_FIXES.forEach(([re, to]) => { n = n.replace(re, to); });
+    n = n.replace(/\s+/g, ' ').trim();
+    if (n !== p.n) { if (!p.nOrig) p.nOrig = p.n; p.n = n; }
+  });
+  /* 0c. adhoora naam ("25NB", "5 micron x 10''") -> "Category + naam" */
+  P.forEach(p => {
+    if (!p.c || p.c === 'General' || !isGenericName(p.n)) return;
+    if (!p.nOrig) p.nOrig = p.n;
+    p.n = titleCaseCat(p.c) + ' ' + p.n;
   });
 
   /* catalogue table headings leak in as "[VESSEL MODEL]" etc.
