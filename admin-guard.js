@@ -37,7 +37,10 @@
     b.title = 'Kaam ho gaya? Logout karein';
     b.style.cssText = 'position:fixed;top:10px;right:10px;z-index:100000;background:#b3261e;color:#fff;border:0;border-radius:20px;padding:8px 14px;font:700 13px Arial,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer';
     b.onclick = function () { if (confirm('Logout karein? Dobara kholne ke liye password lagega.')) wtpeLogout(); };
-    document.body.appendChild(b);
+    /* page me toolbar ho to button usi ke andar (aakhir me) — kisi button ko dhakega nahi */
+    var tb = document.querySelector('.toolbar, .topbar, header .wrap, header');
+    if (tb) { b.style.position = 'static'; b.style.boxShadow = 'none'; b.style.marginLeft = '6px'; tb.appendChild(b); }
+    else document.body.appendChild(b);
     var t = document.createElement('style'); t.textContent = '@media print{#wgOut{display:none!important}}'; document.head.appendChild(t);
   }
 
