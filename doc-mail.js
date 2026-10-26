@@ -156,10 +156,11 @@
     '#terms,#scope,#decl{overflow:hidden!important;resize:none!important}' +
     '#terms{border:1.5px dashed #9fb3c8!important;background:#fffef6!important;font-size:13px!important;line-height:1.75!important;color:#111!important;min-height:150px}' +
     '#terms:focus{border-color:#ff9900!important;background:#fff!important}' +
-    '.wtpe-thint{font-size:11.5px;color:#7a8a99;margin:4px 0 0;font-style:italic}' +
+    '.wtpe-tbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 0}.wtpe-tbar button{border:0;border-radius:7px;padding:7px 13px;font-weight:700;font-size:13px;cursor:pointer;background:#0B2A4A;color:#fff}#wtpeTSave{background:#067d62}#wtpeTDef{background:#fff!important;color:#0B2A4A!important;border:1px solid #0B2A4A!important}#wtpeTMsg{font-size:12px;color:#067d62;font-weight:600}' +
+    
     'body.wtpe-pv #terms,body.preview #terms{border:0!important;background:transparent!important}' +
-    'body.wtpe-pv .wtpe-thint,body.preview .wtpe-thint{display:none}' +
-    '@media print{.wtpe-thint{display:none!important}::placeholder{color:transparent!important}' +
+    'body.wtpe-pv .wtpe-tbar,body.preview .wtpe-tbar{display:none}' +
+    '@media print{.wtpe-tbar{display:none!important}::placeholder{color:transparent!important}' +
     '.pmirror{font-size:13px!important;line-height:1.7!important;color:#000!important}' +
     '.terms .pmirror,.termsbox .pmirror{border:1px solid #cfd8e0;border-radius:6px;padding:8px 10px!important}}';
   document.head.appendChild(st);
@@ -171,16 +172,16 @@
       t.addEventListener('input', function () { grow(t); });
     });
     var t = document.getElementById('terms');
-    if (t && !document.getElementById('wtpeTHint')) {
-      var h = document.createElement('div'); h.id = 'wtpeTHint'; h.className = 'wtpe-thint no-print';
-      var quick = /quick-quote/i.test(location.pathname);
-      h.textContent = quick ? '✏️ Terms par click karke badal sakte ho — aapka badlav is computer par apne aap yaad rahega.'
-                            : '✏️ Terms par click karke badal sakte ho. Hamesha ke liye rakhna ho to upar "💾 Save Defaults" dabao.';
-      t.parentNode.insertBefore(h, t.nextSibling);
-      if (quick) {
-        try { var sv = localStorage.getItem('wtpe_qq_terms'); if (sv) t.value = sv; } catch (e) { }
-        t.addEventListener('input', function () { try { localStorage.setItem('wtpe_qq_terms', t.value); } catch (e) { } });
-      }
+    if (t && !document.getElementById('wtpeTBar')) {
+      if (!t.value.trim() && window.DEF_TERMS) t.value = window.DEF_TERMS;   // khaali ho to purana template
+      var bar = document.createElement('div'); bar.id = 'wtpeTBar'; bar.className = 'wtpe-tbar no-print';
+      bar.innerHTML = '<button type="button" id="wtpeTDef">↺ Purana Template</button><span id="wtpeTMsg"></span>';
+      t.parentNode.insertBefore(bar, t.nextSibling);
+      document.getElementById('wtpeTDef').onclick = function () {
+        if (t.value.trim() && !confirm('Purana (default) terms template daal dein? Abhi likhe terms hat jayenge.')) return;
+        t.value = window.DEF_TERMS || t.value; grow(t); t.focus();
+        document.getElementById('wtpeTMsg').textContent = 'Purana template aa gaya — jo chahe badal lo.';
+      };
     }
     all(); setTimeout(all, 600); setTimeout(all, 1500);
   }
@@ -188,4 +189,147 @@
   window.addEventListener('beforeprint', all);
   var op = window.wtpePreview; if (op) window.wtpePreview = function () { op(); setTimeout(all, 50); };
   var sp = window.showPreview; if (sp) window.showPreview = function () { sp.apply(this, arguments); setTimeout(all, 50); };
+})();
+
+/* ---------- WhatsApp par PDF FILE bhejna ----------
+   1) Page ki quotation se PDF banti hai (browser me hi)
+   2) Mobile / Windows: "Share" se seedha WhatsApp me PDF attach
+   3) Share na ho sake: PDF download + customer ki WhatsApp chat khulti hai -> 📎 se attach  */
+(function () {
+  var LIB = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+  var quick = /quick-quote/i.test(location.pathname), isPI = /proforma/i.test(location.pathname);
+  var KIND = isPI ? 'Proforma Invoice' : 'Quotation';
+  var oldWA = window.sendWA;
+  function v(id) { var e = document.getElementById(id); return e ? String(e.value != null && e.tagName !== 'DIV' ? e.value : e.textContent).trim() : ''; }
+  function load(cb) {
+    if (window.html2pdf) return cb();
+    var s = document.createElement('script'); s.src = LIB; s.onload = cb;
+    s.onerror = function () { box('❌ PDF tool load nahi hua (internet check karein).', []); };
+    document.head.appendChild(s);
+  }
+  function pvOn() { if (quick && window.showPreview) showPreview(); else if (window.wtpePreview) wtpePreview(); }
+  function pvOff() { if (quick && window.closePreview) closePreview(); else if (window.wtpeClosePreview) wtpeClosePreview(); }
+  function phone() { var p = v('cphone').replace(/\D/g, '').slice(-10); return p.length === 10 ? '91' + p : ''; }
+  function msgText() {
+    return 'Dear ' + (v('cname') || 'Sir/Madam') + ',\nPlease find attached our ' + KIND + ' ' + v('qno') +
+      (v('grand') ? ' (Grand Total ' + v('grand') + ')' : '') + '.\n\nFor any query call / WhatsApp 9899193589.\nWTPESTORE — powered by Aqua Filtration System\nwww.wtpestore.co.in';
+  }
+  /* chhota popup */
+  function box(title, btns) {
+    var o = document.getElementById('wtpeWaBox');
+    if (!o) {
+      o = document.createElement('div'); o.id = 'wtpeWaBox';
+      o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px';
+      document.body.appendChild(o);
+    }
+    o.innerHTML = '<div style="background:#fff;border-radius:14px;max-width:420px;width:100%;padding:20px;font-family:Arial,sans-serif;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3)">' +
+      '<div style="font-size:16px;font-weight:700;color:#0B2A4A;margin-bottom:14px;line-height:1.5">' + title + '</div><div id="wtpeWaBtns" style="display:flex;flex-direction:column;gap:9px"></div></div>';
+    var w = document.getElementById('wtpeWaBtns');
+    btns.concat([['✖ Band karein', function () { o.remove(); }, '#e5e7eb', '#111']]).forEach(function (b) {
+      var x = document.createElement('button'); x.textContent = b[0];
+      x.style.cssText = 'border:0;border-radius:9px;padding:12px;font-weight:700;font-size:15px;cursor:pointer;background:' + (b[2] || '#25D366') + ';color:' + (b[3] || '#fff');
+      x.onclick = b[1]; w.appendChild(x);
+    });
+    if (title.indexOf('⏳') === 0) w.firstChild.style.display = 'none';
+    return o;
+  }
+  function download(blob, name) {
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+  }
+  /* PDF copy me input/textarea ko saaf text bana do (placeholder na dikhe, terms ki lines na judein) */
+  function cleanClone(cd) {
+    cd.body.style.background = '#fff'; cd.body.style.padding = '0';
+    cd.querySelectorAll('[id="doc"]').forEach(function (d) { d.style.boxShadow = 'none'; d.style.border = '0'; d.style.margin = '0'; d.style.borderRadius = '0'; });
+    var so = document.getElementById('scope');
+    if (so && !so.value.trim()) cd.querySelectorAll('[id="scopeblock"]').forEach(function (hb) { hb.style.display = 'none'; });
+    cd.querySelectorAll('#doc input, #doc textarea, #doc select').forEach(function (el) {
+      if (el.type === 'file' || el.type === 'hidden') { el.remove(); return; }
+      var nx = el.nextElementSibling; if (nx && nx.classList.contains('pv')) { el.remove(); return; }   // Quick Quote ka apna preview text
+      var val = el.tagName === 'SELECT' ? (el.options[el.selectedIndex] || {}).text || '' : el.value;
+      var cs = cd.defaultView.getComputedStyle(el), span = cd.createElement(el.tagName === 'TEXTAREA' ? 'div' : 'span');
+      span.textContent = val || '';
+      span.style.cssText = 'white-space:pre-wrap;word-break:break-word;font-size:' + cs.fontSize + ';font-weight:' + cs.fontWeight + ';color:#111;text-align:' + cs.textAlign + ';line-height:' + (el.tagName === 'TEXTAREA' ? '1.7' : cs.lineHeight) + ';' +
+        (el.tagName === 'TEXTAREA' || cs.display === 'block' || /width:\s*100%/.test(el.getAttribute('style') || '') || el.offsetWidth > 200 ? 'display:block;padding:2px 0;min-height:' + (val ? '0' : '1em') : 'display:inline-block');
+      el.parentNode.replaceChild(span, el);
+    });
+    cd.querySelectorAll('#doc .pmirror').forEach(function (m) { m.remove(); });
+  }
+  function sendPdfWA() {
+    try { if (typeof reserveQno === 'function') reserveQno(); else if (typeof reserveNo === 'function') reserveNo(); } catch (e) { }
+    var name = (KIND + ' ' + (v('qno') || '') + (v('cname') ? ' - ' + v('cname') : '')).replace(/[\/\\:*?"<>|]+/g, '-').trim() + '.pdf';
+    box('⏳ PDF ban rahi hai…', []);
+    load(function () {
+      pvOn();
+      setTimeout(function () {
+        var doc = document.getElementById('doc');
+        var opt = {
+          margin: [6, 6, 6, 6], filename: name, image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', onclone: cleanClone, ignoreElements: function (el) { return el.classList && (el.classList.contains('no-print') || el.id === 'wtpePvBar' || el.id === 'previewbar'); } },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: [] }
+        };
+        var w = window.html2pdf().set(opt).from(doc).toCanvas();
+        w.get('canvas').then(function (c) {
+          /* poori quotation EK page par (lambai jitni chahiye) — bahut lambi ho to A4 pages */
+          var r = c.height / Math.max(1, c.width);
+          if (r < 2.6) w = w.set({ jsPDF: { unit: 'mm', format: [210, Math.ceil(198 * r) + 14], orientation: 'portrait' } });
+          else w = w.set({ pagebreak: { mode: ['avoid-all', 'css'] } });
+          return w.toPdf().outputPdf('blob');
+        }).then(function (blob) {
+          pvOff();
+          var file = null; try { file = new File([blob], name, { type: 'application/pdf' }); } catch (e) { }
+          var canShare = file && navigator.canShare && navigator.canShare({ files: [file] });
+          var btns = [];
+          if (canShare) btns.push(['📤 WhatsApp par PDF bhejo', function () {
+            navigator.share({ files: [file], title: name, text: msgText() }).then(function () { var o = document.getElementById('wtpeWaBox'); if (o) o.remove(); }).catch(function () { });
+          }]);
+          btns.push(['⬇ PDF download + WhatsApp chat kholo', function () {
+            download(blob, name);
+            window.open('https://wa.me/' + phone() + '?text=' + encodeURIComponent(msgText()), '_blank');
+            box('✅ PDF download ho gayi: <br><b>' + name + '</b><br><br>WhatsApp chat me <b>📎 (attach) → Document</b> dabakar ye PDF chuno aur bhejo.', []);
+          }, canShare ? '#0B2A4A' : '#25D366']);
+          btns.push(['💬 Sirf text bhejo (bina PDF)', function () { var o = document.getElementById('wtpeWaBox'); if (o) o.remove(); if (oldWA) oldWA(); }, '#f1f5f9', '#0B2A4A']);
+          box('✅ PDF taiyaar hai — ab WhatsApp par bhejo' + (phone() ? '' : '<br><span style="font-size:12.5px;color:#b45309;font-weight:400">(customer ka phone number khaali hai — WhatsApp me contact khud chunna hoga)</span>'), btns);
+        }).catch(function () { pvOff(); box('❌ PDF nahi ban payi. Print → Save PDF use karein.', []); });
+      }, 250);
+    });
+  }
+  window.sendWA = sendPdfWA;
+})();
+
+/* ---------- Poori Quotation: 💾 Save + 📂 Saved (Open / Edit) ---------- */
+(function () {
+  if (typeof window.qSave !== 'function' || typeof window.qList !== 'function') return;
+  if (/quick-quote/i.test(location.pathname)) { try { QKEY = 'wtpe_saved_docs_qq'; } catch (e) { } }   // Quick Quote ke columns alag hain
+  var lbl = /proforma/i.test(location.pathname) ? 'Proforma' : 'Quotation';
+  function mk(id, txt, fn, css) { var b = document.createElement('button'); b.id = id; b.className = 'btn'; b.textContent = txt; b.onclick = fn; b.style.cssText = css; return b; }
+  var tb = document.querySelector('.toolbar');
+  if (tb && !document.getElementById('wtpeQSave')) {
+    var ref = tb.querySelector('.btn.wa') || null;
+    tb.insertBefore(mk('wtpeQSave', '💾 Save ' + lbl, function () { qSave(); }, 'background:#067d62;color:#fff'), ref);
+    tb.insertBefore(mk('wtpeQOpen', '📂 Saved / Edit', function () { qList(); }, 'background:#b45309;color:#fff'), ref);
+  }
+  var act = document.getElementById('wtpeAct');
+  if (act && !document.getElementById('wtpeQSave2')) {
+    var first = act.querySelector('button');
+    act.insertBefore(mk('wtpeQSave2', '💾 Save ' + lbl, function () { qSave(); }, 'background:#067d62;color:#fff'), first);
+    act.insertBefore(mk('wtpeQOpen2', '📂 Saved / Edit', function () { qList(); }, 'background:#b45309;color:#fff'), first);
+  }
+})();
+
+/* ---------- Bank details + UPI QR apne aap (khaali ho to) ---------- */
+(function () {
+  var BANK = { bkname: 'AQUA FILTRATION SYSTEM', bkbank: 'Axis Bank Ltd', bkacc: '917020048039102', bkifsc: 'UTIB0002693', bkbranch: 'Green Field Colony, Faridabad' };
+  function fill() {
+    Object.keys(BANK).forEach(function (id) {
+      var e = document.getElementById(id);
+      if (e && (!e.value.trim() || (id === 'bkname' && /^aqua filtration system$/i.test(e.value.trim())))) e.value = BANK[id];
+    });
+    var img = document.getElementById('upiimg'), ph = document.getElementById('upiph');
+    if (img && (!img.getAttribute('src') || img.style.display === 'none')) {
+      img.src = '/qt/upi-qr.png'; img.style.display = 'block'; if (ph) ph.style.display = 'none';
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(fill, 300); }); else setTimeout(fill, 300);
+  var ol = window.qRestore; if (typeof ol === 'function') window.qRestore = function (d) { ol(d); setTimeout(fill, 200); };
 })();
