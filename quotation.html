@@ -146,15 +146,20 @@ textarea{overflow:hidden!important;resize:none!important}
 </div>
 
 <div class="doc" id="doc">
+<div class="lh">
+  <table style="width:100%;border-collapse:collapse"><tr>
+    <td style="width:66px;vertical-align:middle"><img src="/qt/afs-logo.jpg" alt="Aqua Filtration System" style="width:60px;height:60px;display:block"></td>
+    <td style="vertical-align:middle;padding-left:8px"><div style="font-family:Cambria,Georgia,serif;font-size:22px;font-weight:bold;color:#2E7D32;letter-spacing:.3px">AQUA FILTRATION SYSTEM</div>
+      <div style="font-size:10px;color:#555">Water &amp; Waste Water Treatment — Manufacturer &amp; Trader &nbsp;|&nbsp; Est. 2017</div>
+      <div style="font-size:10px;font-weight:bold;color:#1e293b">GSTIN: 06DMUPS2289L1ZZ</div></td>
+    <td style="text-align:right;vertical-align:middle"><div style="font-size:9px;font-style:italic;color:#555">Our Online Brand</div>
+      <img src="/qt/wtpestore-logo.png" alt="WTPESTORE" style="width:135px;height:auto;display:inline-block"><div style="font-size:10px;font-weight:bold;color:#10B981">www.wtpestore.co.in</div></td>
+  </tr></table>
+  <div style="height:9px;background:#1e293b;margin-top:6px;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div style="height:2px;background:#F59E0B;margin:3px 0 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div>
+</div>
+
   <div class="dhead">
-    <div class="brand">
-      <div class="logo"><img src="/icons/logo-dark.png" alt="WTPeSTORE™" style="height:46px;width:auto;display:block"></div>
-      <div class="addr">
-        B-198, Ground Floor, Royal Plaza, Green Field Colony, Mathura Road, Faridabad, Haryana 121003<br>
-        <b>GSTIN:</b> 06DMUPS2289L1ZZ &nbsp;|&nbsp; <b>Ph:</b> 9910646950, 9910646957 &nbsp;|&nbsp; 0129-4340856<br>
-        <b>Email:</b> aquazone350@gmail.com &nbsp;|&nbsp; info@aquafiltrationsystem.in &nbsp;|&nbsp; www.wtpestore.co.in
-      </div>
-    </div>
+    <div class="brand"></div>
     <div class="qmeta">
       <h1>QUOTATION</h1>
       <div class="row">Quote No: <input id="qno" value=""></div>
@@ -272,6 +277,12 @@ textarea{overflow:hidden!important;resize:none!important}
       <div class="line">Authorised Signatory</div>
     </div>
   </div>
+<div class="lf" style="margin-top:22px;border-top:2px solid #2E7D32;padding-top:6px;text-align:center;font-size:9.5px;line-height:1.6;color:#555">
+  <b style="color:#1e293b;font-size:10.5px">Office: B-198, Royal Plaza, Near Domino&#8217;s, Green Field, Faridabad &#8211; 121003 (Haryana)</b><br>
+  Mob: 9899193589 / 9910646957 &nbsp;|&nbsp; Tel: 0129-4340856 &nbsp;|&nbsp; Email: aquazone350@gmail.com, deewakar@aquafiltrationsystem.in<br>
+  <b style="color:#10B981">www.aquafiltrationsystem.in &nbsp;|&nbsp; www.wtpestore.co.in</b><br>
+  RO Plants &#8226; DM Plants &#8226; Water Softeners &#8226; UV Systems &#8226; FRP Vessels &#8226; Dosing Pumps &#8226; Spares
+</div>
 </div>
 
 <script>
@@ -501,7 +512,7 @@ function buildQuoteEmailHTML(){
     '<tr style="background:#0B2A4A;color:#fff"><th>#</th><th align="left">Description</th><th>Qty</th><th>Rate</th><th>Disc</th><th>Amount</th></tr>'+tr+'</table>'+
     '<p style="text-align:right;font-size:14px;margin:10px 0">Sub Total: '+_txt('subtotal')+'<br>'+discLine+'Taxable: '+_txt('taxable')+'<br><b style="color:#0B2A4A">Grand Total (incl. GST): '+_txt('grand')+'</b></p>'+
     (terms?('<div style="font-size:12px;background:#f5f8fa;border-radius:8px;padding:12px"><b>Terms &amp; Conditions:</b><br>'+terms+'</div>'):'')+
-    '<hr style="border:none;border-top:1px solid #ddd;margin:14px 0"><div style="font-size:12px;color:#555">WTPESTORE — Aqua Filtration System, Faridabad<br>📞 9910646950, 9910646957, 9599895683 &nbsp;|&nbsp; 💬 WhatsApp 9899193589 &nbsp;|&nbsp; ✉ info@aquafiltrationsystem.in</div></div>';
+    '<hr style="border:none;border-top:1px solid #ddd;margin:14px 0"><div style="font-size:12px;color:#555">WTPESTORE — Aqua Filtration System, Faridabad<br>📞 9899193589, 9910646957, 9599895683 &nbsp;|&nbsp; 💬 WhatsApp 9899193589 &nbsp;|&nbsp; ✉ info@aquafiltrationsystem.in</div></div>';
 }
 function emailQuote(){
   var to=(val('cemail')||'').trim();
@@ -689,4 +700,5 @@ function sMatch(p,q){q=String(q||'').trim(); if(!q)return true;
   return true;}
 
 </script>
+<script src="/doc-mail.js?v=3"></script>
 </body></html>
