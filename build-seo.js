@@ -1749,23 +1749,12 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
   const ld = `<script type="application/ld+json">${JSON.stringify({
     "@context": "https://schema.org", "@type": "ItemList",
     "name": "WTPESTORE Water Treatment Products",
-    "numberOfItems": P.length,
-    "itemListElement": P.slice(0, 200).map((p, i) => ({
-      "@type": "ListItem", "position": i + 1,
-      "item": {
-        "@type": "Product", "name": p.n,
-        ...(p.make ? { "brand": { "@type": "Brand", "name": p.make } } : {}),
-        ...(p.model ? { "model": p.model } : {}),
-        ...(p.spec ? { "description": p.spec.slice(0, 200) } : {}),
-        "url": STATIC_SLUGS.has(p.slug) ? (SITE + "/products/" + p.slug + ".html") : (SITE + "/?p=" + (p.slugOrig || p.slug)),
-        ...(p.p > 0 ? {
-          "offers": {
-            "@type": "Offer", "price": inclGst(p), "priceCurrency": "INR",
-            "availability": "https://schema.org/InStock",
-            "seller": { "@type": "Organization", "name": "Aqua Filtration System" }
-          }
-        } : {})
-      }
+    "numberOfItems": Math.min(200, P.filter(p => STATIC_SLUGS.has(p.slug)).length),
+    /* List page par sirf link ki list (Google "summary" format). Product + price ka
+       poora schema har product ke APNE page par hai — yahan doharane se Search Console
+       me "Merchant listings: invalid items" aata tha (image nahi thi). */
+    "itemListElement": P.filter(p => STATIC_SLUGS.has(p.slug)).slice(0, 200).map((p, i) => ({
+      "@type": "ListItem", "position": i + 1, "url": SITE + "/products/" + p.slug + ".html"
     }))
   })}</script>`;
 
