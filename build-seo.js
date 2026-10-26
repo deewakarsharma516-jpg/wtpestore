@@ -140,7 +140,21 @@ const BLOG_PAGES = [
   '/blog/water-plant-amc-checklist.html',
   '/blog/water-plant-kharidne-se-pehle.html',
   '/blog/water-testing-kya-karayein.html',
-  '/blog/water-treatment-common-mistakes.html'
+  '/blog/water-treatment-common-mistakes.html',
+  '/blog/multigrade-filter-kya-hai.html',
+  '/blog/activated-carbon-filter-guide.html',
+  '/blog/sdi-test-kaise-karein.html',
+  '/blog/uv-purifier-size-guide.html',
+  '/blog/water-atm-business-guide.html',
+  '/blog/cpcb-ocems-online-monitoring-etp.html',
+  '/blog/dwlr-borewell-water-level-monitoring.html',
+  '/blog/iron-removal-filter-borewell.html',
+  '/blog/water-plant-for-hotel-hospital.html',
+  '/blog/eureka-forbes-aquaguard-softener-comparison.html',
+  '/blog/gopani-cartridge-range-guide.html',
+  '/blog/boiler-feed-water-treatment.html',
+  '/blog/ro-plant-price-list.html',
+  '/blog/stp-etp-uf-plant-cost-per-kld.html'
 ];
 
 /* ---------- helpers ---------- */
@@ -1519,9 +1533,9 @@ function injectBlogPrices(P) {
   for (const f of files) {
     let html;
     try { html = fs.readFileSync(f, 'utf8'); } catch (e) { continue; }
-    if (html.indexOf('<!--WTPE_PRICES:') < 0) continue;
+    if (html.indexOf('<!--WTPE_PRICES:') < 0 && html.indexOf('<!--WTPE_PLIST:') < 0) continue;
 
-    const out = html.replace(/<!--WTPE_PRICES:([^>]+)-->[\s\S]*?<!--WTPE_PRICES_END-->/g, (m, catRaw) => {
+    let out = html.replace(/<!--WTPE_PRICES:([^>]+)-->[\s\S]*?<!--WTPE_PRICES_END-->/g, (m, catRaw) => {
       const want = String(catRaw).trim().toUpperCase();
       const items = P.filter(p => String(p.c).trim().toUpperCase() === want && p.p > 0);
       if (!items.length) return m;   /* category na mile to purana hi rehne do */
@@ -1543,6 +1557,28 @@ ${rows}
 </tbody></table>
 <p style="font-size:12.5px;color:#8b9aa5;margin-top:-8px">Live price list se — last updated ${new Date().toISOString().slice(0, 10)}. GST extra, confirm before order.</p>
 <!--WTPE_PRICES_END-->`;
+    });
+
+    /* Aam price table (kisi bhi category ke liye):
+         <!--WTPE_PLIST:CATEGORY A|CATEGORY B~naam-filter-regex-->  ...  <!--WTPE_PLIST_END-->  */
+    out = out.replace(/<!--WTPE_PLIST:([^>]+)-->[\s\S]*?<!--WTPE_PLIST_END-->/g, (m, spec) => {
+      const [catPart, rx] = String(spec).split('~');
+      const cats = catPart.split('|').map(x => x.trim().toUpperCase()).filter(Boolean);
+      let re = null; try { re = rx ? new RegExp(rx, 'i') : null; } catch (e) { }
+      const items = P.filter(p => cats.indexOf(String(p.c).trim().toUpperCase()) > -1 && p.p > 0 && (!re || re.test(p.n)));
+      if (!items.length) return m;
+      const rows = items.map(p => {
+        const link = STATIC_SLUGS.has(p.slug) ? `/products/${p.slug}.html` : `/products.html#${slug(p.c)}`;
+        return `<tr><td><a href="${link}">${esc(p.n)}</a></td><td>${esc(p.model || extractModel(p.n) || '—')}</td><td>${rupee(p.p)}</td></tr>`;
+      }).join('\n');
+      return `<!--WTPE_PLIST:${spec}-->
+<table>
+<thead><tr><th>Product</th><th>Model</th><th>Price (GST extra)</th></tr></thead>
+<tbody>
+${rows}
+</tbody></table>
+<p style="font-size:12.5px;color:#8b9aa5;margin-top:-8px">Live price list se — last updated ${new Date().toISOString().slice(0, 10)}. GST extra, confirm before order.</p>
+<!--WTPE_PLIST_END-->`;
     });
 
     if (out !== html) { fs.writeFileSync(f, out); count++; }
