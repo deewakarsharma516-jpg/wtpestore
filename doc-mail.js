@@ -44,7 +44,9 @@
       ((shown('row-igst') || shown('r-igst')) ? T('IGST @ ' + x(v('igstp')) + '%', 'igst')
         : T('CGST @ ' + x(v('cgstp')) + '%', 'cgst') + T('SGST @ ' + x(v('sgstp')) + '%', 'sgst')) +
       T('Round Off', 'roundoff') +
-      '<tr class="gt"><td>Grand Total</td><td class="r">' + x(v('grand')) + '</td></tr>';
+      '<tr class="gt"><td>Grand Total</td><td class="r">' + x(v('grand')) + '</td></tr>' +
+      (Number(v('advamt') || 0) > 0 ? '<tr><td>Less: Advance Received' + (v('advpct') ? ' (' + x(v('advpct')) + '%)' : '') + '</td><td class="r">−₹' + x(Number(v('advamt')).toLocaleString('en-IN')) + '</td></tr>' +
+        '<tr class="gt"><td>Balance Payable</td><td class="r">' + x(v('balance')) + '</td></tr>' : '');
     var meta = 'No: <b>' + x(v('qno')) + '</b> &nbsp;|&nbsp; Date: ' + x(v('qdate')) +
       (v('qvalid') ? ' &nbsp;|&nbsp; <b style="color:#b12704">Valid till: ' + x(v('qvalid')) + '</b>' : '') +
       (v('qpo') ? '<br>PO No: ' + x(v('qpo')) + (v('podate') ? ' &nbsp;|&nbsp; PO Date: ' + x(v('podate')) : '') : '');
@@ -332,4 +334,40 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(fill, 300); }); else setTimeout(fill, 300);
   var ol = window.qRestore; if (typeof ol === 'function') window.qRestore = function (d) { ol(d); setTimeout(fill, 200); };
+})();
+
+/* ---------- Proforma Invoice: Advance received + Balance payable ---------- */
+(function () {
+  if (!/proforma/i.test(location.pathname)) return;
+  var g = document.getElementById('grand'); if (!g) return;
+  var grow = g.closest('.tr'); if (!grow || document.getElementById('row-adv')) return;
+  var st = document.createElement('style');
+  st.textContent = '#row-adv input{width:70px;text-align:right}#advpct{width:52px!important}' +
+    '#row-bal{font-weight:800;font-size:15px;color:#0B2A4A;border-top:1px dashed #94a3b8;padding-top:6px}' +
+    '@media print{#row-adv.zero,#row-bal.zero{display:none!important}}' +
+    'body.wtpe-pv #row-adv.zero,body.wtpe-pv #row-bal.zero{display:none!important}';
+  document.head.appendChild(st);
+  var a = document.createElement('div'); a.className = 'tr'; a.id = 'row-adv';
+  a.innerHTML = '<span>Less: Advance Received <input class="pct" id="advpct" type="number" min="0" max="100" step="any" placeholder="%">%</span>' +
+    '<span>−₹<input id="advamt" type="number" min="0" step="any" placeholder="0"></span>';
+  var b = document.createElement('div'); b.className = 'tr'; b.id = 'row-bal';
+  b.innerHTML = '<span>Balance Payable</span><span id="balance">₹0</span>';
+  grow.parentNode.insertBefore(a, grow.nextSibling); a.parentNode.insertBefore(b, a.nextSibling);
+  var pct = document.getElementById('advpct'), amt = document.getElementById('advamt'), bal = document.getElementById('balance');
+  function num(s) { var n = parseFloat(String(s || '').replace(/[^0-9.\-]/g, '')); return isFinite(n) ? n : 0; }
+  function inr(n) { return '₹' + Math.round(n).toLocaleString('en-IN'); }
+  function upd(from) {
+    var G = num(g.textContent);
+    if (from === 'pct') amt.value = pct.value === '' ? '' : Math.round(G * num(pct.value) / 100);
+    else if (from === 'amt') pct.value = (amt.value === '' || !G) ? '' : Math.round(num(amt.value) * 1000 / G) / 10;
+    else if (pct.value !== '' && amt.value === '') amt.value = Math.round(G * num(pct.value) / 100);
+    var A = Math.min(num(amt.value), G);
+    bal.textContent = inr(G - A);
+    var z = !(A > 0); a.classList.toggle('zero', z); b.classList.toggle('zero', z);
+  }
+  pct.addEventListener('input', function () { upd('pct'); });
+  amt.addEventListener('input', function () { upd('amt'); });
+  var oc = window.calc; if (typeof oc === 'function') window.calc = function () { var r = oc.apply(this, arguments); try { upd(pct.value !== '' && document.activeElement !== amt ? 'pct' : ''); } catch (e) { } return r; };
+  var orr = window.qRestore; if (typeof orr === 'function') window.qRestore = function (d) { orr(d); setTimeout(function () { upd(''); }, 150); };
+  upd('');
 })();
