@@ -280,16 +280,31 @@
         }).then(function (blob) {
           pvOff();
           var file = null; try { file = new File([blob], name, { type: 'application/pdf' }); } catch (e) { }
-          var canShare = file && navigator.canShare && navigator.canShare({ files: [file] });
+          var mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+          var canShare = mobile && file && navigator.canShare && navigator.canShare({ files: [file] });   // computer par Windows ka share box nahi
+          var txt = encodeURIComponent(msgText()), ph = phone();
+          var done = function (how) {
+            box('✅ PDF download ho gayi: <br><b>' + name + '</b><br><br>' + how + ' me customer ki chat khulegi — wahan <b>📎 (attach) → Document</b> dabakar ye PDF chuno aur bhejo.<br><span style="font-size:12.5px;color:#666;font-weight:400">(PDF aapke <b>Downloads</b> folder me hai)</span>', []);
+          };
           var btns = [];
           if (canShare) btns.push(['📤 WhatsApp par PDF bhejo', function () {
             navigator.share({ files: [file], title: name, text: msgText() }).then(function () { var o = document.getElementById('wtpeWaBox'); if (o) o.remove(); }).catch(function () { });
           }]);
-          btns.push(['⬇ PDF download + WhatsApp chat kholo', function () {
-            download(blob, name);
-            window.open('https://wa.me/' + phone() + '?text=' + encodeURIComponent(msgText()), '_blank');
-            box('✅ PDF download ho gayi: <br><b>' + name + '</b><br><br>WhatsApp chat me <b>📎 (attach) → Document</b> dabakar ye PDF chuno aur bhejo.', []);
+          if (mobile) btns.push(['⬇ PDF download + WhatsApp kholo', function () {
+            download(blob, name); location.href = 'https://wa.me/' + ph + '?text=' + txt; done('WhatsApp');
           }, canShare ? '#0B2A4A' : '#25D366']);
+          else {
+            btns.push(['💻 WhatsApp App (computer) me bhejo', function () {
+              download(blob, name);
+              location.href = 'whatsapp://send?' + (ph ? 'phone=' + ph + '&' : '') + 'text=' + txt;   // WhatsApp Desktop app seedha khulta hai
+              done('WhatsApp App');
+            }]);
+            btns.push(['🌐 WhatsApp Web me bhejo', function () {
+              download(blob, name);
+              window.open('https://web.whatsapp.com/send?' + (ph ? 'phone=' + ph + '&' : '') + 'text=' + txt, '_blank');
+              done('WhatsApp Web');
+            }, '#128C7E']);
+          }
           btns.push(['💬 Sirf text bhejo (bina PDF)', function () { var o = document.getElementById('wtpeWaBox'); if (o) o.remove(); if (oldWA) oldWA(); }, '#f1f5f9', '#0B2A4A']);
           box('✅ PDF taiyaar hai — ab WhatsApp par bhejo' + (phone() ? '' : '<br><span style="font-size:12.5px;color:#b45309;font-weight:400">(customer ka phone number khaali hai — WhatsApp me contact khud chunna hoga)</span>'), btns);
         }).catch(function () { pvOff(); box('❌ PDF nahi ban payi. Print → Save PDF use karein.', []); });
