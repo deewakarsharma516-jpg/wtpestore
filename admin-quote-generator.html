@@ -151,8 +151,8 @@ h4{color:var(--navy);font-size:16px;border-bottom:1.5px solid var(--navy);margin
  <h3>2A. RO Plant</h3>
  <div class="row2"><div><label>Feed TDS (ppm)</label><input id="roTds" type="number" value="1000"></div><div><label>Recovery %</label><input id="roRec" type="number" value="70"></div></div>
  <div class="row2"><div><label>Membrane Size</label><select id="roSize"><option>Auto</option><option>4040</option><option>8040</option></select></div>
-  <div><label>Membrane Brand</label><select id="roBrand"><option>Vontron</option><option>CSM</option><option>Hydranautics</option><option>Dow Filmtec</option></select></div></div>
- <div class="row2"><div><label>HP Pump Brand</label><select id="roPump"><option>CNP</option><option>Grundfos</option><option>Lubi</option></select></div>
+  <div><label>Membrane Brand</label><select id="roBrand"><option>Vontron</option><option>CSM</option><option>LG Chem</option><option>Toray</option><option>Hydranautics</option><option>Dow Filmtec</option></select></div></div>
+ <div class="row2"><div><label>HP Pump Brand</label><select id="roPump"><option>CNP</option><option>CRI</option><option>Shakti</option><option>Kirloskar</option><option>Lubi</option><option>Grundfos</option></select></div>
   <div><label>Skid</label><select id="roSkid"><option>MS Epoxy</option><option>SS304</option></select></div></div>
  <div class="row2"><div><label>HP Piping</label><select id="roHP"><option>SS304</option><option>SS316</option></select></div>
   <div><label>LP / Permeate Piping</label><select id="roLP"><option>UPVC</option><option>CPVC</option><option>SS304</option></select></div></div>
@@ -161,6 +161,8 @@ h4{color:var(--navy);font-size:16px;border-bottom:1.5px solid var(--navy);margin
   <label><input type="checkbox" id="roHPsb">HP Pump Standby</label>
   <label><input type="checkbox" id="roAS" checked>Antiscalant Dosing</label>
   <label><input type="checkbox" id="roSMBS" checked>SMBS Dosing</label>
+  <label><input type="checkbox" id="roCL">Chlorine Dosing (NaOCl)</label>
+  <label><input type="checkbox" id="roSSHP" checked>SS piping above 5 kg/cm²</label>
   <label><input type="checkbox" id="roPH">pH Dosing</label>
   <label><input type="checkbox" id="roCIP" checked>CIP System</label>
   <label><input type="checkbox" id="roINS" checked>Instruments</label>
@@ -196,6 +198,8 @@ h4{color:var(--navy);font-size:16px;border-bottom:1.5px solid var(--navy);margin
 
  <h3>2B. Pump / Electrical / Piping</h3>
  <div class="chk">
+  <label id="lCLD"><input type="checkbox" id="iCLD">Chlorine Dosing (NaOCl)</label>
+  <label><input type="checkbox" id="iFLT">Float Switches (level)</label>
   <label><input type="checkbox" id="iPMP">Feed Pump (1W+1S)</label>
   <label><input type="checkbox" id="iPNL">Control Panel</label>
   <label><input type="checkbox" id="iCT">Cable Tray</label>
@@ -220,6 +224,14 @@ h4{color:var(--navy);font-size:16px;border-bottom:1.5px solid var(--navy);margin
   <div><label>Margin %</label><input id="margin" type="number" value="35"></div>
   <div><label>Freight (₹)</label><input id="freight" type="number" value="20000"></div>
  </div>
+
+ <h3>2C. Make / Brand</h3>
+ <div class="note">Yahi make quotation ki "Make List" table aur description me aayega.</div>
+ <div class="row2"><div><label>Pumps (Feed / HP / Transfer)</label><select id="mkPump"><option>CNP</option><option>CRI</option><option>Shakti</option><option>Kirloskar</option><option>Lubi</option><option>Grundfos</option></select></div><div><label>Membrane Housing</label><select id="mkPV"><option>UKL</option><option>AFS</option><option>Codeline</option></select></div></div>
+ <div class="row2"><div><label>FRP Vessel Make</label><select id="mkFRP"><option>AFS</option><option>Pentair</option></select></div><div><label>Multiport Valve (MPV)</label><select id="mkMPV"><option>AFS</option><option>Initiative</option><option>UKL</option></select></div></div>
+ <div class="row2"><div><label>FRP Vessel Model</label><select id="frpModel"><option>Auto</option><option value="844">844 (8" x 44")</option><option value="948">948 (9" x 48")</option><option value="1035">1035 (10" x 35")</option><option value="1044">1044 (10" x 44")</option><option value="1054">1054 (10" x 54")</option><option value="1252">1252 (12" x 52")</option><option value="1354">1354 (13" x 54", 50 L)</option><option value="1465">1465 (14" x 65")</option><option value="1665">1665 (16" x 65")</option><option value="1865">1865 (18" x 65")</option><option value="2162">2162 (21" x 62")</option><option value="2472">2472 (24" x 72")</option><option value="3072">3072 (30" x 72")</option><option value="3672">3672 (36" x 72")</option></select></div><div class="note" style="align-self:end">Auto = capacity ke hisaab se sahi model (844 se 3672)</div></div>
+ <div class="row2"><div><label>Dosing Pump</label><select id="mkDZ"><option>E-Dose</option><option>Milton Roy</option></select></div><div><label>Control Panel</label><select id="mkPNL"><option>AFS</option><option>Aster</option></select></div></div>
+ <div class="row2"><div><label>Float Switch</label><select id="mkFLT"><option>AFS</option><option>Aster</option></select></div><div><label>Rotameter</label><select id="mkROT"><option>AFS</option><option>Aster</option></select></div></div>
 
  <h3>3. Terms</h3>
  <div class="row2"><div><label>Validity</label><input id="valid" value="30 days"></div><div><label>Delivery</label><input id="deliv" value="6-8 weeks"></div></div>
@@ -304,6 +316,13 @@ const DEF_RATES={
  ercMin:[15000,"Erection minimum ₹"]
 };
 let R={};
+/* make ke hisaab se price factor (CNP / AFS = 1) */
+const MKF={mkPump:{CNP:1,CRI:0.95,Shakti:0.95,Kirloskar:1.05,Lubi:0.9,Grundfos:1.6},mkPV:{UKL:1,AFS:0.9,Codeline:1.6},mkFRP:{AFS:1,Pentair:1.4},mkMPV:{AFS:1,Initiative:1.1,UKL:1.05},mkDZ:{"E-Dose":1,"Milton Roy":1.5},mkPNL:{AFS:1,Aster:1.1},mkFLT:{AFS:1,Aster:1.2},mkROT:{AFS:1,Aster:1.2}};
+const FRPM=[[8,44],[9,48],[10,35],[10,44],[10,54],[12,52],[13,54,50],[14,65],[16,65],[18,65],[21,62],[24,72],[30,72],[36,72]].map(([d,h,c])=>({m:""+d+h,d,h,c,D:Math.round(d*25.4),H:Math.round(h*25.4)}));
+/* FRP model: Dreq (mm) se bada sabse chhota model; L = resin litre (softener) jo vessel ke 60% me aana chahiye */
+function frpPick(Dreq,L){const o=document.getElementById("frpModel").value;if(o!=="Auto")return FRPM.find(x=>x.m===o);
+ return FRPM.find(x=>x.D>=Dreq*0.95&&(!L||(x.c||area(x.D)*x.H*0.6)>=L))||null}
+const mk=id=>document.getElementById(id).value, mf=id=>(MKF[id]||{})[mk(id)]||1;
 function loadRates(){let s={};try{s=JSON.parse(localStorage.getItem("afsRates")||"{}")}catch(e){}
  for(const k in DEF_RATES)R[k]=(s[k]!==undefined?s[k]:DEF_RATES[k][0]);drawRates()}
 function drawRates(){document.getElementById("rateTbl").innerHTML=Object.keys(DEF_RATES).map(k=>
@@ -337,7 +356,7 @@ function vesselCost(D,H,moc){
  const surf=Math.PI*d*h+2*1.2*area(D);
  let wt=(Math.PI*d*h*ts/1000+2*1.2*area(D)*td/1000)*7850*1.15;
  let c;
- if(moc==="FRP"){const vol=area(D)*h*1000;return {wt:0,c:vol*R.frpL,ts:"FRP",td:"FRP"}}
+ if(moc==="FRP"){const vol=area(D)*h*1000;return {wt:0,c:vol*R.frpL*mf("mkFRP"),ts:"FRP",td:"FRP"}}
  if(moc==="SS304"){wt*=0.8;c=wt*R.ssKg}
  else{c=wt*R.msKg+surf*R.epoxyM2;if(moc==="MSRL")c+=surf*0.85*R.rubberM2}
  return {wt,c,ts,td};
@@ -370,24 +389,25 @@ function calc(){
  // ----- filters
  const filt=(type)=>{
   const ov=ovr(type);let ns=1,Dd=pickDia(Qf2/10);if(!ov&&Dd>2400){ns=Math.ceil(area(Dd)/area(2400));Dd=pickDia(Qf2/ns/10)}
-  const D=ov?ov.D:Dd,A=area(D);
+  let fm=null;if(v("mocF")==="FRP"&&!ov){const need=Qf2/10;ns=1;while(need/ns>area(914)*1.02&&ns<20)ns++;fm=frpPick(Math.sqrt(4*need/ns/Math.PI)*1000)||FRPM[FRPM.length-1]}
+  const D=fm?fm.D:ov?ov.D:Dd,A=area(D);
   let layers,bed;
   if(type==="MGF"){layers=[["Pebbles","20-40 mm",100,RHO_SAND,"sandKg"],["Gravel","6-12 mm",100,RHO_SAND,"sandKg"],["Coarse Sand","1-2 mm",100,RHO_SAND,"sandKg"],["Fine Sand","0.4-0.8 mm",400,RHO_SAND,"sandKg"]]}
   else{layers=[["Pebbles","20-40 mm",75,RHO_SAND,"sandKg"],["Gravel","6-12 mm",75,RHO_SAND,"sandKg"],["Activated Carbon","Coconut shell, IV 900+, 8x30 mesh",600,RHO_C,"carbonKg"]]}
   bed=layers.reduce((s,l)=>s+l[2],0);
-  const Hs=ov?ov.H:Math.max(D>=1000?1500:1200,up(bed/0.5,100));
+  const Hs=fm?fm.H:ov?ov.H:Math.max(D>=1000?1500:1200,up(bed/0.5,100));
   layers=layers.map(l=>({name:l[0],grade:l[1],depth:l[2],kg:A*l[2]/1000*l[3],cost:A*l[2]/1000*l[3]*R[l[4]]}));
   const ves=vesselCost(D,Hs,v("mocF"));
   const plate=v("mocF")==="FRP"?A*6000:A*0.008*7850*R.msKg;
-  const pipe=pipingCost(D,nb,5),gauge=2*R.gauge,hw=3000+D*3;
+  const mpv=v("mocF")==="FRP"&&D<=1000,pipe=mpv?(D<=500?7000:D<=750?12000:25000)*R.pipeFact*mf("mkMPV"):pipingCost(D,nb,5),gauge=(mpv?1:2)*R.gauge,hw=mpv?1500:3000+D*3;
   const media=layers.reduce((s,l)=>s+l.cost,0);
   const cost=ves.c+plate+pipe+gauge+hw+media;
-  const u={type,D,Hs,A,moc:v("mocF"),ts:ves.ts,td:ves.td,wt:ves.wt,layers,vel:Qf2/ns/A,q:Qf2/ns,nos:ns,nb,valves:5,
+  const u={type,D,Hs,A,model:fm?fm.m:"",moc:v("mocF"),make:v("mocF")==="FRP"?mk("mkFRP"):"",ts:ves.ts,td:ves.td,wt:ves.wt,layers,vel:Qf2/ns/A,q:Qf2/ns,nos:ns,nb,valves:mpv?1:5,vtype:mpv?"Multiport (MPV)":undefined,
    under:v("mocF")==="FRP"?"Bottom hub & lateral distributor (FRP vessel)":`Media support plate inside the vessel ${type}`};
   units.push(u);
   const mtot=layers.reduce((s,l)=>s+l.kg,0);
   lines.push({key:type,cost,price:r500(cost*M),qty:ns>1?ns*Math.max(1,n("sets")):undefined,
-   desc:`${type==="MGF"?"Multi Grade Filter (MGF)":"Activated Carbon Filter (ACF)"} Vessel${ns>1?` (${ns} nos. in parallel)`:""} — Dia ${D} x ${Hs} mm, ${u.moc}, c/w ${manhole(D).split(",")[0]} manhole, ${mediaNoz(D).split(",")[0]} media nozzle, ${nb} NB inlet/outlet, ${nb} NB frontal piping, 5 valves, pressure gauges with needle valve, media (${kg(mtot)}) & nut-bolt-gasket`});
+   desc:`${type==="MGF"?"Multi Grade Filter (MGF)":"Activated Carbon Filter (ACF)"} Vessel${ns>1?` (${ns} nos. in parallel)`:""} — ${fm?"FRP Model "+fm.m+" ("+fm.d+'" x '+fm.h+'"), ':""}Dia ${D} x ${Hs} mm, ${u.moc==="FRP"?"FRP ("+u.make+"), top opening for media":u.moc+", c/w "+manhole(D).split(",")[0]+" manhole, "+mediaNoz(D).split(",")[0]+" media nozzle"}, ${nb} NB inlet/outlet, ${mpv?mk("mkMPV")+" make top-mounted multiport valve (MPV)":nb+" NB frontal piping, 5 valves"}, pressure gauges with needle valve, media (${kg(mtot)}) & nut-bolt-gasket`});
  };
  if(on("iMGF"))filt("MGF");
  if(on("iACF"))filt("ACF");
@@ -400,20 +420,22 @@ function calc(){
   while((bed>1.5||(bed*1600+300)/D>3)&&D<3000){D=DIA[DIA.indexOf(D)+1];A=area(D);bed=L/1000/A}
   if(bed<0.75){bed=0.75;L=A*bed*1000}
   L=up(L,25);bed=L/1000/A;
+  let sfm=null;if(v("mocS")==="FRP"&&!ovr("SOFTENER")){L=up(Math.max(Q*hrs*H/RESIN_CAP,25),25);sfm=frpPick(Math.sqrt(4*(Q/25)/Math.PI)*1000,L)||FRPM[FRPM.length-1];D=sfm.D;A=area(D);bed=L/1000/A}
   const so=ovr("SOFTENER");if(so){D=so.D;A=area(D);L=Math.max(25,up(A*(so.H-300)/1.6,25));bed=L/1000/A}
-  const Hs=so?so.H:Math.max(1500,up(bed*1000*1.6+300,100));
+  const Hs=sfm?sfm.H:so?so.H:Math.max(1500,up(bed*1000*1.6+300,100));
   const ves=vesselCost(D,Hs,v("mocS"));
   const rkg=L*RHO_R/1000,gkg=A*0.1*RHO_SAND;
   const plate=v("mocS")==="FRP"?A*6000:A*0.008*7850*R.msKg,str=Math.ceil(A*50);
   const ejNB=L<300?15:L<1000?20:25,ejC=ejNB===15?3000:ejNB===20?4000:5500;
   const salt=L*0.15,cycle=H>0?L*RESIN_CAP/H:0;
-  const cost=ves.c+plate+str*R.strainer+rkg*R.resinKg+gkg*R.sandKg+ejC+pipingCost(D,nb,6)+2*R.gauge+3000+D*3;
-  sof={type:"SOFTENER",D,Hs,A,moc:v("mocS"),ts:ves.ts,td:ves.td,wt:ves.wt,vel:Q/A,nb,valves:6,L,rkg,gkg,bed,str,ejNB,salt,cycle,
+  const smpv=v("mocS")==="FRP"&&D<=1000,sv=smpv?(D<=500?9000:D<=750?14000:28000)*R.pipeFact*mf("mkMPV"):pipingCost(D,nb,6);
+  const cost=ves.c+plate+str*R.strainer+rkg*R.resinKg+gkg*R.sandKg+(smpv?0:ejC)+sv+(smpv?1:2)*R.gauge+(smpv?1500:3000+D*3);
+  sof={type:"SOFTENER",D,Hs,A,model:sfm?sfm.m:"",moc:v("mocS"),make:v("mocS")==="FRP"?mk("mkFRP"):"",vtype:smpv?"Multiport (MPV)":undefined,ts:ves.ts,td:ves.td,wt:ves.wt,vel:Q/A,nb,valves:smpv?1:6,L,rkg,gkg,bed,str,ejNB,salt,cycle,
    layers:[{name:"Gravel (support)",grade:"3-6 mm",depth:100,kg:gkg},{name:"Cation Resin 225 Na",grade:"Strong acid cation, Na form",depth:Math.round(bed*1000),kg:rkg}],
    under:v("mocS")==="FRP"?"Bottom hub & lateral distributor (FRP vessel)":`Strainer plate with ${str} nos. PVC strainers for resin support`};
   units.push(sof);
   lines.push({key:"SOF",cost,price:r500(cost*M),
-   desc:`Softener Vessel — Dia ${D} x ${Hs} mm, ${sof.moc}, c/w ${manhole(D).split(",")[0]} manhole, ${mediaNoz(D).split(",")[0]} media nozzle, ${nb} NB inlet/outlet, strainer plate with PVC strainers, cation resin 225 Na (${kg(rkg)}), ${ejNB} mm NB MS ejector & nut-bolt-gasket`});
+   desc:smpv?`Softener Vessel — ${sfm?"FRP Model "+sfm.m+" ("+sfm.d+'" x '+sfm.h+'"), ':""}Dia ${D} x ${Hs} mm, FRP (${mk("mkFRP")}), ${mk("mkMPV")} make multiport valve (MPV) with brine draw, bottom hub & lateral distributor, cation resin 225 Na (${kg(rkg)}), support gravel & pressure gauge`:`Softener Vessel — Dia ${D} x ${Hs} mm, ${sof.moc}, c/w ${manhole(D).split(",")[0]} manhole, ${mediaNoz(D).split(",")[0]} media nozzle, ${nb} NB inlet/outlet, strainer plate with PVC strainers, cation resin 225 Na (${kg(rkg)}), ${ejNB} mm NB MS ejector & nut-bolt-gasket`});
  }
  // ----- brine
  let brine=null;
@@ -470,9 +492,9 @@ function calc(){
    lines.push({key:"BLW",cost:c,price:r500(c*M),qty:qty*sets0,desc:`Degasser Air Blower — centrifugal, ${dm.blw.cas} casing, ${Math.round(air)} m³/hr @ 150 mmWC, ${bhp} HP, 415 V / 3 Ph${qty===2?" — 1 Working + 1 Standby":""}`});
   }
   if(on("iDTP")){
-   const hd=30,kW=Q*hd*9.81/3600/0.6,hp=HPS.find(x=>x>=kW/0.746*1.1)||50,c=HPP[hp]*1.8*R.pumpFact;
+   const hd=30,kW=Q*hd*9.81/3600/0.6,hp=HPS.find(x=>x>=kW/0.746*1.1)||50,c=HPP[hp]*1.8*R.pumpFact*mf("mkPump");
    dm.dtp={hp,hd};
-   lines.push({key:"DTP",cost:c,price:r500(c*M),qty:2*sets0,desc:`Degassed Water Transfer Pump — Horizontal centrifugal, SS304 wetted parts, ${Q} m³/hr @ ${hd} m head, ${hp} HP, 415 V / 3 Ph — 1 Working + 1 Standby`});
+   lines.push({key:"DTP",cost:c,price:r500(c*M),qty:2*sets0,desc:`Degassed Water Transfer Pump — ${mk("mkPump")} horizontal centrifugal, SS304 wetted parts, ${Q} m³/hr @ ${hd} m head, ${hp} HP, 415 V / 3 Ph — 1 Working + 1 Standby`});
   }
   if(on("iANI")){
    const r=ix("ANION",Math.max(Q*hrs*aLoad/40,100),25,0.8,(L,bed)=>[{name:"Strong Base Anion Resin (OH⁻)",grade:"SBA Type-I, gel type",depth:Math.round(bed*1000),kg:L*0.7,cost:L*0.7*R.sbaKg}],6);
@@ -505,12 +527,12 @@ function calc(){
  const ext={};
  const head=n("pHead")||35,kW=Qf2*head*9.81/3600/0.6,hp=HPS.find(x=>x>=kW/0.746*1.1)||50;
  const pt=v("pType"),pf=pt.includes("Vertical")?2.2:pt.includes("SS304")?1.8:pt.includes("Monoblock")?0.85:1;
- if(on("iPMP")){const c=HPP[hp]*pf*R.pumpFact;ext.pump={hp,head,kW:hp*0.746,type:pt};
-  lines.push({key:"PMP",cost:c,price:r500(c*M),qty:2*Math.max(1,n("sets")),desc:`${ptp==='ETP'||ptp==='STP'?'Filter Feed Pump':ptp==='RO'?'RO Feed Pump':'Raw Water Feed Pump'} — ${pt}, ${+Qf2.toFixed(2)} m³/hr @ ${head} m head, ${hp} HP (${(hp*0.746).toFixed(2)} kW), 415 V / 3 Ph / 50 Hz, 2900 RPM — 1 Working + 1 Standby`})}
+ if(on("iPMP")){const c=HPP[hp]*pf*R.pumpFact*mf("mkPump");ext.pump={hp,head,kW:hp*0.746,type:mk("mkPump")+" — "+pt};
+  lines.push({key:"PMP",cost:c,price:r500(c*M),qty:2*Math.max(1,n("sets")),desc:`${ptp==='ETP'||ptp==='STP'?'Filter Feed Pump':ptp==='RO'?'RO Feed Pump':'Raw Water Feed Pump'} — ${mk("mkPump")} make, ${pt}, ${+Qf2.toFixed(2)} m³/hr @ ${head} m head, ${hp} HP (${(hp*0.746).toFixed(2)} kW), 415 V / 3 Ph / 50 Hz, 2900 RPM — 1 Working + 1 Standby`})}
  if(on("iPNL")){const pk=v("pnlType"),np=(on("iPMP")?2:0)+(X?X.drives:0);
   let c=R.panelBase+np*(3000+hp*800);if(pk.includes("Semi"))c+=15000;if(pk.includes("PLC"))c+=90000;
-  ext.panel={type:pk,np};
-  lines.push({key:"PNL",cost:c,price:r500(c*M),desc:`Electrical Control Panel — ${pk}, powder coated CRCA, IP-54, MCCB incomer, ${np?np+" nos. DOL starters with overload relay, ":""}ammeter, voltmeter, indicating lamps, single phasing & dry-run protection`})}
+  c*=mf("mkPNL");ext.panel={type:pk+" ("+mk("mkPNL")+" make)",np};
+  lines.push({key:"PNL",cost:c,price:r500(c*M),desc:`Electrical Control Panel (${mk("mkPNL")} make) — ${pk}, powder coated CRCA, IP-54, MCCB incomer, ${np?np+" nos. DOL starters with overload relay, ":""}ammeter, voltmeter, indicating lamps, single phasing & dry-run protection`})}
  if(on("iCT")){const L=n("ctLen")||0,c=L*R.trayM;ext.tray={L};
   lines.push({key:"CT",cost:c,price:r500(c*M),desc:`Cable Tray — GI perforated, 100 mm wide, with supports & accessories (${L} m)`})}
  if(on("iWIR")){const L=n("wirLen")||0,sz=hp<=3?"2.5":hp<=7.5?"4":hp<=15?"6":hp<=25?"10":"16";
@@ -521,6 +543,10 @@ function calc(){
   const spec={MS:"MS ERW pipe, Class 'C' (heavy), painted",GI:"GI pipe, Class 'C' (heavy), IS:1239",UPVC:"UPVC pipe, SCH-80",CPVC:"CPVC pipe, SCH-80",MSRL:"MSRL pipe (MS rubber lined), flanged"}[mt];
   ext.pipe={L,mt,spec};
   lines.push({key:"PIP",cost:c,price:r500(c*M),desc:`Inlet / Outlet Piping — ${nb} NB ${spec}, ${L} m, with fittings, supports & 2 nos. isolation valves`})}
+ if(on("iCLD")&&ptp!=="RO"&&ptp!=="STP"){const c=(Q<=5?15000:28000)*mf("mkDZ");ext.cld=true;
+  lines.push({key:"CLD",name:"Chlorine Dosing",cost:c,price:r500(c*M),desc:`Chlorine (NaOCl) Dosing System — ${mk("mkDZ")} electronic dosing pump 0–6 LPH + 100 L HDPE tank`})}
+ if(on("iFLT")){const nf=ptp==="ETP"||ptp==="STP"?4:2,c=nf*1500*mf("mkFLT");ext.flt=nf;
+  lines.push({key:"FLT",name:"Float Switches",cost:c,price:r500(c*M),qty:1,desc:`Level Float Switches — ${mk("mkFLT")} make, ${nf} nos. with cable, for pump dry-run / tank level control`})}
  const eq=lines.reduce((s,l)=>s+l.price*(l.qty||1),0);
  if(on("iERC")){const c=Math.max(eq*R.ercPct/100,R.ercMin);lines.push({key:"ERC",cost:c,price:r500(c),desc:"Erection, Commissioning & Testing (site work)"})}
  if(on("iFRT"))lines.push({key:"FRT",cost:n("freight"),price:n("freight"),desc:"Freight & Transportation",ls:true});
@@ -535,7 +561,7 @@ const HPP2={0.5:9000,1:12000,1.5:15000,2:18000,3:24000,5:34000,7.5:48000,10:6200
 const BLP={1:55000,1.5:60000,2:65000,3:75000,5:95000,7.5:120000,10:145000,12.5:165000,15:190000,20:240000,25:290000,30:340000,40:420000,50:500000,60:580000,75:700000};
 const TANKS=[100,200,300,500,750,1000,1500,2000,3000,5000];
 const hpPick=kW=>HPL.find(x=>x>=kW/0.746*1.1)||75;
-const pumpX=(q,h,f)=>{const hp=hpPick(q*h*9.81/3600/0.6);return {hp,c:HPP2[hp]*f*R.pumpFact}};
+const pumpX=(q,h,f)=>{const hp=hpPick(q*h*9.81/3600/0.6);return {hp,c:HPP2[hp]*f*R.pumpFact*mf("mkPump")}};
 const blowerX=(air,dp)=>{let hp=hpPick(air/3600*dp*100/0.6);if(hp<1)hp=1;return {hp,c:(BLP[hp]||700000)*R.blowF}};
 const f1=x=>(+x).toFixed(1),f2=x=>+(+x).toFixed(2);
 function civ(name,V,hrt,swd){V=Math.max(V,0.5);const A=V/swd,W=Math.sqrt(A/1.5),L=A/W;return [name,V,hrt,`${f1(L)} x ${f1(W)} x ${swd} m SWD + 0.5 m FB`,"RCC (by client)"]}
@@ -557,31 +583,32 @@ function buildX(pt,c){
   const epv=sz==="8040"?(Nm>=12?6:Nm>=6?3:Nm>=2?2:1):(Nm>=8?4:Nm>=3?2:1);
   const nv=Math.ceil(Nm/epv);Nm=nv*epv;
   const P=Math.min(20,Math.max(8,8+tds*0.004)),head=P*10.2,pTDS=Math.max(5,Math.ceil(tds*0.03));
-  const br=v("roBrand"),mp={Vontron:[9000,28000],CSM:[11000,32000],Hydranautics:[14000,42000],"Dow Filmtec":[16000,48000]}[br][sz==="4040"?0:1]*R.memF;
+  const br=v("roBrand"),mp={Vontron:[9000,28000],CSM:[11000,32000],"LG Chem":[13000,40000],Toray:[12500,38000],Hydranautics:[14000,42000],"Dow Filmtec":[16000,48000]}[br][sz==="4040"?0:1]*R.memF;
   const stages=nv>=3?`2-stage array (${Math.ceil(nv*2/3)}:${nv-Math.ceil(nv*2/3)})`:"Single stage";
   basis.push(["Permeate (product) flow",`${f2(Q)} m³/hr (${Math.round(Q*1000).toLocaleString("en-IN")} LPH)`],["Feed flow",`${f2(Qf)} m³/hr`],["Reject flow",`${f2(rej)} m³/hr`],["Recovery",Math.round(rec*100)+" %"],["Feed TDS",tds+" ppm"],["Permeate TDS",`&lt; ${pTDS} ppm (approx. 97% salt rejection)`],["Design flux",flux+" LMH"],["Operating pressure",`${f1(P)} – ${f1(P+2)} kg/cm²`]);
   sec("RO MEMBRANES &amp; PRESSURE VESSELS");
   sp("Membrane",`${br} ${sz}, thin film composite polyamide, spiral wound, brackish water`);sp("Quantity",`${Nm} nos. (${A} m² each, total ${f1(Nm*A)} m²)`);
-  sp("Pressure Vessels",`FRP, ${sz}, ${epv} element(s) per vessel, 300 psi rated — ${nv} nos.`);sp("Array",stages);
+  sp("Pressure Vessels",`${mk("mkPV")} FRP, ${sz}, ${epv} element(s) per vessel, 300 psi rated — ${nv} nos.`);sp("Array",stages);
   add("ROM","RO Membranes",mp,`RO Membrane — ${br} ${sz}, TFC polyamide, brackish water`,Nm,Nm+" Nos.");
-  add("ROV","Pressure Vessels",sz==="4040"?5500+2500*epv:18000+9000*epv,`FRP Pressure Vessel — ${sz}, ${epv} element(s), 300 psi, end/side port`,nv,nv+" Nos.");
-  const pb=v("roPump"),bf={Grundfos:1.6,CNP:1.0,Lubi:0.9}[pb],hp=pumpX(Qf,head,2.0*bf),hq=on("roHPsb")?2:1;X.drives+=hq;
+  add("ROV","Pressure Vessels",(sz==="4040"?5500+2500*epv:18000+9000*epv)*mf("mkPV"),`FRP Membrane Housing (${mk("mkPV")}) — ${sz}, ${epv} element(s), 300 psi, end/side port`,nv,nv+" Nos.");
+  const pb=v("roPump"),bf=MKF.mkPump[pb]||1,hp=pumpX(Qf,head,2.0*bf/mf("mkPump")),hq=on("roHPsb")?2:1;X.drives+=hq;
   sec("HIGH PRESSURE PUMP");sp("Type",`${pb} vertical multistage centrifugal, SS304 / SS316 wetted parts`);sp("Duty",`${f2(Qf)} m³/hr @ ${Math.round(head)} m head`);sp("Motor",`${hp.hp} HP, 415 V, 3 Ph, 50 Hz, 2900 RPM`);sp("Quantity",hq===2?"2 nos. (1 Working + 1 Standby)":"1 no.");
   add("HPP","High Pressure Pump",hp.c,`High Pressure Pump — ${pb} vertical multistage, ${f2(Qf)} m³/hr @ ${Math.round(head)} m, ${hp.hp} HP`,hq,hq===2?"2 Nos. (1W+1S)":"1 No.");
   if(on("roMCF")){const nc=Math.max(1,Math.ceil(Qf/1.5));sec("MICRON CARTRIDGE FILTER");sp("Housing","SS304, with pressure gauges & vent");sp("Cartridges",`${nc} nos. 40" x 5 micron PP spun`);
    add("MCF","Micron Cartridge Filter",6000+nc*1400,`Micron Cartridge Filter — SS304 housing with ${nc} nos. 40" x 5 micron PP cartridges`)}
-  const dz=[];if(on("roAS"))dz.push("Antiscalant");if(on("roSMBS"))dz.push("SMBS (dechlorination)");if(on("roPH"))dz.push("pH correction (HCl/NaOH)");
-  if(dz.length){sec("CHEMICAL DOSING SYSTEMS");dz.forEach(d=>{sp(d,"Electronic dosing pump 0–6 LPH @ 7 bar + 100 L HDPE solution tank");
-   add("DZ"+d[0]+d[1],d+" Dosing",28000,`${d} Dosing System — electronic dosing pump 0–6 LPH + 100 L HDPE tank`)});X.drives+=dz.length}
+  const dz=[];if(on("roAS"))dz.push("Antiscalant");if(on("roSMBS"))dz.push("SMBS (dechlorination)");if(on("roPH"))dz.push("pH correction (HCl/NaOH)");if(on("roCL"))dz.push("Chlorine (NaOCl)");
+  if(dz.length){sec("CHEMICAL DOSING SYSTEMS");dz.forEach(d=>{sp(d,mk("mkDZ")+" electronic dosing pump 0–6 LPH @ 7 bar + 100 L HDPE solution tank");
+   add("DZ"+d[0]+d[1],d+" Dosing",(Q<=5?15000:28000)*mf("mkDZ"),`${d} Dosing System — ${mk("mkDZ")} electronic dosing pump 0–6 LPH + 100 L HDPE tank`)});X.drives+=dz.length}
   if(on("roCIP")){const T=TANKS.find(x=>x>=Nm*(sz==="8040"?40:10))||5000,cq=Math.max(1,Nm*(sz==="8040"?1.5:0.4)),cp=pumpX(cq,30,1.8);X.drives++;
    sec("CIP (CLEANING-IN-PLACE) SYSTEM");sp("CIP Tank",`HDPE ${T} L`);sp("CIP Pump",`SS304 centrifugal, ${f1(cq)} m³/hr @ 30 m, ${cp.hp} HP`);sp("Accessories","CIP cartridge filter, hoses / piping & valves");
-   add("CIP","CIP System",BRINEP[T]+cp.c+18000,`CIP System — HDPE ${T} L tank, SS304 CIP pump ${cp.hp} HP, cartridge filter, piping & valves`)}
+   add("CIP","CIP System",BRINEP[T]+cp.c+(Q<=5?8000:18000),`CIP System — HDPE ${T} L tank, SS304 CIP pump ${cp.hp} HP, cartridge filter, piping & valves`)}
   const sk=v("roSkid"),hpm=v("roHP"),lp=v("roLP");
-  const skc=(20000+nv*5000)*(sk==="SS304"?2.5:1)+(12000+nv*5000)*(hpm==="SS316"?1.3:1)+(8000+nv*3000)*{UPVC:1,CPVC:1.5,SS304:3}[lp];
-  sec("SKID &amp; PIPING");sp("Skid",sk==="SS304"?"SS304 frame":"MS frame, epoxy painted");sp("High pressure piping",`${hpm}, with HP fittings & victaulic/flanged joints`);sp("Low pressure / permeate / reject piping",lp+", SCH-80 / as applicable");
-  add("SKD","RO Skid & Piping",skc,`RO Skid & Interconnecting Piping — ${sk==="SS304"?"SS304":"MS epoxy"} skid, ${hpm} HP piping, ${lp} LP/permeate/reject piping, valves`);
-  if(on("roINS")){sec("INSTRUMENTATION");sp("Flow","Rotameters on permeate & reject");sp("Pressure","Glycerine-filled gauges at feed, HP pump outlet, reject");sp("Quality","Online conductivity / TDS meter on permeate");sp("Protection","Low pressure switch (pump dry-run), high pressure switch");
-   add("RINS","RO Instruments",25000+Q*1500,`RO Instrumentation — permeate & reject rotameters, pressure gauges, online TDS meter, LP & HP switches`,1,"1 Set")}
+  const ssHP=on("roSSHP"),hpTxt=ssHP?hpm+" (all lines above 5 kg/cm²)":"UPVC SCH-80 / HP braided hose (SS not included)";
+  const skc=(8000+nv*3000)*(sk==="SS304"?2.5:1)+(6000+nv*3000)*(ssHP?(hpm==="SS316"?1.3:1):0.45)+(4000+nv*1500)*{UPVC:1,CPVC:1.5,SS304:3}[lp];
+  sec("SKID &amp; PIPING");sp("Skid",sk==="SS304"?"SS304 frame":"MS frame, epoxy painted");sp("High pressure piping",ssHP?`${hpTxt}, with HP fittings & victaulic/flanged joints`:hpTxt);sp("Low pressure / permeate / reject piping",lp+", SCH-80 / as applicable");
+  add("SKD","RO Skid & Piping",skc,`RO Skid & Interconnecting Piping — ${sk==="SS304"?"SS304":"MS epoxy"} skid, ${ssHP?hpm+" HP piping (above 5 kg/cm²)":"UPVC/hose HP piping"}, ${lp} LP/permeate/reject piping, valves`);
+  if(on("roINS")){sec("INSTRUMENTATION");sp("Flow",mk("mkROT")+" rotameters on permeate & reject");sp("Pressure","Glycerine-filled gauges at feed, HP pump outlet, reject");sp("Quality","Online conductivity / TDS meter on permeate");sp("Protection","Low pressure switch (pump dry-run), high pressure switch");
+   add("RINS","RO Instruments",12000+Q*1500,`RO Instrumentation — ${mk("mkROT")} permeate & reject rotameters, pressure gauges, online TDS meter, LP & HP switches`,1,"1 Set")}
   X.qual.push(["TDS",tds+" ppm",`&lt; ${pTDS} ppm`],["Recovery","—",Math.round(rec*100)+" %"],["SDI (RO feed requirement)","—","&lt; 4 (after pre-treatment)"]);
   X.title="Reverse Osmosis (RO) Plant";X.cap=`${f2(Q)} m³/hr (${Math.round(Q*1000).toLocaleString("en-IN")} LPH) permeate`;
   X.flow=["Raw water","Feed pump",c.mgf?"Multi Grade Filter":"",c.acf?"Activated Carbon Filter":"",dz.length?"Chemical dosing":"",on("roMCF")?"Micron cartridge filter":"","HP pump","RO membranes","Permeate to storage (reject to drain)"].filter(x=>x).join(" → ");
@@ -607,17 +634,17 @@ function buildX(pt,c){
   add("UBP","Backwash Pump",bp.c,`UF Backwash Pump — SS304 centrifugal, ${f1(bwQ)} m³/hr @ 25 m, ${bp.hp} HP`,2,"2 Nos. (1W+1S)");
   sec("BACKWASH TANK");sp("Tank",`HDPE ${T} L (UF permeate storage for backwash)`);add("UBT","Backwash Tank",BRINEP[T],`UF Backwash Tank — HDPE ${T} L`);
   if(on("ufCEB")){sec("CEB DOSING (CHEMICALLY ENHANCED BACKWASH)");sp("NaOCl dosing","Dosing pump + 200 L HDPE tank");sp("HCl dosing","Dosing pump + 200 L HDPE tank");X.drives+=2;
-   add("UCE","CEB Dosing",2*32000,`CEB Dosing System — NaOCl & HCl, 2 dosing pumps + 2 x 200 L HDPE tanks`,1,"1 Set")}
+   add("UCE","CEB Dosing",2*(Q<=5?15000:32000),`CEB Dosing System — NaOCl & HCl, 2 dosing pumps + 2 x 200 L HDPE tanks`,1,"1 Set")}
   if(on("ufAir")&&sz==="8 inch"){const air=Nm*12,b=blowerX(air,0.5);X.drives++;sec("AIR SCOURING");sp("Blower",`Twin-lobe / ring blower, ${Math.round(air)} Nm³/hr @ 0.5 bar, ${b.hp} HP`);
    add("UAS","Air Scour Blower",b.c,`Air Scouring Blower — ${Math.round(air)} Nm³/hr @ 0.5 bar, ${b.hp} HP`)}
-  const vt=v("ufValve"),nvv=8,vc=vt==="Pneumatic"?8000+c.nb*150:vt==="Motorized"?9000+c.nb*180:VALVE[c.nb]*1.5;
+  const vt=v("ufValve"),nvv=Q<=5?6:8,vc=vt==="Pneumatic"?8000+c.nb*150:vt==="Motorized"?9000+c.nb*180:VALVE[c.nb]*1.5;
   sec("VALVES &amp; AUTOMATION");sp("Valves",`${nvv} nos. ${vt==="Manual"?"manual butterfly":vt.toLowerCase()+" actuated butterfly"} valves for service, backwash, CEB, drain`);
   if(vt==="Pneumatic")sp("Air compressor","Oil-free, with receiver, FRL & tubing");
   add("UAV","UF Valves",vc*nvv+(vt==="Pneumatic"?(Q<=5?30000:45000):0),`UF Valve Package — ${nvv} nos. ${vt} valves${vt==="Pneumatic"?" + air compressor":""}`,1,"1 Set");
   const sk=v("ufSkid"),pp=v("ufPipe");sec("SKID &amp; PIPING");sp("Skid",sk==="SS304"?"SS304 frame":"MS frame, epoxy painted");sp("Piping",pp==="SS304"?"SS304, flanged":"UPVC SCH-80");
-  add("USK","UF Skid & Piping",(20000+Nm*6000)*(sk==="SS304"?2.5:1)+(10000+Nm*4000)*(pp==="SS304"?3:1),`UF Skid & Piping — ${sk==="SS304"?"SS304":"MS epoxy"} skid, ${pp} interconnecting piping`);
-  if(on("ufINS")){sec("INSTRUMENTATION");sp("Flow","Rotameters on feed, permeate & backwash");sp("Pressure","Pressure transmitters for TMP monitoring");sp("Quality","Online turbidity meter on UF permeate");
-   add("UINS","UF Instruments",60000,`UF Instrumentation — rotameters, pressure transmitters (TMP), online turbidity meter`,1,"1 Set")}
+  add("USK","UF Skid & Piping",(Q<=5?(8000+Nm*4000):(20000+Nm*6000))*(sk==="SS304"?2.5:1)+(Q<=5?(5000+Nm*2500):(10000+Nm*4000))*(pp==="SS304"?3:1),`UF Skid & Piping — ${sk==="SS304"?"SS304":"MS epoxy"} skid, ${pp} interconnecting piping`);
+  if(on("ufINS")){sec("INSTRUMENTATION");sp("Flow",mk("mkROT")+" rotameters on feed, permeate & backwash");sp("Pressure","Pressure transmitters for TMP monitoring");sp("Quality","Online turbidity meter on UF permeate");
+   add("UINS","UF Instruments",Q<=5?25000:60000,`UF Instrumentation — rotameters, pressure transmitters (TMP), online turbidity meter`,1,"1 Set")}
   X.qual.push(["Turbidity","≤ 50 NTU","&lt; 0.2 NTU"],["SDI","—","&lt; 3"],["TSS","—","Nil (≥ 99.9% removal)"],["Bacteria","—","Log 4 removal"]);
   X.title="Ultrafiltration (UF) Plant";X.cap=`${f2(Q)} m³/hr (${Math.round(Q*1000).toLocaleString("en-IN")} LPH) net output`;
   X.flow=["Feed water",on("ufDisc")?"Disc filter":"","UF feed pump","UF modules","UF permeate / backwash tank","To RO / end use"].filter(x=>x).join(" → ");
@@ -637,7 +664,8 @@ function buildX(pt,c){
   sec("SCREENING &amp; OIL REMOVAL");sp("Bar Screen","SS304, manual cleaning, 10 mm clear spacing, with screenings tray");
   add("BSC","Bar Screen",15000+kld*25,"Bar Screen — SS304, manual cleaning, 10 mm clear spacing, with screenings tray");
   X.civil.push(civ("Screen Chamber + O&amp;G Trap",Qa*0.5+1,"30 min",1.5));
-  if(etp&&og>20){sp("Oil &amp; Grease Skimmer","Belt / tube type, SS304, 0.25 HP, with oil collection tray");X.drives++;
+  if(etp&&og>20&&kld<50)sp("Oil &amp; Grease Removal","Baffled O&amp;G trap in screen chamber with manual skimming (small plant)");
+  if(etp&&og>20&&kld>=50){sp("Oil &amp; Grease Skimmer","Belt / tube type, SS304, 0.25 HP, with oil collection tray");X.drives++;
    add("OGS","Oil & Grease Skimmer",85000,"Oil & Grease Skimmer — belt/tube type, SS304, 0.25 HP, with oil collection tray")}
   // equalization
   const Veq=kld*(etp?8:6)/24,aEq=Veq*0.012*60;
@@ -652,10 +680,10 @@ function buildX(pt,c){
    X.civil.push(civ("Flash Mixer",Vfm,"2 min",1.5),civ("Flocculator",Vfl,"20 min",2.5),civ("Primary Tube Settler (hopper bottom)",At*3.5,"—",3.5));
    sec("PHYSICO-CHEMICAL TREATMENT");sp("Flash Mixer Agitator","1 HP, 150 RPM, SS304 shaft & impeller");sp("Flocculator Agitator","0.5 HP, 30 RPM, slow speed, SS304 shaft & paddle");sp("Primary Tube Settler",`PVC/PP tube media, 60° inclination, ${f1(mv)} m³ (${f1(At)} m² area) with MS support`);
    sp("Dosing Systems","Alum/PAC, Lime/NaOH (pH), Polyelectrolyte — each with HDPE tank, agitator & dosing pumps 1W+1S");
-   add("FMA","Flash Mixer Agitator",45000,"Flash Mixer Agitator — 1 HP, 150 RPM, SS304 shaft & impeller");
-   add("FLA","Flocculator Agitator",55000,"Flocculator Agitator — 0.5 HP, 30 RPM slow speed, SS304 shaft & paddle");
+   add("FMA","Flash Mixer Agitator",kld<50?25000:45000,"Flash Mixer Agitator — 1 HP, 150 RPM, SS304 shaft & impeller");
+   add("FLA","Flocculator Agitator",kld<50?30000:55000,"Flocculator Agitator — 0.5 HP, 30 RPM slow speed, SS304 shaft & paddle");
    add("PTS","Primary Tube Settler Media",mv*R.tube*1.2,`Primary Tube Settler — PVC/PP tube media 60°, ${f1(mv)} m³ with MS epoxy support`,1,f1(mv)+" m³");
-   ["Alum / PAC","Lime / NaOH (pH correction)","Polyelectrolyte"].forEach((d,i)=>add("PD"+i,d+" Dosing",R.dosing,`${d} Dosing System — HDPE tank with agitator, 2 dosing pumps (1W+1S)`,1,"1 Set"));X.drives+=8;
+   ["Alum / PAC","Lime / NaOH (pH correction)","Polyelectrolyte"].forEach((d,i)=>add("PD"+i,d+" Dosing",(kld<50?R.dosing*0.45:R.dosing)*mf("mkDZ"),`${d} Dosing System — HDPE tank with agitator, 2 ${mk("mkDZ")} dosing pumps (1W+1S)`,1,"1 Set"));X.drives+=8;
    fl.push("Flash mixer","Flocculator","Primary tube settler");
   }
   // biological
@@ -665,7 +693,7 @@ function buildX(pt,c){
    const O2=1.5*load,eff=tech==="MBBR"?0.12:0.20;airBio=O2/24/(0.276*eff);
    sec("BIOLOGICAL TREATMENT — "+tech.toUpperCase());
    if(!etp&&tech!=="SBR"){const Van=kld*2/24;X.civil.push(civ("Anoxic Tank",Van,"2 hrs",3.5));X.drives++;
-    sp("Anoxic Tank Mixer","Submersible mixer, SS304, for denitrification");add("AXM","Anoxic Submersible Mixer",85000,"Anoxic Tank Mixer — submersible, SS304 propeller");fl.push("Anoxic tank")}
+    sp("Anoxic Tank Mixer","Submersible mixer, SS304, for denitrification");add("AXM","Anoxic Submersible Mixer",kld<100?45000:85000,"Anoxic Tank Mixer — submersible, SS304 propeller");fl.push("Anoxic tank")}
    if(tech==="MBBR"){
     const area=load*1000/(etp?8:10),mv=area/500,V=Math.max(mv/0.4,Qa*(etp?10:6));
     X.civil.push(civ("MBBR Aeration Tank",V,f1(V/Qa)+" hrs",4.0));
@@ -706,17 +734,17 @@ function buildX(pt,c){
   // disinfection
   if(!etp){const Vc=Math.max(1,Qh*0.5);X.civil.push(civ("Chlorine Contact Tank",Vc,"30 min",2.5));X.drives+=2;
    sec("DISINFECTION");sp("Chlorine Contact Tank",`${f1(Vc)} m³ (30 min), baffled — civil by client`);sp("NaOCl Dosing","HDPE tank + 2 dosing pumps (1W+1S)");
-   add("CLD","NaOCl Dosing",R.dosing*0.7,"NaOCl Dosing System — HDPE tank, 2 dosing pumps (1W+1S)",1,"1 Set");fl.push("Chlorine contact tank")}
+   add("CLD","NaOCl Dosing",R.dosing*0.7*mf("mkDZ"),`NaOCl Dosing System — HDPE tank, 2 ${mk("mkDZ")} dosing pumps (1W+1S)`,1,"1 Set");fl.push("Chlorine contact tank")}
   if(c.mgf||c.acf){X.civil.push(civ("Filter Feed Tank",Qh*2,"2 hrs",3.0));fl.push("Filter feed tank");if(c.mgf)fl.push("Pressure sand / multigrade filter");if(c.acf)fl.push("Activated carbon filter")}
   fl.push("Treated water");
   // sludge
   const ds=(pc?kld*(tss*0.8+100)/1000:kld*tss*0.6/1000)+(bio?0.4*load:0);
   X.civil.push(civ("Sludge Holding Tank",Math.max(2,ds/10*2),"2 days",3.0));
   const sh=v("sludge");sec("SLUDGE HANDLING");sp("Sludge generation",`~${f1(ds)} kg dry solids / day`);
-  if(sh==="Filter Press"){const [pz,pc2]=ds<=30?["470 x 470 mm",150000]:ds<=100?["630 x 630 mm",260000]:ds<=300?["800 x 800 mm",450000]:["1000 x 1000 mm",750000];X.drives+=3;
+  if(sh==="Filter Press"){const [pz,pc2]=ds<=10?["300 x 300 mm",85000]:ds<=30?["470 x 470 mm",150000]:ds<=100?["630 x 630 mm",260000]:ds<=300?["800 x 800 mm",450000]:["1000 x 1000 mm",750000];X.drives+=3;
    sp("Filter Press",`${pz} plates, PP recessed, hydraulic closing, MS epoxy frame`);sp("Sludge Feed Pump","Screw / AOD pump — 1W + 1S");
    add("FPR","Filter Press",pc2,`Filter Press — ${pz} PP recessed plates, hydraulic closing, MS epoxy frame`);
-   add("SFP","Sludge Feed Pump",45000,"Sludge Feed Pump — screw / AOD type",2,"2 Nos. (1W+1S)")}
+   add("SFP","Sludge Feed Pump",kld<50?25000:45000,"Sludge Feed Pump — screw / AOD type",2,"2 Nos. (1W+1S)")}
   else if(sh==="Screw Press"){X.drives+=2;sp("Screw Press","Multi-disc screw press with polymer make-up & dosing");
    add("SCP","Screw Press",ds<=100?600000:950000,"Sludge Dewatering Screw Press — multi-disc, with polymer dosing")}
   else{const Ab=Math.max(6,ds*365/100);X.civil.push([ "Sludge Drying Beds",Ab*0.6,"—",`${f1(Ab)} m² total area (2 beds), 0.6 m media depth`,"Brick / RCC (by client)"]);
@@ -756,7 +784,7 @@ function ptSwitch(){const p=v("ptype"),ww=p==="ETP"||p==="STP",sh=(i,b)=>{const 
  const box=(id,b)=>{const e=document.getElementById(id);if(e)e.parentElement.style.display=b?"":"none"};
  box("hard",p==="PT");                       // hardness sirf softener ke liye
  box("regen",p==="PT"||p==="DM");             // regeneration sirf softener / DM
- sh("wMocS",p==="PT");                        // softener MOC sirf softener
+ sh("wMocS",p==="PT");sh("lCLD",p!=="RO"&&p!=="STP");                        // softener MOC sirf softener
  sh("lMGF",p!=="UF");sh("lACF",p!=="UF");sh("wMocF",p!=="UF");
  document.getElementById("tMGF").textContent=ww?"Tertiary Pressure Sand Filter":"MGF";
  document.getElementById("tACF").textContent=ww?"Tertiary Carbon Filter (ACF)":"ACF";
@@ -770,6 +798,7 @@ function newNo(){try{localStorage.setItem("afsQno",(+(localStorage.getItem("afsQ
 function flowSteps(){
  if(S.X&&S.X.flow)return S.X.flow.replace(/&amp;/g,"&").split(" → ");
  const t=S.units.map(x=>x.type),st=["Raw Water"];
+ if(S.ext.cld)st.push("Chlorine Dosing");
  if(S.ext.pump)st.push("Feed Pump");
  if(t.includes("MGF"))st.push("Multi Grade Filter");
  if(t.includes("ACF"))st.push("Activated Carbon Filter");
@@ -798,6 +827,26 @@ function flowPNG(steps){
   L.slice(0,3).forEach((l,j)=>g.fillText(l,p.x+bw/2,p.y+bh/2+(j-(Math.min(L.length,3)-1)/2)*26))});
  return c.toDataURL("image/png");
 }
+/* Make List — sirf wahi items jo is quotation me hain */
+function makeList(){
+ const L=S.lines.map(l=>l.key),p=v("ptype"),rows=[];
+ const has=k=>L.some(x=>x===k||x.startsWith(k));
+ const frp=S.units.some(u=>u.moc==="FRP");
+ if(frp)rows.push(["FRP Vessels",mk("mkFRP")]);
+ if(S.units.some(u=>u.vtype==="Multiport (MPV)"))rows.push(["Multiport Valve (MPV)",mk("mkMPV")]);
+ if(has("ROM"))rows.push(["RO Membranes",v("roBrand")]);
+ if(has("ROV"))rows.push(["Membrane Housing",mk("mkPV")]);
+ if(has("UFM"))rows.push(["UF Modules",v("ufBrand")]);
+ if(has("HPP"))rows.push(["High Pressure Pump",v("roPump")]);
+ if(has("PMP")||has("RTP")||has("DTP")||has("UFP")||has("UBP")||has("RAS")||has("CIP"))rows.push(["Pumps (feed / transfer / CIP)",mk("mkPump")]);
+ if(has("DZ")||has("PD")||has("CLD")||has("UCE"))rows.push(["Dosing Pumps",mk("mkDZ")]);
+ if(has("PNL"))rows.push(["Control Panel",mk("mkPNL")]);
+ if(has("FLT"))rows.push(["Float Switches",mk("mkFLT")]);
+ if(has("RINS")||has("UINS")||has("INS"))rows.push(["Rotameters",mk("mkROT")]);
+ if(S.units.some(u=>u.type==="SOFTENER"||u.type==="CATION"))rows.push(["Ion Exchange Resin","Ion Exchange (India) / Thermax or equivalent"]);
+ if(!rows.length)return "";
+ return `<h4>Make List</h4><table class="t avoid"><tr><th style="width:50%">Item</th><th>Make</th></tr>${rows.map(r=>`<tr><td class="k">${r[0]}</td><td contenteditable="true">${r[1]}</td></tr>`).join("")}</table>`;
+}
 /* Exclusions — jo item quotation me LIYA hai wo yahan NAHI aayega, jo nahi liya wo aayega */
 function excl(){
  const E=S.ext,ww=S.X&&/ETP|STP/.test(S.X.title),tert=on("iMGF")||on("iACF");
@@ -825,7 +874,7 @@ function render(){
  const row=(k,f)=>`<tr><td class="k">${k}</td>${u.map(x=>`<td${ce}>${f(x)}</td>`).join("")}</tr>`;
  const spec=u.length?`<table class="t avoid"><tr><th>Parameter</th>${head.map(h=>`<th>${h==="MB"?"MIXED BED":h+" VESSEL"}</th>`).join("")}</tr>
  ${row("Design Flow",x=>+(x.q||S.Q).toFixed(2)+" m³/hr")}
- ${row("Vessel Size",x=>`Dia ${x.D} x ${x.Hs} mm HOS`)}
+ ${row("Vessel Size",x=>x.model?`FRP Model ${x.model} (Dia ${x.D} x ${x.Hs} mm)`:`Dia ${x.D} x ${x.Hs} mm HOS`)}
  ${row("MOC",x=>MOCN[x.moc])}
  ${row("Thickness",x=>x.moc==="FRP"?"Filament wound FRP, PE liner":`Shell ${x.ts} mm, Dish ${x.td} mm`)}
  ${row("Design / Test Pressure",x=>x.moc==="FRP"?"150 psi (10.5 kg/cm²) rated":"3.5 / 5.25 kg/cm²")}
@@ -885,7 +934,7 @@ function render(){
  }
  // scope table
  const sc=[];
- u.forEach(x=>sc.push([NAME[x.type],`Dia ${x.D} x ${x.Hs} mm, ${x.moc}`,(x.nos||1)*sets+" No."]));
+ u.forEach(x=>sc.push([NAME[x.type],x.model?`FRP Model ${x.model} (${x.make}), Dia ${x.D} x ${x.Hs} mm`:`Dia ${x.D} x ${x.Hs} mm, ${x.moc}`,(x.nos||1)*sets+" No."]));
  if(u.length){
   sc.push(["Manhole",`${manhole(u[0].D).split(",")[0]} on each vessel`,"Each"]);
   sc.push(["Media / resin unloading nozzle",mediaNoz(u[0].D).split(",")[0],"Each"]);
@@ -937,6 +986,7 @@ function render(){
  ${perf}
  ${dmT}
  ${elec}
+ ${makeList()}
  <h4>Exclusions</h4>
  <table class="t avoid"><tr><td${ce}>${excl().map((x,i)=>(i+1)+". "+x).join(" &nbsp; ")}</td></tr></table>
  <h4>Timeline &amp; Warranty</h4>
