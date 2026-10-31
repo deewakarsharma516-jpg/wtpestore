@@ -103,16 +103,16 @@ h4{color:var(--navy);font-size:16px;border-bottom:1.5px solid var(--navy);margin
  </div>
  <label>Items include karo</label>
  <div class="chk">
-  <label><input type="checkbox" id="iMGF" checked>MGF</label>
-  <label><input type="checkbox" id="iACF" checked>ACF</label>
+  <label id="lMGF"><input type="checkbox" id="iMGF" checked><span id="tMGF">MGF</span></label>
+  <label id="lACF"><input type="checkbox" id="iACF" checked><span id="tACF">ACF</span></label>
   <label id="lSOF"><input type="checkbox" id="iSOF" checked>Softener</label>
   <label id="lBRN"><input type="checkbox" id="iBRN" checked>Brine Tank + Agitator</label>
   <label><input type="checkbox" id="iERC" checked>Erection & Comm.</label>
   <label><input type="checkbox" id="iFRT" checked>Freight</label>
  </div>
  <div class="row2">
-  <div><label>Filter MOC (MGF/ACF)</label><select id="mocF"><option>MSEP</option><option>MSRL</option><option>SS304</option><option>FRP</option></select></div>
-  <div><label>Softener MOC</label><select id="mocS"><option>MSRL</option><option>MSEP</option><option>SS304</option><option>FRP</option></select></div>
+  <div id="wMocF"><label id="tMocF">Filter MOC (MGF/ACF)</label><select id="mocF"><option>MSEP</option><option>MSRL</option><option>SS304</option><option>FRP</option></select></div>
+  <div id="wMocS"><label>Softener MOC</label><select id="mocS"><option>MSRL</option><option>MSEP</option><option>SS304</option><option>FRP</option></select></div>
  </div>
 
  <div id="dmBox" style="display:none">
@@ -751,7 +751,17 @@ function ptSwitch(){const p=v("ptype"),ww=p==="ETP"||p==="STP",sh=(i,b)=>{const 
  ["lSOF","lBRN"].forEach(i=>document.getElementById(i).style.display=p==="PT"?"flex":"none");
  document.getElementById("flowLbl").textContent=p==="RO"?"RO Permeate (m³/hr)":p==="UF"?"UF Net Output (m³/hr)":"Flow Capacity (m³/hr)";
  if(ww){const d=p==="ETP"?{kld:25,bod:600,cod:1500,tss:400,og:30}:{kld:250,bod:300,cod:550,tss:300,og:50};for(const k in d)document.getElementById(k).value=d[k]}
- document.getElementById("iMGF").checked=p!=="UF";document.getElementById("iACF").checked=p!=="UF"}
+ document.getElementById("iMGF").checked=p!=="UF";document.getElementById("iACF").checked=p!=="UF";
+ /* sirf wahi fields dikhao jo is plant me lagti hain */
+ const box=(id,b)=>{const e=document.getElementById(id);if(e)e.parentElement.style.display=b?"":"none"};
+ box("hard",p==="PT");                       // hardness sirf softener ke liye
+ box("regen",p==="PT"||p==="DM");             // regeneration sirf softener / DM
+ sh("wMocS",p==="PT");                        // softener MOC sirf softener
+ sh("lMGF",p!=="UF");sh("lACF",p!=="UF");sh("wMocF",p!=="UF");
+ document.getElementById("tMGF").textContent=ww?"Tertiary Pressure Sand Filter":"MGF";
+ document.getElementById("tACF").textContent=ww?"Tertiary Carbon Filter (ACF)":"ACF";
+ document.getElementById("tMocF").textContent=ww?"Tertiary Filter MOC":"Filter MOC (MGF/ACF)";
+ }
 function qno(){let c=+(localStorage.getItem("afsQno")||0);if(!c){c=1;localStorage.setItem("afsQno",1)}
  const d=new Date(),p=x=>String(x).padStart(2,"0");return `QT-${d.getFullYear()}-${p(d.getDate())}${p(d.getMonth()+1)}${String(d.getFullYear()).slice(2)}-${c}`}
 function newNo(){try{localStorage.setItem("afsQno",(+(localStorage.getItem("afsQno")||0))+1)}catch(e){}if(S)render();else alert("New no.: "+qno())}
@@ -787,6 +797,23 @@ function flowPNG(steps){
   const w=s.split(" "),L=[];let cur="";w.forEach(x=>{const t=cur?cur+" "+x:x;if(g.measureText(t).width>bw-20&&cur){L.push(cur);cur=x}else cur=t});L.push(cur);
   L.slice(0,3).forEach((l,j)=>g.fillText(l,p.x+bw/2,p.y+bh/2+(j-(Math.min(L.length,3)-1)/2)*26))});
  return c.toDataURL("image/png");
+}
+/* Exclusions — jo item quotation me LIYA hai wo yahan NAHI aayega, jo nahi liya wo aayega */
+function excl(){
+ const E=S.ext,ww=S.X&&/ETP|STP/.test(S.X.title),tert=on("iMGF")||on("iACF");
+ const xs=(S.X?S.X.excl:[]).join(" ").toLowerCase();
+ return [ww?"":"Civil work &amp; foundation",
+  E.pump?"":(ww&&!tert?"":(ww?"Filter feed pump":S.X&&/RO/.test(S.X.title)?"RO feed pump":"Raw water feed pump")),
+  E.panel?"":"Electrical control panel",
+  E.wire?"Main power supply up to our control panel":"Electrical cabling / wiring from panel to equipment, and power supply",
+  E.tray?"":"Cable tray",
+  E.pipe?`Piping beyond quoted length (${E.pipe.L} m)`:"Inlet / outlet piping beyond equipment battery limit",
+  on("iERC")?"":"Erection, commissioning &amp; testing at site",
+  on("iFRT")?"":"Freight &amp; transportation (extra at actual)",
+  ww?"":"Raw water supply arrangement",(ww||/storage tank/.test(xs))?"":"Storage tanks (feed &amp; product)",
+  S.isDM?"Regeneration chemicals (HCl, NaOH)":"",
+  S.sof?"Salt (NaCl) for regeneration":"",
+  ...(S.X?S.X.excl:[])].filter(x=>x);
 }
 function render(){
  S.flowImg=flowPNG(flowSteps());
@@ -911,7 +938,7 @@ function render(){
  ${dmT}
  ${elec}
  <h4>Exclusions</h4>
- <table class="t avoid"><tr><td${ce}>${["Civil work &amp; foundation",E.wire?"Main power supply up to our panel":"Electrical power cabling &amp; DB",E.pump?"":"Feed pump",E.panel?"":"Control panel","Raw water supply arrangement","Storage tanks (feed &amp; product)",E.pipe?"Piping beyond quoted length":"Extra piping beyond battery limit",S.isDM?"Regeneration chemicals (HCl, NaOH)":S.X?"":"Salt for regeneration",...(S.X?S.X.excl:[])].filter(x=>x).map((x,i)=>(i+1)+". "+x).join(" &nbsp; ")}</td></tr></table>
+ <table class="t avoid"><tr><td${ce}>${excl().map((x,i)=>(i+1)+". "+x).join(" &nbsp; ")}</td></tr></table>
  <h4>Timeline &amp; Warranty</h4>
  <table class="t avoid"><tr><td class="k">Manufacturing / procurement</td><td${ce}>4–6 weeks</td></tr><tr><td class="k">Delivery</td><td${ce}>1 week</td></tr><tr><td class="k">Installation &amp; commissioning</td><td${ce}>1 week</td></tr><tr><td class="k">Total</td><td${ce}><b>${v("deliv")}</b></td></tr><tr><td class="k">Warranty</td><td${ce}>${v("warr")}, against manufacturing defects</td></tr></table>
  <h4>Commercial Terms</h4>
@@ -1012,7 +1039,7 @@ function exportWord(){
  a.download=(qno()+"_"+(v("cName")||"Quotation")).replace(/[^\w\-]+/g,"_")+".doc";
  document.body.appendChild(a);a.click();a.remove();
 }
-loadRates();
+loadRates();ptSwitch();
 </script>
 </body>
 </html>
