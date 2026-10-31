@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Plant Quotation Generator</title>
+<script src="/admin-guard.js?v=2"></script>
+<style>
+:root{--navy:#1f3a68;--green:#2e7d32;--orange:#f39c12;--dark:#1d2b3a;--line:#c9d1dc;--bg:#eef2f7}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:#222}
+.wrap{display:flex;gap:16px;padding:16px;align-items:flex-start}
+.panel{width:400px;flex-shrink:0;background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px #0001;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}
+.panel h2{margin:0 0 8px;color:var(--navy);font-size:18px}
+.panel h3{font-size:13px;margin:14px 0 6px;background:var(--navy);color:#fff;padding:5px 8px;border-radius:5px}
+.panel label{display:block;font-size:12px;margin:6px 0 2px;color:#444;font-weight:600}
+.panel input,.panel select,.panel textarea{width:100%;padding:6px 7px;border:1px solid var(--line);border-radius:5px;font-size:13px;font-family:inherit}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:13px}
+.chk label{font-weight:400;display:flex;gap:6px;align-items:center;margin:2px 0}
+.chk input{width:auto}
+.btn{display:block;width:100%;padding:10px;border:0;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;color:#fff}
+.b1{background:var(--green)}.b2{background:var(--navy)}.b3{background:#25d366}.b4{background:#888}
+details{margin-top:6px}summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--navy)}
+.ratetbl{width:100%;font-size:12px;border-collapse:collapse}.ratetbl td{padding:2px}.ratetbl input{padding:3px 5px}
+.adj{width:100%;font-size:12px;border-collapse:collapse;margin-top:4px}
+.adj th,.adj td{border:1px solid var(--line);padding:3px 4px;text-align:right}.adj th:first-child,.adj td:first-child{text-align:left}
+.adj input{width:90px;padding:3px;text-align:right}
+.note{font-size:11px;color:#777;margin-top:4px}
+/* ---------- DOCUMENT ---------- */
+.paper{background:#fff;width:210mm;min-height:297mm;padding:0 12mm;box-shadow:0 2px 12px #0002;font-family:"Times New Roman",serif;font-size:12.5px;color:#111}
+.paper table.frame{width:100%;border-collapse:collapse}
+.lh{display:flex;justify-content:space-between;align-items:center;padding-top:10mm}
+.lhl{display:flex;gap:10px;align-items:center}
+.logo{width:62px;height:62px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7fd67f,#1b7a3a 55%,#0d4a8a);color:#fff;font:italic 800 22px Georgia,serif;display:flex;align-items:center;justify-content:center;letter-spacing:-1px}
+.cname{font:800 26px Georgia,serif;color:var(--green);letter-spacing:.5px}
+.csub{font:11px Arial,sans-serif;color:#444}.cgst{font:700 11px Arial,sans-serif}
+.lhr{text-align:right;font-family:Arial,sans-serif}
+.lhr .ob{font-size:10px;font-style:italic;color:#555}
+.wtp{display:inline-block;background:#f4f6f8;border-radius:5px;padding:4px 9px;font:800 17px Arial;color:#123}.wtp b{color:var(--orange)}
+.lhr .web{color:var(--green);font-weight:700;font-size:11px}
+.band{background:var(--dark);color:#fff;text-align:center;font:700 11px Arial;padding:4px;margin-top:8px}
+.oline{height:3px;background:var(--orange);margin:5px 0 0}
+.foot{border-top:2px solid var(--green);text-align:center;font:10.5px Arial;padding:5px 0 6mm;line-height:1.5}
+.foot b{font-size:11px}.foot .g{color:var(--green);font-weight:700}
+.title{text-align:center;font:700 26px Georgia;letter-spacing:8px;color:var(--navy);margin:14px 0 2px}
+.qmeta{text-align:center;color:#555;margin-bottom:8px}
+h4{color:var(--navy);font-size:16px;border-bottom:1.5px solid var(--navy);margin:14px 0 6px;padding-bottom:2px}
+.t{width:100%;border-collapse:collapse;margin:4px 0}
+.t th{background:var(--navy);color:#fff;padding:5px 6px;text-align:left;font-size:12px}
+.t td{border:1px solid #333;padding:4px 6px;vertical-align:top}
+.t td.k{background:#f1f3f6;font-weight:700;width:28%}
+.t td.r,.t th.r{text-align:right}.t td.c,.t th.c{text-align:center}
+.t tr.sec td{background:#dfe6f0;font-weight:700}
+.tot{margin-left:auto;width:55%;border-collapse:collapse;margin-top:6px}
+.tot td{padding:3px 6px;text-align:right}.tot tr.g td{font-size:15px;font-weight:700;color:var(--navy);border-top:2px solid var(--navy)}
+.words{font-style:italic;margin-top:4px}
+.sign{display:flex;justify-content:space-between;margin-top:30px}
+.avoid{page-break-inside:avoid}
+[contenteditable]:hover{outline:1px dashed #9ab}
+@media print{
+ body{background:#fff}.panel{display:none}.wrap{padding:0;display:block}
+ .paper{box-shadow:none;width:auto;min-height:0;padding:0 10mm}
+ [contenteditable]:hover{outline:none}
+ @page{size:A4;margin:0}
+ .lh{padding-top:8mm}
+}
+@media(max-width:900px){.wrap{flex-direction:column}.panel{width:100%;position:static;max-height:none}.paper{width:100%;padding:0 10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<!-- ================= FORM PANEL ================= -->
+<div class="panel">
+ <h2>Plant Quotation Generator</h2>
+ <div class="note">MGF + ACF + Softener + Brine — capacity daalo, quotation ready.</div>
+
+ <h3>1. Customer</h3>
+ <label>Company Name</label><input id="cName" value="">
+ <label>Address</label><textarea id="cAddr" rows="2"></textarea>
+ <div class="row2"><div><label>Contact / Mobile</label><input id="cMob"></div><div><label>Kind Attn.</label><input id="cAttn"></div></div>
+ <label>GST Type</label>
+ <select id="gstType"><option value="IGST">Other State — IGST 18%</option><option value="CGST">Haryana — CGST 9% + SGST 9%</option></select>
+
+ <h3>2. Plant Design</h3>
+ <label>Plant Type</label>
+ <select id="ptype" onchange="ptSwitch()"><option value="PT">Pre-Treatment / Softener</option><option value="DM">DM Plant (Cation + Anion + Mixed Bed)</option><option value="RO">RO Plant</option><option value="UF">UF Plant</option><option value="ETP">ETP Plant</option><option value="STP">STP Plant</option></select>
+ <label>Sizing</label>
+ <select id="sizeMode" onchange="document.getElementById('sizeBox').style.display=this.value==='SIZE'?'':'none'"><option value="AUTO">Capacity se (Auto size)</option><option value="SIZE">Size se (Dia x Height daalo)</option></select>
+ <div id="sizeBox" style="display:none">
+  <div class="note">Dia x HOS (mm). Khali chhoda to wo vessel auto-size hoga. PT/DM me capacity pehle bhare vessel se apne aap niklegi.</div>
+  <table class="ratetbl"><tr><th style="text-align:left">Vessel</th><th>Dia (mm)</th><th>HOS (mm)</th></tr>
+  <tr><td>MGF</td><td><input id="szMGFD" type="number" placeholder="auto"></td><td><input id="szMGFH" type="number" placeholder="auto"></td></tr><tr><td>ACF</td><td><input id="szACFD" type="number" placeholder="auto"></td><td><input id="szACFH" type="number" placeholder="auto"></td></tr><tr><td>Softener</td><td><input id="szSOFTENERD" type="number" placeholder="auto"></td><td><input id="szSOFTENERH" type="number" placeholder="auto"></td></tr><tr><td>Cation</td><td><input id="szCATIOND" type="number" placeholder="auto"></td><td><input id="szCATIONH" type="number" placeholder="auto"></td></tr><tr><td>Anion</td><td><input id="szANIOND" type="number" placeholder="auto"></td><td><input id="szANIONH" type="number" placeholder="auto"></td></tr><tr><td>Mixed Bed</td><td><input id="szMBD" type="number" placeholder="auto"></td><td><input id="szMBH" type="number" placeholder="auto"></td></tr></table>
+ </div>
+ <div class="row2">
+  <div id="flowWrap"><label id="flowLbl">Flow Capacity (m³/hr)</label><input id="flow" type="number" step="0.5" value="10"></div>
+  <div><label>Raw Water Hardness (ppm)</label><input id="hard" type="number" value="300"></div>
+ </div>
+ <div class="row2">
+  <div><label>Run between regeneration (hrs)</label><input id="regen" type="number" value="8"></div>
+  <div><label>Qty (Sets)</label><input id="sets" type="number" value="1" min="1"></div>
+ </div>
+ <label>Items include karo</label>
+ <div class="chk">
+  <label><input type="checkbox" id="iMGF" checked>MGF</label>
+  <label><input type="checkbox" id="iACF" checked>ACF</label>
+  <label id="lSOF"><input type="checkbox" id="iSOF" checked>Softener</label>
+  <label id="lBRN"><input type="checkbox" id="iBRN" checked>Brine Tank + Agitator</label>
+  <label><input type="checkbox" id="iERC" checked>Erection & Comm.</label>
+  <label><input type="checkbox" id="iFRT" checked>Freight</label>
+ </div>
+ <div class="row2">
+  <div><label>Filter MOC (MGF/ACF)</label><select id="mocF"><option>MSEP</option><option>MSRL</option><option>SS304</option><option>FRP</option></select></div>
+  <div><label>Softener MOC</label><select id="mocS"><option>MSRL</option><option>MSEP</option><option>SS304</option><option>FRP</option></select></div>
+ </div>
+
+ <div id="dmBox" style="display:none">
+ <h3>2A. DM Plant</h3>
+ <div class="note">Raw water analysis (sab ppm as CaCO₃, silica &amp; CO₂ as such)</div>
+ <div class="row2">
+  <div><label>Total Cations</label><input id="tcat" type="number" value="400"></div>
+  <div><label>Alkalinity (M)</label><input id="alk" type="number" value="250"></div>
+ </div>
+ <div class="row2">
+  <div><label>Cl + SO₄ (EMA)</label><input id="ema" type="number" value="150"></div>
+  <div><label>Silica (ppm SiO₂)</label><input id="sio2" type="number" value="20"></div>
+ </div>
+ <div class="row2">
+  <div><label>Free CO₂ (ppm)</label><input id="co2" type="number" value="15"></div>
+  <div><label>DM Vessel MOC</label><select id="mocDM"><option>MSRL</option><option>FRP</option></select></div>
+ </div>
+ <div class="row2">
+  <div><label>DM Frontal Piping</label><select id="pipDM"><option>MSRL</option><option>UPVC</option></select></div>
+  <div><label>Degasser Tower/Tank MOC</label><select id="mocDG"><option>MSRL</option><option>FRP</option></select></div>
+ </div>
+ <div class="chk">
+  <label><input type="checkbox" id="iCAT" checked>Cation Unit</label>
+  <label><input type="checkbox" id="iANI" checked>Anion Unit</label>
+  <label><input type="checkbox" id="iMB" checked>Mixed Bed</label>
+  <label><input type="checkbox" id="iDGT" checked>Degasser Tower + Tank</label>
+  <label><input type="checkbox" id="iBLW" checked>Degasser Blower</label>
+  <label><input type="checkbox" id="iBLW2">Blower 1W+1S</label>
+  <label><input type="checkbox" id="iDTP" checked>Degassed Water Pump (1W+1S)</label>
+  <label><input type="checkbox" id="iREG" checked>Acid/Alkali Regen System</label>
+  <label><input type="checkbox" id="iINS" checked>Instruments</label>
+ </div>
+ </div>
+
+ <div id="roBox" style="display:none">
+ <h3>2A. RO Plant</h3>
+ <div class="row2"><div><label>Feed TDS (ppm)</label><input id="roTds" type="number" value="1000"></div><div><label>Recovery %</label><input id="roRec" type="number" value="70"></div></div>
+ <div class="row2"><div><label>Membrane Size</label><select id="roSize"><option>Auto</option><option>4040</option><option>8040</option></select></div>
+  <div><label>Membrane Brand</label><select id="roBrand"><option>Vontron</option><option>CSM</option><option>Hydranautics</option><option>Dow Filmtec</option></select></div></div>
+ <div class="row2"><div><label>HP Pump Brand</label><select id="roPump"><option>CNP</option><option>Grundfos</option><option>Lubi</option></select></div>
+  <div><label>Skid</label><select id="roSkid"><option>MS Epoxy</option><option>SS304</option></select></div></div>
+ <div class="row2"><div><label>HP Piping</label><select id="roHP"><option>SS304</option><option>SS316</option></select></div>
+  <div><label>LP / Permeate Piping</label><select id="roLP"><option>UPVC</option><option>CPVC</option><option>SS304</option></select></div></div>
+ <div class="chk">
+  <label><input type="checkbox" id="roMCF" checked>Micron Filter</label>
+  <label><input type="checkbox" id="roHPsb">HP Pump Standby</label>
+  <label><input type="checkbox" id="roAS" checked>Antiscalant Dosing</label>
+  <label><input type="checkbox" id="roSMBS" checked>SMBS Dosing</label>
+  <label><input type="checkbox" id="roPH">pH Dosing</label>
+  <label><input type="checkbox" id="roCIP" checked>CIP System</label>
+  <label><input type="checkbox" id="roINS" checked>Instruments</label>
+ </div>
+ </div>
+
+ <div id="ufBox" style="display:none">
+ <h3>2A. UF Plant</h3>
+ <label>Feed Water</label><select id="ufFeed"><option>Borewell / raw water</option><option>Surface / river water</option><option>STP / ETP treated water</option></select>
+ <div class="row2"><div><label>Module Size</label><select id="ufSize"><option>Auto</option><option>4 inch</option><option>8 inch</option></select></div>
+  <div><label>Module Brand</label><select id="ufBrand"><option>Vontron</option><option>Polymem</option><option>Toray</option><option>Dow / DuPont</option><option>Hydranautics</option></select></div></div>
+ <div class="row2"><div><label>Valves</label><select id="ufValve"><option>Pneumatic</option><option>Motorized</option><option>Manual</option></select></div>
+  <div><label>Skid</label><select id="ufSkid"><option>MS Epoxy</option><option>SS304</option></select></div></div>
+ <label>UF Piping</label><select id="ufPipe"><option>UPVC</option><option>SS304</option></select>
+ <div class="chk">
+  <label><input type="checkbox" id="ufDisc" checked>Disc Filter</label>
+  <label><input type="checkbox" id="ufCEB" checked>CEB Dosing</label>
+  <label><input type="checkbox" id="ufAir" checked>Air Scouring</label>
+  <label><input type="checkbox" id="ufINS" checked>Instruments</label>
+ </div>
+ </div>
+
+ <div id="wwBox" style="display:none">
+ <h3>2A. ETP / STP</h3>
+ <div class="row2"><div><label>Capacity (KLD)</label><input id="kld" type="number" value="25"></div><div><label>Operating hrs/day</label><input id="ophrs" type="number" value="20"></div></div>
+ <div class="row2"><div><label>Inlet BOD (mg/L)</label><input id="bod" type="number" value="600"></div><div><label>Inlet COD (mg/L)</label><input id="cod" type="number" value="1500"></div></div>
+ <div class="row2"><div><label>Inlet TSS (mg/L)</label><input id="tss" type="number" value="400"></div><div><label>Oil &amp; Grease (mg/L)</label><input id="og" type="number" value="30"></div></div>
+ <div id="etpWrap"><label>ETP Process</label><select id="etpProc"><option>Physico-chemical + Biological (MBBR)</option><option>Physico-chemical only</option><option>Biological only (MBBR)</option></select></div>
+ <div id="stpWrap"><label>STP Technology</label><select id="stpTech"><option>MBBR</option><option>SBR</option><option>Extended Aeration</option></select></div>
+ <label>Sludge Handling</label><select id="sludge"><option>Filter Press</option><option>Sludge Drying Bed</option><option>Screw Press</option></select>
+ <div class="note">Tanks RCC by client — tool tank sizes batayega. MGF/ACF tick = tertiary filtration (PSF + ACF).</div>
+ </div>
+
+ <h3>2B. Pump / Electrical / Piping</h3>
+ <div class="chk">
+  <label><input type="checkbox" id="iPMP">Feed Pump (1W+1S)</label>
+  <label><input type="checkbox" id="iPNL">Control Panel</label>
+  <label><input type="checkbox" id="iCT">Cable Tray</label>
+  <label><input type="checkbox" id="iWIR">Wiring / Cabling</label>
+  <label><input type="checkbox" id="iPIP">Inlet/Outlet Piping</label>
+ </div>
+ <div class="row2">
+  <div><label>Pump Head (m)</label><input id="pHead" type="number" value="35"></div>
+  <div><label>Pump Type / MOC</label><select id="pType"><option>Horizontal Centrifugal, CI</option><option>Horizontal Centrifugal, SS304</option><option>Vertical Multistage, SS304</option><option>Monoblock, CI</option></select></div>
+ </div>
+ <div class="row2">
+  <div><label>Panel Type</label><select id="pnlType"><option>Semi-Automatic (with level controller)</option><option>Manual (DOL starters)</option><option>Fully Automatic (PLC based)</option></select></div>
+  <div><label>Cable Tray length (m)</label><input id="ctLen" type="number" value="20"></div>
+ </div>
+ <div class="row2">
+  <div><label>Wiring length (m)</label><input id="wirLen" type="number" value="50"></div>
+  <div><label>Piping length (m)</label><input id="pipLen" type="number" value="30"></div>
+ </div>
+ <label>Inlet/Outlet Piping Material</label>
+ <select id="pipMat"><option>MS</option><option>GI</option><option>UPVC</option><option>CPVC</option><option>MSRL</option></select>
+ <div class="row2">
+  <div><label>Margin %</label><input id="margin" type="number" value="35"></div>
+  <div><label>Freight (₹)</label><input id="freight" type="number" value="20000"></div>
+ </div>
+
+ <h3>3. Terms</h3>
+ <div class="row2"><div><label>Validity</label><input id="valid" value="30 days"></div><div><label>Delivery</label><input id="deliv" value="6-8 weeks"></div></div>
+ <label>Payment Terms</label><input id="pay" value="30% advance with PO, 60% before dispatch, 10% after commissioning">
+ <div class="row2"><div><label>Advance %</label><input id="advP" type="number" value="30"></div><div><label>Warranty</label><input id="warr" value="12 months from commissioning"></div></div>
+
+ <details><summary>⚙ Rate Master (ek baar set karo — auto save)</summary>
+  <table class="ratetbl" id="rateTbl"></table>
+  <button class="btn b4" onclick="resetRates()">Default rates wapas</button>
+ </details>
+
+ <button class="btn b1" onclick="calc()">⚡ Calculate & Make Quotation</button>
+
+ <h3>4. Final Price (edit kar sakte ho)</h3>
+ <div id="adjBox" class="note">Pehle Calculate dabao.</div>
+
+ <button class="btn b2" onclick="window.print()">🖨 Print / Save as PDF</button>
+ <button class="btn b2" style="background:#2b579a" onclick="exportWord()">⬇ Word (.doc) me Download</button>
+ <button class="btn b3" onclick="sendWA()">WhatsApp Summary</button>
+ <button class="btn b4" onclick="newNo()">New Quotation No.</button>
+ <div class="note">PDF: Print → Destination "Save as PDF" → Margins "None" → Background graphics ✔. Document ke andar kisi bhi text pe click karke edit kar sakte ho.</div>
+</div>
+
+<!-- ================= DOCUMENT ================= -->
+<div class="paper" id="paper">
+<table class="frame">
+<thead><tr><td>
+ <div class="lh">
+  <div class="lhl"><img src="data:image/jpeg;base64,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" style="width:66px;height:66px" alt="AFS">
+   <div><div class="cname">AQUA FILTRATION SYSTEM</div>
+   <div class="csub">Water &amp; Waste Water Treatment — Manufacturer &amp; Trader | Est. 2017</div>
+   <div class="cgst">GSTIN: 06DMUPS2289L1ZZ</div></div></div>
+  <div class="lhr"><div class="ob">Our Online Brand</div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAggAAAB+CAIAAADOen7BAABls0lEQVR42u29ebxkV1Uvvr5r71N1557n9NzpOd1JdyedhozMIKiIggMOKMNTRHnoUxT9iY+nIk99+kQElQcqIoIIyDyGBDLPnU7S6XR6SHqep3tvVZ291/f3xzlVt6pu3dvdmYid8/1cQvW9p05Np/baa33X+n4xPDwsBQoUKFCgQB1avAUFChQoUKAIDAUKFChQoAgMBQoUKFCgCAwFChQoUKAIDAUKFChQoAgMBQoUKFCgCAwFChQoUKAIDAUKFChQoAgMBQoUKFCgCAwFChQoUKAIDAUKFChQoAgMBQoUKFCgCAwFChQoUOC/CvyTvichoID5PyFCEYMQosz/CQohhEAgbDpUmP1f/f/Z+EV29MifyJF/Nh5m9A1kN7PHAOrPa+QoggI0PXkKs7tkhyghFEP+bCDtz7hAgQIFisBwFmRRwbS+/lIMIiJK8QScmgIUIaPQIOTI2j+y2qK+8jbWXqDlT8gX7pFVfeRIGTkhmtfuxqPE/JhGjGk8bBa1RFRERQHvBIFGRiEN4kwMKnlsY3GhFChQoAgMZ4dSIsSyahSFIiWDh9acHIqVnWeObj21f3f15L7qmRPpcM2MzfGgsYKzvq5TCOQLcX3JZyOKZHemCCCsL+1sCiFsDgBoeqBGeKk/flMgAsVBe5LyjO7eRV0DlwxMXzYwZbovlyzWYAYS4qy4SAoUKFAEhnMDJa8alUxMkageR3rnyd3fOrjt1hOPP56ePGOpkY4iyBZ9jCzl+ZINsilajCzoLaWbPNXI79uhqkO2JBHCtuwBzCtG2vrk0ch7nIkJyw6LS/0vnDbvlRct3jgws0cktdSEBRNToECB5xXwpB3csjqSM/HOHXfxO4e2fvKJu+8Y2leNUZ0DlCKOAmuUm7LFXfNtvUAorJd0ICDRgR4gSYgo8iWeLQRElkwQWSaBLEYQTQREIyogI0U48gCwPDWBEDBJIUEMMQ5Ar5p60dsWXLZpyqxSDKkUpaQCBQoUgWGM2lFQgYhao4ZD7/T2wb0f3H7T907sqii9c5KtzNZY3DGy+Ddt+cnmshKFWqehmyjinJZoZBvSRiQ0HSAjtPJIwxXGeKDWfIIN2qNOKojUok0Q97qLLn7H0vULy921GFWCAaATKapLBQoUKAJDfclVyxdeA7ygpvbR/Xd9eMf3D3HYu0RZzyWad9gjC3FTJYfSaTXXURWk+i+p5xAVIGymFpqPaX6g5rrTGNFFVAgR1mJlVdfE31tzzSumzmYaKDRYUVkqUKBAERha1mOD+ChwOKLVP9327X89cL84VYBNKzIbkWFkIdbWNb0tJDT/d3SuMLphtLGgN52WY634MuqY5sSlPbqAABEcnVGINNqAyntWbPz5hZdoqAqNRWAoUKBAERiaOklpIqo4JtX3PPSlrxzeGsuJZnzC6HShZXuunZKJcdlmwaiyT1sygSa2edyo0OmAMRKXjIqAM1YdQfUmNAHtN5eueefF612wiFhcNwUKFJCiKylf3U3heFrSP3z4a/9xfGtPKckGx4St/aDjLcRnwciiT4x7gI4+/6gqk4xbhho9+N04jwkBqjcahM6Z6J9tvc+J+9Wll2qIBRldoEABKSQx6gs+o5O/3n7Tfxx+sOySjCgGKa1TAucUFfLgoZ0qSDrWvHGHBb2lgqSdKkhjRYXRz6cxUYeggmwuD4AwIYbLpb96+J5P7n7U+RKoEEYUo28FChR4fgcGimjivnjwoY8euBsl75hLW4xRIDpr0UY6VZBGn0TGCBudH6sT2yxj5BbakZRmYxKPOQuddS2VDadK+scP3fq9YwddokJVgig6lAoUKPA8Dgxlwa7qif+z86YhRwgam+VRPUho7haV+oBCk0oR2tf35kWf2nQSdB6Fyx6o5bDRnanN83R5akJmp9GRRydGOmXZltZARJQANTiBiIffR75v8837QtWLdyN9rgUKFCjw/AsMEAkeH3v89kdqx7qparkyUsvUcdsE8pNkm9tO0s4fjJUHtCccLVGh00k6PZOOf4IIxQhzJt1M7jh5/COPPBATJQwsOpQKFCjw/AsM2Zrt4R4YOvT5A1u8c0Elqojkk8NNU83tgeF82OYxRUyZ7/M7nH9strnDAR24B6J1tKJDVDDAIKUoFKkBhKkv/8uubXed2u+cEq64hgoUKPC8CgyEmGk+L/z5ffcfjkMuHw8GmzS32TJvrKN+2TbF1pFtxtl4hY7pgnYgMMZkm8eakW6OCmjpgqVmYkoRKqaZnLhCDkX7f9sejPQsFLkLFCjwvAoMmayQMzGne8KZbx/ZLk6JEVXUcQpEnXqQZIwK0lnZ5uZqlbbSBqNbjEYp6HWICi01qzFyBXQKYCICU3Nev71//32njiVFJalAgQLPq8BgAKEQKYvec/yJndXjcI4iNOnUz4NzYJvbllodIZzbGYXRbPNZZ5vRdMwI29ym0dR6ng5sc+sxDTGlkTcqieJFDho+v2cHtMgYChQo8HwKDGqZCxsIue3E7hoIEVhd5I4YY0Efq3V1DLa5/Zjmbb6OTxu0NimhrSGqQ67AcdKa0RxGIyq0xB6KV8I5fPPAngO1mkMRGwoUKPD8CQyZSDVwzKqbT+2HascZhXF7e8bpQZKztUGNwUUjIz1s/DLUGIT2WFGhKcIRnUcr6sxDUFDglLuHh7ecOuGQ0SocsRgtUKBAgQuYY8gEko7Z8MHqoIoKzzLFNipdwBjF+o5K2nX/BY7e5o88YVhjUcc4kYDkmN2uZ6kgoWNUkHx0A45GgVKHQ7z3yEHJHSCajEMLFChQQC5orSQAJ6vDp2KVirElUceqII1NJo/pryDjiN9RxEhCBfBmRNu8gnRmm1up784VJI7FNre+LAIGQoxC6PYTRysqXuo+b+fSn1ugQIEC/9XnGACcqA4NSorOi/U4U2w6dq7QPrR8rlEh2jTvJ2qCSMHoKTZ0aG/tYBA0Oiq0NDvV2WY0GUQ39D8at0DFgZBW8giixRR0gQIFnhcZQ9bFX4lpjVamo5xNHe9c2OZOWnvnoqQdyQHDX1zy0gNp5ffu+U5acnWbzrFnm8+VbW5rb0XTr3LxD0KEShFDzsBDMJgGi0YYBbmYYIECBZ73ADB+VwopJJsPy34z1klG//UHGBiQi2EIm1yY26LCWaTxWsoy7a+Lo/qLRseVvECjBsb0bUuu/KGZi6LIg0cPfWTvA92asO4GYQIR67TWd5zB1jHG3Fo/mEwoECMNrBRSIHUH6kAREhADCnmMAgUKZAtarZZy7K4Yiig0SXyIMYSQraxOXZL45tWfZKVaQ9Pxzy0/BgogqC+64/srYAzN1M4xoyk8oHMmAfjIAFRi+OGpC3516YYo5kTevXLTg6cO3nL6cOLKSgtiFIex2eYxCmhtj9vu+Ia82ahVpA+NspI23NxAQgoR7gIFnu9wzh05evQtv/qeo8dPONd5s5jWwoZ1qz/45//zc1/8+vv/4sOlUhKjTZ086SP/94+mTZ0Uo4lIuVz6y7/52Cc/85/lcimkYeWKi//6f/+B9/7ZyRv82XSS6jfYrnB3PhWkjoY50jqANobDD2miqdmSrt73rrl+QJ2RFJleKv/xmhe98dYvHIwWgKiWRDPoOVSQxjqGoxkXQ0MGqimFYr0/ilY0IRUoUKANIcRHHt1x8PDRLDCUyyWnTkTSENI0FZFaLZ06ZSKA02cGd+x6vFwqicj2x3Z9/Vs3vulnfyLGqnN66PDRf/33Lz7+xD7vXZqmEycOyHPWwe1JaaZqq2kzxkgmOvMKMAZBv8kfrr5uSc8AxVSQdYeunzjtN1Zuevf9N9AnpYiIc5xia4tSGa9grbbPLbY9neSY6ibXRY5QoECB5t2ksbe3551vf9Pg0LCqisjnvvj13Y/vNfKqK9df88IrQggx2ry5szLVIe99lgd4z898/qs/8dpXlZIkSZKvffOmx5/YWyqVVEHSOffcCQzNbOqTYJtHO3SeX1QgKdBYS9+8eMOrZy4S1qfbxDJjtZ+bv/KuI/v+Ze8j3VoyhXJ8yaZzYpsbfUc5tdBJggksxp0LPHVgVGr+X/qFFLukbM2x3p6et7/15xq/ufveB3bsfCJavGLDpe98+y82DmteDHt7eyqVyuYtW2+5456XXn/14ODQpz/3ZRH09/cODQ3zOdaVhE5M8lmni5vZZozLNmOsOWqDuCiEVmO4duKsty+/IrtvPoxNCCCUEuT3V73w3pOHHho6UzbNlmuCSgUZ5azzCu31ugbbzNFsM0cExiFCwkQJ5K6m6DhSN/6bSxEhkHgPCEUb7L7SjAwxCqPQERj3WweIUVSEKlHVq/MUl/kSWVoVWtASaCo2jhwsREwAoYo59eJ8dupMFkUpqZiZlZxjRrizqR8BTQTNWW+M3IUEIKZkEG9p1bIaHWLJexFHtD9Cxxs0mkWyntk1/MfBH5T8LUFQlAJhhAoViBFORB3UVFWCMggd4QlQTBjEKHQiqZqPLgpSjWUigCpwUA+aPR17EhAGg5iIUyJIBWPLB4BigFIVtSBOxAFB4SmegArBACGRRFEBhVEYjCqkJ0EXXQ3MCDmOuZzCQC9CQeJEbWzCjgIRg8T8NkmhISrFRUc1gwgdBIYUgrFfGqAJBIYodHiygS2vs8caxUU1kKRWKpWsrUhEzKxeYgoirFSq2T+7usqN369ZtWx4uPL92+7+t3//8stedM2td9x7/wMP9/R0v+aVL/q3z35ZnnuBYXRUwFNmm8f0hc6jggiMIhooM1zpvZdcN815oRmgUm8JEhGICed09bx31TVvvuOrQxBvENCA1r7RsSIQSbQSzvl3ztpoDzTs6lA/Juvjra8/eBKTbRABYJVavG/rbot0sMami5SBCRMWzZ/tYtXOzTADIhS4UtfeA0f3HTxMUZJ9fX1LFlyUSE0tylm5ccTMzRSl7icOHj2w/5BkC4IIhCnR1+enDfTv2H/UCZU63oI/7o2mu9Cyz9NiqatrxcLZqglEapFbtu2spdb8now+W34FO9fd3TVt4kB/f0+p7AHGECSVqDSIWraZeLa3XGoaVSwPn0aNTrxHlOFDPP6AP/lYHDocqidEUiQldE1z3fNsYJGfuDCUpph0BQlKgSUUARPTCDsejz3k0vg0vRYIIqkQBpQxYZn4iWOt2qmjGggGOKCskjIdstPb9NSjcuaQ1Q5LeoaMcN0oTdTu6bF/rkxY6btmRN8VaBoJqp3F1QpgiTBBaqcfkKGTMm78g4jAi/a4pM+6B9RNTKSbaimASEiERCIok/EeMVbs+F0aB/PKAcYX1xl/H1CqTV6jqkoI9Xw/IzP29/e9+hUvuu2u+793y50PbX30s1/42tBwZf1ll1z9gss/8anPP9cCA5u+9TqGafPoqKCdikhtbLOOVUFSk6Ci4kzoQ/obK67eMGma0ZQdLhWYEPGVM+a+eeGav9h+D0rlrIuUpI00CWGUxxzq8Quj2ebmRCdrxm1im6URFaStCQnnnUmbwAMhxHe++4827ziYJE01RMbesn/9a178h//jl7sSHb8PIYtKSkNS/ui/fflPP/TJw0dPiELIrsS95qWb/vQ9vz6hx0U7yxQeRVVMfOnvP/XFv/jbfzp07AzqZD5Ehivp29/46o1rV73ptz5QLsGeDociSGbqoSHUli6c/Y1/+etJfark0cHqm379/9ux/4R35zCAqSiXuyb19c+ZMWnJ/JlXXb520+VrF8yboSaxlgosF4p/lgvNEB+ViKbBMzFVHHuAj/4L9nwVp55QOzMyE0ShiKmyNJAOLNHpL/CLXifTLzXpoolINFGVkp54ovLNN3VXjjwtgr4UERgsIULN9Xe99J85/XqxWseDSxEiGhNxaYrD3467viqH7tST2yWcgFhigvq+IKoYxKE79syMk9e4i16MuS+P/QskJqBRAsacqCURha5sOHP3n+nOL+l4JfV8UyLOmy+xNBE9s2oDS3XmlX7aOvQujapm4mN3cEHGyhnhtLKn8u23loYfV0mIOMpO4DyKRyGZ6F7zdfStoNSoATzvb0eapq946bUf/Lt/3vX43j/+339z/5at3rmf+NFXDvT12Q9CT8GfwyXEpsrHuUUF4tzYZh2deUTQmSoxyOprps9/0+JLhcKmJAAtW2VEqBf79WXrbzv8xC1njiJJfMhSeBmDw+igmZpd2Wx6mWOxzazPYLcxMOdfs2D2pZ80oX/9+nW3P/IlOG1svAl3dIgf+sfPXnbJip973Suq1epZcwafuLsfeuw9f/LBU8PRJSUaIDxdCR/79FdWr1j6zl/8CasMc/wEjup96e6Hd//++z98qhJLXoV5SkRBhF111Ybq0FCFRnrN/vRUS0liEBVLDdEIiZLVg4gqXc3qYWz8s0XW0sFjZ05v37vnu3fe+7HPfmPGtKmvuu7yt/z0qzesWhwCUkNWdnh2i+40jRRRJJoes/s+lG79WNfQXpeZmrumkjwBwBt8eiIeuysevSs8+s+Y90p3yX+TKZtq5pTBQKh0xeGynRE5j4zsnD6Fs6yHiN6X4iB2fSs+9FEcvCkJZwDRbKNImAfF8hhNOBg47Ad32pmdYc8X4uYVuvjH3LJfYN/CSBvrgbIKrcEC4K3WbUPjvMBcw01EokhVOLgfxx728p1069+xa57MuVpX/CynXRudjr9xp6DEwe7sLZUnc/U2KrDeoQoBTI1gQtj5XjAx2rSpU374lS/+qw9//Lvfv93IeXPnvPJl1917/4PyHHRwy1fChrTdWXSQRktkjx0VZEzfZkJSiQt9z++turYLEBFtqec0pR8wJWg2OfHvXnPNDPMI7KiEMSprGc1BN1KKDl7TaEpXGtUePsUqtJCiKvHFV1/e5SmAKLL/ejHnNPier994exy3qAwhMo7eJ1/9zvePngmlpKQCJ3ACr05LvV+94bahWsTZn4+pdzfddueJwUop8XnZTCEKI+dOm7Rx7ao0MBECrvnZjtzAud0YuYsie7ECwIkg2+AT4iQ6cOTI/L7S8WxQLavvSkpdXT2+XD58/ORHP/XVV/3cb777zz5+shLKyQ+EZoCpwZX8qe2VG96k9/2v7upeJGrOEcgKkSDqlzUNYgoVJIKyHU+2f9K+9vqw5S/K8SQzMgBGqLm6r6Ciww0RAtkbSM03Lk2/abohEEHUug8j4hi7eFHn3Il7qzf+Mr7zM8m+r5TtjDoRJ6bZmYmso48KEmKZ/jFVVKVM6Rp82N33R/Frr47bPuZZE3Udc9ZcmpgQRNBZXY+/8WNa/01dX59S/70TOoGTMiyp7ML2f8bXftxu+01X3UnNPRbZsawNy9YCatbVMnL++i+bfoOmJzD6hiRKU4op5fyjQoOO/rEffvmkiRMAhBBe/Yrrp0yeFGN8DgaGNhed1t93GAIYfSTPwaGzZXyMEDWIhV9fdsXqvkl1VYp8TUA76aoqAnUict2UGW9aslarZtkkNN2IDlKLX5u1sXBKyb55OdtMWtOzg0DzhEWtnoqwTnJKGztxPjvKbGY6hrDukmVzZkyxGB1jvhcBnWniZcujjx8/ddphvF1PVOcEw5XaDXdu9qrMoly2wop4Lw88vHPX7r3O+7NVu6wW4213PyjIS+MQgRjEQqhdunrZ7GkTLYZ6wtX8A9TrQs3RtR5joWIq2Zc9ouWOrCckDW1aEKqMBgex5vMg4xvpJfswCM3YXWZ1OZdNODoyUXT1lE9Uw5/+7ad+/tf+YM+RY4l32Sginr3OGXPSpYPbq997a/cTX09UqCowMLboytRrl0oTIUHQEQovpeoBveN30rv/xAuVXiQy02pkXcc4+3d2sUuD8GIucsx63VzE8j4HNr/rObHfSbhBmWtCQpW7PsWv/UR5xyedVOCyJB9KwNRyDXypN+mhscWCZEIAEIh3Ujr9CG7+lfTmd6K2X5Fkz6Btnwdhc3m2WV+GIlHBLCrmflzZ04RAIpCVmTN9CefUx1OlLX9t33ozTj8Mlwgkqqk5Uxtb3sFyazJRofD8h1Xz+CwUsSc9/bBs6aLrrtp48tSZvt7eH/+RV4g8h0X0Wve4GLszVcbVTEWnWn97rpBJ01WYvmz6gp+Zd8lZa2sY+R8g8pZll14+aSprDOo0+3h4FisIogPVATaykxFxPeK8/CTOPkyej+/FOHvGlMsuWZ6GbDVEg9twqrv37Htk+y437ig8hN7ro7v2Pvjw9tFD86ru6PFTt9+92fmzlA1V3eHjpx56ZIf3rukzVhFV8voXrM/alqI4QkHkG16i0Zeh7NC2liVGpDNxJr7+9mb3FaWYODIPHg1SukPVi47iSaMFMkSzSEbShBRxDMqQb1dFRZgoe7r7vn7DvW/7zT89dqaWKEXEni2tQ0PJxxPhjt8p7b9FPCKgYmrIwmS2AsJMxMQEzAhLwCAaXaQQdAIYy/1AEiEU5xiVzZEyi4uN72R7hRf5rhjORHN1rxGxSQjVBJJNabbUxKOaKBVet3xIbvyV0uCurOCf1XMb4d1R8pUWJrB6iAZoJhpd/oSyVLyMNNn2sfjtt+nQbriEOffT8TvNtkxfo/ooKpFCIespv6lQTZJAiBiyjMmBQhVN4A9+1773q8nw4yKamBNENde5Bab+xGFQEwFMW3c+4/+IGMwASATV8KSFK2jG3/rvb/vHD3/g/33o/UsWL2jbxT4HAwM6miu0pwLE2Ax2R8+DDg6dgTLdl353xQt7VM+v14ec7pN3X7KxR71R2aK00chIdPRlYZBW6aeWJiWw0YM0Qtt1inBPppakYhQpqbzoBeshFsVlD0aAMECHhqv3bNkmOm5goKn3N9/94PGTZ0TdqNqtmuBb37ujFs8yp+18smXbzj37DznnRJhv4qlmmNTfc/Xla0WEMcbK6VplsFKrVmrVSqVaqVWr1eHhWqVSTauVSjWNhI6q3KmRsXImrQxXK9XGfavVSrVaGayltVqlUqvFca/GqEaRni4d6O7u7xro6+nq6yn3dCWJA0OoVKshknR5F5BADSoh6e352s33vv+DH3fOETDos5M0OIew87PJY1/wKgIqCSICUUETC1JLeiv9i2sDq2rdc2ooMxUxWpadKkFFKhxY65f/gjGIEBHBNJqEth9KahIiorX3yxIEoYZokhqb75Vm9zJEk0CKxdaMAYkk4ZG/wR3vLsXTVGnp8TNVEmJGRlowRPpIH80FMojBxFnUVt0yiqiXrr1fq37/zW54T8Kuc4/QVIvK4LtCMjn10ywZMD8h9T01LdXEhWxjkhGWGrNGXESvivLem9LNH/TCVJm3MY/9oFmophqoNGdWyl8Xk9YbSdsNi86YYGRPaaOJ5Wq1Vq3WQoijqYXsT2kaRCTGOO+i2a/94Zdf88KN9Yal/IBamj43J58xxryCdqKRz3OKbWRdVk1rv7bsBWv7p0SR83TNBGnXTZvzs/OWfmjXQ9ASW6bY2pJlsLFCZJ2X7DzFllWDWyqhI2aizSMq55tEoL7BcjHGqzasndLffbxqPk9p1YlldZWb73zgbT/32rGbngDRWki/cdMdwOhiEUG4JLlz86P7Dx+fM3lisDB2xqD3bdk6mLLkRr4pAolpddmq5RcvmB1CbeNlqz74x78Nl6/9eeylGZxQyh6bt+/5yCc+l81AjHwxIhfOmvyON70t8Y6MrcsFKBALAwN9PSU1jjk6qCalGP/mA7+9fvXikEYDIDDj0HDlwKFDN9394Oe+9J3H9x8tlUtNH3IUhKSr/I+f/uJPvOraDZeuTGu1Z2OyAU4rR+yhv3OI5jQrlZlCaRalNmEVVr4ZMy6XnpmAolq1wd1hz9e56/Pu9M6sdgtYgHL1W9hzkYSaoMK+Gbbpf9XSwdY3CJBIUYGz2kG/+YOudqLROSdUqgXfZaveEXsWo2WwByIRokIT1y0DFwtHLgzzXdj1Wb3jDxNWzaFd54AxUkJpAietw8wrOWmJdxMEzmyQwwd56K546G49vS3poGgpkqDrie/Wbn+Pu+pD1B4wntsXW5BKbc0vuxVvMauZpGAJqaB2JFZ2xn236hNfLA0dskRgDoQgCELwVBW37eNx6Y9j0gZDEHC8nRwoqjALTm3D76N/lTCctcGi7iqp1j2LErLuPrRWk9ZdurpUKpnZxYvnN2YaskV/zuwZL3vx1UK5bO3KbLWMMTZ4BTObOmXSy150lYgsWTQfz+JYrT/nkIC2lswmtnl8OnosxbpRvs2iweKmiTN+dvFaIbW1c+IcG0CdyDuWX3bDgSe21mqlvBbblnmMiF3UfX46rrZN1taos82N94BP/RPK8hQzcSHawvmzVi1deOO9j4pvjEpQBM77Bx7efvTYyWkTeqLJ6HkJinjn9hw8cu+Wbd75UdthCsQ57D1w9J77tsx/2XWhFsZ6NrU03HzHvcz21FQirxAxhquvvKyvt7taGVy26KLVyxaONjGtd3XhW7du/vA/fZau+c8wxqkTe97yU68uJ67TEAZFLIoLlco48TVCI2TO7OlL5l9kacpc1BEC1Usufs1LXvDWn/rRd/+vv/riDbe7ctkxGryIOqPCnTwz9LHPfHnDpSudRBPXuX4xapUY69Kuh8N69kvJ9qNsOLyq46Hv6dHN4kRJa8zZmVSnX+Ou/7/oW0NGUqIA5SgTlnDOdW7Vr8StHw9bP14a2mvCdM61bvFrEdIozkVhMiNZ+os+alS2qlsGEadQHdweHvpHXzvB5nyRAnbrwp/SKVewaUmCIBsK8+Y9JFqt7pVLgU9OPBBu/71yOBGdOJLNbw+l5nrigtf7FT8tk6+wpNcRUZiJHAPEcsPwDtv95eGH/r588hHXlG0gGyhJkGz/tzj1Erf6N2LM/YPHb/fO9Sl7ptvEFZoygkJa1pEi1+nin9EjvzR81x+U9nzTOYoyQh3NGWBgOGq7v1KacEWAqJ0lLtTTZJWZr5Bpl2d80Mi0br3KOdIkLs01u5oRAjqatZSd5d3v+mVVZPlBrTay8a/V0uuu3viS61+QjTKEEEalGmHtJSs/+f/+MjtVmoZnTXlbz62xkm0j763jCBjbrE3HEM/QkWOoWZ9GpPZR37l802SfcJSS6zllnCImnNvV844V69SyijPr+3qObAva2Ob8iJGnV2ebs9lmaWabG7MR+WtAPtCAFkLiHNtVyWxomdbXXbpm0wbGQNEIVVr2EF7dE4eObdu5x/vsXaK0RznzHrff/dDew8fUsU6zZ/0hzL6qSqtYuOHm+0zrO/RRLknq5NDR4w8+us/7xu+ZDXiXunqu33gJLVJcjLFSGa5UqpVWVCvVSqVCs1CrWmunvUEcYyCGK8O12vCoO2b/SdNKdfxLXimEMY1mVosxDZaGmIaYpmm1WqlWKosvmvr3f/pbV162KtSiiEPdcE/EXJLceNt9B46eUtfeFcORYcXGUEFWuRIBVOChCVwJrqSupK4E51Rzmry5lxvmTMGcxpT93wNrOf2SDWvQKuW+ZP272b82WoUW1CIYxExiTYKG7kVu3Xv0lf9eW/Vr6dK3uCv/OPoZQoNEy0ajQxpZZaw1fiTWGCNjGixYTJXGtp1Sfo1ERmu+o8UaY4oQo9VirMGyUW0QVBmO9/65nn5EnDhTQ07JQmAmw90L5KoPuWs+HGdcA/YzBoupxIAQGNNoNZqTrkWy+p2ll362uuB1qQnza1KpAqoj1UXe/7c4cg+dOo6tqNBWFLVIE2MVVhOmiEFiypia0aZsSq79YJh6GaOJmDPLGxpgCtF9txsHCYO4c5kVJSlWs2i0GmMt/2/jhrXeyP9arYslcPTMdgihVktrtXR0i5GZZX8aHRXaDshqTc9J8vlcNVM7ss06ZgUJFkGIjyF97awlL54+b8Q+Gec3UlRviOZPzL34xVNmVqLRHAVsGopnrvGgrS9hJGvBCNuMTmxz/loanbxPC2jxqivX93X5UU4dMlyp3HrX/cjJgw7dtybuxlvuthjr3UQ00SCOuZ6FCNT55Pt33n/k+BmnksWMtkkM75KHHt158NBhr9pcOosxLJgzffWq5enIhYtxhXjHyzvHfcd4PupC7RcYBdVaOnnSwP94+y/0+FGGJ87v2X9oy8Pb1ZfaGsiywe6gYsiGKpyaOtEudc7rcdS2pcfuGtz3vVO7v3ty53dP77qrsv/xcCpVlFFycErxea+QEkaNkMTHU+HYo9rUsWBKMZGJq3XqpYxp/hWoBxbQZT35wciJ67HpL3HtX3PSOolpXRqSY7xH5+gNNfqw5t0eTaMyEiYu4YEb4+4veJ8nxsjzIZCs9M531/01l/ycRNFUIoIbyUKYlfsEKam+Wg0TVvirP1Rb8jNBjEqRbIxdCIGKrzyePvQRx7TmoTSR+GS/THSGlJXQu0Qv+TVT3/ZCAbEzO3X4sIqz824kPR8CejSfKhe053OTk1mmHDTWFBvH8G3WTvMKTSUdoTdXEZnrS7+ybEMiDYmR8w9x9T7qbpV3rlx/2/e+MmTAyJxWkzlp6xRbIw/I03TCgA4qIGxbjJ42j+cQwiXLFy2eO+uhHfuyonQTA653b36kGnLH0dHEwMGjp7535+bEu8al3FAhqo8WM3H+sccPPPjorus2rLBaJjKjLYmUulvvfrBSTbu685lcEJm8xJWXLZsysT/WqvLcVnGjIK1Wr1q3cumiizZve6KlQQtaTfnYridwzYbRC2lGeiT17bWW3PEweOvRXTed2Hn/iccP1k6fRqgxClmiePUDKC/vmb5p6pKXTVu+oDyBqYFCUQMpJqISzrB6uKEZUk86RbvnhdJUidYxxxYhxYkBqESNaiVPCoLJM27PQnEiBnqNFXvoo13pSfhs35NdSwKx1JWTy9/HOa9EOkzxqTNISKJr/RTUIKkLPjqNFSYTko3vl5M7eeQWlSDIlcdA8ULb9XlZ+SZOu0pipV7JeXINYKYsSYyYeb31zdMzO5pXD4ggPS6Vo+idR6k9ua2wFJ7P4ylFsVkdb/QUGzr3II0xxda0gVcQmlbfuGD1yr5J9pQnTrPXdNWUGT86d1GwNDHLlzk215w66D6N7O/QxDaj+V5oqo49nfo70ThloHvjuktCDGit4Dvv7n1o+8HDR52D5eGviczz7sGt23fuP+rU5Z3dRFlt3aqLhVZfgeCEg5Xad75/ezbyw1EbyVot3Ln5EdFEOcL/UsQBL3nhBv+c3wNln50Rk3pLq1cua83Z8z6BI8eOjx5lyDJIpTgKEn9cKx/bd9tP3vdPb3/osx89dMfm2oFDGKogJYzKirdB1Pbg9NcHH33fY1994z0f//snbh3SoIqsFq/MtAsFDESu0ZRde4QgnFQbgmhbcMoGZcGsBBfVxEdvkKB4FqJCPkBKT+dx5C7de4OqiGVjw8xzeqMteD0Wvi6GaAKDlKOVQ9LWKkChmutKIYgRzmgsz5F1v5/6iSI01HN3gqq+epzbP+0tUtxZizzjMosKSZMgUu6JvXM7ZFA0WiVi1BxUgaevlDSeNF59PFpHl7A79iBlSy1FUnJx94SfWbQ2TzrxpHeNI6Sxirx96aUzk2TQZbKrQEshqE2POxuxlaa+8LbZZrTOzHfKjZ5aH6SDXH/1FS5n60ZO5dQdPHLskcced07b9EAIEXXf+d7tw5UUAIUCMeO0SRPe+rOvKznNtZ6EEHNOv3f7fYOVNJcibOqx8s7tPXB4y9btPmMYcipVzGza1EmXr10ZQ/pf4mrO1tcZ06aNGks3Ck6fGYS0G3OD4iiOYMndcGrHW+77lz/Y/pX70wOWWLc6Va/iQSeiApVsCYMrIelyfoec+MOd3/i9rV85hhSal+ghRk0E3VnLf2M6R1Ti0a08sz1T9KzrOljTTIKIRMCCImp0Zs6eNRfxVOiptfjE1116kiqiVmfWISJpeapb+ctBu5SpijiC0OCCtQcGRA3ZNJkzuIwSmHW1zX1FtKx+m19ZzNS2nvgWKk8INFcrfpJRTYNq6mhIBOXRxLXQiyL/FM5xm3H2rzNGSbFdUPDnxCnki35To87ZeYXR6UJHcVahACH+/NJL55V7AsPO4ZNnQgVNZZ9z/GYw/27RhNNKfXO7Jqzqn/D6eUv+YsfDgJpGEa3PNmcDnxj9GVMaPUhs+r00d06wXVcDT8fFgTTaFasvnjl1ysFjJ5oFxACpDNduuffhl77w0qzaoEKRYOJE5fRg9aY7H0xcpl9NIdNQW7x44auv2fCXF01/aMc+9T7vf02wZdueRx/bedmyhdUQGsalEHjnHtrx+OFjp5x6g2bTFQIJtXDZ6ovnzZ7+g5rLP6+hkLr2uELiqAl5EiCc5K1oAorlBVEmxJlE/unxm/9293cPay0p+URQl/Whkhn94Cyv8GXNC0GRiEPCTx+5r3t76Q8vfqVaplBFdV1anpSNP7OhNgGUh3ZXb/19d/VfSu9ihpiNXGSDyRRRAejyy46uYRX1bLx74kQlqR2r7P9+18g8ev2bHYXzrpEpl5iZk4w6ifUUx0bxSCP0CQUmpPa6i18Xdn+hzOHGjiwfVj69247dq7PnR8vGN57cfjBm1LbGlOFkhzdMyyz1K2Fn1U5qDBGNy4cxkyKWEfG052dgaN7+89yiwlizzR1Me6LJyt6Bn5y3TEQeOLX/HQ99+gzSbHnG+UiWEpJpJKTALPb+3zVvuLh36s8tWf353Y/vtdAqy96ug9Q0jTxaQQ/No/lN3j7n24Z0tucfw5xZM9avWfbFb93sfNI8JKGqd9y9uZq+odHUR4iS3uGBR3c8tH2X+nJONUNIeclV66dM7L1y3ZrN255I6gPPCpw6deqWuzavW7UUaSCk3oYIqt5y5321Wlru9s0le4hdc+W6pOQqlfQ5XpytF8RJyqHDRzooxzL29fYIsrIJrV7OSeiGXfzAY9/82N7bQwkOJWcWYVm/Wg3RzBy8V+eowWIV1kMXvcRMvEIYy+6Th+550eQlL5+8vMbUxEH7dPJ87hE1RAeKeBKkeZSe+Gr1W4f9mneVZr80LU+xWBIZgik1kl4AIlX+AN5qqNipvf7E1tGfc4TqvFeaK2kwy/clPMd4A5pJVadttIElPP5Aa5cifBiuHrzbzflh1EUpnhTHoJDgxdnQIT3z2CgJQGHfTHTPIQMRdWzdU2bhnyPKghxnQaSPMGdQYVQD9XkYGBr2y6PZ5ua98/hsM8cKG7Tw0/NXTy+VRaQvKc/rmnQ61LRR+DnnylIe5SmpyBw/od+VRWx5b//r5i368x1bSpp0ZJvzKTZqY/1vnebRppcKtlSQ9ElfymNc4NGXcd2mtV/85vdoLcVb75Otj+0+cPTk7KkTYiCRlbPptPT9uzafHhxOunqy52jkQG/XVetXichLrrr8Y5/5ctu3/1vfu+fNP/1ahRqolikx6FA13Hn/I2idSqPZQG/3dVdeatEIAZ/rDmKZwcXpoeqD23Y2+yBSAIgDp02ekGsLqQilZCIiaSJ/vvO7H997GzwSqlqu0ESjBVneNf1lM5at6509qdwnqkdqp791dNtXDj2UMs0aJDIh6RrSf9t/91VTliYwpXPm4oyrg/uIRwQViLkhLQVeug/flX7nl2qz1mPR692sa9CzNCZlH0OAiZg3/CCcxE3g7NiWpHq0bYkDheXpmL5WTLxJdGGUYsU4n0rq6ESM5WmYchmPPYBWQsJB5PB9jMOC8lOomZnGrpCo7f9GMnysbbSdJjJ9HZI+F0i48fXr1SDmLCMT4caublEQRRJDJgmcyLMu3/vcCAwjOhbtJjztU2xnjQotB2igLenqf+3c5UIjcXH3tI+seWO1TpqisRU8B03c+u6GZlb2pQmaZM/2DUuW/uvuRw6ZOrSnLI3ctUkHSUYWwXr5aMSZZyRo6NO94VXCYozXXnHpxIHewUps7qpU1f2Hjj/w4LZ5L94UYzV/AsBQNXzze3cAqjJiEbVq5bKVFy9IY7r+kqWzp03ef/S0q7saOO/vefCxvQcOLpgxPVqNcBRTdfsPHHj4sSe0RUyJIaZLFl28bP7sEMJ/gQ0RARFfKm158OGtO/a2CUORLHu3eMF8YcyrjtnVUvafPHD3P+y9JZTVMycgTMloA+z6pXkv+JmLNszwvaUokRSI9uGHpixf1jf9T3Z8G5p1rMNFIdzW4QPHwtAclCMZkeqMq2qT1vrj9ygt24o2lIRUJZFhv/f7sufmWu8cm3m5v+jFMvulvncBs5MxPvv5Aih2egeZXf5sWb97ZqF7phhM0/Psx1QiEPAspZNXtn/9Mi/GoT2SnpZS11PIvanO6cnN9uDfOWmXYKol3XrRDxvgMgoOY5IH+UwtSCHtmKsdVI7XiediKU16g098NEKenxnDebi8jRsVRlpUCZjAQvzR+UvnlLvJnCjtd6V+99QsSJwIxcQyscMVfRNeOnP+Pz2xE0k2o6AisWVeoYlLYTuVLZ00e9FqFyJPl2VNiHHJvNkrl8y95f7Hyi36SFpL0zu3bHv1Szblj0xzDjv2Htm8ta55RxOoBdt0+dq+3q5KpTZn5rT1a5Z/7pu3OlfKuASnsv/w8dvu3rL4R14itazUDp/o/Q8+evjoKU2aFTUQo11/5WUD/d3VSuW5UEXNu4eQFeZdQ5h0ROVaEYwf+ugnTg9Vu8tJ65SIzZs145IVC2KIWbJFATy2DB34m+3fCY6l6CxvImIgp6P3/cte/ZrJK2Ok1WJFxUA1iqgDfnTqyo89cfueeBKaMc7iDKcYhtKKlroDhEile1qy/C3xlncAQQjNV1yiTujCQYRdlT22c4/t/Jz1zo8XvUiXvMFPuyq6LrMIGuiIiGejp0sIc2f2saFx2qRyyt6Z6ifHjAOgO4+hEzpTozhSdcI8wjXvrCESVbR6DOkpKU0/B59CIJsszjbyAAUKr6CcvLt667u7j2+FU4qZZt9qZTSbc5XO2mQRohz/mStJNfOSWAjffZe4MkckCKTZj4EQilWpycb36kWvJSrPT46hcyToxCuMN6/QKp+IzHxnivM/PHep5B96XXSIT35HHoUCqEgjG3Air12w+N/37BgGfN2CTZq82Nj0ckb2Ey1sM5rlX+uFi1widKT5hE9l1TMTiklvb9e1m9Z/755HJWmRp3GKm+58YLhShQpNlHCJfv/2+w8fPVEqdeV+0caertLLrrnCmILwXq9/4frPfePWXOHCHBAi5Yab7/2pH3lxJrqsVCrv2rw1BCsnbG7v6UrK121cmyk9Q35g5sktqnACqKmYRxSxjKGFAJAkSYaDvP+D//jZb95SLveiXozLxjjSNLzwirWzpgyEWiToTAwYdPHvt9/4OE+XNJtRE1ACZCD49y575Q9NXVVN04aYKOpz9U5wNFZOWzW3N84qeGCPlMo+E3wXZwgifskbwoGbsP1f4SWbpUfdILjRCZqpOnjChnb7rR+rbf/3OPtqrP4VN/tFiIiaqumzshslhagcymxQwdYFuXeaIKFE0EMiz8PVPMs1EZ258mS6brEzzZ11EGh60sIZATpKK7UIrkr0rAKpwYTKGCU9guE9Yfe3Zdsnu888pl4Io6gas87ZkEz2a37L/EASKjUnPrrx3sxsGoUiYsnpbeeQDYnUTl+oDbD+yUaF1m6cs6njNReRDBBRR1attnHq3FUDk9sGmBUyZLWbDj96nJUsyT27vxKFwpm+5wWTF5VQAiVoxiMJJW6aOnPFwOS7Tp8WFXBE3drkLFNsVqemR+k+5fEE8nRlDWi0XF915fq+v/90bLEypfP+sR279x46MX/W5IAogtT0xlvvzvJfCA0ujenyedPXLF0QUqP6GO2Fl6+dOtB9qhLqr1K9x61333fgyMlpE3oDDdDTw9Vb7rzfuVYdixAWXzRjzeqVaUglE5vCD3xSIVMBTYI6g88+nCgIIQ4ND993/9Z/+NSXvnTjHfC9KiMUDYQ09PWUfvonXql0lJi1rpYhN5zY/dWTjzrvmj9AS+11M9e9dtpKVFJxue5FYiAQgS7VQaQf23P7yTicqGatNEKpgTOTvsmuO1LqRKQZJiYbP5DGk+XHvgInpo6girFNF4gQgXmqoWyn4xNfqR24VVe+LVnzmzGZyCwEPvPvLsgYhpNR4hQUge+jJMoK82/EedDCAioD6cT30pVaXko26mZVi6mKcvzOAqXf+knbe4cpISkI1io2fECr+116KhGxRFKBjwLQlBokxF5e/ru1OdclaRCWRTJ9rXPbcp6TVJATXLCDEf7J7S5GtaXi3NlmEVWCtCj20hmL2p6BIwW48fC2dz3y+Uww/hxpTxP0Wflv1/7Uxglzm6StqIJ+py+bPffeBzdLqSQSct8ziJyFbW6MN7dGBeTpCEeqTE81NtTlKxjScNmKxYvnznpo9/6kqVCuqoePntj88GNL5k6PVXNwew4du+2eB32SMMuZoRbSq69YM33yQLVSo1oMsmTerNUXz7/p3m3eaTZ+5J3s2n9k80OPvfzqdSGtqfq9e/dvf/xgg4fIE68Qrrh0+fTJ/bE2RPF4DlDPThCh7/7DD/b3l6PAmRAwY7UWjp44vnv/4ZCGcinJXA5aqsyVoZ95wytfuG51mgZmJmFOqmqf23vPGUlLTaNVUWxWMvCLF200CjXbpzoBSoAAp5Dedmrnx/bc/u3j27xzqYoz+EydKMoLp1zcr10hRIXk1SoMxfIMd83HqhP/jz70d75yTJ0Q0LY9OUjQxczYlQ7SHY/H+95fHTroN30g+D7Ys1Ooo4zFbaiyWf/gnMf9mz2BCWXHvRApZ3MdgEh0cCe3upNbTXMTiJwRqJ9Io2jWfkBDkFS7bd1vu5VvQawYEtPURzXlc7uH4r9yYBiRxHgybDOyvYnRDJyFriunz+1QS6SsHJj1qqmrjnFYz9nzIIjN9wMLuidnjznSVEcVyFXTZ/311vsr5gjTTCZ6DLZZmtjm0bkCZMS5D5Snz2ce9YRBpkzo3XDZ6s2P7WkEhqx1txp5y12bf+xlmyjw3t//4LY9B49mrUSZQGmivGbTeuakeo0s9XaXr9l0+Q13b03yqVpxEs+k9p3v3fnyazaY0Dl33wMPHTp+plRyzfUiVbzomis9mAlnjhrl+4E0pIoB9z6806QWoa6uJwgoVNX5Utln4zaEUPJpjGqlumbF4t/79V/wxlRMJKqV1dlDlUM3n9hdUmgTsRSjvWLm8hW9M2KkcxpUzkjlcDq4d/jE7cd23HLqiQdO7zkjNeedNyihpClTs5VuyhtmrDWjQJzlDh+UEiwGPwWXvxfzX1l75F9095cxvNeBrrXrG6aEmKvbklHUwz36sdg1xW94X3w6dh5n3VZRnWppRMq0uYwTK4DlU/fnIwKDLJGnowBWRacAoPBQz/GzoszwzXkB1Syb+ED9bWFuJGdqEFighN6Fuu733MWvi+x2kakTlWiaaVDiKXKnzeVfCp+fgaEtDwBpHWnYMXmFToZuee+HcWHfhAXdfR2NwRd0T/mLlT/COgN87g7nTU8FjbMJZfnESXO7+x4dDoImf4W2KbYmtpntI2z1/VL92qKIQY3yNAnhNk5LBV589eX//B/fNKHLqTaSzqvevWXrUDVNhFHxrRtvr4bQ45UCg2OMc2ZO27RuVQjBlKSK0CKvuXJt9z98yghDPlXunL/prs2nBis9JVDl9nseDhZL2cgRlYipYdqkgSvWLIsxUBS058YIjyoFiReIgWhpSKcyUpyJCqgSKRbF1YaHVi6a8eE/f8/cGVPSWpDczoWJ6O3Hdx+NZzRxzTxrl/q1Ey+6/8y+bacP7w0nDwyf2nHm0GPDRw+zMhxTUUlUvXgTiaAzEbFh2kXS/7vLX7kwmVhlbFrCFSRBZ1UxJ5Ov8S/YIJf8mu3+Vrrva+Hw3Vo77E2gddtupZoiL7RS6Eoahh/5B859MWa9lDHUr5Bn6LMwwGl5EtHBxVcqp7JNfXCxFBzz+bVz6klKnYFOAasNaxyWtn5VCH0ffLdI5PiNpJn/XlYkhESID44aCWY0kIhEVZbnhfk/oqvfjP5VgQGMQVVpYCnTTDm70CAERJCSiRs3HjOw7AlT02gXngSTP49li+NM+Y41xTZqLqTub0DjxROn9apr97wQ+cdHdm05cuI3Llsxq7vcWNtHR6qxbnQwYoZMTUqLBiY/MrgP6kW0IaTdNqeNelWquT9nhG0eZUPEp3NDPGL9um7NshlTJuw/ecqhvnIB3rmtj+7atefgyoWzjp6u3HbPA84lmRWPQS2tXrp6+azpky2GXFNeGEJcvWLxknmzHs47OElB4vSRHbse3LbjBZcuPzU4fM/mR5xDfXQcBokhXLZqzYKLZoZ8QPo5sS3KpTFBUB3R5ssboZllkEgUYQi0MPzyq9b/2R/8+oqFc6q1WrN885DDPUd3p8qkZXcMKP7Xzm9VQzoUKkEso28c4KCJd5niUT7AAkkRJXBT95z3LHnZxoF51Rhb/f2saSyWKWqJKfqWxTUrdNXP49TOcOCm+MQNPHxXMrzX5aYEoFjWv5RlsqXqierWf/YzriZKYBA+c0S0E3HWPRsijqMSlMEDsJPKPhfd+WoKq0FJqHFwH6zaun4qaDGZhKTfxp2NyNTjYUYVy7zXIdFHijoj6OhSTRG6Slz3K6Xlb0+ty6zmKWkWaik8l+GQLDE3pq4Ur/wjmbgSMYytHAeIl4mrNaXQC+x5Wkpi1uE3dgWpQ7WhdWShTVzIhIt6JzUZ4eQ4Wqv90d07t5+uLZ865c3L5j5di5IXmenLAXC5MAY7ciTWrvQ3im0GsnhgxDOUSMYY582esf6Si//zhtszN7VsD6mqx08Nbtm2c+WSeZu3Prx9xxPed9XrswaJL7t2Y+J9pUnYnYwTJ/RtWrdqyyO7vfcUFYkKOT1YufmO+1+wbtXOPfsffewJ73zeoQgjgBiuvnJtKfHVGOQ5NMPmMi0oQSYhpFnwyzp8FJGGQKmFoCqr5s9+y8+99o2ve9VAWdNqtfnKheBYHH508LA4RSsRHMkT6RmBqHeJ5ALleW0HjMIIwBjMkiiLuqf8xJx1Pzl77WTXG1PKuGyYkypYNhqkqtaD/jU68VIue4s/8VDY8eWw7Z+TocegFlWyxZewrO/aHbzJBh9n38VqWQfUM+JZTXEqFnsv0rrjeOOlQIVD+1g5JV0TvcWo57E7zpLUnPE/sS0Z1WYmJtY93fue0a5n7Q0pZFqeFktTwBgRk6HjLhxXQGDUmA0tlmrDw3f9ec263LJfjkAQZNbW55hj5cw0BCJuyjWcfnkmDdO5OiEiSrOqs2GDu/BUMfyTGyjpZPk5Fh2t7e2thEFUpEf96J0+Ae9KcDxcGR4dNp4KenySXfHGZs3vZnW8trwHLfKTeS02GzDG0yCbN3bu0OX06ivXfvHbd+SNjXXLmVrkzXfc9/pXXXvjrfecqcZSud6SZXHShL5Nl60MrWp3FFHhS67a8LHPfEUkEj7/nrjkWzfd8d/f+tNbtu04caaq5UQYc1cvswl93ddvusyeS1FBstEUSK1ajUaDF6YZs5IxjupcbzmZOqF347rVL7l20yuve8H0KX1pbaiWGlt9nlXkVBg+YsOJQEfbt9U9LbKZTphQWIMYicAeSyaVutdPnPfiKYuvmrpkrvYHWtWsTAk63oXqQpkwqlCSAFJTF1XEhUlrcPlaXfzqcPO7kgM3OQhhSkBpACRxwwft5CPWf7GII2KLtcjTGXWj0GHykuC6PCvttYLhAzi923oWEcMmifJcOQ9CqJFWVhuU4w/IKJM8o9jEJUj6wEgxGUNjVSmMtEt/3q14B62SUO3MrnD3H3ftu4FeRKCmgFHQM3y4etsfSPcMWfg6RitFROCcGedMIZdKpAxiUWI6dquIlGII0CBlxyevAHgBBYYxlbTHYpulXWpbQIgaa1kXRGtE70/8nN7kkVO1HccHn96XWoux7qfVgWFraCW1pT5okuPORJRjSxr0jOwUGMLVm9YN9PcPp0OKXK6DFPWl+x7cdvzU8I0330FN6usd0hBWr7pk6fw5MYY24ieGuH718pnTpx48elQ1ySRAnS89uG3X7n1Hbr/rvppJ18jnYiHExUsWXrwwO9VzKjKoSvyxV10/e+okY+5poCLd5dK0aVMWzps5c/rkOTOmz54+2SvTWlqtDElmMyCxeZOrKqeGh05bzdXbGhrrnAlDrh1tYlQRhZbhZpQmLCxNWtw7bePkhct7ps0tTyyJCxZrZhAmFFMZXzUk84NzpkpGNaNBzEAxaPCcuE6v+8jwN3+y5/D9UhIaNWbqe0GMdupxBSlKhGcmLAhoxi5MWirdF8mZ7a2u0uLTM7UD3/Qzrwv0ziDnXFt0hqCEqpzajiP3QkfVY8S5aWsDehGr4wzXZy86JlOlZx6tRioHFvmuyZWvvrZ76HGhUmOEKkmPUjxZufuPkmnrY/e8oOclrGGgwJAqqIKx4x9AEwm5rtKFJoZxLoHBmBuBZSZTHK2k3WHMbTSvMLLUZsqL5k2r8Kdqw/XlduRe3cDKSX3fPjh425HBg9Xa9HIp95yF4SkIGVLkeDA1REcl8741AtKQ78oaLtiJbW4UstE0oKQiplmRAib5+8OnJVSkxuXz5ixfNPP2B3d0Jfmss0ASlceeOHj3lkd27z3sfJKZPkIYjddtXFsuJ5XqKO/AGOfMmn75mmWf//r3S12ZCKt4yJGTZ26+895HHtujzjsyApa9irRyzZWXTuzvr1aGn1sJMk0Zf+OX3nD52otF2goaWarDaBbSWuhgNt6yK6mkocaQfWKgBEXJmCqnSPd07UlKyQTXtaRn2sLSlGldfTO7BuZ2TZzsustwmTdvjKxJ2uzYkducjSqVwJQghEpmHstZw5Kal3ymSwymocK+pe7in45HNjvjiEODUCgWK0ohIsULwjPDczpKTcuzOPkyntqurlWZHILHv2Gr3qVuoF0f4GylJEdHB+75jh8+RG2TxJBQnuimXB4Yc/IIY6tgU5wZKYgmQq0GTlqlK99ut/+OJAH1uyuFCn9iS/rgh5IN709hYNZxgKyJY5x3T4WWu+dGZ3E8i8bc8yVbGI3PU3VVsKnqgrNoTXeQ2mbb8fVhUewcPMH2uCAi8oqF0/5x2/5tpyuf2bXnV5ctMrA+5noeFcP2pZZyoDZcn68esRpt+IvWo8JIWQx5wxKaHbbq74c+w82D1tfXfe0L1t26+VHJnciY+Y6eHhz+zJe/c/z0kM+FphPSBnq7rr9qo1nHPT4Tj2uuXPefX/s+Rqy0SeAr375l557D6iVfZ0khuhK96spLafG5drlnGirVatXMarXquJcB2nq92vZ7UWhS54ggjpIqQgw/P3/jL826wgl6xHv1BhUxWNZebekYQmkdEwVQDAY1ESF927Nocouuc7Ri2n+xaCKoNQw5WFcGhDiiBnqhPjMfS1QB0Y+FL4q7PwcJrd1g0COb7fHP+4W/NOxq3s71KUSISjmpPF7b/i+llsbwbAJQOO0yTlmhkYKU461FGVdg9do+DSoBbvkb0l2fTQ7dYYkqCXPZnj+BpI/8i819jc68howt3txnbQzMZ1bPpfzEC9iPQc+nmRLnNcXWmk+MNLBmk6FOse30yZMhjCIZ5LqZU66YMVCz0t/c9/jDp4e0bp4DPvlC3uFqZceZE5nDSJv5sIl2DnhNnztHeIURDzcl5JlqEzGjXbXxst6SsukhAETj57/+/VokELP53hDi0vmzli6aG2JttLUvhTGkV29cN2VCjzVNMHnvb7j53v1HTqjLxeAgiDHMnzN9/ZplY1mTXwCgsOy9VyckIUEb1puIximut0tKRlRjTENqtRAsprDzVywC6JXdkK5zdOwwdHVYjyAoTcj0YCGRz9ioLekDam7Wy9i/uO0iMoiTlJs/JMOPl0TPvUstMXq1sPXjemyzOIyKjnALXme+L+L8SPUIgQQxhPJcXvauiD61jBOKojFzVOiuHI73/SnCCcITWQaGC08c+wcYGKzFuLapgtQ6r6BN+YSOonBb1CYgyKq3ewcHdwyfHv2d6VH89tpFU33t0UH+6g0PPTY4rPlpnnxN/4ETJw5VgoMDtc4y5Ks82WGKTTkymGkCG6XDqtRndLMQ0rh+1cULLpqRxrSt//rUUKWR0apIjPG6K9dNHuimdUynNMawZO7MZUvmhSbaAMDpSi0y0xTVTDQqhnTdJctnTOo38kK94o2cVOqegKTRwOhMHIXgrtOHq0zBIIiQqGLRSUQ+dNm2ZkPECcbawEd1QEVOb3GVx9THcbUTaIBSpLJTWGsrSUXtw8ACI4V+tPPg0xcWEsKcBem5iBf/dGzTJxQ6ka4j94a7/0A4TE3OMTRaqdue+JLe/3/LNLS5OJjUJq3Rea9AoCCS59HYQ5AQSECMfs4r0sU/ZJEUMSVMRWBQcfD7vm3bP5Fo1HwmFyLF3PPTExjYSQEPZ2tSkk62ly33DRBCTqS1m/fvbsvMCDGJL5kz+TfXLiwz3nj0xE99/d5v7DvG0WUBnvuotnx/356KaUY9a51a6OxTnbPNGDFlZNPbkecuz3T+CCOnTuxfv3ZFCKHtpSoIMROYKIzlRK/etD4bQxv1gYHiSPb1lK554RXtjUaOKuZM8m4QUFVedM2mREWICzgwTPE9U11PEIqINzFIAD1w/+DevfGMgyMhogaA4k0Sa7GqB8Wp0ulRVo6zqk7RZgYJeDsZb//d8KWXhy+/xh76e8dBaCnTOmx120YuMsog+25pMcKiCIXdM2VgQSZgl1lqPjOXW3QUmKuKYtnr48Dy+lYkayNUg4oX3f5Pdvvv+nhSXElEG4XWpiUfdbbAq/P6+H/aze/w4VgmIdic7gSqrviFWt9s0nkDYOf+0pypmjdAmEb0+zXvTLsuUqPmrSWmNCo8Ijf/jZx8ROGEXoTjTxuwadXjebYcEhdaTUnP8le6ervkWTRTR6/Fo9bxJqM0mrMYnf/q3h2D0YRCSn2K2JRehO9au+g31l7UQ955ovqGb2/+2W/d9+kdB+8+dnrn4FDVogjJs80xklln2cFa7Wv79sIRzFwexeoKem0UCKRF0sUEEZK734rmuU7L6qsCa5JXxdMWGEScykuvudyra1vuKUpxKoCwapw/Z/qGtUtDGiMUrXXw7IVGOFp69RWX9ZZKRjIbHK6TJYRCLBMXnDKx78q1S0PkBTzrb5Qp2rNiYBZiNhsICpXi4HbWjv/Hvvu9c1mkVFrD2Cv7BAwKaNm7bemx9z761R+976Ovu/ej/37ofvVexKtkjKVTVW77V2z9SE/tQNfpbe6W30i/+1Y9cRc8RD2Rn59ZHgLnXCnu/7Lu/lrG+hK59SxNwrS1vmuqkKYRwmfO3I0ZSxsje5bI2l9PkWRXGvKygYlIAiYPfSh++2dx9EZ18M5RPeCzIoKImno4VZ9IOMT7/6fd8JauwT1o9DERVCFgUeKsF+nin0SASMx1c895L0KQsFyG3VKZvEFWvCmM6E5lh5hASqe3p5v/kggqJGhnK5DkTKO6rGu5HsxAjNyoNyrWb4yo92e3TS4IPSZ/3mo+Y2imdpp063BYxqk5IirE+7tPHv7O4SdeM3O+MEZ1nrlQaoQm5Hs3LL94Qt/773tk20n9110nPrP30ERx/T5ZN73nw1evnVROMH5gAJWA4EuP73poaNg738SWaNb90da+0oltzi5YPX9i5ql6GMcQ1q9ZOX1y39FTg05dmw5xluPHULv80pVTJ020Whgtddfw2IshrF25ZNH82Q/u3Oe9z10wWw9OQ7h05aoF8+aEGC/gvJsqXtyLpy7/wqEH6UybHdOc/t2em+d2D/zI9LVdwYX6dHU2dpOIE8d98cx/7t/yT7tv3x6OOwch/3D7VyeWul8+cWUaEnE1QUlObYkP/mW3RaGnj16C3/GZ9NDNsvRNWPzjSf/F5rpNvFIFkeG4bP9P3vneUjiKrIueIBicGBO/4BURE2GikhIUumdOiirvSoimF/8UD3yX2z7FJOsEGlnrvBJ7vhoO3xHnvdIWvM5PWCJdE9RPEHGwU1Y9JUNHwv7v6GP/LsfuK6H5u0IVkoLI4Z5ZuPI9sTQNMX1yw0AtuuAW3YpfTB//kjt2L1qnFtQJdvybLXilm/tqxkwPNY69vsGyCVBGMojSNbZZ4youZD1pNQ0uJiIamoyzLuDAYCNCSXmeO6bUNslRNHVL5KgvRcxdDg2Dqn+37Z7rp1/UB0mYebAo1CCS7WR/9uKLrp899RPb9vznzmPbT7sTHDo6qGf2nTpaHZ7SpeM8f80aT1QO1Cp/v+0RhcfIZrxz9GrNFdrzpPqYGxoHGOu9rMDTrksNSrC48KJZ6y+5+Cs33uVKrikujVx2JbWXX3ulUxhzK5vRqiAQWrQpE3qvXLfy/kcfd74sknZo3Yu1a65Y01VKqpVhAheqDmX2xl47adGqvtl3Vfb0NBFXTnAS1d/a9sWbj+561fSVK/qnd2viiWgclPjE0LHvH3/s64e3PlI9TBVfUm8wtSNSfc/DX5q+pntt70UM3Spn4r3/p/vEY/BCCblhpFNX28f7/ihu/X9h1gbXv8SVJgghw3vj4fvckfs9q+ac0kjNElQNEqZt0Lk/FBgdDGL1QvwzLqhn0uMv/4Nwcr8evhFOmnUGKaKKcu1o3PYJe+xTsWtq7Jrly9OhpZAei5WDpeEDSe2Mg3RQGBAhpeb63Ib3YcoLY6w9LRm2UdA736/5tXjjWz3Sts+6lA5W7v2Am3YFy3PUKhR3VjMoZUjv+iMtTThHw06SFd/v1v9/7J1L5onmhR0Y2EobjCeJ0ZmEGCM9NIESjkyQ3Hj8yCd2bP1vS1ZlgUNzNaVM2FpF5KLerndftuRtl4TtJ8/sOTN8YLC2ZGL/4oEBmkDP8iFD5ENbH9lyatiVsr0EOooAtvn9WZOIZKPFblQWDz7D+4Io0uPlqo1rv3zDXZ0/nhimT5m0cc3yEGoNI9RRTSNZc7CD2IuvueLj//7VvBQrzV6tYmR/b++LXrDeYu6Bc+HyaqTYRNf91nmbHn3wc8Olls+1i1px/Odj937h8ANTSr29pa4uqkU7xdrRdHDQqubVeXWk1dmmIDZRu9RKalL1KodukZ2fhhNTESpMRCyoqXlFTIb3y44vxqYJWpdLe0jdEAgCE5Ogk3Dpu1iaBqsSAP0zNms/+utptZ5lpWv/snbDL5cP3yatxLBlFto+OgnJ8AEZPJB1kZfyMTERL8zpfGsbrx5Ket36P5Clb4zR6fjCeef1gYbUL3h1deersPsLXpvCGAROSofuDA992F/2vijJODp6Oa9ABWJ53zd4PlsNS0pY85sGJznNjgu+K6nT6PKoJXJMXqFFcq5ZrRogDCYQ0/Jfbb3nrhNH664q2Ti0MzCCIoxCMU5y/vIpE187f9Yvr5z/0tmTHaVjuZVi9REcAPjGgf0ffWSbc66uotX5qeZebM1ND21sc3uVH3Uv0mc0sxcL4dpNl/f3d0daY4AuK5WaaC3E9WtWzpszPRPOw5i2VELRGOJlq5fNnjopG3ewfCOYbeMYYlw0f86yRfNiCDzvWlmjb431vQCbfkbqsOeQhWR5qY58UUd+cveLp8j8EzRQUnvVlOWvn7UuzcTv6qesKsomvXA1H/fw5Lbhg/dX92+OB3fb8SEfUHJlKkQiNBtEToO9vGfJ3172htX9s6MRFpP+S2XRT1VFNYrSQJooRJTBlCGBODgV50QTQVbNFphKJogbnQmkJiqX/DeZ9woNVPOkN3GZBEgnr+sWGfiWi7rxlsp5TbtFshoG1iQv+vDQ3OtTa/k6KwmJWZ2fUHOAQqFUmNPc2ZBRM8mlxuCQyVB5mtv4PrfyHWZiqHVcaAw2VsdK9i0c3SGebd2CTvVrfi2WJuXv0EibiPMQt+Wjduwm5nLpjUdTiuZqCHWJRGZ1A1WoQnEuP6Li0EtHlag0XBCNG3q2qNDo21EAY2qmdmabRxeRso9K606NDkQZ3BvS377rxl2VYaBeroGAmaUJnGDEobmpNWd0pyAzRe9c9hSbT5347TtuO0mBmpraGAN3zZKVJojS2FA3sc1EK/nFelt0U6sKnsadgoJ0ZBpl6fy5y+bPDkFA5yxfw7wFiBhx3aY1pcQLncDYqcc8+xpALMY4b+a0DWtW1WK13vnL+jqrFuJ1V146YUIfGQ2Jnt9KQhFoxsM3eMyMCCSy0VCVyLP3qucZjGVrUx6A81M1/sVcm/opRAbRACYR/33JS3500uqYhgirq7szG1kA1Inz8In4Ep0XBwLMlnhxZLBQinjb7Bd8cNUblvppwaoUKKuhPLV85Z/Zhv85nMxkyHcRqG8jlI1xLdSjKJX1qV+qRgZzcfXb3drfppWCpkTGf2cjhzraKlxytbiGnHDLmFZucXo+75iJ8xZoaRy4pPe6j4RVv1bDBMS683Lda5MqdRXCXCwImUlGPhZDySqsFEtleMqV/kV/55e+PYU6po4tnt2ZenaW06ux47ZSDcjyNGKUYXVErHH6lbbk50PdWyVqfUur8NVD8b6/9OGUy2ePDHXmBMymBjWTZRuhr+s7krYbGH0DIoiggBpVLoxhCX3qWkmd6vUYIyp0oG8oogluP3X8Hbff+ES1KlAQMObXynn6oGWim1BsPX36V2658dHKsCRwVNA1WSxoUzcq2mqgbe2qrTPb2aQb+cxPPOYdfrSJ/V0vuvJyhGBwERAJnoFANJs80HXNpvXx3IbRKJJ4XLPpMqUJ1VlU5vtKkIl312xcB4si1PM2YFCKGCLru4F81hSNiJqvF2f7OEFxSjo2NKvz9VPArGEMEqVV++i8r3jm+v5V5VQmH1j26l+atakr9RZiFtoNiAAIbznznPWtOorSIqxmkSnX9V704RWvf8/il0xCqcLgDBAVJsENV5Med8nv+Jf9azr/hyrax8CG4bNBTEfcBetqDaKmSovRYjLDNv5Jed37ovYGyPhtSPVen5iJZ9S/afnuqBGN5Dy19yCi9EBIWauWFummD7gXfbQ685oanWQda4SIZt1BTbRiLj5oQL7xjiKpVbpm29rfTF7+CZvzo1URkSqshFHzqoQSBvOmzRqVHCEzlaCaONPYquztiWiwIN6vfnM6sCIzKvcxU9MyijCRZNdXuPMzXkUtk3zNROijiCB6g5myqfN2pDGPrVk8R93IwmV0TujU1CQ+z0T02JwEjNJMPUui0BwMWsblSNUorsTvHt371u9//X9fcd3q/gkiZiIq7jzqdRSVKDBBcsuRI++6/fubB6vd6Aq0VEE2eAPtyDY3zTZLUzKhrVEn66uQZ8uXIzOusBdcuQb/8PGhCoC6HoAIa4MbVi5bPH92iOd6IcYQr7rysv7u7uODqSKbpCUFDOn8ubPXr10eQ5rv9Yjz6bpDfZ/oyFitDLvopbEDZ2JpTKsha/obt6pBiAm8ia/ULK2mpg05a5g5IKaEAE+F38teGUQSkxpsgpR/d+nLN05d9NHdt9x/es8gUigcYLlqdCM2CIOR7HHly3pm/uTMS18xbcVk1xtCNNJlwQNVxHKSdlOrRuPMjZj+Cey9Kd32j3LgFjd0wJt4l1WMZETDVUSCkDHtnhrm/5Bb9cs6aX1qIlL1Bp6DBkYjb6ClrAfN3NMniqAm8Xy78oOx5KKDqxqFEemCV7tZ1/Dxr1e2/7McvjepHHaWb//Q+GYhL3Q6IyWmvosT58v8V7tFP29TltJE4pADNZRFYIjNsUoJEFENqEVGhqaJtLpHSkAUlSRYaKUWDZGAmtNI9i+TDb83fPM7SrVjjS941qHuQ6jc8+eccWUcWKYBpuJMLYpRkG2tVHguXmBsleSFiImFFER0waUG8xeAg6h/Eob1reYK43gwnDU7UZJ1Y0OVEm8+efRnb/rK76zZ+KNzF5XqhDfOnQMSVyE+8di2P9my+UAtllySQr1Zmu+YmsfWRmgDUOKIVt4ILdueTIiYUJDXuCGi1GdM7XKkTzakYcOaFW9+/WuOnhxWZGUtE2GsVV/9smt6yqW0VjvH04bABRdNe/PrX75z/2Hn1FlWzYCF2tqVy6dN6EstZnv288wYsmqJSuCMKf0//uprNbP+qX/GabQlF01NYCJ+fFcsEUZBOcFrrlu//8QZVW0VaZYZA/0Z9fRUKD5CqirlmOd/SSo/PLDsutULbz6965ajjz1wcu+OcHJIUkSDiTiUxE9G14JJU1f1ztw0ecGqvlkTtEtCrMWIeuNvPQcIShFzJopAolfn/BBmv4SnH437b02P3I6jD/jBfRorZBTANLHShDhpdTJ1g859WXnS6ogyY4BIVFVLqOnZrjFSYAL43tr814ba0fzriczfxlI/obc8iUhxXhLnGsScmhdEpVqKqFOx+I264DVy8uH0wC3h6BY5tkWHd2sIYiHb8otzTCbGgRUyZTlmbNRpG6VrltFLqDkTIhFGAaNWQCfiG5QJhURQOhXHaS8ZhocmzZ+vWRX9q0tWs0zQs6nrlGpZ0pD12iYLXmNdU2s7/zOEg2oidGouOnOMMZocecwNrHRSIRMmvWHejwyGfRAFvUh8sleUBd/b5brNGFxm2/dfnmbA8PDw+LvwssPnDj72i/d9K/GuvtPXjlY246YL2lFSiRRIJJR0RHTU1KRs8cdmL3jr8rXrJ07qpFvEptW7sWiridxy6MhfPfzANw8cjOqdEkRUBzMhGwMpbUraI1KWDSov40BaSU6KWL1cWw8MCNEundDzxRdvmqCMzIpq+rT4neX+6VkBhaKAL5Xz7qHcmgEiYpEhVM/vxIilpIdomNDUiWMLaRoyWjuzyTqfXQ/rstigE5eUmikKiEU4McbaMM/OaTEjJJKkW7StNZMUZbVqlADRp/A+N0aSUifO6h88xKtGlcGYHk8HT8dqzYKJlNT3qJ/ougaSnhIUxhiz2JSpnzI6AcWbmtC04TlqmT6P5rLA3qlQItNTqBzRdMgshUB8ryQTpGtyTEpmTmMkUtApaTlpEMd/03KLEVEvNWhzhTbzCDVIJoZ1Xr5SICJFlAmFAqPAMUAYkUBKUBMJUjuN2glNTzNWM1VT+h6WJkjXBNGS0JkpWINYrFtrQ0yYCJh1pDdfY1n3dIQ4UdWatHz7VCQV6zKJEeqtzVsUSomaUrySFC/OJ5YKqgaf+4IjiiXUqpgYu5zFmhel88iGVTJBhCcdGCCCmKk8Zo5xcoEHBoq4knP/cXDbm+7/dln92abYmsrx7NRX0FK7zyqg7c2jEEYiRJmm+oqZc16/cMklk6dPS0rjzFkcrlZuPXL00zsf/e6BfcdNu1BSYVoXY+Wop9HKNkvG/DVrpmqbfipheblWm/s/UuNlE7q/8OKrJsFCHmIEhRzLf+nvQ6aqm+WpQGPvQNLkqQtIZf6wWt+f1Bsm8soYn5ba41kGwp7Gt2r0a8mL85Q2ZaSn51Wc1ws5x5NAngF33gucYzCIM8nUApQdRVU7D7u1Vpk6GvhIx6iQeR54gzp3mPJPe/b8+94nFnf3XDlt5vKJk2f19s/p6hoolUXkZLWyf3h41+DgQ8eP3HXo0I5qOijo0aQXkroYxDnTuk5vZy+25nmFBtuMtvBW73oYUVca6QpUEfMCUbmAJeeeb2De3cln5puendmesTWEz65M7TP0WvgsnqT45j5ZjoFknyv3iqvmqT7HSRRGmbWNLjGhg65GU1BxUSMEjE4F3qfElmpt8+M7/c4dJWpX4rxzEKkFG05jBWrKEuCAHqiIC2ogHduFvTqyza1pTV0yr2WNaHcian6pRulRdYrcaEQERYQoUKDAhR0YsiHkAE7v7hvQ0kFJ6wvrmGzzGLxCM6uKVrG51vDAXOqEokmkMFDFEaKOqlHktCgiM6VilpMS6SgRiIAzgViqmaq2MV/l27b5qJuoaGOb39C81Ha2Gc1sc9MBrFfn2ZeUSsh665VFFalAgQJyoc8xZM2FpE0pdQ2UyoxNjekdJlDYISrkUyDNva0cg23NSWmTrIseEZo6jeIMzqAmoEDrp3TCxCjCCAjhLVuqmURRayjntvUg5coXhgZngLo/X8vxWUsHSRCoj9zWpXjV8mEcoejsrpKHaygwFddTgQIFLvDAkGkWRYnTXWnVwFRGq8vPjs/2tM1nnosFozQLekMa0+kjE8+NaU4wn5A0tPQ4GcSQr9ptz6FtbNpG2vSb+pTaRC/Y/LBNDENd1yFCXeSyKRO9wDKBD0IuUJ+/AgUKFIGhOTCIASXiumlzgWj5HGp9aLMxWNm5B0lHaSVhzHRhZNltKOqoUkbSjtEnacpFbMRMdMRYtGMPUl37TFscOuvHW66KkbHN2qJ2IZoNf0FUxBmlz3P1lIkac+mhpmdeoECBAhdoYMjK8ErUEF8w7aJ55b5cUrKFxEVrCWl0D5Jm9pmjRCbQvOiT0iqYUDfMGYkuTeEnDwmN5CU3ChlNjGvTvEKTkvZIJtHs0JmNj1qTcng2+I8mAdZME42ERFvUV17R32MxjmjTFE0OBQoUuOAzBoOowRjnd/W9bPpiCbHZxY7t888YW2JvDLa5syUcdNS0Z8dmp3oJqIOQH5rCVy6WNRIktOn3rf13bScZmZfOU6UIIRXGwPTFs2ZN6tKITGVPCLtwDTELFChQBIYmm5dszfNmr1u4fIpPSAUlYjSRjIZDbDPbzLE6OOuVKLYaPTQGk03UWhSZWh4rqwRZQwG7fUGXZkPaCNiIIF8ukKmtValct1MyXTM2hQ3KyAxPZtbECE52pVcvmAWLmZZOgQIFCjxPAkNjjh6pxXV9U354zpI01rxpa29mE9PL8Qca2kX0SBEq2HweSGvNp70MRW22XW8KCdrKJKPJOyFjmzGOQydbm2jr928/T6bIWDN7yeyJl07qj6HFA764ngoUKPA8kt2mSCmEt1182eKungqi1Q0txtJMlbOslWNVkEYtx+zQ0ir5kIF2fKCzKmlrU4Rgg21uLUOh9bllWkm5bRrdJNW3rpzfJbxAxNcLFChQ4Mn5MVQQl3T1vnPphiSmxoaO1WhVjEZ3kI7PNo+OCq09SGiPCtLw50Ure9FBSZtNPUitU3va6q+QJUV5k1LONtc7WS3vU8q6nrIHVknTX1g4+/LpU9NYjNQXKFDg+R0YQJWQvv6ii984ZwXTaHmdX3nubDM7ss0Qadav7mgmitb0pBOvIHX3t5xj0Fa2GW2tq/W0o7WnqpVtzt+iXDUfFK1FWzux51fXLCrVIhhMrbiGChQo8DwODEKaOvJ/rN5w/eSZlRAyTWiDy+SqG3yzjMU218MGRzm3NthmjsFPNNhmy5tfRToUf6ShxBdHeApFnTVunYFAfbZ5PLY5m3EmIsxFs2k+vO/yS+aWfaDhKfsPFyhQoMB/7cAQYYQwygwtfeCy6zf0TUlD6hjLQUQ8RTu1IKF9y593/jTKNTpSYmphrdvlmNjs7TMyatDWV9rGK8hYbHPm0NJ0hqZI0GrkSTFCIZpK7Dd73/o1L5s2ocqKAQZXEM4FChR4nmcMAqFAgsXF3V0fWvfiDT0TTtOqTkVi5iQ4hmbqCNvMZpZYckOypmSiqcrE1s5XQVOugLYZNBk129zgHiBQAjIyIx0p1qqk3dy9yvphVrdsByVG7WN874ZlP7dwdoVVNZ9El7fLFihQoMDzNjD46AwSNIqgZnFlX/eHNr3iFRNnWToMi22WDB0aTEexzWcTkMidcdDiDsRxKkjWPMUG6ZhMNL3w0ZoZubW5NfHepqzF6jS1/7Nx1S8tnx1iSibCUtUbhUXGUKBAgQsPZ7H2HC23CjE1R9GooQvukNn/fujOf9r96DA00cyMERnlYMiqRoL2uk2ulFfXK80OYVPkGGlM0nzF1ybeAe2NTNmEmmQOnWxobGcPgaZikUnDu8fVrYJQN05vKFqAmW09GEWsZpdP7PnDjSteMnWgGqG0mP0NdKapQqXgnwsUKPD8DQyj56JNVEzLX9y38y8evu/h08dj4r04rc8zqzmIRhhpjckzEE3NP3lxaWTVZ6svL6SpvVUozabNaPaAJsXQ/PvRzHAjD4ABdTo6O9JFkKBShUKxSFe1MEv5xiXz3nbJ4oXOV6Vq4rzBCqm8AgUKFIFBOnPRTIwGIbSsfk+ofmrHI5/auX179UzwSCQRqBJCRpjL+5DQWmiqr/5N/oAq7ZNlzZbhyNOR9q5TskWZGyMH57+zFvPnRkEqswYSZRR6ShIl1phKkFm+9JK5U96yYu7GSf0ImtKCo5JqRSNSgQIFisAgY0rsCaFUg6kEpxCXPD48/LV9T3x5766HT508HNIq4LNiDhrGBmCeA6DhrdthbnlkBKFhtKbSqPyw2X08n1NrLPTSpIfaeLJGZNLcaDF0y8yIxMQi4M2mOiwe6HvJnBmvmDfzkom9iUmMMWqE+VJEVAtKLSJDgQIFisDQEY5Sc+ItZ32d+ajBafTqT0XbMTx435GDj5w+deD00LFabZjRaKhLW480rzYW9ZE13LXmE2xtZkVT2ysaUknWCAyj1CzqkxNoJjk06zgSetUu1Snl8sz+3sX93ZdNnbSwr2eyQxAypkKlqMAytb78/EUnUoECBYrAMNa8W1RzJgaAThkNEMl8LpkIoM4gQWIVjCbMrNU697Ny7MYkto08C5uUX0eyCozl19YkvV0vIGVdsxCQTiRReBEPcRQzBmEUgqJUCk2zjlUzCKhKMS0CQ4ECBYrA8FQe4Dnf0clxQ1OBAgUKPN/gn4Vlt1hzCxQoUEAuyAG3AgUKFChQBIYCBQoUKFAEhgIFChQoUASGAgUKFChQoAgMBQoUKFCgCAwFChQoUKAIDAUKFChQoAgMBQoUKFCgCAwFChQoUKAIDAUKFChQoAgMBQoUKFCgCAwFChQoUKAIDAUKFChQ4AeL/x8tvUgPhwUj8wAAAABJRU5ErkJggg==" style="height:34px;display:block;margin-left:auto" alt="WTPeSTORE"><div class="web">www.wtpestore.co.in</div></div>
+ </div>
+ <div class="band">AUTHORISED DEALER — EUREKA FORBES LTD. (WATER SOFTENERS)</div>
+ <div class="oline"></div>
+</td></tr></thead>
+<tfoot><tr><td>
+ <div class="foot"><b>Office: B-198, Royal Plaza, Near Domino’s, Green Field, Faridabad – 121003 (Haryana)</b><br>
+ Mob: 9899193589 / 9910646957 | Tel: 0129-4340856 | Email: aquazone350@gmail.com, deewakar@aquafiltrationsystem.in<br>
+ <span class="g">www.aquafiltrationsystem.in | www.wtpestore.co.in</span><br>
+ RO Plants • DM Plants • Water Softeners • UV Systems • FRP Vessels • Dosing Pumps • Spares</div>
+</td></tr></tfoot>
+<tbody><tr><td id="doc"><p style="text-align:center;color:#888;margin:80px 0">Left side me details bhar ke <b>Calculate</b> dabao.</p></td></tr></tbody>
+</table>
+</div>
+</div>
+
+<script>
+/* ================= RATE MASTER ================= */
+const DEF_RATES={
+ msKg:[130,"MS fabricated vessel ₹/kg (incl. fabrication)"],
+ ssKg:[420,"SS304 fabricated vessel ₹/kg"],
+ epoxyM2:[450,"Epoxy painting ₹/m² (in+out)"],
+ rubberM2:[2800,"Rubber lining ₹/m² (inside)"],
+ sandKg:[9,"Pebbles / Gravel / Sand ₹/kg"],
+ carbonKg:[115,"Activated Carbon ₹/kg"],
+ resinKg:[230,"Cation Resin 225 Na ₹/kg"],
+ strainer:[45,"PVC strainer ₹/nos"],
+ gauge:[1800,"Pressure gauge + needle valve ₹/set"],
+ pipeFact:[1.0,"Piping / valve price factor (1 = default)"],
+ brineFact:[1.0,"Brine system price factor"],
+ sbaKg:[480,"Anion Resin SBA Type-I ₹/kg"],
+ mbcKg:[320,"Mixed Bed Cation Resin ₹/kg"],
+ mbaKg:[560,"Mixed Bed Anion Resin ₹/kg"],
+ ppRing:[22000,"PP Pall ring packing ₹/m³"],
+ instr:[35000,"DM instruments (rotameter + conductivity meter) ₹"],
+ mbbr:[14000,"MBBR media ₹/m³"],
+ tube:[9000,"Tube settler media ₹/m³"],
+ diffF:[1300,"Fine bubble disc diffuser ₹/nos"],
+ dosing:[55000,"Dosing system (tank+agitator+2 pumps) ₹"],
+ memF:[1.0,"RO membrane price factor"],
+ ufF:[1.0,"UF module price factor"],
+ blowF:[1.0,"Air blower price factor"],
+ frpL:[45,"FRP vessel ₹ per litre of vessel volume"],
+ pumpFact:[1.0,"Pump price factor"],
+ panelBase:[35000,"Control panel base ₹ (manual)"],
+ trayM:[450,"GI perforated cable tray ₹/m"],
+ cableFact:[1.0,"Cable / wiring price factor"],
+ pipeIOFact:[1.0,"Inlet/outlet piping price factor"],
+ ercPct:[8,"Erection & commissioning % of equipment"],
+ ercMin:[15000,"Erection minimum ₹"]
+};
+let R={};
+function loadRates(){let s={};try{s=JSON.parse(localStorage.getItem("afsRates")||"{}")}catch(e){}
+ for(const k in DEF_RATES)R[k]=(s[k]!==undefined?s[k]:DEF_RATES[k][0]);drawRates()}
+function drawRates(){document.getElementById("rateTbl").innerHTML=Object.keys(DEF_RATES).map(k=>
+ `<tr><td>${DEF_RATES[k][1]}</td><td style="width:90px"><input type="number" step="any" value="${R[k]}" onchange="R['${k}']=+this.value;saveRates()"></td></tr>`).join("")}
+function saveRates(){try{localStorage.setItem("afsRates",JSON.stringify(R))}catch(e){}}
+function resetRates(){for(const k in DEF_RATES)R[k]=DEF_RATES[k][0];saveRates();drawRates()}
+
+/* ================= ENGINEERING TABLES ================= */
+const DIA=[300,400,500,600,750,900,1000,1100,1200,1400,1500,1600,1800,2000,2200,2400,2600,2800,3000];
+const NBS=[25,32,40,50,65,80,100,125,150,200];
+const VALVE={25:900,32:1100,40:1400,50:2200,65:3000,80:3800,100:5200,125:7000,150:9000,200:14000};
+const PIPEM={25:250,32:320,40:380,50:480,65:650,80:800,100:1100,125:1500,150:1900,200:2800};
+const BRINE=[100,200,300,500,750,1000,1500,2000,3000,5000];
+const BRINEP={100:3000,200:5000,300:7000,500:10000,750:14000,1000:18000,1500:26000,2000:34000,3000:48000,5000:75000};
+const RHO_SAND=1600,RHO_C=500,RHO_R=820,RESIN_CAP=45; // g CaCO3 per litre resin
+const up=(v,s)=>Math.ceil(v/s)*s;
+const pickDia=a=>{const d=Math.sqrt(4*a/Math.PI)*1000;return DIA.find(x=>x>=d)||DIA[DIA.length-1]};
+const pickNB=q=>{const d=Math.sqrt(4*(q/3600)/1.5/Math.PI)*1000;return NBS.find(x=>x>=d)||200};
+const area=D=>Math.PI*(D/1000)**2/4;
+const thk=D=>D<=900?[4,5]:D<=1400?[5,6]:D<=2000?[6,8]:[8,10];
+const manhole=D=>D>=900?"450 mm dia, top inspection manhole":D>=600?"300 mm dia, top manhole":"6\" (150 mm) top handhole";
+const mediaNoz=D=>D>=900?"6\" (150 mm), nozzle for unloading":"4\" (100 mm), nozzle for unloading";
+const vent=D=>D>=1400?"25 NB, with valve":"20 NB, with valve";
+const MOCN={MSEP:"MSEP (Mild Steel Epoxy Painted)",MSRL:"MSRL (Mild Steel Rubber Lined)",SS304:"SS304 (Stainless Steel)",FRP:"FRP (Fibre Reinforced Plastic) with PE liner"};
+const inr=n=>"₹"+Math.round(n).toLocaleString("en-IN");
+const kg=n=>Math.round(n).toLocaleString("en-IN")+" kg";
+const r500=n=>Math.round(n/500)*500;
+
+function vesselCost(D,H,moc){
+ const [ts,td]=thk(D),d=D/1000,h=H/1000;
+ const surf=Math.PI*d*h+2*1.2*area(D);
+ let wt=(Math.PI*d*h*ts/1000+2*1.2*area(D)*td/1000)*7850*1.15;
+ let c;
+ if(moc==="FRP"){const vol=area(D)*h*1000;return {wt:0,c:vol*R.frpL,ts:"FRP",td:"FRP"}}
+ if(moc==="SS304"){wt*=0.8;c=wt*R.ssKg}
+ else{c=wt*R.msKg+surf*R.epoxyM2;if(moc==="MSRL")c+=surf*0.85*R.rubberM2}
+ return {wt,c,ts,td};
+}
+function pipingCost(D,nb,nValves){
+ const len=8+D/1000*4;
+ return (len*PIPEM[nb]*1.4+nValves*VALVE[nb])*R.pipeFact;
+}
+
+/* ================= CALCULATION ================= */
+let S=null;
+function v(id){return document.getElementById(id).value}
+function n(id){return +document.getElementById(id).value||0}
+function on(id){return document.getElementById(id).checked}
+
+function ovr(t){if(v("sizeMode")!=="SIZE")return null;const d=n("sz"+t+"D"),h=n("sz"+t+"H");return d>0&&h>0?{D:d,H:h}:null}
+function autoQ(){const p=v("ptype");if(v("sizeMode")!=="SIZE"||!(p==="PT"||p==="DM"))return;
+ for(const [t,vel,cb] of [["MGF",10,"iMGF"],["ACF",10,"iACF"],["SOFTENER",25,"iSOF"],["CATION",25,"iCAT"],["ANION",25,"iANI"]]){
+  if(t==="SOFTENER"&&p!=="PT")continue;if((t==="CATION"||t==="ANION")&&p!=="DM")continue;
+  const o=ovr(t);if(o&&on(cb)){document.getElementById("flow").value=Math.max(0.5,Math.round(area(o.D)*vel*2)/2);return}}}
+function calc(){
+ autoQ();
+ const Q=n("flow"),H=n("hard"),hrs=n("regen")||8,M=1+n("margin")/100;
+ if(Q<=0){alert("Flow capacity daalo");return}
+ const ptp=v("ptype"),isDM=ptp==="DM",sets0=Math.max(1,n("sets"));
+ const Qf2=ptp==="RO"?Q/((n("roRec")||70)/100):(ptp==="ETP"||ptp==="STP")?(n("kld")||25)/(n("ophrs")||20):ptp==="UF"?Q*1.1:Q;
+ const nb=pickNB(Qf2),units=[],lines=[];
+ const HPS=[0.5,1,1.5,2,3,5,7.5,10,12.5,15,20,25,30,40,50];
+ const HPP={0.5:9000,1:12000,1.5:15000,2:18000,3:24000,5:34000,7.5:48000,10:62000,12.5:75000,15:88000,20:115000,25:140000,30:165000,40:210000,50:260000};
+ // ----- filters
+ const filt=(type)=>{
+  const ov=ovr(type);let ns=1,Dd=pickDia(Qf2/10);if(!ov&&Dd>2400){ns=Math.ceil(area(Dd)/area(2400));Dd=pickDia(Qf2/ns/10)}
+  const D=ov?ov.D:Dd,A=area(D);
+  let layers,bed;
+  if(type==="MGF"){layers=[["Pebbles","20-40 mm",100,RHO_SAND,"sandKg"],["Gravel","6-12 mm",100,RHO_SAND,"sandKg"],["Coarse Sand","1-2 mm",100,RHO_SAND,"sandKg"],["Fine Sand","0.4-0.8 mm",400,RHO_SAND,"sandKg"]]}
+  else{layers=[["Pebbles","20-40 mm",75,RHO_SAND,"sandKg"],["Gravel","6-12 mm",75,RHO_SAND,"sandKg"],["Activated Carbon","Coconut shell, IV 900+, 8x30 mesh",600,RHO_C,"carbonKg"]]}
+  bed=layers.reduce((s,l)=>s+l[2],0);
+  const Hs=ov?ov.H:Math.max(D>=1000?1500:1200,up(bed/0.5,100));
+  layers=layers.map(l=>({name:l[0],grade:l[1],depth:l[2],kg:A*l[2]/1000*l[3],cost:A*l[2]/1000*l[3]*R[l[4]]}));
+  const ves=vesselCost(D,Hs,v("mocF"));
+  const plate=v("mocF")==="FRP"?A*6000:A*0.008*7850*R.msKg;
+  const pipe=pipingCost(D,nb,5),gauge=2*R.gauge,hw=3000+D*3;
+  const media=layers.reduce((s,l)=>s+l.cost,0);
+  const cost=ves.c+plate+pipe+gauge+hw+media;
+  const u={type,D,Hs,A,moc:v("mocF"),ts:ves.ts,td:ves.td,wt:ves.wt,layers,vel:Qf2/ns/A,q:Qf2/ns,nos:ns,nb,valves:5,
+   under:v("mocF")==="FRP"?"Bottom hub & lateral distributor (FRP vessel)":`Media support plate inside the vessel ${type}`};
+  units.push(u);
+  const mtot=layers.reduce((s,l)=>s+l.kg,0);
+  lines.push({key:type,cost,price:r500(cost*M),qty:ns>1?ns*Math.max(1,n("sets")):undefined,
+   desc:`${type==="MGF"?"Multi Grade Filter (MGF)":"Activated Carbon Filter (ACF)"} Vessel${ns>1?` (${ns} nos. in parallel)`:""} — Dia ${D} x ${Hs} mm, ${u.moc}, c/w ${manhole(D).split(",")[0]} manhole, ${mediaNoz(D).split(",")[0]} media nozzle, ${nb} NB inlet/outlet, ${nb} NB frontal piping, 5 valves, pressure gauges with needle valve, media (${kg(mtot)}) & nut-bolt-gasket`});
+ };
+ if(on("iMGF"))filt("MGF");
+ if(on("iACF"))filt("ACF");
+ // ----- softener
+ let sof=null;
+ if(on("iSOF")&&ptp==="PT"){
+  let D=pickDia(Q/25),A=area(D);
+  let L=Math.max(Q*hrs*H/RESIN_CAP,100);
+  let bed=L/1000/A;
+  while((bed>1.5||(bed*1600+300)/D>3)&&D<3000){D=DIA[DIA.indexOf(D)+1];A=area(D);bed=L/1000/A}
+  if(bed<0.75){bed=0.75;L=A*bed*1000}
+  L=up(L,25);bed=L/1000/A;
+  const so=ovr("SOFTENER");if(so){D=so.D;A=area(D);L=Math.max(25,up(A*(so.H-300)/1.6,25));bed=L/1000/A}
+  const Hs=so?so.H:Math.max(1500,up(bed*1000*1.6+300,100));
+  const ves=vesselCost(D,Hs,v("mocS"));
+  const rkg=L*RHO_R/1000,gkg=A*0.1*RHO_SAND;
+  const plate=v("mocS")==="FRP"?A*6000:A*0.008*7850*R.msKg,str=Math.ceil(A*50);
+  const ejNB=L<300?15:L<1000?20:25,ejC=ejNB===15?3000:ejNB===20?4000:5500;
+  const salt=L*0.15,cycle=H>0?L*RESIN_CAP/H:0;
+  const cost=ves.c+plate+str*R.strainer+rkg*R.resinKg+gkg*R.sandKg+ejC+pipingCost(D,nb,6)+2*R.gauge+3000+D*3;
+  sof={type:"SOFTENER",D,Hs,A,moc:v("mocS"),ts:ves.ts,td:ves.td,wt:ves.wt,vel:Q/A,nb,valves:6,L,rkg,gkg,bed,str,ejNB,salt,cycle,
+   layers:[{name:"Gravel (support)",grade:"3-6 mm",depth:100,kg:gkg},{name:"Cation Resin 225 Na",grade:"Strong acid cation, Na form",depth:Math.round(bed*1000),kg:rkg}],
+   under:v("mocS")==="FRP"?"Bottom hub & lateral distributor (FRP vessel)":`Strainer plate with ${str} nos. PVC strainers for resin support`};
+  units.push(sof);
+  lines.push({key:"SOF",cost,price:r500(cost*M),
+   desc:`Softener Vessel — Dia ${D} x ${Hs} mm, ${sof.moc}, c/w ${manhole(D).split(",")[0]} manhole, ${mediaNoz(D).split(",")[0]} media nozzle, ${nb} NB inlet/outlet, strainer plate with PVC strainers, cation resin 225 Na (${kg(rkg)}), ${ejNB} mm NB MS ejector & nut-bolt-gasket`});
+ }
+ // ----- brine
+ let brine=null;
+ if(on("iBRN")&&ptp==="PT"){
+  const salt=sof?sof.salt:Math.max(Q*hrs*H/RESIN_CAP,100)*0.15;
+  const need=salt*3.6*2;const T=BRINE.find(x=>x>=need)||5000;
+  const agit=T<=500?18000:T<=1500?26000:38000;
+  const cost=(BRINEP[T]+agit+6000)*R.brineFact;
+  brine={T,salt,agit:T<=500?"0.5 HP":T<=1500?"1 HP":"2 HP"};
+  lines.push({key:"BRN",cost,price:r500(cost*M),desc:`Brine Tank with Agitator — HDPE ${T} L tank, ${brine.agit} electrical agitator, brine valve assembly (complete brine system)`});
+ }
+
+
+ // ----- DM PLANT
+ let dm=null;
+ if(isDM){
+  dm={};
+  const mocD=v("mocDM"),pm=v("pipDM"),mt=v("mocDG");
+  const tc=n("tcat"),alk=n("alk"),ema=n("ema"),si=n("sio2"),co2=n("co2"),dg=on("iDGT");
+  const aLoad=ema+si*0.83+(dg?5.68:alk+co2*1.136);
+  const vtype=pm==="UPVC"?"UPVC ball":"Diaphragm (CI rubber lined)",vf=pm==="UPVC"?0.6:1.8,pf2=pm==="UPVC"?0.45:2.2;
+  dm.aLoad=aLoad;dm.tc=tc;dm.pm=pm;dm.vtype=vtype;
+  const ix=(type,L,vel,minBed,mk,nv)=>{
+   let D=pickDia(Q/vel),A=area(D),bed=L/1000/A;
+   while((bed>1.6||(bed*1000*(type==="MB"?2.0:1.8)+300)/D>3.2)&&D<3000){D=DIA[DIA.indexOf(D)+1];A=area(D);bed=L/1000/A}
+   if(bed<minBed)L=A*minBed*1000;
+   L=up(L,25);bed=L/1000/A;
+   const o=ovr(type);if(o){D=o.D;A=area(D);L=Math.max(25,up(A*(o.H-300)/(type==="MB"?2.0:1.8),25));bed=L/1000/A}
+   const Hs=o?o.H:Math.max(1500,up(bed*1000*(type==="MB"?2.0:1.8)+300,100));
+   const ves=vesselCost(D,Hs,mocD),lay=mk(L,bed),str=Math.ceil(A*60);
+   const plate=mocD==="FRP"?A*6000:A*0.008*7850*R.msKg*1.8;
+   const pipe=(8+D/1000*4)*PIPEM[nb]*pf2*1.4+nv*VALVE[nb]*vf;
+   const cost=ves.c+plate+str*R.strainer*1.5+lay.reduce((s,l)=>s+l.cost,0)+pipe+2*R.gauge+3000+D*3;
+   const u={type,D,Hs,A,moc:mocD,ts:ves.ts,td:ves.td,vel:Q/A,nb,valves:nv,vtype,pmat:pm==="UPVC"?"UPVC SCH-80":"MSRL",L,bed,layers:lay,
+    under:mocD==="FRP"?"Bottom hub & lateral distributor, top distributor":`Strainer plate with ${str} nos. PP strainers, top distributor${type==="MB"?", middle collector & air mixing line":""}`};
+   units.push(u);return {u,cost};
+  };
+  if(on("iCAT")){
+   const r=ix("CATION",Math.max(Q*hrs*tc/50,100),25,0.8,(L,bed)=>[{name:"Strong Acid Cation Resin (H⁺)",grade:"SAC, gel type",depth:Math.round(bed*1000),kg:L*0.82,cost:L*0.82*R.resinKg}],6);
+   const u=r.u;u.chem=u.L*0.08/0.33;u.regen=`HCl 33%: ~${kg(u.chem)} per regeneration`;u.cycle=u.L*50/(tc||1);u.qual="FMA water, Na⁺ slip &lt; 2 ppm";
+   lines.push({key:"CAT",cost:r.cost,price:r500(r.cost*M),desc:`Strong Acid Cation Exchanger — Dia ${u.D} x ${u.Hs} mm, ${MOCN[mocD]}, c/w manhole, ${nb} NB ${u.pmat} frontal piping, ${u.valves} nos. ${vtype} valves, SAC resin (${kg(u.layers[0].kg)}), strainers & pressure gauges`});
+  }
+  if(dg){
+   const Dt=pickDia(Q/60),pk=Q<=5?1.5:Q<=20?2.0:2.5,Ht=up(pk*1000+1500,100),pkv=area(Dt)*pk;
+   const Vt=Math.max(1,Q*0.5),Dk=DIA.find(x=>x>=Math.cbrt(4*Vt/Math.PI)*1000)||3000,Hk=up(Vt/area(Dk)*1000+300,100);
+   const cost=vesselCost(Dt,Ht,mt).c*0.8+pkv*R.ppRing+vesselCost(Dk,Hk,mt).c*0.7+15000;
+   dm.dg={Dt,Ht,pk,pkv,Vt,Dk,Hk,mt};
+   lines.push({key:"DGT",cost,price:r500(cost*M),desc:`Degasser Tower — Dia ${Dt} x ${Ht} mm, ${mt}, ${pk} m PP Pall ring packing (${pkv.toFixed(2)} m³), top water distributor, air inlet & vent; with Degasser Tank ${Vt.toFixed(1)} m³ (Dia ${Dk} x ${Hk} mm), ${mt}, with level indicator`});
+  }
+  if(on("iBLW")){
+   const air=Q*30,bhp=air<=300?0.5:air<=600?1:air<=1200?2:air<=2500?3:5;
+   const c={0.5:18000,1:24000,2:32000,3:42000,5:60000}[bhp]*(mt==="FRP"?1.3:1),qty=on("iBLW2")?2:1;
+   dm.blw={air,bhp,qty,cas:mt==="FRP"?"FRP":"MSRL / epoxy coated MS"};
+   lines.push({key:"BLW",cost:c,price:r500(c*M),qty:qty*sets0,desc:`Degasser Air Blower — centrifugal, ${dm.blw.cas} casing, ${Math.round(air)} m³/hr @ 150 mmWC, ${bhp} HP, 415 V / 3 Ph${qty===2?" — 1 Working + 1 Standby":""}`});
+  }
+  if(on("iDTP")){
+   const hd=30,kW=Q*hd*9.81/3600/0.6,hp=HPS.find(x=>x>=kW/0.746*1.1)||50,c=HPP[hp]*1.8*R.pumpFact;
+   dm.dtp={hp,hd};
+   lines.push({key:"DTP",cost:c,price:r500(c*M),qty:2*sets0,desc:`Degassed Water Transfer Pump — Horizontal centrifugal, SS304 wetted parts, ${Q} m³/hr @ ${hd} m head, ${hp} HP, 415 V / 3 Ph — 1 Working + 1 Standby`});
+  }
+  if(on("iANI")){
+   const r=ix("ANION",Math.max(Q*hrs*aLoad/40,100),25,0.8,(L,bed)=>[{name:"Strong Base Anion Resin (OH⁻)",grade:"SBA Type-I, gel type",depth:Math.round(bed*1000),kg:L*0.7,cost:L*0.7*R.sbaKg}],6);
+   const u=r.u;u.chem=u.L*0.07/0.98;u.regen=`NaOH flakes (98%): ~${kg(u.chem)} per regeneration`;u.cycle=u.L*40/(aLoad||1);u.qual="Conductivity &lt; 20 µS/cm, SiO₂ &lt; 0.2 ppm";
+   lines.push({key:"ANI",cost:r.cost,price:r500(r.cost*M),desc:`Strong Base Anion Exchanger — Dia ${u.D} x ${u.Hs} mm, ${MOCN[mocD]}, c/w manhole, ${nb} NB ${u.pmat} frontal piping, ${u.valves} nos. ${vtype} valves, SBA resin (${kg(u.layers[0].kg)}), strainers & pressure gauges`});
+  }
+  if(on("iMB")){
+   const r=ix("MB",Math.max(Q*1000/40,100),40,1.0,(L,bed)=>[
+    {name:"MB Cation Resin (H⁺)",grade:"SAC, MB grade",depth:Math.round(bed*400),kg:L*0.4*0.82,cost:L*0.4*0.82*R.mbcKg},
+    {name:"MB Anion Resin (OH⁻)",grade:"SBA Type-I, MB grade",depth:Math.round(bed*600),kg:L*0.6*0.7,cost:L*0.6*0.7*R.mbaKg}],9);
+   const u=r.u;u.chemA=u.L*0.4*0.1/0.33;u.chemB=u.L*0.6*0.1/0.98;
+   u.regen=`HCl 33%: ~${kg(u.chemA)} + NaOH flakes: ~${kg(u.chemB)} per regeneration`;u.qual="Conductivity &lt; 1 µS/cm, SiO₂ &lt; 0.02 ppm, pH 6.5–7.5";
+   lines.push({key:"MB",cost:r.cost,price:r500(r.cost*M),desc:`Mixed Bed Exchanger — Dia ${u.D} x ${u.Hs} mm, ${MOCN[mocD]}, c/w manhole, middle collector, air mixing line, ${nb} NB ${u.pmat} frontal piping, ${u.valves} nos. ${vtype} valves, MB resin (${kg(u.layers[0].kg+u.layers[1].kg)}), strainers & pressure gauges`});
+  }
+  if(on("iREG")){
+   const hcl=units.reduce((s,u)=>s+(u.type==="CATION"?u.chem:u.type==="MB"?u.chemA:0),0);
+   const naoh=units.reduce((s,u)=>s+(u.type==="ANION"?u.chem:u.type==="MB"?u.chemB:0),0);
+   const ta=BRINE.find(x=>x>=hcl/1.16*1.3)||5000,tb=BRINE.find(x=>x>=naoh/0.3*1.3)||5000;
+   const c=BRINEP[ta]+BRINEP[tb]+2*4500+12000;
+   dm.reg={hcl,naoh,ta,tb};
+   lines.push({key:"REG",cost:c,price:r500(c*M),desc:`Regeneration System — Acid measuring tank (HDPE ${ta} L), Alkali preparation tank (HDPE ${tb} L), 2 nos. PP ejectors, regeneration piping & valves`});
+  }
+  if(on("iINS")){
+   dm.ins=true;
+   lines.push({key:"INS",cost:R.instr,price:r500(R.instr*M),desc:"Instruments — Rotameter at DM outlet, online conductivity meter with cell, sample cocks at each unit outlet"});
+  }
+ }
+ let X=null;if(["RO","UF","ETP","STP"].includes(ptp))X=buildX(ptp,{Q,M,sets:sets0,lines,nb,mgf:on("iMGF"),acf:on("iACF")});
+ // ----- pump / panel / electrical / piping
+ const ext={};
+ const head=n("pHead")||35,kW=Qf2*head*9.81/3600/0.6,hp=HPS.find(x=>x>=kW/0.746*1.1)||50;
+ const pt=v("pType"),pf=pt.includes("Vertical")?2.2:pt.includes("SS304")?1.8:pt.includes("Monoblock")?0.85:1;
+ if(on("iPMP")){const c=HPP[hp]*pf*R.pumpFact;ext.pump={hp,head,kW:hp*0.746,type:pt};
+  lines.push({key:"PMP",cost:c,price:r500(c*M),qty:2*Math.max(1,n("sets")),desc:`${ptp==='ETP'||ptp==='STP'?'Filter Feed Pump':ptp==='RO'?'RO Feed Pump':'Raw Water Feed Pump'} — ${pt}, ${+Qf2.toFixed(2)} m³/hr @ ${head} m head, ${hp} HP (${(hp*0.746).toFixed(2)} kW), 415 V / 3 Ph / 50 Hz, 2900 RPM — 1 Working + 1 Standby`})}
+ if(on("iPNL")){const pk=v("pnlType"),np=(on("iPMP")?2:0)+(X?X.drives:0);
+  let c=R.panelBase+np*(3000+hp*800);if(pk.includes("Semi"))c+=15000;if(pk.includes("PLC"))c+=90000;
+  ext.panel={type:pk,np};
+  lines.push({key:"PNL",cost:c,price:r500(c*M),desc:`Electrical Control Panel — ${pk}, powder coated CRCA, IP-54, MCCB incomer, ${np?np+" nos. DOL starters with overload relay, ":""}ammeter, voltmeter, indicating lamps, single phasing & dry-run protection`})}
+ if(on("iCT")){const L=n("ctLen")||0,c=L*R.trayM;ext.tray={L};
+  lines.push({key:"CT",cost:c,price:r500(c*M),desc:`Cable Tray — GI perforated, 100 mm wide, with supports & accessories (${L} m)`})}
+ if(on("iWIR")){const L=n("wirLen")||0,sz=hp<=3?"2.5":hp<=7.5?"4":hp<=15?"6":hp<=25?"10":"16";
+  const rm={"2.5":250,"4":320,"6":420,"10":620,"16":900}[sz];const c=(L*rm+8000)*R.cableFact;ext.wire={L,sz};
+  lines.push({key:"WIR",cost:c,price:r500(c*M),desc:`Wiring / Cabling — 4C x ${sz} sq.mm copper armoured cable from panel to pumps (${L} m), with glands, lugs, termination & earthing`})}
+ if(on("iPIP")){const L=n("pipLen")||0,mt=v("pipMat"),mf={MS:1,GI:1.3,UPVC:0.45,CPVC:0.75,MSRL:2.2}[mt];
+  const c=(L*PIPEM[nb]*mf*1.35+2*VALVE[nb])*1.1*R.pipeIOFact;
+  const spec={MS:"MS ERW pipe, Class 'C' (heavy), painted",GI:"GI pipe, Class 'C' (heavy), IS:1239",UPVC:"UPVC pipe, SCH-80",CPVC:"CPVC pipe, SCH-80",MSRL:"MSRL pipe (MS rubber lined), flanged"}[mt];
+  ext.pipe={L,mt,spec};
+  lines.push({key:"PIP",cost:c,price:r500(c*M),desc:`Inlet / Outlet Piping — ${nb} NB ${spec}, ${L} m, with fittings, supports & 2 nos. isolation valves`})}
+ const eq=lines.reduce((s,l)=>s+l.price*(l.qty||1),0);
+ if(on("iERC")){const c=Math.max(eq*R.ercPct/100,R.ercMin);lines.push({key:"ERC",cost:c,price:r500(c),desc:"Erection, Commissioning & Testing (site work)"})}
+ if(on("iFRT"))lines.push({key:"FRT",cost:n("freight"),price:n("freight"),desc:"Freight & Transportation",ls:true});
+ S={Q,H,hrs,nb,units,sof,brine,lines,ext,dm,isDM,X,Qf2,sets:Math.max(1,n("sets"))};
+ drawAdj();render();
+}
+
+
+/* ================= RO / UF / ETP / STP MODULE ================= */
+const HPL=[0.5,1,1.5,2,3,5,7.5,10,12.5,15,20,25,30,40,50,60,75];
+const HPP2={0.5:9000,1:12000,1.5:15000,2:18000,3:24000,5:34000,7.5:48000,10:62000,12.5:75000,15:88000,20:115000,25:140000,30:165000,40:210000,50:260000,60:310000,75:380000};
+const BLP={1:55000,1.5:60000,2:65000,3:75000,5:95000,7.5:120000,10:145000,12.5:165000,15:190000,20:240000,25:290000,30:340000,40:420000,50:500000,60:580000,75:700000};
+const TANKS=[100,200,300,500,750,1000,1500,2000,3000,5000];
+const hpPick=kW=>HPL.find(x=>x>=kW/0.746*1.1)||75;
+const pumpX=(q,h,f)=>{const hp=hpPick(q*h*9.81/3600/0.6);return {hp,c:HPP2[hp]*f*R.pumpFact}};
+const blowerX=(air,dp)=>{let hp=hpPick(air/3600*dp*100/0.6);if(hp<1)hp=1;return {hp,c:(BLP[hp]||700000)*R.blowF}};
+const f1=x=>(+x).toFixed(1),f2=x=>+(+x).toFixed(2);
+function civ(name,V,hrt,swd){V=Math.max(V,0.5);const A=V/swd,W=Math.sqrt(A/1.5),L=A/W;return [name,V,hrt,`${f1(L)} x ${f1(W)} x ${swd} m SWD + 0.5 m FB`,"RCC (by client)"]}
+
+function buildX(pt,c){
+ const {Q,M,sets,lines}=c;
+ const X={tables:[],scope:[],civil:[],qual:[],excl:[],drives:0,flow:""};
+ const basis=[],eq=[];
+ const add=(key,name,unit,desc,qn,label)=>{qn=qn||1;lines.push({key,name,cost:unit,price:r500(unit*M),desc,qty:qn*sets});
+  X.scope.push([name,desc.includes(" — ")?desc.split(" — ").slice(1).join(" — "):desc,label||(qn>1?qn+" Nos.":"1 No.")])};
+ const sec=t=>eq.push(["sec",t]),sp=(k,val)=>eq.push([k,val]);
+
+ /* ---------------- RO ---------------- */
+ if(pt==="RO"){
+  const rec=(n("roRec")||70)/100,tds=n("roTds")||1000,Qf=Q/rec,rej=Qf-Q;
+  let sz=v("roSize");if(sz==="Auto")sz=Q<=3?"4040":"8040";
+  const A=sz==="4040"?7.9:37,flux=tds<=1500?22:tds<=4000?18:15;
+  let Nm=Math.max(1,Math.ceil(Q*1000/(flux*A)));
+  const epv=sz==="8040"?(Nm>=12?6:Nm>=6?3:Nm>=2?2:1):(Nm>=8?4:Nm>=3?2:1);
+  const nv=Math.ceil(Nm/epv);Nm=nv*epv;
+  const P=Math.min(20,Math.max(8,8+tds*0.004)),head=P*10.2,pTDS=Math.max(5,Math.ceil(tds*0.03));
+  const br=v("roBrand"),mp={Vontron:[9000,28000],CSM:[11000,32000],Hydranautics:[14000,42000],"Dow Filmtec":[16000,48000]}[br][sz==="4040"?0:1]*R.memF;
+  const stages=nv>=3?`2-stage array (${Math.ceil(nv*2/3)}:${nv-Math.ceil(nv*2/3)})`:"Single stage";
+  basis.push(["Permeate (product) flow",`${f2(Q)} m³/hr (${Math.round(Q*1000).toLocaleString("en-IN")} LPH)`],["Feed flow",`${f2(Qf)} m³/hr`],["Reject flow",`${f2(rej)} m³/hr`],["Recovery",Math.round(rec*100)+" %"],["Feed TDS",tds+" ppm"],["Permeate TDS",`&lt; ${pTDS} ppm (approx. 97% salt rejection)`],["Design flux",flux+" LMH"],["Operating pressure",`${f1(P)} – ${f1(P+2)} kg/cm²`]);
+  sec("RO MEMBRANES &amp; PRESSURE VESSELS");
+  sp("Membrane",`${br} ${sz}, thin film composite polyamide, spiral wound, brackish water`);sp("Quantity",`${Nm} nos. (${A} m² each, total ${f1(Nm*A)} m²)`);
+  sp("Pressure Vessels",`FRP, ${sz}, ${epv} element(s) per vessel, 300 psi rated — ${nv} nos.`);sp("Array",stages);
+  add("ROM","RO Membranes",mp,`RO Membrane — ${br} ${sz}, TFC polyamide, brackish water`,Nm,Nm+" Nos.");
+  add("ROV","Pressure Vessels",sz==="4040"?5500+2500*epv:18000+9000*epv,`FRP Pressure Vessel — ${sz}, ${epv} element(s), 300 psi, end/side port`,nv,nv+" Nos.");
+  const pb=v("roPump"),bf={Grundfos:1.6,CNP:1.0,Lubi:0.9}[pb],hp=pumpX(Qf,head,2.0*bf),hq=on("roHPsb")?2:1;X.drives+=hq;
+  sec("HIGH PRESSURE PUMP");sp("Type",`${pb} vertical multistage centrifugal, SS304 / SS316 wetted parts`);sp("Duty",`${f2(Qf)} m³/hr @ ${Math.round(head)} m head`);sp("Motor",`${hp.hp} HP, 415 V, 3 Ph, 50 Hz, 2900 RPM`);sp("Quantity",hq===2?"2 nos. (1 Working + 1 Standby)":"1 no.");
+  add("HPP","High Pressure Pump",hp.c,`High Pressure Pump — ${pb} vertical multistage, ${f2(Qf)} m³/hr @ ${Math.round(head)} m, ${hp.hp} HP`,hq,hq===2?"2 Nos. (1W+1S)":"1 No.");
+  if(on("roMCF")){const nc=Math.max(1,Math.ceil(Qf/1.5));sec("MICRON CARTRIDGE FILTER");sp("Housing","SS304, with pressure gauges & vent");sp("Cartridges",`${nc} nos. 40" x 5 micron PP spun`);
+   add("MCF","Micron Cartridge Filter",6000+nc*1400,`Micron Cartridge Filter — SS304 housing with ${nc} nos. 40" x 5 micron PP cartridges`)}
+  const dz=[];if(on("roAS"))dz.push("Antiscalant");if(on("roSMBS"))dz.push("SMBS (dechlorination)");if(on("roPH"))dz.push("pH correction (HCl/NaOH)");
+  if(dz.length){sec("CHEMICAL DOSING SYSTEMS");dz.forEach(d=>{sp(d,"Electronic dosing pump 0–6 LPH @ 7 bar + 100 L HDPE solution tank");
+   add("DZ"+d[0]+d[1],d+" Dosing",28000,`${d} Dosing System — electronic dosing pump 0–6 LPH + 100 L HDPE tank`)});X.drives+=dz.length}
+  if(on("roCIP")){const T=TANKS.find(x=>x>=Nm*(sz==="8040"?40:10))||5000,cq=Math.max(1,Nm*(sz==="8040"?1.5:0.4)),cp=pumpX(cq,30,1.8);X.drives++;
+   sec("CIP (CLEANING-IN-PLACE) SYSTEM");sp("CIP Tank",`HDPE ${T} L`);sp("CIP Pump",`SS304 centrifugal, ${f1(cq)} m³/hr @ 30 m, ${cp.hp} HP`);sp("Accessories","CIP cartridge filter, hoses / piping & valves");
+   add("CIP","CIP System",BRINEP[T]+cp.c+18000,`CIP System — HDPE ${T} L tank, SS304 CIP pump ${cp.hp} HP, cartridge filter, piping & valves`)}
+  const sk=v("roSkid"),hpm=v("roHP"),lp=v("roLP");
+  const skc=(20000+nv*5000)*(sk==="SS304"?2.5:1)+(12000+nv*5000)*(hpm==="SS316"?1.3:1)+(8000+nv*3000)*{UPVC:1,CPVC:1.5,SS304:3}[lp];
+  sec("SKID &amp; PIPING");sp("Skid",sk==="SS304"?"SS304 frame":"MS frame, epoxy painted");sp("High pressure piping",`${hpm}, with HP fittings & victaulic/flanged joints`);sp("Low pressure / permeate / reject piping",lp+", SCH-80 / as applicable");
+  add("SKD","RO Skid & Piping",skc,`RO Skid & Interconnecting Piping — ${sk==="SS304"?"SS304":"MS epoxy"} skid, ${hpm} HP piping, ${lp} LP/permeate/reject piping, valves`);
+  if(on("roINS")){sec("INSTRUMENTATION");sp("Flow","Rotameters on permeate & reject");sp("Pressure","Glycerine-filled gauges at feed, HP pump outlet, reject");sp("Quality","Online conductivity / TDS meter on permeate");sp("Protection","Low pressure switch (pump dry-run), high pressure switch");
+   add("RINS","RO Instruments",25000+Q*1500,`RO Instrumentation — permeate & reject rotameters, pressure gauges, online TDS meter, LP & HP switches`,1,"1 Set")}
+  X.qual.push(["TDS",tds+" ppm",`&lt; ${pTDS} ppm`],["Recovery","—",Math.round(rec*100)+" %"],["SDI (RO feed requirement)","—","&lt; 4 (after pre-treatment)"]);
+  X.title="Reverse Osmosis (RO) Plant";X.cap=`${f2(Q)} m³/hr (${Math.round(Q*1000).toLocaleString("en-IN")} LPH) permeate`;
+  X.flow=["Raw water","Feed pump",c.mgf?"Multi Grade Filter":"",c.acf?"Activated Carbon Filter":"",dz.length?"Chemical dosing":"",on("roMCF")?"Micron cartridge filter":"","HP pump","RO membranes","Permeate to storage (reject to drain)"].filter(x=>x).join(" → ");
+  X.overview=`We propose the supply, installation, testing and commissioning of a Reverse Osmosis (RO) plant of ${Math.round(Q*1000).toLocaleString("en-IN")} LPH permeate capacity at ${Math.round(rec*100)}% recovery, designed for a feed TDS of ${tds} ppm. The system comprises ${Nm} nos. ${br} ${sz} membranes housed in ${nv} FRP pressure vessels, a ${pb} high pressure pump, micron cartridge filtration, chemical dosing, CIP system, instrumentation and a ${sk==="SS304"?"SS304":"MS epoxy painted"} skid with ${hpm} high pressure piping.`;
+  X.excl.push("Raw water &amp; permeate storage tanks","Reject disposal arrangement","Antiscalant &amp; membrane cleaning chemicals");
+ }
+
+ /* ---------------- UF ---------------- */
+ if(pt==="UF"){
+  const ft=v("ufFeed"),flux={"Borewell / raw water":60,"Surface / river water":50,"STP / ETP treated water":40}[ft];
+  let sz=v("ufSize");if(sz==="Auto")sz=Q<=2?"4 inch":"8 inch";
+  const A=sz==="4 inch"?8:55,Qg=Q*1.1;let Nm=Math.max(1,Math.ceil(Qg*1000/(flux*A)));
+  const br=v("ufBrand"),mp={Vontron:[16000,55000],Polymem:[20000,70000],Toray:[24000,85000],"Dow / DuPont":[24000,90000],Hydranautics:[26000,95000]}[br][sz==="4 inch"?0:1]*R.ufF;
+  const bwQ=Nm*A*100/1000,bwL=bwQ*1000/60*3,T=TANKS.find(x=>x>=Math.max(500,bwL))||5000;
+  basis.push(["Net UF output",`${f2(Q)} m³/hr (${Math.round(Q*1000).toLocaleString("en-IN")} LPH)`],["Gross feed flow",`${f2(Qg)} m³/hr (10% backwash allowance)`],["Feed water",ft],["Design flux",flux+" LMH"],["Backwash flux","100 LMH"],["Recovery","≥ 90 %"]);
+  sec("UF MODULES");sp("Module",`${br} ${sz} hollow fibre, PVDF, outside-in, ${A} m² each`);sp("Quantity",`${Nm} nos. (total ${f1(Nm*A)} m²)`);
+  add("UFM","UF Modules",mp,`UF Membrane Module — ${br} ${sz}, PVDF hollow fibre, outside-in, ${A} m²`,Nm,Nm+" Nos.");
+  if(on("ufDisc")){sec("PRE-FILTER");sp("Type","Automatic self-cleaning disc filter, 100 micron");sp("Flow",f2(Qg)+" m³/hr");
+   add("UFD","Disc Filter",35000+Qg*2500,`Automatic Disc Filter — 100 micron, ${f2(Qg)} m³/hr, self-cleaning`)}
+  const fp=pumpX(Qg,30,1.8),bp=pumpX(bwQ,25,1.8);X.drives+=4;
+  sec("PUMPS");sp("UF Feed Pump",`SS304 centrifugal, ${f2(Qg)} m³/hr @ 30 m, ${fp.hp} HP — 1W + 1S`);sp("Backwash Pump",`SS304 centrifugal, ${f1(bwQ)} m³/hr @ 25 m, ${bp.hp} HP — 1W + 1S`);
+  add("UFP","UF Feed Pump",fp.c,`UF Feed Pump — SS304 centrifugal, ${f2(Qg)} m³/hr @ 30 m, ${fp.hp} HP`,2,"2 Nos. (1W+1S)");
+  add("UBP","Backwash Pump",bp.c,`UF Backwash Pump — SS304 centrifugal, ${f1(bwQ)} m³/hr @ 25 m, ${bp.hp} HP`,2,"2 Nos. (1W+1S)");
+  sec("BACKWASH TANK");sp("Tank",`HDPE ${T} L (UF permeate storage for backwash)`);add("UBT","Backwash Tank",BRINEP[T],`UF Backwash Tank — HDPE ${T} L`);
+  if(on("ufCEB")){sec("CEB DOSING (CHEMICALLY ENHANCED BACKWASH)");sp("NaOCl dosing","Dosing pump + 200 L HDPE tank");sp("HCl dosing","Dosing pump + 200 L HDPE tank");X.drives+=2;
+   add("UCE","CEB Dosing",2*32000,`CEB Dosing System — NaOCl & HCl, 2 dosing pumps + 2 x 200 L HDPE tanks`,1,"1 Set")}
+  if(on("ufAir")&&sz==="8 inch"){const air=Nm*12,b=blowerX(air,0.5);X.drives++;sec("AIR SCOURING");sp("Blower",`Twin-lobe / ring blower, ${Math.round(air)} Nm³/hr @ 0.5 bar, ${b.hp} HP`);
+   add("UAS","Air Scour Blower",b.c,`Air Scouring Blower — ${Math.round(air)} Nm³/hr @ 0.5 bar, ${b.hp} HP`)}
+  const vt=v("ufValve"),nvv=8,vc=vt==="Pneumatic"?8000+c.nb*150:vt==="Motorized"?9000+c.nb*180:VALVE[c.nb]*1.5;
+  sec("VALVES &amp; AUTOMATION");sp("Valves",`${nvv} nos. ${vt==="Manual"?"manual butterfly":vt.toLowerCase()+" actuated butterfly"} valves for service, backwash, CEB, drain`);
+  if(vt==="Pneumatic")sp("Air compressor","Oil-free, with receiver, FRL & tubing");
+  add("UAV","UF Valves",vc*nvv+(vt==="Pneumatic"?(Q<=5?30000:45000):0),`UF Valve Package — ${nvv} nos. ${vt} valves${vt==="Pneumatic"?" + air compressor":""}`,1,"1 Set");
+  const sk=v("ufSkid"),pp=v("ufPipe");sec("SKID &amp; PIPING");sp("Skid",sk==="SS304"?"SS304 frame":"MS frame, epoxy painted");sp("Piping",pp==="SS304"?"SS304, flanged":"UPVC SCH-80");
+  add("USK","UF Skid & Piping",(20000+Nm*6000)*(sk==="SS304"?2.5:1)+(10000+Nm*4000)*(pp==="SS304"?3:1),`UF Skid & Piping — ${sk==="SS304"?"SS304":"MS epoxy"} skid, ${pp} interconnecting piping`);
+  if(on("ufINS")){sec("INSTRUMENTATION");sp("Flow","Rotameters on feed, permeate & backwash");sp("Pressure","Pressure transmitters for TMP monitoring");sp("Quality","Online turbidity meter on UF permeate");
+   add("UINS","UF Instruments",60000,`UF Instrumentation — rotameters, pressure transmitters (TMP), online turbidity meter`,1,"1 Set")}
+  X.qual.push(["Turbidity","≤ 50 NTU","&lt; 0.2 NTU"],["SDI","—","&lt; 3"],["TSS","—","Nil (≥ 99.9% removal)"],["Bacteria","—","Log 4 removal"]);
+  X.title="Ultrafiltration (UF) Plant";X.cap=`${f2(Q)} m³/hr (${Math.round(Q*1000).toLocaleString("en-IN")} LPH) net output`;
+  X.flow=["Feed water",on("ufDisc")?"Disc filter":"","UF feed pump","UF modules","UF permeate / backwash tank","To RO / end use"].filter(x=>x).join(" → ");
+  X.overview=`We propose the supply, installation, testing and commissioning of an Ultrafiltration (UF) plant of ${Math.round(Q*1000).toLocaleString("en-IN")} LPH net output for ${ft.toLowerCase()}. The system comprises ${Nm} nos. ${br} ${sz} PVDF hollow fibre modules, feed and backwash pumps (1W + 1S), backwash tank, ${on("ufCEB")?"CEB dosing, ":""}${vt.toLowerCase()} valve automation, instrumentation and skid with interconnecting piping.`;
+  X.excl.push("Feed &amp; UF permeate storage tanks (except backwash tank)","CEB chemicals (NaOCl, HCl)","Compressed air (if not in scope)");
+ }
+
+ /* ---------------- ETP / STP ---------------- */
+ if(pt==="ETP"||pt==="STP"){
+  const etp=pt==="ETP",kld=n("kld")||25,hrs=n("ophrs")||20,Qh=kld/hrs,Qa=kld/24;
+  const bod=n("bod"),cod=n("cod"),tss=n("tss"),og=n("og"),W=etp?"effluent":"sewage";
+  const proc=etp?v("etpProc"):"Biological",pc=etp&&proc!=="Biological only (MBBR)",bio=!etp||proc!=="Physico-chemical only";
+  const tech=etp?"MBBR":v("stpTech");
+  basis.push(["Capacity",`${kld} KLD`],["Average flow",`${f2(Qa)} m³/hr`],["Design flow (treatment)",`${f2(Qh)} m³/hr @ ${hrs} hrs/day`],["Process",etp?proc:tech+" technology"],["Inlet BOD / COD",`${bod} / ${cod} mg/L`],["Inlet TSS / O&amp;G",`${tss} / ${og} mg/L`]);
+  const fl=["Raw "+W,"Bar screen","Oil &amp; grease trap","Equalization tank"];
+  // screening & O&G
+  sec("SCREENING &amp; OIL REMOVAL");sp("Bar Screen","SS304, manual cleaning, 10 mm clear spacing, with screenings tray");
+  add("BSC","Bar Screen",15000+kld*25,"Bar Screen — SS304, manual cleaning, 10 mm clear spacing, with screenings tray");
+  X.civil.push(civ("Screen Chamber + O&amp;G Trap",Qa*0.5+1,"30 min",1.5));
+  if(etp&&og>20){sp("Oil &amp; Grease Skimmer","Belt / tube type, SS304, 0.25 HP, with oil collection tray");X.drives++;
+   add("OGS","Oil & Grease Skimmer",85000,"Oil & Grease Skimmer — belt/tube type, SS304, 0.25 HP, with oil collection tray")}
+  // equalization
+  const Veq=kld*(etp?8:6)/24,aEq=Veq*0.012*60;
+  X.civil.push(civ("Equalization Tank",Veq,(etp?8:6)+" hrs",3.5));
+  const rp=pumpX(Qh,12,1.4);X.drives+=2;
+  sec("EQUALIZATION");sp("Air mixing",`Coarse bubble SS304 / UPVC air grid, ${Math.round(aEq)} m³/hr air`);sp(`Raw ${W} transfer pump`,`Non-clog submersible, CI, ${f2(Qh)} m³/hr @ 12 m, ${rp.hp} HP — 1W + 1S`);
+  add("RTP",`Raw ${etp?"Effluent":"Sewage"} Transfer Pump`,rp.c,`Raw ${etp?"Effluent":"Sewage"} Transfer Pump — non-clog submersible, CI, ${f2(Qh)} m³/hr @ 12 m, ${rp.hp} HP`,2,"2 Nos. (1W+1S)");
+  add("EQG","Equalization Air Grid",15000+aEq*20,`Equalization Air Grid — coarse bubble, SS304/UPVC header & laterals (${Math.round(aEq)} m³/hr)`,1,"1 Set");
+  // physico-chemical
+  if(pc){
+   const Vfm=Math.max(0.5,Qh*2/60),Vfl=Math.max(1,Qh*20/60),At=Qh/1.5,mv=Math.max(0.5,At*0.6);
+   X.civil.push(civ("Flash Mixer",Vfm,"2 min",1.5),civ("Flocculator",Vfl,"20 min",2.5),civ("Primary Tube Settler (hopper bottom)",At*3.5,"—",3.5));
+   sec("PHYSICO-CHEMICAL TREATMENT");sp("Flash Mixer Agitator","1 HP, 150 RPM, SS304 shaft & impeller");sp("Flocculator Agitator","0.5 HP, 30 RPM, slow speed, SS304 shaft & paddle");sp("Primary Tube Settler",`PVC/PP tube media, 60° inclination, ${f1(mv)} m³ (${f1(At)} m² area) with MS support`);
+   sp("Dosing Systems","Alum/PAC, Lime/NaOH (pH), Polyelectrolyte — each with HDPE tank, agitator & dosing pumps 1W+1S");
+   add("FMA","Flash Mixer Agitator",45000,"Flash Mixer Agitator — 1 HP, 150 RPM, SS304 shaft & impeller");
+   add("FLA","Flocculator Agitator",55000,"Flocculator Agitator — 0.5 HP, 30 RPM slow speed, SS304 shaft & paddle");
+   add("PTS","Primary Tube Settler Media",mv*R.tube*1.2,`Primary Tube Settler — PVC/PP tube media 60°, ${f1(mv)} m³ with MS epoxy support`,1,f1(mv)+" m³");
+   ["Alum / PAC","Lime / NaOH (pH correction)","Polyelectrolyte"].forEach((d,i)=>add("PD"+i,d+" Dosing",R.dosing,`${d} Dosing System — HDPE tank with agitator, 2 dosing pumps (1W+1S)`,1,"1 Set"));X.drives+=8;
+   fl.push("Flash mixer","Flocculator","Primary tube settler");
+  }
+  // biological
+  let airBio=0,load=0;
+  if(bio){
+   load=kld*(pc?bod*0.6:bod)/1000;
+   const O2=1.5*load,eff=tech==="MBBR"?0.12:0.20;airBio=O2/24/(0.276*eff);
+   sec("BIOLOGICAL TREATMENT — "+tech.toUpperCase());
+   if(!etp&&tech!=="SBR"){const Van=kld*2/24;X.civil.push(civ("Anoxic Tank",Van,"2 hrs",3.5));X.drives++;
+    sp("Anoxic Tank Mixer","Submersible mixer, SS304, for denitrification");add("AXM","Anoxic Submersible Mixer",85000,"Anoxic Tank Mixer — submersible, SS304 propeller");fl.push("Anoxic tank")}
+   if(tech==="MBBR"){
+    const area=load*1000/(etp?8:10),mv=area/500,V=Math.max(mv/0.4,Qa*(etp?10:6));
+    X.civil.push(civ("MBBR Aeration Tank",V,f1(V/Qa)+" hrs",4.0));
+    sp("BOD load",f1(load)+" kg/day");sp("MBBR Media",`PP/HDPE bio-carriers, 500 m²/m³ specific surface, ${f1(mv)} m³ (${Math.round(V?mv/V*100:0)}% fill)`);sp("Media Retention Screens","SS304 wedge wire / perforated screens at outlet");
+    sp("Air Diffusion","Coarse/medium bubble SS304 / UPVC grid");
+    add("MBM","MBBR Media",R.mbbr,`MBBR Media — PP/HDPE bio-carriers, 500 m²/m³`,Math.ceil(mv),Math.ceil(mv)+" m³");
+    add("MBS","Media Retention Screen",25000+V*300,"Media Retention Screens — SS304, at aeration tank outlet",1,"1 Set");
+    add("MBG","Aeration Air Grid",25000+airBio*25,`Aeration Air Grid — medium bubble SS304/UPVC header & laterals (${Math.round(airBio)} m³/hr)`,1,"1 Set");
+    fl.push("MBBR aeration tank");
+   }else if(tech==="SBR"){
+    const V=kld/12/0.3*2;X.civil.push(civ("SBR Basins (2 nos., total)",V,"4 hr cycle",4.5));X.drives+=4;
+    const nd=Math.max(Math.ceil(airBio/6),Math.ceil(V/4.5));
+    sp("BOD load",f1(load)+" kg/day");sp("Cycle","2 basins, 4 hr cycle (fill-aerate-settle-decant), PLC controlled");sp("Decanters","2 nos. SS304 motorized / floating decanters");sp("Air Diffusion",`${nd} nos. 9" EPDM fine bubble disc diffusers with UPVC/SS grid`);sp("Sludge Wasting","2 nos. submersible sludge pumps");
+    add("SDC","SBR Decanter",180000,"SBR Decanter — SS304, motorized, with limit switches",2,"2 Nos.");
+    add("SDF","Fine Bubble Diffusers",R.diffF,`Fine Bubble Disc Diffuser — 9" EPDM membrane, with grid piping`,nd,nd+" Nos.");
+    add("SWP","Sludge Wasting Pump",pumpX(Math.max(2,Qh*0.2),10,1.4).c,"Sludge Wasting Pump — submersible, CI",2,"2 Nos.");
+    fl.push("SBR basins (decant)");
+   }else{
+    const V=kld*18/24,nd=Math.max(Math.ceil(airBio/6),Math.ceil(V/4.0));X.civil.push(civ("Aeration Tank",V,"18 hrs",4.0));
+    sp("BOD load",f1(load)+" kg/day");sp("Air Diffusion",`${nd} nos. 9" EPDM fine bubble disc diffusers with UPVC/SS grid`);
+    add("EDF","Fine Bubble Diffusers",R.diffF,`Fine Bubble Disc Diffuser — 9" EPDM membrane, with grid piping`,nd,nd+" Nos.");
+    fl.push("Aeration tank");
+   }
+   if(tech!=="SBR"){
+    const At=Qh/1.2,mv=Math.max(0.5,At*0.6);X.civil.push(civ("Secondary Tube Settler (hopper bottom)",At*3.5,"—",3.5));
+    sp("Secondary Tube Settler",`PVC/PP tube media 60°, ${f1(mv)} m³ with MS support`);
+    add("STS","Secondary Tube Settler Media",mv*R.tube*1.2,`Secondary Tube Settler — PVC/PP tube media 60°, ${f1(mv)} m³ with support`,1,f1(mv)+" m³");
+    const rs=pumpX(Math.max(1,Qh),10,1.2);X.drives+=2;sp("Sludge Recirculation Pump",`Non-clog, ${f2(Math.max(1,Qh))} m³/hr @ 10 m, ${rs.hp} HP — 1W + 1S`);
+    add("RAS","Sludge Recirculation Pump",rs.c,`Sludge Recirculation Pump — non-clog, ${rs.hp} HP`,2,"2 Nos. (1W+1S)");
+    fl.push("Secondary tube settler");
+   }
+  }
+  // blowers
+  const air=aEq+airBio,bl=blowerX(air,0.5);X.drives+=2;
+  sec("AIR BLOWERS");sp("Type","Twin-lobe roots blower with motor, base frame, V-belt guard, silencers, NRV & safety valve");sp("Duty",`${Math.round(air)} m³/hr @ 0.5 kg/cm² (equalization ${Math.round(aEq)} + ${bio?"biological "+Math.round(airBio):"—"})`);sp("Motor",`${bl.hp} HP, 415 V, 3 Ph — 1 Working + 1 Standby`);sp("Air Header","MS / GI air header with valves");
+  add("BLR","Air Blower",bl.c,`Air Blower — twin-lobe, ${Math.round(air)} m³/hr @ 0.5 kg/cm², ${bl.hp} HP`,2,"2 Nos. (1W+1S)");
+  add("AHD","Air Header Piping",20000+air*30,"Air Header — MS/GI piping from blowers to diffusers, with valves",1,"1 Lot");
+  // disinfection
+  if(!etp){const Vc=Math.max(1,Qh*0.5);X.civil.push(civ("Chlorine Contact Tank",Vc,"30 min",2.5));X.drives+=2;
+   sec("DISINFECTION");sp("Chlorine Contact Tank",`${f1(Vc)} m³ (30 min), baffled — civil by client`);sp("NaOCl Dosing","HDPE tank + 2 dosing pumps (1W+1S)");
+   add("CLD","NaOCl Dosing",R.dosing*0.7,"NaOCl Dosing System — HDPE tank, 2 dosing pumps (1W+1S)",1,"1 Set");fl.push("Chlorine contact tank")}
+  if(c.mgf||c.acf){X.civil.push(civ("Filter Feed Tank",Qh*2,"2 hrs",3.0));fl.push("Filter feed tank");if(c.mgf)fl.push("Pressure sand / multigrade filter");if(c.acf)fl.push("Activated carbon filter")}
+  fl.push("Treated water");
+  // sludge
+  const ds=(pc?kld*(tss*0.8+100)/1000:kld*tss*0.6/1000)+(bio?0.4*load:0);
+  X.civil.push(civ("Sludge Holding Tank",Math.max(2,ds/10*2),"2 days",3.0));
+  const sh=v("sludge");sec("SLUDGE HANDLING");sp("Sludge generation",`~${f1(ds)} kg dry solids / day`);
+  if(sh==="Filter Press"){const [pz,pc2]=ds<=30?["470 x 470 mm",150000]:ds<=100?["630 x 630 mm",260000]:ds<=300?["800 x 800 mm",450000]:["1000 x 1000 mm",750000];X.drives+=3;
+   sp("Filter Press",`${pz} plates, PP recessed, hydraulic closing, MS epoxy frame`);sp("Sludge Feed Pump","Screw / AOD pump — 1W + 1S");
+   add("FPR","Filter Press",pc2,`Filter Press — ${pz} PP recessed plates, hydraulic closing, MS epoxy frame`);
+   add("SFP","Sludge Feed Pump",45000,"Sludge Feed Pump — screw / AOD type",2,"2 Nos. (1W+1S)")}
+  else if(sh==="Screw Press"){X.drives+=2;sp("Screw Press","Multi-disc screw press with polymer make-up & dosing");
+   add("SCP","Screw Press",ds<=100?600000:950000,"Sludge Dewatering Screw Press — multi-disc, with polymer dosing")}
+  else{const Ab=Math.max(6,ds*365/100);X.civil.push([ "Sludge Drying Beds",Ab*0.6,"—",`${f1(Ab)} m² total area (2 beds), 0.6 m media depth`,"Brick / RCC (by client)"]);
+   sp("Sludge Drying Beds",`${f1(Ab)} m² (civil by client); media: graded gravel & sand (supply)`);
+   add("SDB","Drying Bed Media & Piping",Ab*1200,"Sludge Drying Bed — graded gravel & sand media, underdrain piping",1,f1(Ab)+" m²")}
+  // quality
+  const tert=c.mgf||c.acf;
+  if(etp)X.qual.push(["pH","—","6.5 – 8.5"],["BOD₃ (27°C)",bod+" mg/L",tert?"&lt; 20 mg/L":"&lt; 30 mg/L"],["COD",cod+" mg/L",tert?"&lt; 150 mg/L":"&lt; 250 mg/L"],["TSS",tss+" mg/L",tert?"&lt; 20 mg/L":"&lt; 100 mg/L"],["Oil &amp; Grease",og+" mg/L","&lt; 10 mg/L"]);
+  else X.qual.push(["pH","—","6.5 – 9.0"],["BOD",bod+" mg/L",tert?"&lt; 10 mg/L":"&lt; 20 mg/L"],["COD",cod+" mg/L",tert?"&lt; 50 mg/L":"&lt; 100 mg/L"],["TSS",tss+" mg/L",tert?"&lt; 10 mg/L":"&lt; 30 mg/L"],["Oil &amp; Grease",og+" mg/L","&lt; 10 mg/L"],["Fecal Coliform","—","&lt; 1000 MPN/100 ml"]);
+  X.title=etp?`Effluent Treatment Plant (ETP) — ${kld} KLD`:`Sewage Treatment Plant (STP) — ${kld} KLD, ${tech} Technology`;
+  X.cap=`${kld} KLD (design ${f2(Qh)} m³/hr @ ${hrs} hrs/day)`;
+  X.flow=fl.join(" → ");
+  X.overview=`We propose the design, supply, installation, testing and commissioning of the electro-mechanical equipment for a ${kld} KLD ${etp?"Effluent Treatment Plant based on "+proc.toLowerCase():"Sewage Treatment Plant based on "+tech+" technology"}, designed to treat raw ${W} with inlet BOD ${bod} mg/L, COD ${cod} mg/L and TSS ${tss} mg/L to meet the CPCB / SPCB discharge norms. All RCC tanks are in the client's civil scope; recommended tank sizes are furnished in this offer.`;
+  X.excl.push("All civil work — RCC tanks as per sizes given, sheds, foundations","Treated water storage / reuse network","Dosing chemicals &amp; consumables","Odour control system","SPCB approvals (CTE / CTO)");
+ }
+ X.tables=[["DESIGN BASIS",basis],["EQUIPMENT SPECIFICATIONS",eq]];
+ return X;
+}
+
+/* ================= PRICE ADJUST ================= */
+function drawAdj(){
+ const nm={MGF:"MGF",ACF:"ACF",SOF:"Softener",BRN:"Brine",ERC:"Erection",FRT:"Freight",PMP:"Pump (each)",PNL:"Panel",CT:"Cable Tray",WIR:"Wiring",PIP:"Piping",CAT:"Cation",ANI:"Anion",MB:"Mixed Bed",DGT:"Degasser",BLW:"Blower (each)",DTP:"DG Pump (each)",REG:"Regen System",INS:"Instruments"};
+ document.getElementById("adjBox").innerHTML=`<table class="adj"><tr><th>Item</th><th>Cost</th><th>Quote Rate</th></tr>${
+  S.lines.map((l,i)=>`<tr><td>${l.name||nm[l.key]}</td><td>${inr(l.cost)}</td><td><input type="number" value="${l.price}" onchange="S.lines[${i}].price=+this.value;render()"></td></tr>`).join("")}
+  </table><div class="note">“Cost” sirf aapke liye hai — PDF me nahi aata.</div>`;
+}
+
+/* ================= RENDER DOCUMENT ================= */
+const NAME={MGF:"Multi Grade Filter (MGF)",ACF:"Activated Carbon Filter (ACF)",SOFTENER:"Softener",CATION:"Strong Acid Cation Exchanger",ANION:"Strong Base Anion Exchanger",MB:"Mixed Bed Exchanger"};
+function ptSwitch(){const p=v("ptype"),ww=p==="ETP"||p==="STP",sh=(i,b)=>{const e=document.getElementById(i);if(e)e.style.display=b?"":"none"};
+ sh("dmBox",p==="DM");sh("roBox",p==="RO");sh("ufBox",p==="UF");sh("wwBox",ww);sh("etpWrap",p==="ETP");sh("stpWrap",p==="STP");sh("flowWrap",!ww);
+ ["lSOF","lBRN"].forEach(i=>document.getElementById(i).style.display=p==="PT"?"flex":"none");
+ document.getElementById("flowLbl").textContent=p==="RO"?"RO Permeate (m³/hr)":p==="UF"?"UF Net Output (m³/hr)":"Flow Capacity (m³/hr)";
+ if(ww){const d=p==="ETP"?{kld:25,bod:600,cod:1500,tss:400,og:30}:{kld:250,bod:300,cod:550,tss:300,og:50};for(const k in d)document.getElementById(k).value=d[k]}
+ document.getElementById("iMGF").checked=p!=="UF";document.getElementById("iACF").checked=p!=="UF"}
+function qno(){let c=+(localStorage.getItem("afsQno")||0);if(!c){c=1;localStorage.setItem("afsQno",1)}
+ const d=new Date(),p=x=>String(x).padStart(2,"0");return `QT-${d.getFullYear()}-${p(d.getDate())}${p(d.getMonth()+1)}${String(d.getFullYear()).slice(2)}-${c}`}
+function newNo(){try{localStorage.setItem("afsQno",(+(localStorage.getItem("afsQno")||0))+1)}catch(e){}if(S)render();else alert("New no.: "+qno())}
+
+function render(){
+ const u=S.units,sets=S.sets,ce=' contenteditable="true"';
+ const today=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+ const names=u.map(x=>NAME[x.type]).join(" + ")+(S.brine?" + Brine System":"")+(S.dm&&S.dm.dg?" + Degasser System":"");
+ const head=u.map(x=>x.type);
+ // spec table rows (column-wise vessels)
+ const row=(k,f)=>`<tr><td class="k">${k}</td>${u.map(x=>`<td${ce}>${f(x)}</td>`).join("")}</tr>`;
+ const spec=u.length?`<table class="t avoid"><tr><th>Parameter</th>${head.map(h=>`<th>${h==="MB"?"MIXED BED":h+" VESSEL"}</th>`).join("")}</tr>
+ ${row("Design Flow",x=>+(x.q||S.Q).toFixed(2)+" m³/hr")}
+ ${row("Vessel Size",x=>`Dia ${x.D} x ${x.Hs} mm HOS`)}
+ ${row("MOC",x=>MOCN[x.moc])}
+ ${row("Thickness",x=>x.moc==="FRP"?"Filament wound FRP, PE liner":`Shell ${x.ts} mm, Dish ${x.td} mm`)}
+ ${row("Design / Test Pressure",x=>x.moc==="FRP"?"150 psi (10.5 kg/cm²) rated":"3.5 / 5.25 kg/cm²")}
+ ${row("Service Velocity",x=>x.vel.toFixed(1)+" m/hr")}
+ ${row("Manhole",x=>x.moc==="FRP"?"4\" / 6\" top opening":manhole(x.D))}
+ ${row("Media Nozzle",x=>x.moc==="FRP"?"Bottom drain / top opening for media":mediaNoz(x.D))}
+ ${row("Inlet / Outlet Nozzle",x=>x.nb+" NB")}
+ ${row("Air Vent",x=>vent(x.D))}
+ ${row("Underdrain System",x=>x.under)}
+ ${row("Total Media Weight",x=>kg(x.layers.reduce((s,l)=>s+l.kg,0)))}
+ ${row("Frontal Piping",x=>`${x.nb} NB ${x.pmat||"MS"}, complete`)}
+ ${row("Valves",x=>`${x.valves} nos. ${x.vtype||(x.nb>=50?"Butterfly":"Ball")} valves`)}
+ ${row("Pressure Gauge",x=>"Glycerine-filled, inlet & outlet, with needle valve")}
+ ${S.isDM?row("Regeneration",x=>x.regen||"—"):""}
+ ${S.isDM?row("Treated Water Quality",x=>x.qual||"—"):""}
+ ${S.sof?row("Ejector",x=>x.type==="SOFTENER"?`MS Ejector, ${x.ejNB} mm NB`:"—"):""}
+ </table>`:"";
+ // media table
+ let mrows="";u.forEach(x=>x.layers.forEach((l,i)=>{mrows+=`<tr>${i===0?`<td rowspan="${x.layers.length}" class="k">${x.type}</td>`:""}<td${ce}>${l.name}</td><td${ce}>${l.grade}</td><td class="c">${l.depth}</td><td class="r">${kg(l.kg*sets*(x.nos||1))}</td></tr>`}));
+ const media=mrows?`<table class="t avoid"><tr><th>Vessel</th><th>Media</th><th>Size / Grade</th><th class="c">Bed Depth (mm)</th><th class="r">Qty (kg)</th></tr>${mrows}</table>`:"";
+ // softener performance
+ const perf=S.sof?`<table class="t avoid"><tr><th colspan="2">SOFTENER PERFORMANCE &amp; BRINE SYSTEM</th></tr>
+  <tr><td class="k">Raw water hardness</td><td${ce}>${S.H} ppm as CaCO₃</td></tr>
+  <tr><td class="k">Treated water hardness</td><td${ce}>&lt; 5 ppm as CaCO₃</td></tr>
+  <tr><td class="k">Resin quantity</td><td>${kg(S.sof.rkg)} (${S.sof.L} litres)</td></tr>
+  <tr><td class="k">Output between regeneration</td><td>~${Math.round(S.sof.cycle)} m³ (~${Math.round(S.sof.cycle/S.Q)} hrs at ${S.Q} m³/hr)</td></tr>
+  <tr><td class="k">Salt per regeneration</td><td>~${kg(S.sof.salt)} (NaCl)</td></tr>
+  ${S.brine?`<tr><td class="k">Brine Tank</td><td${ce}>HDPE ${S.brine.T} litres with brine valve assembly</td></tr><tr><td class="k">Agitator</td><td${ce}>${S.brine.agit} electrical agitator for brine mixing</td></tr>`:""}
+ </table>`:(S.brine?`<table class="t avoid"><tr><th colspan="2">BRINE SYSTEM</th></tr><tr><td class="k">Brine Tank</td><td>HDPE ${S.brine.T} litres</td></tr><tr><td class="k">Agitator</td><td>${S.brine.agit} electrical</td></tr></table>`:"");
+ // electrical & piping table
+ const E=S.ext,er=[];
+ if(E.pump)er.push(["sec","FEED PUMP (1 Working + 1 Standby)"],["Type / MOC",E.pump.type],["Duty",`${+S.Qf2.toFixed(2)} m³/hr @ ${E.pump.head} m head`],["Motor",`${E.pump.hp} HP (${E.pump.kW.toFixed(2)} kW), 415 V, 3 Ph, 50 Hz, 2900 RPM, TEFC`],["Quantity",`2 nos. (1 Working + 1 Standby)`]);
+ if(E.panel)er.push(["sec","CONTROL PANEL"],["Type",E.panel.type],["Enclosure","CRCA, powder coated, IP-54, floor/wall mounted"],["Components",`MCCB incomer${E.panel.np?", "+E.panel.np+" nos. DOL starters with OLR":""}, ammeter, voltmeter, ON/OFF/TRIP lamps, single phasing preventer, dry-run protection${E.panel.type.includes("Semi")?", level controller":""}${E.panel.type.includes("PLC")?", PLC with HMI, auto backwash/regeneration sequence":""}`]);
+ if(E.tray)er.push(["sec","CABLE TRAY"],["Type","GI perforated, 100 mm wide, with supports & accessories"],["Length",E.tray.L+" m"]);
+ if(E.wire)er.push(["sec","WIRING / CABLING"],["Cable",`4C x ${E.wire.sz} sq.mm copper armoured`],["Length",E.wire.L+" m"],["Includes","Cable glands, lugs, termination & earthing"]);
+ if(E.pipe)er.push(["sec","INLET / OUTLET PIPING"],["Material",E.pipe.spec],["Size",S.nb+" NB"],["Length",E.pipe.L+" m"],["Includes","Fittings, supports & 2 nos. isolation valves"]);
+ const elec=er.length?`<h4>Pump, Electrical &amp; Piping</h4><table class="t avoid">${er.map(r=>r[0]==="sec"?`<tr class="sec"><td colspan="2">${r[1]}</td></tr>`:`<tr><td class="k">${r[0]}</td><td${ce}>${r[1]}</td></tr>`).join("")}</table>`:"";
+ // DM performance & degasser
+ let dmT="";
+ if(S.dm){const D=S.dm,c=u.find(x=>x.type==="CATION"),a=u.find(x=>x.type==="ANION"),m=u.find(x=>x.type==="MB");
+  const rr=[["sec","DM PLANT DESIGN BASIS &amp; PERFORMANCE"],["Total cations",D.tc+" ppm as CaCO₃"],["Anion load on SBA",Math.round(D.aLoad)+" ppm as CaCO₃"+(D.dg?" (after degasser, CO₂ &lt; 5 ppm)":"")]];
+  if(c)rr.push(["Cation output / regeneration",`~${Math.round(c.cycle)} m³ (~${Math.round(c.cycle/S.Q)} hrs)`]);
+  if(a)rr.push(["Anion output / regeneration",`~${Math.round(a.cycle)} m³ (~${Math.round(a.cycle/S.Q)} hrs)`]);
+  rr.push(["Final treated water",m?m.qual:a?a.qual:"FMA water"]);
+  if(D.reg)rr.push(["Chemicals per regeneration (all units)",`HCl 33%: ~${kg(D.reg.hcl)}, NaOH flakes: ~${kg(D.reg.naoh)}`],["Acid measuring tank",`HDPE ${D.reg.ta} L with PP ejector`],["Alkali preparation tank",`HDPE ${D.reg.tb} L with PP ejector`]);
+  if(D.dg)rr.push(["sec","DEGASSER SYSTEM"],["Degasser Tower",`Dia ${D.dg.Dt} x ${D.dg.Ht} mm, ${MOCN[D.dg.mt]}`],["Packing",`PP Pall rings, ${D.dg.pk} m bed, ${D.dg.pkv.toFixed(2)} m³`],["Internals","Top water distributor, packing support grid, air inlet &amp; vent"],["Degasser Tank",`${D.dg.Vt.toFixed(1)} m³, Dia ${D.dg.Dk} x ${D.dg.Hk} mm, ${MOCN[D.dg.mt]}, with level indicator`]);
+  if(D.blw)rr.push(["Air Blower",`Centrifugal, ${D.blw.cas} casing, ${Math.round(D.blw.air)} m³/hr @ 150 mmWC, ${D.blw.bhp} HP — ${D.blw.qty===2?"1W + 1S":"1 No."}`]);
+  if(D.dtp)rr.push(["Degassed Water Pump",`SS304 centrifugal, ${S.Q} m³/hr @ ${D.dtp.hd} m, ${D.dtp.hp} HP — 1W + 1S`]);
+  if(D.ins)rr.push(["Instruments","Rotameter, online conductivity meter, sample cocks"]);
+  dmT=`<h4>DM Plant Details</h4><table class="t avoid">${rr.map(r=>r[0]==="sec"?`<tr class="sec"><td colspan="2">${r[1]}</td></tr>`:`<tr><td class="k">${r[0]}</td><td${ce}>${r[1]}</td></tr>`).join("")}</table>`;}
+ // RO/UF/ETP/STP tables
+ let xT="";
+ if(S.X){const X=S.X;
+  X.tables.forEach(([t,rows])=>{if(rows.length)xT+=`<table class="t"><tr><th colspan="2">${t}</th></tr>${rows.map(r=>r[0]==="sec"?`<tr class="sec"><td colspan="2">${r[1]}</td></tr>`:`<tr><td class="k">${r[0]}</td><td${ce}>${r[1]}</td></tr>`).join("")}</table>`});
+  if(X.qual.length)xT+=`<h4>${/ETP|STP/.test(X.title)?"Treated Water Quality":"Product Water Quality"}</h4><table class="t avoid"><tr><th>Parameter</th><th class="c">Inlet</th><th class="c">Outlet (Guaranteed)</th></tr>${X.qual.map(q=>`<tr><td class="k">${q[0]}</td><td class="c"${ce}>${q[1]}</td><td class="c"${ce}>${q[2]}</td></tr>`).join("")}</table>`;
+  if(X.civil.length)xT+=`<h4>Civil Tank Sizes (RCC — by client)</h4><table class="t avoid"><tr><th>Tank</th><th class="c">Volume (m³)</th><th class="c">HRT</th><th>Suggested Size (L x W x SWD)</th><th class="c">MOC</th></tr>${X.civil.map(c=>`<tr><td class="k">${c[0]}</td><td class="c">${(+c[1]).toFixed(1)}</td><td class="c">${c[2]}</td><td${ce}>${c[3]}</td><td class="c">${c[4]}</td></tr>`).join("")}</table>`;
+ }
+ // scope table
+ const sc=[];
+ u.forEach(x=>sc.push([NAME[x.type],`Dia ${x.D} x ${x.Hs} mm, ${x.moc}`,(x.nos||1)*sets+" No."]));
+ if(u.length){
+  sc.push(["Manhole",`${manhole(u[0].D).split(",")[0]} on each vessel`,"Each"]);
+  sc.push(["Media / resin unloading nozzle",mediaNoz(u[0].D).split(",")[0],"Each"]);
+  sc.push(["Inlet / outlet nozzle",S.nb+" NB","Each"]);
+  u.forEach(x=>sc.push([`Underdrain — ${x.type}`,x.under,"1 Set"]));
+  sc.push(["Frontal piping",`${S.nb} NB frontal piping — `+[...new Set(u.map(x=>x.pmat||"MS"))].map(p=>p+" ("+u.filter(x=>(x.pmat||"MS")===p).map(x=>x.type).join(", ")+")").join("; "),"Each"]);
+  sc.push(["Valves",u.map(x=>`${x.type}: ${x.valves} nos. ${x.vtype||(x.nb>=50?"Butterfly":"Ball")}`).join(", "),"As listed"]);
+  sc.push(["Pressure gauges","With needle (isolation) valve at inlet / outlet","Each"]);
+  u.forEach(x=>sc.push([`${x.type} media`,x.layers.map(l=>l.name).join(", "),kg(x.layers.reduce((s,l)=>s+l.kg,0)*sets*(x.nos||1))]));
+  if(S.sof)sc.push(["MS Ejector",`${S.sof.ejNB} mm NB, for brine draw`,"1 No."]);
+ }
+ if(S.brine)sc.push(["Brine Tank with Agitator",`HDPE ${S.brine.T} L, ${S.brine.agit} agitator, brine valve`,"1 Set"]);
+ if(S.X)S.X.scope.forEach(r=>sc.push(r));
+ if(S.dm){const D=S.dm;
+  if(D.dg)sc.push(["Degasser Tower",`Dia ${D.dg.Dt} x ${D.dg.Ht} mm, ${D.dg.mt}, PP Pall ring packing`,sets+" No."],["Degasser Tank",`${D.dg.Vt.toFixed(1)} m³, ${D.dg.mt}`,sets+" No."]);
+  if(D.blw)sc.push(["Degasser Air Blower",`${Math.round(D.blw.air)} m³/hr, ${D.blw.bhp} HP`,D.blw.qty===2?"2 Nos. (1W+1S)":"1 No."]);
+  if(D.dtp)sc.push(["Degassed Water Transfer Pump",`SS304, ${D.dtp.hp} HP`,"2 Nos. (1W+1S)"]);
+  if(D.reg)sc.push(["Regeneration System",`Acid tank ${D.reg.ta} L + Alkali tank ${D.reg.tb} L, PP ejectors`,"1 Set"]);
+  if(D.ins)sc.push(["Instruments","Rotameter, conductivity meter, sample cocks","1 Set"]);}
+ if(E.pump)sc.push([S.X&&/ETP|STP/.test(S.X.title)?"Filter Feed Pump":S.X&&/RO/.test(S.X.title)?"RO Feed Pump":"Raw Water Feed Pump",`${E.pump.type}, ${E.pump.hp} HP, ${+S.Qf2.toFixed(2)} m³/hr @ ${E.pump.head} m`,"2 Nos. (1W+1S)"]);
+ if(E.panel)sc.push(["Electrical Control Panel",E.panel.type,"1 No."]);
+ if(E.tray)sc.push(["Cable Tray","GI perforated, 100 mm",E.tray.L+" m"]);
+ if(E.wire)sc.push(["Wiring / Cabling",`4C x ${E.wire.sz} sq.mm Cu armoured, with earthing`,E.wire.L+" m"]);
+ if(E.pipe)sc.push(["Inlet / Outlet Piping",`${S.nb} NB ${E.pipe.mt}`,E.pipe.L+" m"]);
+ sc.push(["Hardware","Nut, bolts & gaskets for all pipe / flange joints","Lot"]);
+ if(on("iERC"))sc.push(["Erection & Commissioning","Erection, commissioning & testing at site","LS"]);
+ const scope=`<table class="t"><tr><th class="c" style="width:7%">S.No</th><th>Item</th><th>Specification</th><th class="c" style="width:13%">Qty</th></tr>${sc.map((s,i)=>`<tr><td class="c">${i+1}</td><td${ce}><b>${s[0]}</b></td><td${ce}>${s[1]}</td><td class="c"${ce}>${s[2]}</td></tr>`).join("")}</table>`;
+ // commercial
+ let taxable=0;
+ const crow=S.lines.map((l,i)=>{const q=l.ls?1:(l.qty||(["ERC","FRT","PNL","CT","WIR","PIP","REG","INS"].includes(l.key)?1:sets));const amt=l.price*q;taxable+=amt;
+  return `<tr><td class="c">${i+1}</td><td${ce}>${l.desc}</td><td class="c">${l.ls?"LS":q}</td><td class="r">${l.ls?"—":inr(l.price)}</td><td class="r">${inr(amt)}</td></tr>`}).join("");
+ const igst=v("gstType")==="IGST",gst=taxable*0.18,grand=taxable+gst,adv=grand*n("advP")/100;
+ const OV=`We propose the supply, installation, testing and commissioning of a complete ${S.isDM?"Demineralisation (DM) plant":"pre-treatment filtration"+(S.sof?" and softening":"")+" package"} of ${S.Q} m³/hr capacity comprising ${u.map(x=>`a ${NAME[x.type]} vessel of Dia ${x.D} x ${x.Hs} mm (${x.moc})`).join(", ")}${S.brine?", along with a separate Brine Tank with Agitator":""}. Each vessel is supplied complete with manhole, media/resin unloading nozzle, ${S.nb} NB inlet/outlet nozzle, underdrain system, frontal piping, valves, pressure gauges with isolation needle valve, respective media/resin and all mounting hardware (nut, bolts &amp; gaskets).`;
+ const doc=`
+ <div class="title">QUOTATION</div>
+ <div class="qmeta"${ce}>${qno()} &nbsp;|&nbsp; Date: ${today} &nbsp;|&nbsp; Valid: ${v("valid")}</div>
+ <h4>Customer</h4>
+ <div${ce}><b>${(v("cName")||"CUSTOMER NAME").toUpperCase()}</b><br>${(v("cAddr")||"Address").replace(/\n/g,"<br>")}<br>${v("cAttn")?"Kind Attn.: "+v("cAttn")+" | ":""}Contact: ${v("cMob")||"—"}</div>
+ <h4>Product / Service</h4>
+ <table class="t"><tr><td class="k">System</td><td${ce}><b>${S.X?S.X.title:S.isDM?"Demineralisation (DM) Plant":"Pre-Treatment Filtration"+(S.sof?" &amp; Water Softener":"")+" Package"}</b>${names?" — "+names:""}</td></tr>
+ <tr><td class="k">Capacity</td><td${ce}>${S.X?S.X.cap:S.Q+" m³/hr ("+(S.Q*1000).toLocaleString("en-IN")+" LPH)"}</td></tr>
+ <tr><td class="k">Quantity</td><td${ce}>${sets} Set</td></tr><tr><td class="k">Delivery</td><td${ce}>${v("deliv")}</td></tr></table>
+ <h4>Overview</h4>
+ <p${ce} style="text-align:justify;margin:4px 0">${S.X?S.X.overview:OV}</p>
+ ${S.X&&S.X.flow?`<h4>Process Flow</h4><p${ce} style="margin:4px 0;font-weight:bold;color:#1f3a68">${S.X.flow}</p>`:""}
+ <h4>Scope of Supply</h4>${scope}
+ <h4>Technical Specifications</h4>${spec}${xT}
+ ${media?`<h4>Media &amp; Resin Details</h4>${media}`:""}
+ ${perf}
+ ${dmT}
+ ${elec}
+ <h4>Exclusions</h4>
+ <table class="t avoid"><tr><td${ce}>${["Civil work &amp; foundation",E.wire?"Main power supply up to our panel":"Electrical power cabling &amp; DB",E.pump?"":"Feed pump",E.panel?"":"Control panel","Raw water supply arrangement","Storage tanks (feed &amp; product)",E.pipe?"Piping beyond quoted length":"Extra piping beyond battery limit",S.isDM?"Regeneration chemicals (HCl, NaOH)":S.X?"":"Salt for regeneration",...(S.X?S.X.excl:[])].filter(x=>x).map((x,i)=>(i+1)+". "+x).join(" &nbsp; ")}</td></tr></table>
+ <h4>Timeline &amp; Warranty</h4>
+ <table class="t avoid"><tr><td class="k">Manufacturing / procurement</td><td${ce}>4–6 weeks</td></tr><tr><td class="k">Delivery</td><td${ce}>1 week</td></tr><tr><td class="k">Installation &amp; commissioning</td><td${ce}>1 week</td></tr><tr><td class="k">Total</td><td${ce}><b>${v("deliv")}</b></td></tr><tr><td class="k">Warranty</td><td${ce}>${v("warr")}, against manufacturing defects</td></tr></table>
+ <h4>Commercial Terms</h4>
+ <table class="t"><tr><th class="c" style="width:6%">S.No</th><th>Description</th><th class="c" style="width:7%">Qty</th><th class="r" style="width:14%">Rate</th><th class="r" style="width:15%">Amount</th></tr>${crow}</table>
+ <div class="avoid">
+ <table class="tot"><tr><td>Taxable Amount</td><td><b>${inr(taxable)}</b></td></tr>
+ ${igst?`<tr><td>IGST @ 18%</td><td><b>${inr(gst)}</b></td></tr>`:`<tr><td>CGST @ 9%</td><td><b>${inr(gst/2)}</b></td></tr><tr><td>SGST @ 9%</td><td><b>${inr(gst/2)}</b></td></tr>`}
+ <tr class="g"><td>GRAND TOTAL (Incl. GST)</td><td>${inr(grand)}</td></tr></table>
+ <div class="words">Rupees ${words(Math.round(grand))} Only</div>
+ <h4>Payment Terms</h4>
+ <div${ce}>${v("pay")}</div>
+ <p><b>Advance Due Now: <span style="color:var(--navy)">${inr(adv)}</span></b></p>
+ <table class="t"><tr><th colspan="4">BANK DETAILS</th></tr><tr><td class="k">Bank</td><td>AXIS BANK, Green Field Colony, Faridabad</td><td class="k">A/C No.</td><td>917020048039102</td></tr><tr><td class="k">A/C Name</td><td>AQUA FILTRATION SYSTEM</td><td class="k">IFSC</td><td>UTIB0002693</td></tr></table>
+ <table style="width:100%;margin-top:30px"><tr><td><b>For AQUA FILTRATION SYSTEM</b><br><br><br>Authorized Signatory</td><td style="text-align:right"><b>Customer Acceptance</b><br>${(v("cName")||"").toUpperCase()}<br><br>Sign &amp; Stamp</td></tr></table>
+ </div>`;
+ document.getElementById("doc").innerHTML=doc;
+ S.grand=grand;S.taxable=taxable;
+}
+
+/* ================= AMOUNT IN WORDS (Indian) ================= */
+function words(num){
+ const a=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"],
+ b=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+ const two=n=>n<20?a[n]:b[Math.floor(n/10)]+(n%10?" "+a[n%10]:"");
+ const three=n=>(n>=100?a[Math.floor(n/100)]+" Hundred"+(n%100?" ":""):"")+(n%100?two(n%100):"");
+ if(num===0)return "Zero";let s="";
+ const cr=Math.floor(num/1e7);num%=1e7;const la=Math.floor(num/1e5);num%=1e5;const th=Math.floor(num/1e3);num%=1e3;
+ if(cr)s+=three(cr)+" Crore ";if(la)s+=two(la)+" Lakh ";if(th)s+=two(th)+" Thousand ";if(num)s+=three(num);
+ return s.trim();
+}
+
+/* ================= WHATSAPP ================= */
+function sendWA(){
+ if(!S){alert("Pehle Calculate karo");return}
+ const t=`Dear Sir,\nGreetings from Aqua Filtration System (WTPESTORE).\n\nQuotation ${qno()} for ${S.X?S.X.title+" ("+S.X.cap+")":S.Q+" m³/hr "+(S.isDM?"DM Plant":"Pre-Treatment Filtration"+(S.sof?" & Softener":"")+" Package")}:\n`+
+  S.units.map(x=>`• ${x.type}: Dia ${x.D} x ${x.Hs} mm, ${x.moc}`).join("\n")+
+  `\n\nTaxable: ${inr(S.taxable)}\nGrand Total (incl. GST): ${inr(S.grand)}\n\nDetailed PDF quotation attached.\nAqua Filtration System\n9899193589 | www.wtpestore.co.in`;
+ let m=(v("cMob")||"").replace(/\D/g,"");if(m.length===10)m="91"+m;
+ window.open("https://wa.me/"+m+"?text="+encodeURIComponent(t),"_blank");
+}
+/* ================= WORD EXPORT (MHTML .doc with logos) ================= */
+function exportWord(){
+ if(!S){alert("Pehle Calculate karo");return}
+ const imgs=[...document.querySelectorAll(".lh img")].map(i=>i.src);
+ const C={navy:"#1f3a68",green:"#2e7d32",orange:"#f39c12",dark:"#1d2b3a"};
+ const cl=document.getElementById("doc").cloneNode(true);
+ const st=(sel,css)=>cl.querySelectorAll(sel).forEach(e=>e.setAttribute("style",(e.getAttribute("style")||"")+";"+css));
+ st("table.t","width:100%;border-collapse:collapse;margin:3pt 0");
+ st("table.t td","border:1px solid #333333;padding:3pt 5pt;vertical-align:top;font-size:10pt");
+ st("table.t th","background:#1f3a68;color:#ffffff;border:1px solid #333333;padding:3pt 5pt;text-align:left;font-size:10pt;font-weight:bold");
+ st("table.t td.k","background:#f1f3f6;font-weight:bold");
+ st("table.t tr.sec td","background:#dfe6f0;font-weight:bold");
+ st(".r","text-align:right");st(".c","text-align:center");
+ st("h4","color:#1f3a68;font-size:13pt;border-bottom:1.5pt solid #1f3a68;margin:12pt 0 4pt");
+ st("table.tot","margin-left:auto");st("table.tot td","text-align:right;padding:2pt 5pt");
+ st("table.tot tr.g td","font-size:12pt;font-weight:bold;color:#1f3a68;border-top:2pt solid #1f3a68");
+ st(".title","text-align:center;font-family:Georgia;font-size:20pt;font-weight:bold;letter-spacing:6pt;color:#1f3a68");
+ st(".qmeta","text-align:center;color:#555555");
+ cl.querySelectorAll("th").forEach(th=>th.setAttribute("bgcolor","#1f3a68"));
+ cl.querySelectorAll("td.k").forEach(td=>td.setAttribute("bgcolor","#f1f3f6"));
+ cl.querySelectorAll("tr.sec td").forEach(td=>td.setAttribute("bgcolor","#dfe6f0"));
+ cl.querySelectorAll("table.t").forEach(t=>{t.setAttribute("border","1");t.setAttribute("cellspacing","0");t.setAttribute("cellpadding","4");t.setAttribute("width","100%")});
+ const body=cl.innerHTML.replace(/ contenteditable="true"/g,"").replace(/var\(--(\w+)\)/g,(m,k)=>C[k]||"#000");
+ const lh=`<table style="width:100%;border:none"><tr>
+  <td style="width:75px;border:none"><img src="file:///C:/afsq/afs.jpg" width="66" height="66"></td>
+  <td style="border:none"><p style="margin:0;font:bold 20pt Georgia;color:#2e7d32">AQUA FILTRATION SYSTEM</p>
+   <p style="margin:0;font:8.5pt Arial;color:#444">Water &amp; Waste Water Treatment — Manufacturer &amp; Trader | Est. 2017</p>
+   <p style="margin:0;font:bold 8.5pt Arial">GSTIN: 06DMUPS2289L1ZZ</p></td>
+  <td style="border:none;text-align:right"><p style="margin:0;font:italic 8pt Arial;color:#555">Our Online Brand</p>
+   <img src="file:///C:/afsq/wtp.png" width="140" height="34"><p style="margin:0;font:bold 8.5pt Arial;color:#2e7d32">www.wtpestore.co.in</p></td></tr></table>
+  <p style="background:#1d2b3a;color:#fff;text-align:center;font:bold 8.5pt Arial;padding:3px;margin:6px 0 2px">AUTHORISED DEALER — EUREKA FORBES LTD. (WATER SOFTENERS)</p>
+  <p style="border-top:3px solid #f39c12;margin:0 0 6px"></p>`;
+ const ft=`<p style="border-top:2px solid #2e7d32;text-align:center;font:8pt Arial;margin-top:16px;padding-top:4px"><b>Office: B-198, Royal Plaza, Near Domino’s, Green Field, Faridabad – 121003 (Haryana)</b><br>Mob: 9899193589 / 9910646957 | Tel: 0129-4340856 | Email: aquazone350@gmail.com, deewakar@aquafiltrationsystem.in<br><span style="color:#2e7d32;font-weight:bold">www.aquafiltrationsystem.in | www.wtpestore.co.in</span><br>RO Plants • DM Plants • Water Softeners • UV Systems • FRP Vessels • Dosing Pumps • Spares</p>`;
+ const css=`@page{size:21cm 29.7cm;margin:1.5cm 1.5cm 1.5cm 1.5cm}
+ body{font-family:"Times New Roman";font-size:10.5pt}
+ .title{text-align:center;font:bold 20pt Georgia;letter-spacing:6pt;color:#1f3a68;margin:8pt 0 0}
+ .qmeta{text-align:center;color:#555}
+ h4{color:#1f3a68;font-size:13pt;border-bottom:1.5pt solid #1f3a68;margin:12pt 0 4pt}
+ table.t{width:100%;border-collapse:collapse}
+ .t th{background:#1f3a68;color:#fff;padding:3pt 5pt;text-align:left;font-size:10pt;border:1px solid #333}
+ .t td{border:1px solid #333;padding:3pt 5pt;vertical-align:top;font-size:10pt}
+ .t td.k{background:#f1f3f6;font-weight:bold}
+ .t tr.sec td{background:#dfe6f0;font-weight:bold}
+ .r{text-align:right}.c{text-align:center}
+ table.tot{margin-left:auto}.tot td{text-align:right;padding:2pt 5pt}
+ .tot tr.g td{font-size:12pt;font-weight:bold;color:#1f3a68;border-top:2pt solid #1f3a68}
+ .words{font-style:italic}`;
+ const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Quotation</title><style>${css}</style></head><body>${lh}${body}${ft}</body></html>`;
+ const out=html.replace("file:///C:/afsq/afs.jpg",imgs[0]||"").replace("file:///C:/afsq/wtp.png",imgs[1]||"");
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob(["\ufeff"+out],{type:"application/msword"}));
+ a.download=(qno()+"_"+(v("cName")||"Quotation")).replace(/[^\w\-]+/g,"_")+".doc";
+ document.body.appendChild(a);a.click();a.remove();
+}
+loadRates();
+</script>
+</body>
+</html>

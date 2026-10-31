@@ -8,6 +8,7 @@ Disallow: /admin-change-pin.html
 Disallow: /admin-settings.html
 Disallow: /admin-quick-quote.html
 Disallow: /admin-seo-pages.html
+Disallow: /admin-quote-generator.html
 Disallow: /admin.html
 Disallow: /quotation.html
 Disallow: /proforma-invoice.html
