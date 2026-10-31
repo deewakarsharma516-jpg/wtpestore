@@ -774,6 +774,17 @@ function drawAdj(){
 
 /* ================= RENDER DOCUMENT ================= */
 const NAME={MGF:"Multi Grade Filter (MGF)",ACF:"Activated Carbon Filter (ACF)",SOFTENER:"Softener",CATION:"Strong Acid Cation Exchanger",ANION:"Strong Base Anion Exchanger",MB:"Mixed Bed Exchanger"};
+/* 2C Make / Brand — sirf wahi make dikhao jo is plant / selection me lagta hai */
+function updMakes(){
+ const p=v("ptype"),box=(id,b)=>{const e=document.getElementById(id);if(e)e.parentElement.style.display=b?"":"none"};
+ const frpF=p!=="UF"&&v("mocF")==="FRP"&&(on("iMGF")||on("iACF")),frpS=p==="PT"&&v("mocS")==="FRP"&&on("iSOF"),frp=frpF||frpS;
+ box("mkPV",p==="RO");
+ box("mkFRP",frp);box("frpModel",frp);document.getElementById("frpModel").parentElement.nextElementSibling.style.display=frp?"":"none";
+ box("mkMPV",frp);
+ box("mkDZ",["RO","UF","ETP","STP"].includes(p)||(on("iCLD")&&p!=="RO"&&p!=="STP"));
+ box("mkPNL",on("iPNL"));box("mkFLT",on("iFLT"));
+ box("mkROT",["RO","UF","DM"].includes(p));
+}
 function ptSwitch(){const p=v("ptype"),ww=p==="ETP"||p==="STP",sh=(i,b)=>{const e=document.getElementById(i);if(e)e.style.display=b?"":"none"};
  sh("dmBox",p==="DM");sh("roBox",p==="RO");sh("ufBox",p==="UF");sh("wwBox",ww);sh("etpWrap",p==="ETP");sh("stpWrap",p==="STP");sh("flowWrap",!ww);
  ["lSOF","lBRN"].forEach(i=>document.getElementById(i).style.display=p==="PT"?"flex":"none");
@@ -784,7 +795,7 @@ function ptSwitch(){const p=v("ptype"),ww=p==="ETP"||p==="STP",sh=(i,b)=>{const 
  const box=(id,b)=>{const e=document.getElementById(id);if(e)e.parentElement.style.display=b?"":"none"};
  box("hard",p==="PT");                       // hardness sirf softener ke liye
  box("regen",p==="PT"||p==="DM");             // regeneration sirf softener / DM
- sh("wMocS",p==="PT");sh("lCLD",p!=="RO"&&p!=="STP");                        // softener MOC sirf softener
+ sh("wMocS",p==="PT");updMakes();sh("lCLD",p!=="RO"&&p!=="STP");                        // softener MOC sirf softener
  sh("lMGF",p!=="UF");sh("lACF",p!=="UF");sh("wMocF",p!=="UF");
  document.getElementById("tMGF").textContent=ww?"Tertiary Pressure Sand Filter":"MGF";
  document.getElementById("tACF").textContent=ww?"Tertiary Carbon Filter (ACF)":"ACF";
@@ -1089,7 +1100,7 @@ function exportWord(){
  a.download=(qno()+"_"+(v("cName")||"Quotation")).replace(/[^\w\-]+/g,"_")+".doc";
  document.body.appendChild(a);a.click();a.remove();
 }
-loadRates();ptSwitch();
+loadRates();ptSwitch();["mocF","mocS","iMGF","iACF","iSOF","iCLD","iPNL","iFLT"].forEach(i=>{const e=document.getElementById(i);if(e)e.addEventListener("change",updMakes)});
 </script>
 </body>
 </html>
