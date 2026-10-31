@@ -756,7 +756,40 @@ function qno(){let c=+(localStorage.getItem("afsQno")||0);if(!c){c=1;localStorag
  const d=new Date(),p=x=>String(x).padStart(2,"0");return `QT-${d.getFullYear()}-${p(d.getDate())}${p(d.getMonth()+1)}${String(d.getFullYear()).slice(2)}-${c}`}
 function newNo(){try{localStorage.setItem("afsQno",(+(localStorage.getItem("afsQno")||0))+1)}catch(e){}if(S)render();else alert("New no.: "+qno())}
 
+/* ================= PROCESS FLOW DIAGRAM (canvas -> PNG, web + Word dono me) ================= */
+function flowSteps(){
+ if(S.X&&S.X.flow)return S.X.flow.replace(/&amp;/g,"&").split(" → ");
+ const t=S.units.map(x=>x.type),st=["Raw Water"];
+ if(S.ext.pump)st.push("Feed Pump");
+ if(t.includes("MGF"))st.push("Multi Grade Filter");
+ if(t.includes("ACF"))st.push("Activated Carbon Filter");
+ if(t.includes("SOFTENER"))st.push(S.brine?"Softener (+ Brine Tank)":"Softener");
+ if(t.includes("CATION"))st.push("Cation Exchanger");
+ if(S.dm&&S.dm.dg)st.push("Degasser Tower");
+ if(t.includes("ANION"))st.push("Anion Exchanger");
+ if(t.includes("MB"))st.push("Mixed Bed");
+ st.push(S.isDM?"DM Water to Storage":S.sof?"Soft Water to Storage":"Treated Water");
+ return st;
+}
+function flowPNG(steps){
+ const bw=230,bh=86,gx=60,gy=70,per=Math.min(5,steps.length),W=40+per*bw+(per-1)*gx,rows=Math.ceil(steps.length/per),H=40+rows*bh+(rows-1)*gy;
+ const c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d");
+ g.fillStyle="#fff";g.fillRect(0,0,W,H);
+ const pos=steps.map((s,i)=>{const r=Math.floor(i/per),k=i%per,col=r%2?per-1-k:k;return{x:20+col*(bw+gx),y:20+r*(bh+gy)}});
+ const arrow=(x1,y1,x2,y2)=>{g.strokeStyle="#f39c12";g.fillStyle="#f39c12";g.lineWidth=4;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-16*Math.cos(a-0.45),y2-16*Math.sin(a-0.45));g.lineTo(x2-16*Math.cos(a+0.45),y2-16*Math.sin(a+0.45));g.closePath();g.fill()};
+ for(let i=0;i<pos.length-1;i++){const a=pos[i],b=pos[i+1];
+  if(a.y===b.y){if(b.x>a.x)arrow(a.x+bw,a.y+bh/2,b.x-4,b.y+bh/2);else arrow(a.x,a.y+bh/2,b.x+bw+4,b.y+bh/2)}
+  else arrow(a.x+bw/2,a.y+bh,b.x+bw/2,b.y-4)}
+ steps.forEach((s,i)=>{const p=pos[i],end=i===0||i===steps.length-1;
+  g.fillStyle=end?"#2e7d32":"#1f3a68";g.beginPath();if(g.roundRect)g.roundRect(p.x,p.y,bw,bh,14);else g.rect(p.x,p.y,bw,bh);g.fill();
+  g.fillStyle="#fff";g.font="bold 22px Arial";g.textAlign="center";g.textBaseline="middle";
+  const w=s.split(" "),L=[];let cur="";w.forEach(x=>{const t=cur?cur+" "+x:x;if(g.measureText(t).width>bw-20&&cur){L.push(cur);cur=x}else cur=t});L.push(cur);
+  L.slice(0,3).forEach((l,j)=>g.fillText(l,p.x+bw/2,p.y+bh/2+(j-(Math.min(L.length,3)-1)/2)*26))});
+ return c.toDataURL("image/png");
+}
 function render(){
+ S.flowImg=flowPNG(flowSteps());
  const u=S.units,sets=S.sets,ce=' contenteditable="true"';
  const today=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
  const names=u.map(x=>NAME[x.type]).join(" + ")+(S.brine?" + Brine System":"")+(S.dm&&S.dm.dg?" + Degasser System":"");
@@ -870,7 +903,7 @@ function render(){
  <tr><td class="k">Quantity</td><td${ce}>${sets} Set</td></tr><tr><td class="k">Delivery</td><td${ce}>${v("deliv")}</td></tr></table>
  <h4>Overview</h4>
  <p${ce} style="text-align:justify;margin:4px 0">${S.X?S.X.overview:OV}</p>
- ${S.X&&S.X.flow?`<h4>Process Flow</h4><p${ce} style="margin:4px 0;font-weight:bold;color:#1f3a68">${S.X.flow}</p>`:""}
+ <h4>Process Flow Diagram</h4><div class="avoid" style="text-align:center"><img src="${S.flowImg}" alt="Process flow" style="width:100%;max-width:100%"></div>
  <h4>Scope of Supply</h4>${scope}
  <h4>Technical Specifications</h4>${spec}${xT}
  ${media?`<h4>Media &amp; Resin Details</h4>${media}`:""}
@@ -922,9 +955,10 @@ function sendWA(){
 /* ================= WORD EXPORT (MHTML .doc with logos) ================= */
 function exportWord(){
  if(!S){alert("Pehle Calculate karo");return}
- const imgs=[...document.querySelectorAll(".lh img")].map(i=>i.src);
+ const imgs=[...document.querySelectorAll(".lh img")].map(i=>i.src);const parts=[];
  const C={navy:"#1f3a68",green:"#2e7d32",orange:"#f39c12",dark:"#1d2b3a"};
  const cl=document.getElementById("doc").cloneNode(true);
+ cl.querySelectorAll("img").forEach(i=>{i.removeAttribute("style");i.setAttribute("width","640")});
  const st=(sel,css)=>cl.querySelectorAll(sel).forEach(e=>e.setAttribute("style",(e.getAttribute("style")||"")+";"+css));
  st("table.t","width:100%;border-collapse:collapse;margin:3pt 0");
  st("table.t td","border:1px solid #333333;padding:3pt 5pt;vertical-align:top;font-size:10pt");
@@ -967,9 +1001,14 @@ function exportWord(){
  .tot tr.g td{font-size:12pt;font-weight:bold;color:#1f3a68;border-top:2pt solid #1f3a68}
  .words{font-style:italic}`;
  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Quotation</title><style>${css}</style></head><body>${lh}${body}${ft}</body></html>`;
- const out=html.replace("file:///C:/afsq/afs.jpg",imgs[0]||"").replace("file:///C:/afsq/wtp.png",imgs[1]||"");
+ /* data: images ko MHTML parts banao — Word inhe dikhata hai */
+ let k=0;const out0=html.replace("file:///C:/afsq/afs.jpg",imgs[0]||"").replace("file:///C:/afsq/wtp.png",imgs[1]||"").replace(/src="data:(image\/[a-z+]+);base64,([^"]+)"/g,(m,t,b)=>{const nm="img"+(++k)+"."+(t.split("/")[1].replace("jpeg","jpg").replace("+xml",""));parts.push({nm,t,b});return 'src="file:///C:/afsq/'+nm+'"'});
+ const B="----=_NextPart_AFS_QT",wrap=x=>x.replace(/(.{76})/g,"$1\r\n");
+ const b64=t=>btoa(unescape(encodeURIComponent(t)));
+ const out="MIME-Version: 1.0\r\nContent-Type: multipart/related; boundary=\""+B+"\"; type=\"text/html\"\r\n\r\n--"+B+"\r\nContent-Location: file:///C:/afsq/quotation.htm\r\nContent-Transfer-Encoding: base64\r\nContent-Type: text/html; charset=\"utf-8\"\r\n\r\n"+wrap(b64(out0))+"\r\n"+
+  parts.map(p=>"--"+B+"\r\nContent-Location: file:///C:/afsq/"+p.nm+"\r\nContent-Transfer-Encoding: base64\r\nContent-Type: "+p.t+"\r\n\r\n"+wrap(p.b)+"\r\n").join("")+"--"+B+"--\r\n";
  const a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob(["\ufeff"+out],{type:"application/msword"}));
+ a.href=URL.createObjectURL(new Blob([out],{type:"application/msword"}));
  a.download=(qno()+"_"+(v("cName")||"Quotation")).replace(/[^\w\-]+/g,"_")+".doc";
  document.body.appendChild(a);a.click();a.remove();
 }
