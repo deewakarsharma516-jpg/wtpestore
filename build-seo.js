@@ -1297,14 +1297,15 @@ ${relBlock}
 <p style="margin-top:18px"><a href="/products.html#${catSlug}">← View all ${esc(titleCaseCat(p.c))} products</a></p>`;
 
   const ldProduct = {
-    "@context": "https://schema.org", "@type": "Product", "name": p.n,
+    "@context": "https://schema.org", "@type": "Product", "name": String(p.n).slice(0, 150),
     ...(p.img ? { "image": [p.img] } : {}),
     ...(p.make ? { "brand": { "@type": "Brand", "name": p.make } } : {}),
-    ...(autoModel ? { "model": autoModel, "sku": autoModel } : {}),
+    ...(autoModel ? { "model": autoModel } : {}),
+    ...(autoModel && String(autoModel).replace(/[^A-Za-z0-9._\/-]+/g, "-").replace(/^-+|-+$/g, "") ? { "sku": String(autoModel).replace(/[^A-Za-z0-9._\/-]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 50) } : {}),
     "category": p.c,
     "description": (p.spec || blurb.text).slice(0, 300),
     "url": pageUrl,
-    ...(p.p > 0 ? {
+    ...(p.p > 0 && p.img ? {
       "offers": {
         "@type": "Offer", "price": inclGst(p), "priceCurrency": "INR",
         "availability": "https://schema.org/InStock",
