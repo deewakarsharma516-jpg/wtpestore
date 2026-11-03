@@ -218,6 +218,7 @@ async function load() {
     ii = ix('image', 'photo'), mrp = ix('mrp', 'list price', 'old price'),
     dsc = ix('discount', 'disc', 'off'), pdfi = ix('catalogue', 'catalog', 'pdf'),
     shi = ix('courier charge', 'courier', 'shipping', 'shipping charge'),
+    fri = ix('freight', 'freight charge', 'freight (approx)', 'freight approx'),
     gsi = ix('gst rate', 'gst', 'gst %', 'gst%'), dti = ix('dispatch time', 'dispatch', 'dispatch days');
   const numOr = (v) => { const t = String(v == null ? '' : v).trim(); if (!t) return null; const x = parseFloat(t.replace(/[^0-9.]/g, '')); return isFinite(x) ? x : null; };
   const out = [];
@@ -232,6 +233,7 @@ async function load() {
       pdf: pdfi > -1 ? clean(r[pdfi]) : '',
       k: n,  /* Sheet ka asli naam — cart/server isi se product pehchante hain */
       ship: shi > -1 ? numOr(r[shi]) : null,
+      freight: fri > -1 ? numOr(r[fri]) : null,   // sirf Google feed ke liye: courier khaali ho to yeh freight
       gst: gsi > -1 ? numOr(r[gsi]) : null,
       disp: dti > -1 ? numOr(r[dti]) : null
     };
@@ -1442,7 +1444,7 @@ async function prepFeedImages(list) {
   let map = {}; try { map = JSON.parse(fs.readFileSync(MAPF, 'utf8')); } catch (e) { }
   const next = {}; let conv = 0, okN = 0, fail = 0;
   for (const p of list) {
-    if (!(p.p > 0) || p.ship == null || !/^https?:\/\//.test(p.img || '')) continue;
+    if (!(p.p > 0) || (p.ship == null && p.freight == null) || !/^https?:\/\//.test(p.img || '')) continue;
     const old = map[p.slug], file = path.join(FEED_IMG_DIR, p.slug + '.jpg');
     if (old && old.src === p.img && (old.ok || (old.file && fs.existsSync(file)))) { next[p.slug] = old; if (old.file) p.feedImg = SITE + '/' + FEED_IMG_DIR + '/' + p.slug + '.jpg'; continue; }
     const b = await getBin(p.img);
@@ -1465,7 +1467,7 @@ function writeMerchantFeed(list) {
   const money = n => (Math.round(n * 100) / 100).toFixed(2) + ' INR';
   const items = [], seen = new Set();
   for (const p of list) {
-    if (!(p.p > 0) || p.ship == null || !/^https?:\/\//.test(p.img || '')) continue;
+    if (!(p.p > 0) || (p.ship == null && p.freight == null) || !/^https?:\/\//.test(p.img || '')) continue;
     if (!fs.existsSync(path.join('products', p.slug + '.html')) || seen.has(p.slug)) continue;
     seen.add(p.slug);
     const model = p.model || extractModel(p.n);
@@ -1481,9 +1483,9 @@ function writeMerchantFeed(list) {
 <g:price>${money(inclGst(p))}</g:price>
 ${p.make ? `<g:brand>${x(p.make)}</g:brand>\n` : ''}${model ? `<g:mpn>${x(model)}</g:mpn>\n` : ''}<g:identifier_exists>${p.make && model ? 'yes' : 'no'}</g:identifier_exists>
 <g:product_type>${x(titleCaseCat(p.c))}</g:product_type>
-<g:shipping><g:country>IN</g:country><g:service>Courier</g:service><g:price>${money(inclGst(p, p.ship))}</g:price>${p.disp != null ? `<g:min_transit_time>${Math.max(0, Math.round(p.disp))}</g:min_transit_time><g:max_transit_time>${Math.max(0, Math.round(p.disp))}</g:max_transit_time>` : ''}</g:shipping>${p.disp != null ? `
-<g:min_handling_time>0</g:min_handling_time>
-<g:max_handling_time>0</g:max_handling_time>` : ''}
+<g:shipping><g:country>IN</g:country><g:service>Courier</g:service><g:price>${money(inclGst(p, p.ship != null ? p.ship : p.freight))}</g:price><g:min_transit_time>2</g:min_transit_time><g:max_transit_time>7</g:max_transit_time></g:shipping>
+<g:min_handling_time>${p.disp != null ? Math.max(0, Math.min(1, Math.round(p.disp))) : 1}</g:min_handling_time>
+<g:max_handling_time>${p.disp != null ? Math.max(1, Math.round(p.disp)) : 3}</g:max_handling_time>
 </item>`);
   }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
