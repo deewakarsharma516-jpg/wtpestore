@@ -1008,7 +1008,7 @@ function closeLead(){document.getElementById('lov').classList.remove('open');}
 var v=q.get('utm_source')||(q.get('gclid')?'Google Ads':'')||(/wtpestore\.co\.in$/.test(h)?'':(/google\./.test(h)?'Google':/bing\./.test(h)?'Bing':/instagram/.test(h)?'Instagram':/facebook|fb\./.test(h)?'Facebook':/youtube/.test(h)?'YouTube':/indiamart/.test(h)?'IndiaMART':h?h:'Direct'));
 if(v)localStorage.setItem(k,JSON.stringify({v:v,t:Date.now(),l:location.pathname}))}}catch(e){}})();
 function wtpeSrc(){try{var s=JSON.parse(localStorage.getItem('wtpe_src')||'null');return s?s.v+(s.l?' → '+s.l:''):'Direct'}catch(e){return ''}}
-function wtpeLead(o){try{var u=window.WTPE_ORDER_URL||LOGIN_URL_DEFAULT;if(!u)return;o.via=o.via||wtpeSrc();var q='action=lead';for(var k in o)q+='&'+k+'='+encodeURIComponent(o[k]||'');fetch(u+'?'+q,{mode:'no-cors'});}catch(e){}}
+function wtpeLead(o){try{window.wtpeConv&&wtpeConv('lead');}catch(e){}try{var u=window.WTPE_ORDER_URL||LOGIN_URL_DEFAULT;if(!u)return;o.via=o.via||wtpeSrc();var q='action=lead';for(var k in o)q+='&'+k+'='+encodeURIComponent(o[k]||'');fetch(u+'?'+q,{mode:'no-cors'});}catch(e){}}
 function submitLead(){var no=(document.getElementById('leadNo').value||'').replace(/[^0-9]/g,'');if(no.length<10){alert('Sahi 10-digit WhatsApp number daalein');return;}
   var lead={token:'WTP2025AFS',number:no,name:document.getElementById('leadName').value||'',search:lastSearch||'',product:lastProduct||'',time:new Date().toLocaleString('en-IN'),page:location.href,link:(lastProduct?location.origin+'/?p='+pSlug(lastProduct):location.href)};
   var url=cfg('lead','')||DEFAULT_LEAD;if(url){try{fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(lead)});}catch(e){}}

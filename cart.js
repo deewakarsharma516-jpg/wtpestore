@@ -5,6 +5,35 @@
    - Add to Cart sirf un products par jinke Sheet me Price + Courier Charge dono hain.
    - Rate/shipping/GST ka asli hisaab server (Apps Script) karta hai — yahan sirf estimate.
    ===================================================================== */
+/* ===== WTPESTORE — Google Ads conversion tracking (AW-764610085) =====
+   Purchase = payment successful | Lead = enquiry form | Contact = WhatsApp / Call click */
+(function(){
+  var AW = 'AW-764610085';
+  var L = { purchase: 'psmBCOyowrEdEKWMzOwC', lead: '_jH8CO-owrEdEKWMzOwC', contact: '1WdmCPKowrEdEKWMzOwC' };
+  window.dataLayer = window.dataLayer || [];
+  if(typeof window.gtag !== 'function'){ window.gtag = function(){ dataLayer.push(arguments); }; }
+  if(!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')){
+    var s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + AW; document.head.appendChild(s);
+    gtag('js', new Date());
+  }
+  gtag('config', AW);
+  var last = {};
+  window.wtpeConv = function(type, value, id){
+    try{
+      var now = Date.now(); if(type !== 'purchase' && last[type] && now - last[type] < 3000) return; last[type] = now;
+      var p = { send_to: AW + '/' + L[type] };
+      if(type === 'purchase'){ p.value = Number(value) || 1; p.currency = 'INR'; p.transaction_id = String(id || ''); }
+      gtag('event', 'conversion', p);
+      gtag('event', type === 'purchase' ? 'purchase' : 'generate_lead', type === 'purchase' ? { value: Number(value) || 0, currency: 'INR', transaction_id: String(id || '') } : { method: type });
+    }catch(e){}
+  };
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null; if(!a) return;
+    var h = a.getAttribute('href') || '';
+    if(/^tel:/i.test(h) || /wa\.me|api\.whatsapp\.com|whatsapp:\/\//i.test(h)) wtpeConv('contact');
+  }, true);
+})();
+
 (function(){
   var CART_LIVE = true;    // LIVE: cart sabke liye chalu (band karna ho to false)
   var ORDER_URL = 'https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec';
@@ -246,7 +275,7 @@
           screen('Confirming payment…', '⏳', 'Please wait, do not close this page.', r, '');
           jsonp(ORDER_URL + '?action=verifyPayment&id=' + encodeURIComponent(r.orderId) + '&rzp_order_id=' + encodeURIComponent(resp.razorpay_order_id) +
                 '&rzp_payment_id=' + encodeURIComponent(resp.razorpay_payment_id) + '&rzp_signature=' + encodeURIComponent(resp.razorpay_signature), function(v){
-            if(v && v.ok){ remember(r.orderId, { paid: true }); LAST = null;
+            if(v && v.ok){ remember(r.orderId, { paid: true }); LAST = null; try{ window.wtpeConv && wtpeConv('purchase', r.total, r.orderId); }catch(e){}
               return screen('Payment successful ✅', '✅', 'Thank you! We have received your payment. A confirmation email is on its way. We will share the courier tracking number once your order ships.', r,
                 '<button type="button" class="wcbtn sec" data-a="close">Continue shopping</button>'); }
             screen('Payment received — confirming', '⏳', 'Your payment went through. Our system will confirm it within 15 minutes. Payment ID: ' + esc(resp.razorpay_payment_id), r,
