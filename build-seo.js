@@ -1472,11 +1472,23 @@ function writeMerchantFeed(list) {
     seen.add(p.slug);
     const model = p.model || extractModel(p.n);
     const desc = (p.spec ? p.spec + '. ' : '') + p.n + (p.make ? ' by ' + p.make : '') + '. Genuine product with GST invoice, dispatched pan-India from Faridabad by WTPESTORE (Aqua Filtration System).';
-    items.push(`<item>
-<g:id>${x(p.slug.slice(0, 50))}</g:id>
+    items.push(itemXml(p, SITE + '/products/' + p.slug + '.html', p.slug));
+  }
+  /* ZeroScale chemicals: har pack alag item, link = chemical ka apna page */
+  for (const c of CHEM_FEED) {
+    const p = c.p, id = 'zs-' + String(p.slug || slug(p.n));
+    if (!(p.p > 0) || (p.ship == null && p.freight == null) || !/^https?:\/\//.test(p.img || '') || seen.has(id)) continue;
+    seen.add(id);
+    items.push(itemXml(p, c.link, id));
+  }
+  function itemXml(p, link, id) {
+    const model = p.model || extractModel(p.n);
+    const desc = (p.spec ? p.spec + '. ' : '') + p.n + (p.make ? ' by ' + p.make : '') + '. Genuine product with GST invoice, dispatched pan-India from Faridabad by WTPESTORE (Aqua Filtration System).';
+    return `<item>
+<g:id>${x(String(id).slice(0, 50))}</g:id>
 <g:title>${x(p.n.slice(0, 150))}</g:title>
 <g:description>${x(desc.slice(0, 4900))}</g:description>
-<g:link>${x(SITE + '/products/' + p.slug + '.html')}</g:link>
+<g:link>${x(link)}</g:link>
 <g:image_link>${x(p.feedImg || p.img)}</g:image_link>
 <g:availability>in_stock</g:availability>
 <g:condition>new</g:condition>
@@ -1486,7 +1498,7 @@ ${p.make ? `<g:brand>${x(p.make)}</g:brand>\n` : ''}${model ? `<g:mpn>${x(model)
 <g:shipping><g:country>IN</g:country><g:service>Courier</g:service><g:price>${money(inclGst(p, p.ship != null ? p.ship : p.freight))}</g:price><g:min_transit_time>2</g:min_transit_time><g:max_transit_time>7</g:max_transit_time></g:shipping>
 <g:min_handling_time>${p.disp != null ? Math.max(0, Math.min(1, Math.round(p.disp))) : 1}</g:min_handling_time>
 <g:max_handling_time>${p.disp != null ? Math.max(1, Math.round(p.disp)) : 3}</g:max_handling_time>
-</item>`);
+</item>`;
   }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
@@ -1654,7 +1666,8 @@ function injectStatic(P) {
    Model = chemical code (ZS-RO-101), naam me pack size (25 kg).
    Har chemical ka URL wahi purana rehta hai — har pack us page par ek option.
 --------------------------------------------------------------- */
-const CHEM_MAP = {};   /* chemical row slug -> uska page (homepage click ke liye) */
+const CHEM_MAP = {};
+const CHEM_FEED = [];   /* chemical packs -> Google Merchant feed (link = chemical page) */   /* chemical row slug -> uska page (homepage click ke liye) */
 function writeChemPrices(rows) {
   let list = [];
   try { list = JSON.parse(fs.readFileSync('chemicals/chemicals.json', 'utf8')); } catch (e) { return; }
@@ -1669,6 +1682,7 @@ function writeChemPrices(rows) {
     const packs = (byCode[String(ch.code).toUpperCase()] || []).filter(p => p.p > 0);
     const kg = n => { const m = String(n).match(/(\d+(?:\.\d+)?)\s*(kg|ltr|l|litre)\b/i); return m ? m[1] + ' ' + m[2].toLowerCase() : n; };
     packs.sort((a, b) => (parseFloat(kg(a.n)) || 0) - (parseFloat(kg(b.n)) || 0));
+    packs.forEach(p => CHEM_FEED.push({ p: p, link: SITE + '/' + f }));
     let box = '', ld = '';
     if (packs.length) {
       const sell = p => p.ship != null;
