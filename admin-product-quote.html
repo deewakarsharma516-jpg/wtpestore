@@ -206,7 +206,10 @@ function fname(ext){return ('Quotation_'+(v('qno')||'AFS')+'_'+(v('cName')||''))
 
 /* product photos ko data: me badlo (Word + PDF ke liye) */
 function toData(src){return new Promise(function(res){if(!src||/^data:/.test(src))return res(src);
- var im=new Image();im.crossOrigin='anonymous';im.onload=function(){try{var cv=document.createElement('canvas'),s=Math.min(1,300/Math.max(im.width,im.height));cv.width=im.width*s;cv.height=im.height*s;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.85))}catch(e){res('')}};im.onerror=function(){res('')};im.src=src})}
+ try{var u=new URL(src,location.href);if(/wtpestore\.co\.in$/i.test(u.hostname))src=u.pathname}catch(e){}
+ fetch(src).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(bl){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){try{var cv=document.createElement('canvas'),s=Math.min(1,300/Math.max(im.width,im.height));cv.width=im.width*s;cv.height=im.height*s;var cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);cx.drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.85))}catch(e){res(fr.result)}};im.onerror=function(){res('')};im.src=fr.result};fr.readAsDataURL(bl)}).catch(function(){old1(src,res)})})}
+function old1(src,res){
+ var im=new Image();im.crossOrigin='anonymous';im.onload=function(){try{var cv=document.createElement('canvas'),s=Math.min(1,300/Math.max(im.width,im.height));cv.width=im.width*s;cv.height=im.height*s;cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);res(cv.toDataURL('image/jpeg',.85))}catch(e){res('')}};im.onerror=function(){res('')};im.src=src}
 async function inlineImgs(root){var ims=[].slice.call(root.querySelectorAll('img'));for(var i=0;i<ims.length;i++){var d=await toData(ims[i].src);if(d)ims[i].src=d;else ims[i].remove()}}
 
 async function exportWord(){
