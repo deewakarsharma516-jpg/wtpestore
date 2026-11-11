@@ -288,7 +288,7 @@ async function sendGmail(){
  var w=preOpen(),b=null;try{b=await pdfBlob()}catch(e){}
  if(b){try{
   var r=await pqPost('pqMail',{pdf:await b64(b),name:fname('pdf'),to:v('cMail'),subject:v('mSub'),body:$('mMail').value});
-  if(r&&r.ok&&r.draftUrl){go(w,r.draftUrl);if(!r.sig)setTimeout(function(){alert('Draft ban gaya (PDF attached). Signature nahi laga — Apps Script me Gmail service add karni hai.')},300);return}
+  if(r&&r.ok&&r.draftUrl){go(w,String(r.draftUrl).replace(/%40/g,'@'));if(!r.sig)setTimeout(function(){alert('Draft ban gaya (PDF attached). Signature nahi laga — Apps Script me Gmail service add karni hai.')},300);return}
  }catch(e){}}
  var url='https://mail.google.com/mail/u/aquazone350@gmail.com/?view=cm&fs=1&to='+encodeURIComponent(v('cMail'))+'&su='+encodeURIComponent(v('mSub'))+'&body='+encodeURIComponent($('mMail').value);
  if(b)dl(b,fname('pdf'));go(w,url);
