@@ -94,6 +94,7 @@ Thank you for your enquiry. We are pleased to quote our best rates for the follo
 
   <h3>4. Terms &amp; Conditions</h3>
   <textarea id="terms" style="min-height:170px" oninput="render()"></textarea>
+  <label>Bank Details (khaali chhodein to quotation me nahi aayega)</label><textarea id="bank" oninput="localStorage.setItem('wtpe_pq_bank',this.value);render()" placeholder="Bank: ...&#10;A/c Name: Aqua Filtration System&#10;A/c No.: ...&#10;IFSC: ..."></textarea>
   <label>Note (optional)</label><textarea id="note" oninput="render()"></textarea>
   <h3>5. Offer bhejne ka message</h3>
   <label>Email Subject</label><input id="mSub" oninput="this.dataset.ed=1">
@@ -192,12 +193,12 @@ function render(){
  '<td contenteditable="true" style="text-align:right"><b>Quotation No.:</b> '+esc(v('qno'))+'<br><b>Date:</b> '+dt+'</td></tr></table>'+
  '<p contenteditable="true" style="margin:4pt 0"><b>Subject:</b> '+esc(v('subj'))+'</p>'+
  '<p contenteditable="true" style="margin:4pt 0 6pt">'+esc(v('intro')).replace(/\n/g,'<br>')+'</p>'+
- '<table class="t"><thead contenteditable="true"><tr>'+heads().map(function(h,k){return '<th style="width:'+['5%','12%','auto','9%','13%','14%'][k]+'">'+esc(h)+'</th>'}).join('')+'</tr></thead><tbody contenteditable="true">'+(rows||'<tr><td colspan="6" class="c">— koi product nahi —</td></tr>')+'</tbody></table>'+
+ '<table class="t"><thead contenteditable="true"><tr>'+heads().map(function(h,k){return '<th style="width:'+['5%','12%','auto','9%','13%','14%'][k]+'">'+esc(h)+'</th>'}).join('')+'</tr></thead><tbody contenteditable="true">'+(rows||'<tr><td colspan="6" class="c">—</td></tr>')+'</tbody></table>'+
  '<table class="tot" contenteditable="true">'+tot+'</table>'+
  '<p contenteditable="true" style="margin:4pt 0;font-style:italic"><b>Amount in words:</b> Rupees '+words(c.tot)+' Only</p>'+
  (v('note')?'<p contenteditable="true"><b>Note:</b> '+esc(v('note')).replace(/\n/g,'<br>')+'</p>':'')+
  '<h4>Terms &amp; Conditions</h4><ol class="terms" contenteditable="true">'+terms+'</ol>'+
- '<p contenteditable="true" style="margin-top:8pt;font-size:9.5pt"><b>Bank Details:</b> (yahan apni bank details likhein)</p>'+
+ (v('bank')?'<p contenteditable="true" style="margin-top:8pt;font-size:9.5pt"><b>Bank Details:</b><br>'+esc(v('bank')).replace(/\n/g,'<br>')+'</p>':'')+
  '<div class="sign" contenteditable="true">For <b>AQUA FILTRATION SYSTEM</b><br><br><br>Authorised Signatory</div>'+
  '<div class="ft"><b>Office: B-198, Royal Plaza, Near Domino’s, Green Field, Faridabad – 121003 (Haryana)</b><br>Mob: 9910646950 / 9910646957 | Tel: 0129-4340856 | Email: aquazone350@gmail.com, deewakar@aquafiltrationsystem.in<br><span style="color:#2e7d32;font-weight:bold">www.aquafiltrationsystem.in | www.wtpestore.co.in</span><br>RO Plants • DM Plants • Water Softeners • UV Systems • FRP Vessels • Dosing Pumps • Spares</div>';
 }
@@ -291,7 +292,7 @@ function pqNextSync(){jp('action=pqNext&fy='+encodeURIComponent(fy()),function(r
  var cur=v('qno'),saved=hist().some(function(h){return h.qno===cur});
  if(!saved&&cur.indexOf('AFS/'+fy()+'/')===0&&noNum(r.next)>noNum(cur)){$('qno').value=r.next;render()}})}
 /* ---------- History ---------- */
-var HK='wtpe_pq_hist',FIELDS=['cName','cAddr','cAttn','cMob','cMail','subj','qno','qdt','intro','heads','disc','gst','frt','pkg','terms','note','mSub','mMail','mWA'];
+var HK='wtpe_pq_hist',FIELDS=['bank','cName','cAddr','cAttn','cMob','cMail','subj','qno','qdt','intro','heads','disc','gst','frt','pkg','terms','note','mSub','mMail','mWA'];
 function hist(){try{return JSON.parse(localStorage.getItem(HK)||'[]')||[]}catch(e){return []}}
 function histPut(h){try{localStorage.setItem(HK,JSON.stringify(h))}catch(e){alert('History save nahi hui (browser storage bhar gaya?) — Backup download kar lein.')}}
 function fy(d){d=d||new Date();var y=d.getFullYear()%100;return d.getMonth()>2?y+'-'+(y+1):(y-1)+'-'+y}
@@ -328,7 +329,7 @@ function newQuote(){if(L.length&&!confirm('Nayi quotation shuru karein? (Abhi wa
 
 (function init(){
  load();$('qdt').value=new Date().toISOString().slice(0,10);$('qno').value=nextNo();
- $('terms').value=DEF_TERMS;itemsUI();render();pqNextSync();
+ $('terms').value=DEF_TERMS;try{$('bank').value=localStorage.getItem('wtpe_pq_bank')||''}catch(e){}itemsUI();render();pqNextSync();
  window.addEventListener('storage',function(e){if(e.key===KEY){load();itemsUI();render()}});
 })();
 </script>
