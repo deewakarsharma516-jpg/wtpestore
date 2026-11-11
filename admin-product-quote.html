@@ -78,7 +78,7 @@ h4{color:#1f3a68;font-size:12pt;border-bottom:1.5pt solid #1f3a68;margin:12pt 0 
   <label>Customer / Company naam</label><input id="cName" oninput="render()">
   <label>Address</label><textarea id="cAddr" oninput="render()"></textarea>
   <div class="row2"><div><label>Kind Attn.</label><input id="cAttn" oninput="render()"></div><div><label>Mobile (WhatsApp)</label><input id="cMob" oninput="render()" placeholder="98xxxxxxxx"></div></div>
-  <label>Email</label><input id="cMail" oninput="render()">
+  <div class="row2"><div><label>Email</label><input id="cMail" oninput="render()"></div><div><label>Customer GSTIN</label><input id="cGst" oninput="this.value=this.value.toUpperCase();render()" maxlength="15" placeholder="06ABCDE1234F1Z5"></div></div>
   <label>Subject</label><input id="subj" oninput="render()" value="Quotation for Water Treatment Products">
   <div class="row2"><div><label>Quotation No.</label><input id="qno" oninput="render()"></div><div><label>Date</label><input id="qdt" type="date" oninput="render()"></div></div>
 
@@ -94,7 +94,12 @@ Thank you for your enquiry. We are pleased to quote our best rates for the follo
 
   <h3>4. Terms &amp; Conditions</h3>
   <textarea id="terms" style="min-height:170px" oninput="render()"></textarea>
-  <label>Bank Details (khaali chhodein to quotation me nahi aayega)</label><textarea id="bank" oninput="localStorage.setItem('wtpe_pq_bank',this.value);render()" placeholder="Bank: ...&#10;A/c Name: Aqua Filtration System&#10;A/c No.: ...&#10;IFSC: ..."></textarea>
+  <h3>Bank Details (ek baar bhariye — har quotation me aayegi)</h3>
+  <label>Account Name</label><input id="bkName" class="bk" value="Aqua Filtration System">
+  <div class="row2"><div><label>Bank Name</label><input id="bkBank" class="bk"></div><div><label>Account No.</label><input id="bkAc" class="bk"></div></div>
+  <div class="row2"><div><label>IFSC Code</label><input id="bkIfsc" class="bk" oninput="this.value=this.value.toUpperCase()"></div><div><label>Account Type</label><input id="bkType" class="bk" value="Current"></div></div>
+  <label>Branch Address</label><input id="bkAddr" class="bk">
+  <textarea id="bank" style="display:none"></textarea>
   <label>Note (optional)</label><textarea id="note" oninput="render()"></textarea>
   <h3>5. Offer bhejne ka message</h3>
   <label>Email Subject</label><input id="mSub" oninput="this.dataset.ed=1">
@@ -170,7 +175,9 @@ function calc(){
  return{sub:sub,d:d,frt:frt,pk:pk,tax:tax,tot:sub-d+frt+pk+tax}
 }
 function heads(){var d=['S.No','Image','Description & Specification','Qty','Rate','Amount'],h=v('heads').split(',');return d.map(function(x,k){return (h[k]||'').trim()||x})}
-function render(){
+var BK=['bkName','bkBank','bkAc','bkIfsc','bkType','bkAddr'];
+function bankTxt(){var g=function(i){return v(i)};if(!g('bkAc')&&!g('bkBank'))return '';return [g('bkName')&&'A/c Name: '+g('bkName'),g('bkBank')&&'Bank: '+g('bkBank'),g('bkAc')&&'A/c No.: '+g('bkAc')+(g('bkType')?' ('+g('bkType')+')':''),g('bkIfsc')&&'IFSC: '+g('bkIfsc'),g('bkAddr')&&'Branch: '+g('bkAddr')].filter(Boolean).join('\n')}
+function render(){try{$('bank').value=bankTxt()}catch(e){}
  setTimeout(msgs,0);var c=calc(),dt=v('qdt')?new Date(v('qdt')).toLocaleDateString('en-GB'):'';
  var rows=L.map(function(p,i){var sp=String(p.spec||'').split(/\n+/).filter(Boolean);
   return '<tr><td class="c">'+(i+1)+'</td>'+
@@ -189,7 +196,7 @@ function render(){
  '<div class="band">AUTHORISED DEALER — EUREKA FORBES LTD. (WATER SOFTENERS)</div><div class="rule"></div>'+
  '<div class="title" contenteditable="true">QUOTATION</div>'+
  '<table class="meta"><tr><td contenteditable="true" style="width:60%"><b>To,</b><br>'+(v('cName')?'<b>'+esc(v('cName'))+'</b><br>':'')+esc(v('cAddr')).replace(/\n/g,'<br>')+
- (v('cAttn')?'<br>Kind Attn.: '+esc(v('cAttn')):'')+(v('cMob')?'<br>Mob: '+esc(v('cMob')):'')+(v('cMail')?'<br>Email: '+esc(v('cMail')):'')+'</td>'+
+ (v('cAttn')?'<br>Kind Attn.: '+esc(v('cAttn')):'')+(v('cMob')?'<br>Mob: '+esc(v('cMob')):'')+(v('cMail')?'<br>Email: '+esc(v('cMail')):'')+(v('cGst')?'<br><b>GSTIN:</b> '+esc(v('cGst')):'')+'</td>'+
  '<td contenteditable="true" style="text-align:right"><b>Quotation No.:</b> '+esc(v('qno'))+'<br><b>Date:</b> '+dt+'</td></tr></table>'+
  '<p contenteditable="true" style="margin:4pt 0"><b>Subject:</b> '+esc(v('subj'))+'</p>'+
  '<p contenteditable="true" style="margin:4pt 0 6pt">'+esc(v('intro')).replace(/\n/g,'<br>')+'</p>'+
@@ -308,7 +315,7 @@ function pqNextSync(){jp('action=pqNext&fy='+encodeURIComponent(fy()),function(r
  var cur=v('qno'),saved=hist().some(function(h){return h.qno===cur});
  if(!saved&&cur.indexOf('AFS/'+fy()+'/')===0&&noNum(r.next)>noNum(cur)){$('qno').value=r.next;render()}})}
 /* ---------- History ---------- */
-var HK='wtpe_pq_hist',FIELDS=['bank','cName','cAddr','cAttn','cMob','cMail','subj','qno','qdt','intro','heads','disc','gst','frt','pkg','terms','note','mSub','mMail','mWA'];
+var HK='wtpe_pq_hist',FIELDS=['cGst','cName','cAddr','cAttn','cMob','cMail','subj','qno','qdt','intro','heads','disc','gst','frt','pkg','terms','note','mSub','mMail','mWA'];
 function hist(){try{return JSON.parse(localStorage.getItem(HK)||'[]')||[]}catch(e){return []}}
 function histPut(h){try{localStorage.setItem(HK,JSON.stringify(h))}catch(e){alert('History save nahi hui (browser storage bhar gaya?) — Backup download kar lein.')}}
 function fy(d){d=d||new Date();var y=d.getFullYear()%100;return d.getMonth()>2?y+'-'+(y+1):(y-1)+'-'+y}
@@ -340,12 +347,13 @@ function histClose(){$('hist').style.display='none'}
 function histBackup(){dl(new Blob([JSON.stringify(hist(),null,1)],{type:'application/json'}),'WTPESTORE-quotation-history-'+new Date().toISOString().slice(0,10)+'.json')}
 function histRestore(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var a=JSON.parse(r.result),h=hist(),seen={};h.forEach(function(x){seen[x.qno]=1});a.forEach(function(x){if(x&&x.qno&&!seen[x.qno])h.push(x)});h.sort(function(x,y){return String(y.at).localeCompare(String(x.at))});histPut(h);pqPush(a);histShow(true);alert('Restore ho gaya')}catch(e){alert('Galat file')}};r.readAsText(f)}
 function newQuote(){if(L.length&&!confirm('Nayi quotation shuru karein? (Abhi wali history me save ho jayegi)'))return;if(L.length)histSave('Saved');
- L=[];save();['cName','cAddr','cAttn','cMob','cMail','note'].forEach(function(k){$(k).value=''});$('disc').value=0;$('frt').value=0;$('pkg').value=0;$('terms').value=DEF_TERMS;
+ L=[];save();['cName','cAddr','cAttn','cMob','cMail','cGst','note'].forEach(function(k){$(k).value=''});$('disc').value=0;$('frt').value=0;$('pkg').value=0;$('terms').value=DEF_TERMS;
  $('qno').value=nextNo();$('qdt').value=new Date().toISOString().slice(0,10);['mSub','mMail','mWA'].forEach(function(k){$(k).dataset.ed=''});$('saved').textContent='';itemsUI();render();pqNextSync()}
 
 (function init(){
  load();$('qdt').value=new Date().toISOString().slice(0,10);$('qno').value=nextNo();
- $('terms').value=DEF_TERMS;try{$('bank').value=localStorage.getItem('wtpe_pq_bank')||''}catch(e){}itemsUI();render();pqNextSync();
+ $('terms').value=DEF_TERMS;try{var bk=JSON.parse(localStorage.getItem('wtpe_pq_bankf')||'{}');BK.forEach(function(k){if(bk[k]!=null)$(k).value=bk[k]})}catch(e){}
+ BK.forEach(function(k){$(k).addEventListener('input',function(){var o={};BK.forEach(function(x){o[x]=$(x).value});try{localStorage.setItem('wtpe_pq_bankf',JSON.stringify(o))}catch(e){}render()})});itemsUI();render();pqNextSync();
  window.addEventListener('storage',function(e){if(e.key===KEY){load();itemsUI();render()}});
 })();
 </script>
