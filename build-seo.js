@@ -1934,6 +1934,7 @@ ${catNames.map(c => `<section><h2 id="${slug(c)}">${esc(titleCaseCat(c))} <span 
       'Disallow: /admin-settings.html',
       'Disallow: /admin-quick-quote.html',
       'Disallow: /admin-quote-generator.html',
+      'Disallow: /admin-product-quote.html',
       'Disallow: /admin-seo-pages.html',
       'Disallow: /admin-leads.html',
       'Disallow: /admin-panel.html',

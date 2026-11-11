@@ -5,6 +5,43 @@
    - Add to Cart sirf un products par jinke Sheet me Price + Courier Charge dono hain.
    - Rate/shipping/GST ka asli hisaab server (Apps Script) karta hai — yahan sirf estimate.
    ===================================================================== */
+/* ===== WTPESTORE — Admin: product page par "📄 Quotation" button (sirf admin login par) ===== */
+(function(){
+  function tok(){ try{ return localStorage.getItem('wtpe_admin_token') || localStorage.getItem('wtpe_tok') || ''; }catch(e){ return ''; } }
+  function grab(){
+    var ld = {}; [].forEach.call(document.querySelectorAll('script[type="application/ld+json"]'), function(s){ try{ var j = JSON.parse(s.textContent); if(j['@type']==='Product') ld = j; }catch(e){} });
+    var rows = [], rate = 0;
+    [].forEach.call(document.querySelectorAll('table.pp-spec tr'), function(tr){
+      var td = tr.querySelectorAll('td'); if(td.length < 2) return;
+      var k = td[0].textContent.trim(), val = td[1].textContent.trim();
+      if(/^price basis/i.test(k)){ var m = val.replace(/,/g,'').match(/(\d+(\.\d+)?)/); if(m) rate = +m[1]; return; }
+      rows.push(k + ': ' + val);
+    });
+    if(!rate && ld.offers && ld.offers.price) rate = Math.round(ld.offers.price / 1.18);
+    var h1 = document.querySelector('h1');
+    return { name: ld.name || (h1 && h1.textContent.trim()) || document.title, model: ld.model || '', brand: (ld.brand && ld.brand.name) || '',
+      img: (function(u){ try{ return u ? new URL(u, location.href).pathname : ''; }catch(e){ return u || ''; } })(ld.image && ld.image[0]), url: location.href.split('?')[0], rate: rate, qty: 1, unit: 'Nos', spec: rows.join('\n') };
+  }
+  function add(open){
+    var L = []; try{ L = JSON.parse(localStorage.getItem('wtpe_pq') || '[]') || []; }catch(e){}
+    var p = grab(); if(!L.some(function(x){ return x.url === p.url; })) L.push(p);
+    try{ localStorage.setItem('wtpe_pq', JSON.stringify(L)); }catch(e){}
+    if(open) window.open('/admin-product-quote.html', 'wtpe_pq');
+    else alert('✅ Quotation me jud gaya (' + L.length + ' product). Aur products jodiye, phir "📄 Quotation" dabaiye.');
+  }
+  function init(){
+    if(!tok()) return;
+    var cta = document.querySelector('.pp-cta'); if(!cta || document.getElementById('wtpePQ')) return;
+    var w = document.createElement('div'); w.id = 'wtpePQ'; w.style.cssText = 'margin:10px 0;display:flex;gap:8px;flex-wrap:wrap';
+    w.innerHTML = '<button type="button" style="background:#f39c12;color:#fff;border:0;border-radius:8px;padding:10px 16px;font:700 14px Arial;cursor:pointer">📄 Quotation</button>' +
+      '<button type="button" style="background:#fff;color:#1f3a68;border:1px solid #1f3a68;border-radius:8px;padding:10px 16px;font:700 14px Arial;cursor:pointer">➕ Quotation me jodo</button>' +
+      '<span style="font:12px Arial;color:#888;align-self:center">(sirf admin ko dikhta hai)</span>';
+    var b = w.querySelectorAll('button'); b[0].onclick = function(){ add(true); }; b[1].onclick = function(){ add(false); };
+    cta.parentNode.insertBefore(w, cta.nextSibling);
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
 /* ===== WTPESTORE — Google Ads conversion tracking (AW-764610085) =====
    Purchase = payment successful | Lead = enquiry form | Contact = WhatsApp / Call click */
 (function(){
