@@ -113,7 +113,7 @@ Thank you for your enquiry. We are pleased to quote our best rates for the follo
    <button class="btn l" onclick="histBackup()">⬇ Backup</button>
    <label class="btn l" style="display:inline-block;margin:0">⬆ Restore<input type="file" accept=".json" style="display:none" onchange="histRestore(this)"></label>
    <button class="btn gm" onclick="histClose()">Band karo</button></div>
-  <div style="font-size:12px;color:#666;margin:6px 0">History isi computer ke browser me save hoti hai. Mahine me ek baar <b>⬇ Backup</b> le lijiye; doosre computer par <b>⬆ Restore</b> se la sakte hain.</div>
+  <div style="font-size:12px;color:#666;margin:6px 0">History aapki Google Sheet ke <b>Quotations</b> tab me save hoti hai — kisi bhi computer par admin login karke dikhegi.</div>
   <div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#1f3a68;color:#fff"><th style="padding:6px;text-align:left">No. / Date</th><th style="text-align:left">Customer / Products</th><th style="text-align:right">Total</th><th>Bheja</th><th></th></tr></thead><tbody id="hbody"></tbody></table></div>
  </div></div>
 <script>
@@ -278,6 +278,18 @@ async function sendGmail(){
  setTimeout(function(){alert(b?'PDF download ho gayi. Gmail me 📎 dabakar downloaded PDF attach karke Send dabaiye.':'PDF nahi bani — Word download karke PDF save karein, phir attach karein.')},300);
 }
 
+/* ---------- Google Sheet sync ---------- */
+var PQURL='https://script.google.com/macros/s/AKfycbzzi3a8MZGV5_f-nt-hYA29OCn50ir3KD8WX66mNJTn4dhzOKYr1zkAv5w9aYlXD2dG/exec';
+try{PQURL=localStorage.getItem('wtpe_login_url')||PQURL}catch(e){}
+function ptok(){try{return localStorage.getItem('wtpe_admin_token')||localStorage.getItem('wtpe_tok')||''}catch(e){return ''}}
+function jp(q,cb){var fn='pq_'+Math.floor(Math.random()*1e9),done=false,s=document.createElement('script');
+ function fin(r){if(done)return;done=true;try{cb(r)}finally{try{delete window[fn];s.remove()}catch(e){}}}
+ window[fn]=fin;s.src=PQURL+'?'+q+'&token='+encodeURIComponent(ptok())+'&callback='+fn;s.onerror=function(){fin({ok:false,error:'network'})};document.head.appendChild(s);setTimeout(function(){fin({ok:false,error:'timeout'})},20000)}
+function pqPush(arr){if(!arr.length)return;try{fetch(PQURL+'?action=pqSave&token='+encodeURIComponent(ptok()),{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(arr)})}catch(e){}}
+function noNum(q){var m=String(q||'').match(/\/(\d+)$/);return m?+m[1]:0}
+function pqNextSync(){jp('action=pqNext&fy='+encodeURIComponent(fy()),function(r){if(!r||!r.ok)return;
+ var cur=v('qno'),saved=hist().some(function(h){return h.qno===cur});
+ if(!saved&&cur.indexOf('AFS/'+fy()+'/')===0&&noNum(r.next)>noNum(cur)){$('qno').value=r.next;render()}})}
 /* ---------- History ---------- */
 var HK='wtpe_pq_hist',FIELDS=['cName','cAddr','cAttn','cMob','cMail','subj','qno','qdt','intro','heads','disc','gst','frt','pkg','terms','note','mSub','mMail','mWA'];
 function hist(){try{return JSON.parse(localStorage.getItem(HK)||'[]')||[]}catch(e){return []}}
@@ -289,30 +301,34 @@ function histSave(how){
  if(!L.length)return;var h=hist(),f={};FIELDS.forEach(function(k){f[k]=$(k).value});
  var e={qno:v('qno'),date:v('qdt'),cust:v('cName')||v('cAttn')||'—',total:calc().tot,items:L.map(function(p){return p.name}).join(', '),f:f,L:JSON.parse(JSON.stringify(L)),at:new Date().toISOString(),sent:how||'Saved'};
  var i=h.findIndex(function(x){return x.qno===e.qno});if(i>-1){e.sent=(h[i].sent&&h[i].sent!=='Saved'&&how==='Saved')?h[i].sent:(how||h[i].sent);h[i]=e}else h.unshift(e);
- histPut(h);var m=String(e.qno).match(/\/(\d+)$/);if(m&&String(e.qno).indexOf('AFS/'+fy()+'/')===0){try{var k='wtpe_pq_no_'+fy();if(+m[1]>(+localStorage.getItem(k)||0))localStorage.setItem(k,+m[1])}catch(x){}}
+ histPut(h);pqPush([e]);var m=String(e.qno).match(/\/(\d+)$/);if(m&&String(e.qno).indexOf('AFS/'+fy()+'/')===0){try{var k='wtpe_pq_no_'+fy();if(+m[1]>(+localStorage.getItem(k)||0))localStorage.setItem(k,+m[1])}catch(x){}}
  $('saved').textContent='✅ History me save: '+e.qno;
 }
 function histOpen(i){var e=hist()[i];if(!e)return;L=e.L||[];save();FIELDS.forEach(function(k){if(e.f&&k in e.f)$(k).value=e.f[k]});['mSub','mMail','mWA'].forEach(function(k){$(k).dataset.ed=1});itemsUI();render();histClose()}
-function histDel(i){if(!confirm('Ye quotation history se hata dein?'))return;var h=hist();h.splice(i,1);histPut(h);histShow()}
+function histDel(i){if(!confirm('Ye quotation history se hata dein?'))return;var h=hist(),q=h[i]&&h[i].qno;h.splice(i,1);histPut(h);histShow(true);if(q)jp('action=pqDel&qno='+encodeURIComponent(q),function(){})}
 function histCopy(i){histOpen(i);$('qno').value=nextNo();$('qdt').value=new Date().toISOString().slice(0,10);['mSub','mMail','mWA'].forEach(function(k){$(k).dataset.ed=''});render();alert('Copy bani — naya No. '+v('qno'))}
-function histShow(){
+function histShow(local){
+ if(!local){$('hcount').textContent='Sheet se la rahe hain…';jp('action=pqList',function(r){
+  if(!r||!r.ok){$('hcount').textContent=(r&&r.error==='login'?'Login dobara karein — ':'Sheet nahi mili — ')+'is computer ki history dikh rahi hai';return}
+  var loc=hist(),seen={},push=[];(r.list||[]).forEach(function(x){seen[x.qno]=1});loc.forEach(function(x){if(!seen[x.qno])push.push(x)});
+  var all=(r.list||[]).concat(push);all.sort(function(a,b){return String(b.at||'').localeCompare(String(a.at||''))});histPut(all);pqPush(push);histShow(true)})}
  var q=(($('hq')||{}).value||'').toLowerCase(),h=hist();
  var rows=h.map(function(e,i){return {e:e,i:i}}).filter(function(o){return !q||(o.e.qno+' '+o.e.cust+' '+o.e.items).toLowerCase().indexOf(q)>-1}).map(function(o){var e=o.e;
   return '<tr><td><b>'+esc(e.qno)+'</b><br><small>'+(e.date?new Date(e.date).toLocaleDateString('en-GB'):'')+'</small></td><td>'+esc(e.cust)+'<br><small>'+esc(String(e.items).slice(0,90))+'</small></td><td style="text-align:right">'+inr(e.total)+'</td><td><small>'+esc(e.sent||'')+'</small></td>'+
   '<td style="white-space:nowrap"><button class="btn" onclick="histOpen('+o.i+')">Kholo</button> <button class="btn l" onclick="histCopy('+o.i+')">Copy</button> <button class="btn gm" onclick="histDel('+o.i+')">✕</button></td></tr>'}).join('');
  $('hbody').innerHTML=rows||'<tr><td colspan="5" style="text-align:center;padding:20px;color:#666">Koi quotation nahi mili</td></tr>';
- $('hcount').textContent=h.length+' quotations';$('hist').style.display='flex';
+ if(local)$('hcount').textContent=h.length+' quotations (Google Sheet)';$('hist').style.display='flex';
 }
 function histClose(){$('hist').style.display='none'}
 function histBackup(){dl(new Blob([JSON.stringify(hist(),null,1)],{type:'application/json'}),'WTPESTORE-quotation-history-'+new Date().toISOString().slice(0,10)+'.json')}
-function histRestore(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var a=JSON.parse(r.result),h=hist(),seen={};h.forEach(function(x){seen[x.qno]=1});a.forEach(function(x){if(x&&x.qno&&!seen[x.qno])h.push(x)});h.sort(function(x,y){return String(y.at).localeCompare(String(x.at))});histPut(h);histShow();alert('Restore ho gaya')}catch(e){alert('Galat file')}};r.readAsText(f)}
+function histRestore(inp){var f=inp.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var a=JSON.parse(r.result),h=hist(),seen={};h.forEach(function(x){seen[x.qno]=1});a.forEach(function(x){if(x&&x.qno&&!seen[x.qno])h.push(x)});h.sort(function(x,y){return String(y.at).localeCompare(String(x.at))});histPut(h);pqPush(a);histShow(true);alert('Restore ho gaya')}catch(e){alert('Galat file')}};r.readAsText(f)}
 function newQuote(){if(L.length&&!confirm('Nayi quotation shuru karein? (Abhi wali history me save ho jayegi)'))return;if(L.length)histSave('Saved');
  L=[];save();['cName','cAddr','cAttn','cMob','cMail','note'].forEach(function(k){$(k).value=''});$('disc').value=0;$('frt').value=0;$('pkg').value=0;$('terms').value=DEF_TERMS;
- $('qno').value=nextNo();$('qdt').value=new Date().toISOString().slice(0,10);['mSub','mMail','mWA'].forEach(function(k){$(k).dataset.ed=''});$('saved').textContent='';itemsUI();render()}
+ $('qno').value=nextNo();$('qdt').value=new Date().toISOString().slice(0,10);['mSub','mMail','mWA'].forEach(function(k){$(k).dataset.ed=''});$('saved').textContent='';itemsUI();render();pqNextSync()}
 
 (function init(){
  load();$('qdt').value=new Date().toISOString().slice(0,10);$('qno').value=nextNo();
- $('terms').value=DEF_TERMS;itemsUI();render();
+ $('terms').value=DEF_TERMS;itemsUI();render();pqNextSync();
  window.addEventListener('storage',function(e){if(e.key===KEY){load();itemsUI();render()}});
 })();
 </script>
