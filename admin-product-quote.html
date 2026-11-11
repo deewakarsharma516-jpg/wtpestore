@@ -263,8 +263,9 @@ function msgText(){return v('mWA')}
 function preOpen(){var w=null;try{w=window.open('about:blank','_blank');if(w)w.document.write('<p style="font:16px Arial;padding:20px">⏳ PDF ban rahi hai, 2–3 second rukiye…</p>')}catch(e){}return w}
 function go(w,url){if(w&&!w.closed){try{w.location.href=url;return}catch(e){}}var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
 function b64(blob){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1])};r.onerror=rej;r.readAsDataURL(blob)})}
+var MAILURL='https://script.google.com/macros/s/AKfycby8JNzFP4e6DH0C0jxVDfkGKJcjVEMhSmhlNC1DrECzq6ijwMxIKu0avcp3h0AB0d91/exec';try{MAILURL=localStorage.getItem('wtpe_mail_url')||MAILURL}catch(e){}
 async function pqPost(action,data){
- var r=await fetch(PQURL+'?action='+action+'&token='+encodeURIComponent(ptok()),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+ var r=await fetch((MAILURL||PQURL)+'?action='+action+'&token='+encodeURIComponent(ptok()),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
  return await r.json();
 }
 async function sendWA(){
