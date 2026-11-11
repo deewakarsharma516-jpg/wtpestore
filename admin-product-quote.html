@@ -255,28 +255,40 @@ function msgs(){
  '\n\nTotal Offer Value: '+inr(c.tot)+' (inclusive of GST'+(c.frt?' and freight':'; freight extra at actual')+').\n\nPlease find the detailed quotation attached in PDF format, which includes complete technical specifications, pricing and our commercial terms & conditions.\n\n'+
  'All items are genuine and supplied with a proper GST invoice. Dispatch is available across India.\n\nShould you require any clarification or wish to discuss the offer further, please feel free to contact us. We look forward to receiving your valued purchase order.'+
  '';
- var wa='Dear '+who+',\n\nGreetings from *Aqua Filtration System (WTPESTORE)*.\n\nThank you for your enquiry. Please find attached our quotation'+(qn?' *No. '+qn+'*':'')+' for:\n'+items+'\n\n*Total: '+inr(c.tot)+'* (incl. GST'+(c.frt?', freight':'; freight extra')+')\n\nThe PDF has full specifications and terms. Please let us know if you need any clarification.\n\nRegards,\nDeewakar Sharma\nAqua Filtration System\n📞 9910646957 | 🌐 www.wtpestore.co.in';
+ var wa='Dear '+who+',\n\nGreetings from *Aqua Filtration System (WTPESTORE)*.\n\nThank you for your enquiry. Please find our quotation'+(qn?' *No. '+qn+'*':'')+' for:\n'+items+'\n\n*Total: '+inr(c.tot)+'* (incl. GST'+(c.frt?', freight':'; freight extra')+')\n\nThe PDF has full specifications and terms. Please let us know if you need any clarification.\n\nRegards,\nDeewakar Sharma\nAqua Filtration System\nMob: 9910646957 | www.wtpestore.co.in';
  if(!$('mSub').dataset.ed)$('mSub').value=sub;if(!$('mMail').dataset.ed)$('mMail').value=mail;if(!$('mWA').dataset.ed)$('mWA').value=wa;
 }
 function msgText(){return v('mWA')}
 /* ---------- send: window click ke time hi kholo (popup block na ho) ---------- */
 function preOpen(){var w=null;try{w=window.open('about:blank','_blank');if(w)w.document.write('<p style="font:16px Arial;padding:20px">⏳ PDF ban rahi hai, 2–3 second rukiye…</p>')}catch(e){}return w}
 function go(w,url){if(w&&!w.closed){try{w.location.href=url;return}catch(e){}}var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}
+function b64(blob){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1])};r.onerror=rej;r.readAsDataURL(blob)})}
+async function pqPost(action,data){
+ var r=await fetch(PQURL+'?action='+action+'&token='+encodeURIComponent(ptok()),{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+ return await r.json();
+}
 async function sendWA(){
  histSave('WhatsApp');
- var m=v('cMob').replace(/\D/g,'');if(m.length===10)m='91'+m;var url='https://wa.me/'+(m||'')+'?text='+encodeURIComponent(msgText());
- var share=!!(navigator.canShare&&/Android|iPhone|iPad/i.test(navigator.userAgent)),w=share?null:preOpen();
+ var m=v('cMob').replace(/\D/g,'');if(m.length===10)m='91'+m;
+ var mobile=!!(navigator.canShare&&/Android|iPhone|iPad/i.test(navigator.userAgent)),w=mobile?null:preOpen();
  var b=null;try{b=await pdfBlob()}catch(e){}
- if(b&&share){var f=new File([b],fname('pdf'),{type:'application/pdf'});if(navigator.canShare({files:[f]})){try{await navigator.share({files:[f],text:msgText()});return}catch(e){if(e&&e.name==='AbortError')return}}}
- if(b)dl(b,fname('pdf'));go(w,url);
- setTimeout(function(){alert(b?'PDF download ho gayi. WhatsApp me 📎 dabakar downloaded PDF attach karke bhejein.':'PDF nahi bani — Word download karke PDF save karein, phir attach karein.')},300);
+ if(b&&mobile){var f=new File([b],fname('pdf'),{type:'application/pdf'});if(navigator.canShare({files:[f]})){try{await navigator.share({files:[f],text:msgText()});return}catch(e){if(e&&e.name==='AbortError')return}}}
+ var txt=msgText(),link='';
+ if(b){try{var r=await pqPost('pqPdf',{pdf:await b64(b),name:fname('pdf')});if(r&&r.ok)link=r.pdfUrl}catch(e){}}
+ if(link)txt=txt.replace(/\n\nRegards,/,'\n\nQuotation PDF: '+link+'\n\nRegards,');if(link&&txt.indexOf(link)<0)txt+='\n\nQuotation PDF: '+link;
+ go(w,'https://wa.me/'+(m||'')+'?text='+encodeURIComponent(txt));
+ if(!link){if(b)dl(b,fname('pdf'));setTimeout(function(){alert('PDF ka link nahi ban paya — PDF download ho gayi, WhatsApp me 📎 se attach karein.')},300)}
 }
 async function sendGmail(){
  histSave('Gmail');
- var url='https://mail.google.com/mail/u/aquazone350@gmail.com/?view=cm&fs=1&to='+encodeURIComponent(v('cMail'))+'&su='+encodeURIComponent(v('mSub'))+'&body='+encodeURIComponent($('mMail').value);
  var w=preOpen(),b=null;try{b=await pdfBlob()}catch(e){}
+ if(b){try{
+  var r=await pqPost('pqMail',{pdf:await b64(b),name:fname('pdf'),to:v('cMail'),subject:v('mSub'),body:$('mMail').value});
+  if(r&&r.ok&&r.draftUrl){go(w,r.draftUrl);if(!r.sig)setTimeout(function(){alert('Draft ban gaya (PDF attached). Signature nahi laga — Apps Script me Gmail service add karni hai.')},300);return}
+ }catch(e){}}
+ var url='https://mail.google.com/mail/u/aquazone350@gmail.com/?view=cm&fs=1&to='+encodeURIComponent(v('cMail'))+'&su='+encodeURIComponent(v('mSub'))+'&body='+encodeURIComponent($('mMail').value);
  if(b)dl(b,fname('pdf'));go(w,url);
- setTimeout(function(){alert(b?'PDF download ho gayi. Gmail me 📎 dabakar downloaded PDF attach karke Send dabaiye.':'PDF nahi bani — Word download karke PDF save karein, phir attach karein.')},300);
+ setTimeout(function(){alert('Gmail draft automatic nahi ban paya — PDF download ho gayi, 📎 se attach karein.')},300);
 }
 
 /* ---------- Google Sheet sync ---------- */
