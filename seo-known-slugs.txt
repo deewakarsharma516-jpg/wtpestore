@@ -492,6 +492,7 @@ extra-price-pulse-input
 extra-price-relay-o-p-with-reg-level-switch
 extra-price-with-level-swtch-reg
 extra-price-with-level-swtch-teflon-wire-for-pvdf-pumps
+filter-press-10-x-10-inch-10-chambers-pp-recessed-plates-with-hydraulic-power-pa
 filters-bag-5-10-25-50-100-micron-x-175-mm-x-425mm
 filters-bag-5-10-25-50-100-micron-x-175-mm-x-800mm
 filters-bag-5-10-25-50-100-micron-x-250-mm
